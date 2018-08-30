@@ -1,0 +1,57 @@
+@import './variables.css';
+
+.button {
+  display: inline-block;
+  padding-top: var(--spacing-half);
+  padding-bottom: var(--spacing-half);
+  padding-left: var(--spacing-default);
+  padding-right: var(--spacing-default);
+  font-size: var(--font-size-default);
+  color: var(--action-color);
+  text-transform: uppercase;
+  letter-spacing: 1px; /* use letter spacing when capitals are used for readability */
+  background-color: var(--background-color);
+  box-shadow: var(--shadow-small-grey);
+  border: 1px solid transparent; /* https://twitter.com/AmeliasBrain/status/1026521723888226304 and to match the height of the input fields with the buttons. */
+  border-radius: 3px;
+}
+
+.button:hover,
+.button:focus {
+  color: var(--focus-color);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.button--primary {
+  color: var(--background-color);
+  background-color: var(--action-color);
+  border: 1px solid var(--action-color);
+}
+
+.button--primary:hover,
+.button--primary:focus {
+  background-color: var(--focus-color);
+  border-color: var(--focus-color);
+  color: var(--background-color);
+}
+
+.button--pending::before {
+  content: '';
+  display: inline-block;
+  vertical-align: middle;
+  width: 1.5em;
+  height: 1.5em;
+  margin-top: -.25em;
+  margin-left: -.25em;
+  animation: button__spinner 2s linear infinite;
+  background-image: url('/images/spinner.png');
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+@keyframes button__spinner {
+  0% { transform: rotate(0deg) }
+  100% { transform: rotate(360deg) }
+}

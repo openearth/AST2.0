@@ -1,0 +1,26 @@
+query ($locale: SiteLocale) {
+  measures: allMeasures(locale: $locale) {
+    title,
+    slug,
+    measureId,
+    body,
+    color {
+      hex
+    },
+    image {
+      url,
+      format,
+      width,
+      height
+    },
+    images {
+      title,
+      image {
+        url,
+        format,
+        width,
+        height
+      },
+    }
+  }
+}

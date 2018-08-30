@@ -1,0 +1,11 @@
+query ($locale: SiteLocale) {
+  areaSettings: allAreaSettings(locale: $locale) {
+    title,
+    key
+    multiple,
+    options {
+      title,
+      value
+    },
+  }
+}

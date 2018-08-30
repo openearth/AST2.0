@@ -1,0 +1,25 @@
+*, *:before, *:after {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+figure {
+  margin: 0 auto;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+button {
+  border: none;
+}
+
+button:hover {
+  cursor: pointer;
+}

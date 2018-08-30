@@ -1,0 +1,6 @@
+query ($locale: SiteLocale) {
+  messages: allTranslations(locale: $locale) {
+    key,
+    value
+  }
+}
