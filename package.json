@@ -31,7 +31,8 @@
     "precommit": "npm run lint",
     "proxy": "ngrok http 5326",
     "start": "run-p dev:server start:dist",
-    "start:dist": "http-server './dist/client/' -c-1 -o -p 5326 --proxy 'http://localhost:9000/'"
+    "start:dist": "http-server './dist/client/' -c-1 -o -p 5326 --proxy 'http://localhost:9000/'",
+    "new-component": "node ./_scripts/new-component/index.js --component"
   },
   "dependencies": {
     "@nuxtjs/proxy": "1.2.4",
