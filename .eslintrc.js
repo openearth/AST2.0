@@ -18,6 +18,7 @@ module.exports = {
   ],
   // add your custom rules here
   rules: {
+    'object-curly-spacing': [2, 'always'],
     'comma-dangle': [2, 'always-multiline'],
     'vue/max-attributes-per-line': [2, {
       "singleline": 2,

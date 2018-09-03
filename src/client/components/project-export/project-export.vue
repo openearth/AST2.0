@@ -17,7 +17,7 @@ export default {
   computed: {
     projectBlob() {
       if (this.isClient) {
-        const blob = new Blob([JSON.stringify(this.project, null, 2)], {type: 'application/json'})
+        const blob = new Blob([JSON.stringify(this.project, null, 2)], { type: 'application/json' })
         return URL.createObjectURL(blob)
       } else {
         return ''
