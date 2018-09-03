@@ -4,7 +4,16 @@
 
 <script>
 export default {
-  props: ['project', 'isClient'],
+  props: {
+    project: {
+      type: Object,
+      default: () => ({}),
+    },
+    isClient: {
+      type: Boolean,
+      required: true,
+    },
+  },
   computed: {
     projectBlob() {
       if (this.isClient) {
@@ -13,9 +22,9 @@ export default {
       } else {
         return ''
       }
-    }
+    },
   },
   methods: {
-  }
+  },
 }
 </script>

@@ -1,10 +1,15 @@
 <template>
-  <div class="rich-text" v-html="text"></div>
+  <div class="rich-text" v-html="text"/>
 </template>
 
 <script>
 export default {
-  props: ['text']
+  props: {
+    text: {
+      type: String,
+      default: '',
+    },
+  },
 }
 </script>
 

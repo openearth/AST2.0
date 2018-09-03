@@ -108,7 +108,7 @@ function pageToJson (page, i18n) {
     items: items.toMap()
       .map(item => ({ ...item, type: item.itemType }))
       .map(item => omit(item, ['id', 'itemType', 'createdAt', 'updatedAt']))
-      .map(transformItem)
+      .map(transformItem),
   }))
 
   const slug = page.slug ? `${page.slug}/` : '' // makes sure there's always a trailing slash ending each route so we don't get different versions of same page

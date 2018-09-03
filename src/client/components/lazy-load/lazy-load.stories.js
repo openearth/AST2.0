@@ -16,22 +16,22 @@ storiesOf('Lazy load', module)
           "width": 500,
           "height": 500,
           "alt": "",
-          "url": "https://picsum.photos/500/500"
+          "url": "https://picsum.photos/500/500",
         },
         imageLarge: {
           "format": "jpeg",
           "width": 1200,
           "height": 400,
           "alt": "",
-          "url": "https://picsum.photos/1200/400"
+          "url": "https://picsum.photos/1200/400",
         },
         imageSmall: {
           "format": "jpeg",
           "width": 600,
           "height": 250,
           "alt": "",
-          "url": "https://picsum.photos/600/250"
-        }
+          "url": "https://picsum.photos/600/250",
+        },
       }
     },
   }))

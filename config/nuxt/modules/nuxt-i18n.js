@@ -10,7 +10,7 @@ module.exports = [
     defaultLocale,
     detectBrowserLanguage: {
       useCookie: true,
-      cookieKey: 'i18n_redirected'
+      cookieKey: 'i18n_redirected',
     },
     lazy: true,
     langDir: 'static/data/',
@@ -24,6 +24,6 @@ module.exports = [
     strategy: 'prefix',
     vueI18n: {
       fallbackLocale: defaultLocale,
-    }
-  }
+    },
+  },
 ]

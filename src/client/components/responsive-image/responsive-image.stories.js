@@ -15,8 +15,8 @@ storiesOf('Responsive image', module)
           "width": 1280,
           "height": 720,
           "alt": "Two hands forming a heart around the sun during a sunset",
-          "url": "https://www.datocms-assets.com/6068/1529572359-random-image.jpeg"
-        }
+          "url": "https://www.datocms-assets.com/6068/1529572359-random-image.jpeg",
+        },
       }
     },
   }))
@@ -30,8 +30,8 @@ storiesOf('Responsive image', module)
           "width": 360,
           "height": 360,
           "alt": "Mountain landscape with a cloudy sky",
-          "url": "https://www.datocms-assets.com/6068/1529671983-random-image-square.jpeg"
-        }
+          "url": "https://www.datocms-assets.com/6068/1529671983-random-image-square.jpeg",
+        },
       }
     },
   }))
@@ -46,8 +46,8 @@ storiesOf('Responsive image', module)
           "height": 360,
           "title": "The view during our lunch break",
           "alt": "Mountain landscape with a cloudy sky",
-          "url": "https://www.datocms-assets.com/6068/1529671983-random-image-square.jpeg"
-        }
+          "url": "https://www.datocms-assets.com/6068/1529671983-random-image-square.jpeg",
+        },
       }
     },
   }))
@@ -62,8 +62,8 @@ storiesOf('Responsive image', module)
           "height": 360,
           "title": "The view during our lunch break",
           "alt": "Mountain landscape with a cloudy sky",
-          "url": "broken url"
-        }
+          "url": "broken url",
+        },
       }
     },
   }))

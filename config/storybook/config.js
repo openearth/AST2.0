@@ -1,3 +1,5 @@
+/* eslint-disable vue/require-default-prop, vue/require-prop-types */
+
 import { configure } from '@storybook/vue'
 import { setOptions } from '@storybook/addon-options'
 
@@ -28,7 +30,7 @@ Vue.use(Vuex)
 Vue.mixin({
   created() {
     this.$route = {}
-  }
+  },
 })
 
 /**
@@ -42,7 +44,7 @@ Vue.mixin({
     this.localeUrl = (options, locale) => `/${locale}`
     this.switchLocalePath = locale => `/${locale}`
     this.switchLocaleUrl = locale => `/${locale}`
-  }
+  },
 })
 
 /**

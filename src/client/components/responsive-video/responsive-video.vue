@@ -1,35 +1,39 @@
 <template>
   <div class="responsive-video">
     <figure>
-      <fixed-ratio class="responsive-video__canvas" :width="video.width" :height="video.height">
+      <fixed-ratio 
+        :width="video.width" 
+        :height="video.height" 
+        class="responsive-video__canvas">
         <lazy-load>
           <div
-            class="responsive-video__background"
             :style="{ backgroundImage: `url(${imageUrl})` }"
-          >
-          </div>
+            class="responsive-video__background"
+          />
         </lazy-load>
         <iframe
           v-if="isPlaying"
-          class="responsive-video__i-frame"
           :src="videoUrl"
+          class="responsive-video__i-frame"
           frameborder="0"
           webkitallowfullscreen
           mozallowfullscreen
           allowfullscreen
-          allow="autoplay">
-        </iframe>
+          allow="autoplay"/>
         <a
           v-if="!isPlaying"
-          class="responsive-video__button"
           :href="video.url"
+          class="responsive-video__button"
           @click.prevent="play">
           <span class="a11y-sr-only">{{ $t('play_video') }}</span>
-          <img class="responsive-video__icon" src="/images/play.svg" />
+          <img class="responsive-video__icon" src="/images/play.svg" >
         </a>
       </fixed-ratio>
       <figcaption v-if="video.title">
-        <a target="_blank" rel="noopener" :href="video.url" >
+        <a 
+          :href="video.url" 
+          target="_blank" 
+          rel="noopener" >
           {{ video.title }}
         </a>
       </figcaption>
@@ -45,6 +49,7 @@ import imageUrl from '../../lib/image-url'
 const binaryBoolean = value => (value) ? 1 : 0
 
 export default {
+  components: { FixedRatio, LazyLoad },
   props: {
     video: {
       type: Object,
@@ -63,7 +68,12 @@ export default {
       required: true,
     },
   },
-  components: { FixedRatio, LazyLoad },
+  data () {
+    return {
+      isPlaying: this.autoplay,
+      width: undefined,
+    }
+  },
   computed: {
     imageUrl() {
       switch (this.video.provider) {
@@ -101,13 +111,12 @@ export default {
           console.error(`unsupported video provider: ${provider}`);
           return ''
       }
-    }
+    },
   },
-  data () {
-    return {
-      isPlaying: this.autoplay,
-      width: undefined,
-    }
+   mounted() {
+    const pixelRatio = window.devicePixelRatio || 1
+    const cssWidth = this.$el.getBoundingClientRect().width
+    this.width = cssWidth * pixelRatio
   },
   methods: {
     play() {
@@ -115,15 +124,10 @@ export default {
         eventCategory: 'video',
         eventAction: 'play',
         eventLabel: this.video.url,
-        eventValue: 1
+        eventValue: 1,
       })
       this.isPlaying = true
     },
-  },
-   mounted() {
-    const pixelRatio = window.devicePixelRatio || 1
-    const cssWidth = this.$el.getBoundingClientRect().width
-    this.width = cssWidth * pixelRatio
   },
 }
 </script>

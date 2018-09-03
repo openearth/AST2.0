@@ -2,8 +2,8 @@ import Vue from 'vue'
 
 export const state = () => ({
   settings: {
-    title: 'My project title'
-  }
+    title: 'My project title',
+  },
 })
 
 export const mutations = {
@@ -12,5 +12,5 @@ export const mutations = {
   },
   setTitle(state, value) {
     state.settings.title = value
-  }
+  },
 }

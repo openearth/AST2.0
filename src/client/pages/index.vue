@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>Home</h1>
-    <p>Project: <input v-model="projectTitle" />: {{projectTitle}}</p>
+    <p>Project: <input v-model="projectTitle" >: {{ projectTitle }}</p>
     <ul>
       <li><nuxt-link to="/en/about">about</nuxt-link></li>
       <li><project-export :is-client="isClient" :project="project"/></li>
@@ -15,16 +15,16 @@ import { mapState, mapMutations } from "vuex";
 import { ProjectExport, ProjectImport } from "../components";
 
 export default {
-  data: () => ({
-    isClient: false
-  }),
   components: { ProjectExport, ProjectImport },
+  data: () => ({
+    isClient: false,
+  }),
   computed: {
     ...mapState(['project']),
     projectTitle: {
       get() {return this.$store.state.project.settings.title},
-      set(value) {  this.$store.commit('project/setTitle', value)}
-    }
+      set(value) {  this.$store.commit('project/setTitle', value)},
+    },
   },
   mounted() {
     this.isClient = true
@@ -33,7 +33,7 @@ export default {
     ...mapMutations({ import: 'project/import' }),
     onImport(projectFile) {
       this.import(projectFile)
-    }
-  }
+    },
+  },
 }
 </script>
