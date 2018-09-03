@@ -4,7 +4,7 @@ import { withReadme } from 'storybook-readme'
 import readme from './readme.md'
 import AppHeader from './'
 import menuItems from './app-header.stories.json'
-import { mockLocales, i18n } from '../language-selector/language-selector.stories'
+import { mockLocales, i18n } from '../../../../config/storybook/i18n-mock'
 
 storiesOf('App header', module)
   .addDecorator(withReadme(readme))
