@@ -10,7 +10,7 @@ import '../app-core/index.css'
 import ProjectExport from './project-export.vue'
 import README from './README.md'
 
-const stories = storiesOf('Components/Project Export', module)
+const stories = storiesOf('Project Export', module)
   .addDecorator(withKnobs)
   .addDecorator(withReadme(README))
 
