@@ -37,11 +37,13 @@
     "new-component": "node ./_scripts/new-component/index.js --component"
   },
   "dependencies": {
+    "@mapbox/mapbox-gl-draw": "1.0.9",
     "@nuxtjs/proxy": "1.2.4",
     "@nuxtjs/pwa": "2.5.0",
     "@nuxtjs/sitemap": "0.1.1",
     "dotenv": "6.0.0",
     "dotenv-safe": "6.0.0",
+    "mapbox-gl": "0.48.0",
     "normalize.css": "8.0.0",
     "nuxt": "1.4.2",
     "nuxt-i18n": "5.2.1",

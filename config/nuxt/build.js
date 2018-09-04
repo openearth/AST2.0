@@ -2,7 +2,7 @@
  * @see https://nuxtjs.org/api/configuration-build
  */
 module.exports = {
-  vendor: ['babel-polyfill', 'unfetch/polyfill'],
+  vendor: ['babel-polyfill', 'unfetch/polyfill', 'mapbox-gl', '@mapbox/mapbox-gl-draw'],
   postcss: [
     require('postcss-import')(),
     require('postcss-custom-properties')(),
@@ -24,6 +24,11 @@ module.exports = {
         loader: 'eslint-loader',
         exclude: /(node_modules)/,
       })
+    }
+
+    if (isClient) {
+      config.node = {}
+      config.node.fs = 'empty'
     }
 
     config.module.rules.push({
