@@ -6,7 +6,7 @@
     <section class="measures">
       <ul class="measures__list">
         <li
-          v-for="measure in measures"
+          v-for="measure in orderedMeasures"
           :key="measure.id"
           class="measures__list__item">
           
@@ -18,13 +18,14 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex"
+import { mapState, mapMutations, mapGetters } from "vuex"
 import { MeasureCard } from '~/components'
 
 export default {
   components: { MeasureCard },
   computed: {
     ...mapState('data', ['measures']),
+    ...mapGetters('data/measures', ['orderedMeasures', 'filteredMeasures']),
   },
 }
 </script>
@@ -33,13 +34,13 @@ export default {
 @import '../components/app-core/index.css';
 
 .container {
-  padding: 2rem;
+  padding: var(--spacing-double);
   height: 100%;
   overflow: scroll;
 }
 
 .header {
-  margin-bottom: 2rem;
+  margin-bottom: var(--spacing-double);
 }
 
 .measures {
@@ -47,13 +48,14 @@ export default {
 }
 
 .measures__list {
-  padding: 0;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  padding: 0;
 }
 
 .measures__list__item {
+  margin-bottom: var(--spacing-double);
   list-style-type: none;
 }
 </style>
