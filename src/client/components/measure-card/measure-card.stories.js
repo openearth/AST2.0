@@ -3,7 +3,6 @@ import { storiesOf } from '@storybook/vue'
 import { withReadme } from 'storybook-readme'
 import { withKnobs } from '@storybook/addon-knobs/vue'
 import VueI18n from 'vue-i18n'
-// import { action } from '@storybook/addon-actions'
 
 import '../app-core/index.css'
 
@@ -19,7 +18,24 @@ Vue.component('measure-card', MeasureCard)
 stories.add(
   'Measure Card',
   () => ({
+    data() {
+      return {
+        measure: {
+          "title": "Cooling with water elements: fountains",
+          "body": "<p>A fountain pours water into a basin or jets it into the air to supply water or for a decorative or dramatic effect.</p>",
+          "color": {
+            "hex": "#772D8B",
+          },
+          "image": {
+            "format": "png",
+            "url": "https://www.datocms-assets.com/7033/1535639285-iconen-11.png",
+            "height": 417,
+            "width": 417,
+          },
+        },
+      }
+    },
     i18n: new VueI18n({ locale: 'en' }),
-    template: '<measure-card/>',
+    template: '<measure-card :measure="measure"/>',
   }),
 )

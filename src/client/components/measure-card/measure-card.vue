@@ -28,7 +28,7 @@ export default {
   },
   methods: {
     showMeasureInfo() {
-      console.log(this.measure.body)
+      // TODO show additional info
     },
   },
 }
@@ -46,6 +46,7 @@ export default {
 }
 
 .measure-card__text {
+  margin-right: var(--spacing-half);
   width: 70%;
   height: 200px;
   overflow: hidden;
