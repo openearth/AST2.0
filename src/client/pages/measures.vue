@@ -1,15 +1,15 @@
 <template>
-  <aside class="container">
-    <header class="header">
+  <aside class="measures">
+    <header class="measures__header">
       <h2>Measures</h2>
     </header>
 
-    <section class="measures">
+    <section class="measures__list-container">
       <div class="measures__options">
         <input
           v-model="searchValue" 
           type="text"
-          placeholder="search words">
+          placeholder="search something">
         <button class="button" @click="sortItems">{{ !isAlphabeticallyOrdered ? 'A-z' : 'Default' }}</button>
       </div>
       <ul class="measures__list">
@@ -58,18 +58,18 @@ export default {
 </script>
 
 <style>
-.container {
+.measures {
   padding: var(--spacing-double);
   height: 100%;
   overflow: scroll;
   position: relative;
 }
 
-.header {
+.measures__header {
   margin-bottom: var(--spacing-double);
 }
 
-.measures {
+.measures__list-container {
   width: 700px;
 }
 
