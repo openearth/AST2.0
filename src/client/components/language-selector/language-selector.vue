@@ -1,45 +1,50 @@
 <template>
-<div
-  id="language"
-  class="language-selector"
-  :class="{'language-selector--dropdown': useDropdown}"
->
-  <a
-    v-if="useDropdown"
-    :aria-label="$t('select_language')"
-    class="language-selector__open language-selector__item"
-    href="#language"
-    @click.prevent="toggleList"
+  <div
+    id="language"
+    :class="{'language-selector--dropdown': useDropdown}"
+    class="language-selector"
   >
-    {{ currentLocale }}
-  </a>
-  <ul
-    class="language-selector__list"
-    :class="{'language-selector__list--open': isOpen}"
-  >
-    <template v-for="locale in locales">
-      <li
-        v-if="shouldIncludeLocale(locale.code)"
-        :key="locale.code"
-        class="language-selector__item"
-      >
-        <nuxt-link
-          class="language-selector__link"
-          rel="alternate"
-          :hreflang="locale.code"
-          :to="pageUrl(locale.code)"
+    <a
+      v-if="useDropdown"
+      :aria-label="$t('select_language')"
+      class="language-selector__open language-selector__item"
+      href="#language"
+      @click.prevent="toggleList"
+    >
+      {{ currentLocale }}
+    </a>
+    <ul
+      :class="{'language-selector__list--open': isOpen}"
+      class="language-selector__list"
+    >
+      <template v-for="locale in locales">
+        <li
+          v-if="shouldIncludeLocale(locale.code)"
+          :key="locale.code"
+          class="language-selector__item"
         >
-          {{ locale.name }}
-        </nuxt-link>
-      </li>
-    </template>
-  </ul>
-</div>
+          <nuxt-link
+            :hreflang="locale.code"
+            :to="pageUrl(locale.code)"
+            class="language-selector__link"
+            rel="alternate"
+          >
+            {{ locale.name }}
+          </nuxt-link>
+        </li>
+      </template>
+    </ul>
+  </div>
 </template>
 
 <script>
 export default {
-  props: ['locales'],
+  props: {
+    locales: {
+      type: Array,
+      required: true,
+    },
+  },
   data() {
     return {
       isOpen: false,
@@ -68,7 +73,7 @@ export default {
     toggleList () {
       this.isOpen = !this.isOpen
     },
-  }
+  },
 }
 </script>
 

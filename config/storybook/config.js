@@ -1,23 +1,20 @@
+/* eslint-disable vue/require-default-prop, vue/require-prop-types */
+
 import { configure } from '@storybook/vue'
 import { setOptions } from '@storybook/addon-options'
 
 import Vue from 'vue'
-import VueAnalytics from 'vue-analytics'
 import VueI18n from 'vue-i18n'
 import Vuex from 'vuex'
 
 setOptions({
-  name: 'Lean Web Kit',
+  name: 'AST 2.0',
   url: '#',
   showLeftPanel: true,
   showDownPanel: true,
   downPanelInRight: true,
 })
 
-Vue.use(VueAnalytics, {
-  debug: { enabled: true, sendHitTask: false },
-  id: 'UA-MOCK-X',
-})
 Vue.use(VueI18n)
 Vue.use(Vuex)
 
@@ -28,7 +25,7 @@ Vue.use(Vuex)
 Vue.mixin({
   created() {
     this.$route = {}
-  }
+  },
 })
 
 /**
@@ -42,7 +39,7 @@ Vue.mixin({
     this.localeUrl = (options, locale) => `/${locale}`
     this.switchLocalePath = locale => `/${locale}`
     this.switchLocaleUrl = locale => `/${locale}`
-  }
+  },
 })
 
 /**

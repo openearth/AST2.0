@@ -19,5 +19,5 @@ export const isSupported = (() => {
 })()
 
 export default {
-  isSupported
+  isSupported,
 }

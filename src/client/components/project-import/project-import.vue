@@ -1,5 +1,5 @@
 <template>
-  <input type="file" @change="onUpload"/>
+  <input type="file" @change="onUpload">
 </template>
 
 <script>
@@ -14,7 +14,7 @@ export default {
       })
 
       reader.readAsText(file)
-    }
-  }
+    },
+  },
 }
 </script>

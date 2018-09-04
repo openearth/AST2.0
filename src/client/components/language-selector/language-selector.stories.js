@@ -31,7 +31,7 @@ storiesOf('Language selector', module)
       data() {
         return {
           twoLocales: mockLocales(['en', 'nl']),
-          moreThanTwoLocales: mockLocales(['en', 'nl', 'pt', 'fr', 'it'])
+          moreThanTwoLocales: mockLocales(['en', 'nl', 'pt', 'fr', 'it']),
         }
       },
       i18n: new VueI18n({
@@ -39,7 +39,7 @@ storiesOf('Language selector', module)
         messages: {
           en: {
             select_language: 'Select language',
-          }
+          },
         },
       }),
       store: new Vuex.Store(),

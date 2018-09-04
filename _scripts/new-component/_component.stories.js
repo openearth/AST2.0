@@ -10,7 +10,7 @@ import '../app-core/index.css'
 import __NAME_PASCAL__ from './__NAME_KEBAB__.vue'
 import README from './README.md'
 
-const stories = storiesOf('Components/__NAME_START__', module)
+const stories = storiesOf('__NAME_START__', module)
   .addDecorator(withKnobs)
   .addDecorator(withReadme(README))
 

@@ -23,13 +23,13 @@ storiesOf('Responsive video', module)
             "provider": "vimeo",
             "providerUid": "265601385",
             "thumbnailUrl": "https://i.vimeocdn.com/video/695812178_640.jpg",
-          }
-        }
+          },
+        },
       }
     },
     i18n: new VueI18n({
       locale: 'en',
-    })
+    }),
   }))
   .add('Vimeo with autoplay', () => ({
     components: { ResponsiveVideo },
@@ -48,13 +48,13 @@ storiesOf('Responsive video', module)
             "provider": "vimeo",
             "providerUid": "265601385",
             "thumbnailUrl": "https://i.vimeocdn.com/video/695812178_640.jpg",
-          }
-        }
+          },
+        },
       }
     },
     i18n: new VueI18n({
       locale: 'en',
-    })
+    }),
   }))
   .add('Vimeo with loop and autoplay', () => ({
     components: { ResponsiveVideo },
@@ -73,13 +73,13 @@ storiesOf('Responsive video', module)
             "provider": "vimeo",
             "providerUid": "55491848",
             "thumbnailUrl": "https://i.vimeocdn.com/video/384455198_640.jpg",
-          }
-        }
+          },
+        },
       }
     },
     i18n: new VueI18n({
       locale: 'en',
-    })
+    }),
   }))
   .add('YouTube default', () => ({
     components: { ResponsiveVideo },
@@ -98,13 +98,13 @@ storiesOf('Responsive video', module)
             "provider": "youtube",
             "providerUid": "ZPIIT6siIaE",
             "thumbnailUrl": "https://i.ytimg.com/vi/ZPIIT6siIaE/hqdefault.jpg",
-          }
-        }
+          },
+        },
       }
     },
     i18n: new VueI18n({
       locale: 'en',
-    })
+    }),
   }))
   .add('YouTube with autoplay', () => ({
     components: { ResponsiveVideo },
@@ -123,13 +123,13 @@ storiesOf('Responsive video', module)
             "provider": "youtube",
             "providerUid": "ZPIIT6siIaE",
             "thumbnailUrl": "https://i.ytimg.com/vi/ZPIIT6siIaE/hqdefault.jpg",
-          }
-        }
+          },
+        },
       }
     },
     i18n: new VueI18n({
       locale: 'en',
-    })
+    }),
   }))
   .add('Youtube with loop and autoplay', () => ({
     components: { ResponsiveVideo },
@@ -148,11 +148,11 @@ storiesOf('Responsive video', module)
             "provider": "youtube",
             "providerUid": "B7bqAsxee4I",
             "thumbnailUrl": "https://i.ytimg.com/vi/B7bqAsxee4I/hqdefault.jpg",
-          }
-        }
+          },
+        },
       }
     },
     i18n: new VueI18n({
       locale: 'en',
-    })
+    }),
   }))

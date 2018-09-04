@@ -1,19 +1,28 @@
 <template>
   <figure class="responsive-image">
-    <div class="responsive-image__sizer" :style="`max-width:${image.width}px;`">
-      <fixed-ratio class="responsive-image__canvas" :width="image.width" :height="image.height">
+    <div :style="`max-width:${image.width}px;`" class="responsive-image__sizer" >
+      <fixed-ratio
+        :width="image.width"
+        :height="image.height"
+        class="responsive-image__canvas">
         <lazy-load>
-          <picture class="responsive-image__picture" v-if="width">
+          <picture v-if="width" class="responsive-image__picture">
             <!--[if IE 9]><video style="display: none;"><![endif]-->
-            <source type="image/webp" :srcset="imageUrl({ fm: 'webp', w: width })">
+            <source :srcset="imageUrl({ fm: 'webp', w: width })" type="image/webp">
             <source :type="`image/${image.format}`" :srcset="imageUrl({ w: width })">
             <!--[if IE 9]></video><![endif]-->
-            <img class="responsive-image__img" :alt="image.alt" :src="imageUrl({ w: width })" />
+            <img
+              :alt="image.alt"
+              :src="imageUrl({ w: width })"
+              class="responsive-image__img" >
           </picture>
         </lazy-load>
         <no-script>
           <picture class="responsive-image__picture">
-            <img class="responsive-image__img" :alt="image.alt" :src="imageUrl({ w: 500 })" />
+            <img
+              :alt="image.alt"
+              :src="imageUrl({ w: 500 })"
+              class="responsive-image__img" >
           </picture>
         </no-script>
       </fixed-ratio>
@@ -40,7 +49,7 @@ export default {
     widthStep: {
       type: Number,
       default: 100,
-    }
+    },
   },
   data() {
     return {
@@ -57,7 +66,7 @@ export default {
     imageUrl(options) {
       return imageUrl(this.image.url, options)
     },
-  }
+  },
 }
 </script>
 
