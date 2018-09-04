@@ -2,7 +2,6 @@ import Vue from 'vue'
 import { storiesOf } from '@storybook/vue'
 import { withReadme } from 'storybook-readme'
 import { withKnobs } from '@storybook/addon-knobs/vue'
-import VueI18n from 'vue-i18n'
 
 import '../app-core/index.css'
 
@@ -35,7 +34,6 @@ stories.add(
         },
       }
     },
-    i18n: new VueI18n({ locale: 'en' }),
     template: '<measure-card :measure="measure"/>',
   }),
 )

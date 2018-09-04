@@ -1,6 +1,6 @@
 <template>
   <article 
-    :style="`border-top: 8px solid ${ measure.color.hex }`"
+    :style="`border-color: ${measure.color.hex}`"
     class="measure-card">
     
     <div class="measure-card__content">
@@ -38,6 +38,7 @@ export default {
 .measure-card {
   padding: 1.5rem var(--spacing-default);
   width: 320px;
+  border-top: 8px solid;
   box-shadow: 2px 2px 15px #ddd;
 }
 
