@@ -22,7 +22,4 @@ export const getters = {
       return 0
     })
   },
-  filteredMeasures: state => filter => {
-    return state.filter(measure => measure.title.includes(filter))
-  },
 }

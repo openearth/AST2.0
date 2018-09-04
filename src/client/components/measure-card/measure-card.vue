@@ -3,12 +3,15 @@
     :style="`border-top: 8px solid ${ measure.color.hex }`"
     class="measure-card">
     
-    <div class="measure-card__text">
-      <h3 class="measure-card__text__title">{{ measure.title }}</h3>
-      <div v-html="measure.body" />
+    <div class="measure-card__content">
+      <div class="measure-card__text">
+        <h3 class="measure-card__title">{{ measure.title }}</h3>
+        <div v-html="measure.body" />
+      </div>
+      
+      <responsive-image :image="measure.image" class="measure-card__image" />
     </div>
-    
-    <responsive-image :image="measure.image" class="measure-card__image" />
+    <button class="measure-card__info" @click="showMeasureInfo"/>
   </article>
 </template>
 
@@ -23,16 +26,24 @@ export default {
       required: true,
     },
   },
+  methods: {
+    showMeasureInfo() {
+      console.log(this.measure.body)
+    },
+  },
 }
 </script>
 
 <style>
 .measure-card {
-    display: flex;
-    padding: 1.5rem var(--spacing-default);
-    max-width: 320px;
-    box-shadow: 2px 2px 10px #ccc;
-  }
+  padding: 1.5rem var(--spacing-default);
+  width: 320px;
+  box-shadow: 2px 2px 15px #ddd;
+}
+
+.measure-card__content {
+  display: flex;
+}
 
 .measure-card__text {
   width: 70%;
@@ -40,11 +51,21 @@ export default {
   overflow: hidden;
 }
 
-.measure-card__text__title {
+.measure-card__title {
   margin-bottom: var(--spacing-half);
 }
 
 .measure-card__image {
   width: 30%;
+}
+
+.measure-card__info {
+  display: block;
+  margin-left: auto;
+  width: 35px;
+  height: 35px;
+  background-image: url('/images/info.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
 }
 </style>
