@@ -58,8 +58,6 @@ export default {
 </script>
 
 <style>
-@import '../components/app-core/index.css';
-
 .container {
   padding: var(--spacing-double);
   height: 100%;
