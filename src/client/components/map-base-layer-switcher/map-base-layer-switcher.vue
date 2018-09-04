@@ -21,6 +21,6 @@ export default {
 
 <style>
 .map-base-layer-switcher__button {
-  margin-left: 1rem;
+  margin-left: var(--spacing-default);
 }
 </style>
