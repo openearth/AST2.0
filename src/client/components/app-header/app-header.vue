@@ -1,9 +1,6 @@
 <template>
   <div class="app-header">
     <h2>AST 2.0</h2>
-    <nuxt-link to="/en">index</nuxt-link>
-    <nuxt-link to="/en/new-project">New project</nuxt-link>
-    <nuxt-link to="/en/measures">Measures</nuxt-link>
   </div>
 </template>
 
