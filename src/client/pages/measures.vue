@@ -1,7 +1,7 @@
 <template>
   <aside class="measures">
     <header class="measures__header">
-      <h2>Measures</h2>
+      <h2>Select a measure</h2>
     </header>
 
     <section class="measures__list-container">
@@ -18,7 +18,7 @@
           :key="measure.id"
           class="measures__list__item">
           
-          <measure-card :measure="measure" />
+          <measure-card :measure="measure" :scores="scoresArray" />
         </li>
       </ul>
     </section>
@@ -35,6 +35,10 @@ export default {
     return {
       isAlphabeticallyOrdered: false,
       searchValue: '',
+      scoresArray: [
+        'Ground water',
+        'Drought',
+      ],
     }
   },
   computed: {
