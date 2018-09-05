@@ -1,28 +1,37 @@
 <template>
   <div class="search">
-    <span v-if="searchValue === ''" class="search__search-icon" />
+    <span v-if="value === ''" class="search__search-icon" />
     <input
-      v-model="searchValue"
+      v-model="value"
       class="search__input"
       type="text"
       placeholder="Search">
-    <button class="search__delete-icon" @click="clearSearch" />
+    <button class="search__delete-icon" @click="onClear" />
   </div>
 </template>
 
 <script>
 export default {
+  props: {
+    searchValue: {
+      type: String,
+      required: true,
+    },
+  },
   data() {
     return {
-      value: '',
+      value: this.searchValue,
     }
   },
-  methods: {
-    sortItems () {
-      this.isAlphabeticallyOrdered = !this.isAlphabeticallyOrdered
+  watch: {
+    value(val) {
+      this.$emit('onSearch', val)
     },
-    clearSearch() {
-      this.searchValue = ''
+  },
+  methods: {
+    onClear() {
+      this.value = ''
+      this.$emit('clearSearch')
     },
   },
 }
