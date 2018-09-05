@@ -12,6 +12,7 @@
         @delete="onAreaDelete"
         @baseLayerSwitch="onBaseLayerSwitch"/>
       <kpi-panel />
+      <span v-if="area" class="project-area">{{ area.toFixed(2) }}m2</span>
     </section>
   </div>
 </template>
@@ -24,7 +25,10 @@ import turf from '@turf/area'
 export default {
   components: { AppHeader, MapViewer, KpiPanel },
   computed: {
-    ...mapState({ map: state => state.project.map }),
+    ...mapState({
+      map: state => state.project.map,
+      area: state => state.project.settings.projectArea.area,
+    }),
   },
   methods: {
     ...mapMutations({
@@ -35,7 +39,6 @@ export default {
     }),
     onAreaCreate(e) {
       const area = turf(e[0].geometry)
-      console.log(area.toFixed(2))
       const [projectArea] = e
 
       this.createArea({ ...projectArea, area })
@@ -73,4 +76,9 @@ export default {
   flex: 1;
 }
 
+.project-area {
+  position: absolute;
+  top: var(--spacing-default);
+  right: var(--spacing-default);
+}
 </style>
