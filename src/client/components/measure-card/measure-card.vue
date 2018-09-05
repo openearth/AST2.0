@@ -6,12 +6,24 @@
     <div class="measure-card__content">
       <div class="measure-card__text">
         <h3 class="measure-card__title">{{ measure.title }}</h3>
-        <div v-html="measure.body" />
+
+        <ul class="measure-card__scores">
+          <li
+            v-for="(score, index) in scores"
+            :key="index"
+            class="measure-card__scores__score">
+            {{ score }}
+          </li>
+        </ul>
       </div>
-      
+
       <responsive-image :image="measure.image" class="measure-card__image" />
     </div>
-    <button class="measure-card__info" @click="showMeasureInfo"/>
+
+    <div class="measure-card__actions">
+      <button class="measure-card__actions__choose" @click="chooseMeasure">Choose</button>
+      <a href="#" class="measure-card__actions__learn-more" />
+    </div>
   </article>
 </template>
 
@@ -26,9 +38,18 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      scores: [
+        'Ground water',
+        'Drought',
+        'Pluvial flooding',
+      ],
+    }
+  },
   methods: {
-    showMeasureInfo() {
-      // TODO show additional info
+    chooseMeasure() {
+      // TODO show add measure to selected area
     },
   },
 }
@@ -38,7 +59,8 @@ export default {
 .measure-card {
   padding: 1.5rem var(--spacing-default);
   width: 320px;
-  border-top: 8px solid;
+  height: 180px;
+  border-left: 8px solid;
   box-shadow: 2px 2px 15px #ddd;
 }
 
@@ -49,8 +71,6 @@ export default {
 .measure-card__text {
   margin-right: var(--spacing-half);
   width: 70%;
-  height: 200px;
-  overflow: hidden;
 }
 
 .measure-card__title {
@@ -69,5 +89,9 @@ export default {
   background-image: url('/images/info.svg');
   background-size: contain;
   background-repeat: no-repeat;
+}
+
+.measure-card__scores {
+  font-size: 12px;
 }
 </style>
