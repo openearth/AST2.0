@@ -26,11 +26,11 @@ export default {
     ...mapState({ map: state => state.project.map }),
   },
   methods: {
-    onMapCreate(event) {console.log(event)},
-    onMapUpdate(event) {console.log(event)},
-    onMapDelete(event) {console.log(event)},
     ...mapMutations({
       onBaseLayerSwitch: 'project/setBaseLayer',
+      onMapCreate: 'project/createArea',
+      onMapUpdate: 'project/updateArea',
+      onMapDelete: 'project/deleteArea',
     }),
   },
 }
