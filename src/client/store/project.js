@@ -43,8 +43,7 @@ export const mutations = {
     const updatedArea = (state.settings.areas.find(area => area.id === id))
     Object.assign(updatedArea, updates)
   },
-  deleteArea(state, value) {
-    const [{ id }] = value
+  deleteArea(state, [{ id }]) {
     const { projectArea } = state.settings
 
     if (projectArea.id === id) {
