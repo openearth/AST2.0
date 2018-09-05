@@ -6,10 +6,15 @@
 
     <section class="measures__list-container">
       <div class="measures__options">
-        <input
-          v-model="searchValue" 
-          type="text"
-          placeholder="search something">
+        <div class="search">
+          <span v-if="searchValue === ''" class="search__search-icon" />
+          <input
+            v-model="searchValue"
+            class="search__input"
+            type="text"
+            placeholder="Search">
+          <button class="search__delete-icon" @click="clearSearch" />
+        </div>
         <button class="button" @click="sortItems">{{ !isAlphabeticallyOrdered ? 'A-z' : 'Default' }}</button>
       </div>
       <ul class="measures__list">
@@ -57,6 +62,9 @@ export default {
     sortItems () {
       this.isAlphabeticallyOrdered = !this.isAlphabeticallyOrdered
     },
+    clearSearch() {
+      this.searchValue = ''
+    },
   },
 }
 </script>
@@ -95,5 +103,61 @@ export default {
 .measures__list__item {
   margin-bottom: var(--spacing-double);
   list-style-type: none;
+}
+
+.measures__search {
+  padding: 10px 8px;
+  border-radius: var(--border-radius-small);
+  box-shadow: none;
+  border: 1px solid var(--text-light-color);
+  font-size: 14px;
+  width: 250px;
+}
+
+.search {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 var(--spacing-half);
+  height: 40px;
+  background-color: var(--background-color);
+  border-radius: var(--border-radius-small);
+  border: 2px solid var(--text-color);
+}
+
+.search:focus-within {
+  border-color: var(--action-color);
+}
+
+.search__search-icon {
+  background-image: url('/images/search.svg');
+  background-size: contain;
+}
+
+.search__delete-icon {
+  background-color: var(--text-color);
+  border-radius: 50%;
+  background-size: 50%;
+  background-image: url('/images/delete.svg');
+}
+
+.search__search-icon,
+.search__delete-icon {
+  width: 20px;
+  height: 20px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.search__input {
+  flex-grow: 1;
+  width: 230px;
+  height: 100%;
+  border-style: none;
+  padding: 0 8px;
+}
+
+.search__input:focus {
+  outline: none;
 }
 </style>
