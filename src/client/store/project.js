@@ -25,20 +25,15 @@ export const mutations = {
   setBaseLayer(state, value) {
     state.map.activeBaseLayer = value
   },
-  createArea(state, value) {
-    const [{ geometry, type, id }] = value
-    const newArea = { geometry, type, id }
-
+  createArea(state, newArea) {
     if (!state.settings.projectArea.id) {
       return state.settings.projectArea = newArea
     }
 
     state.settings.areas.push(newArea)
   },
-  updateArea(state, value) {
-    const [{ geometry, type, id }] = value
-    const updates = { geometry, type, id }
-
+  updateArea(state, updates) {
+    const { id } = updates
     const { projectArea } = state.settings
 
     if (projectArea.id === id) {
@@ -50,6 +45,7 @@ export const mutations = {
   },
   deleteArea(state, value) {
     const [{ id }] = value
+    const { projectArea } = state.settings
 
     if (projectArea.id === id) {
       return state.settings.projectArea = {}

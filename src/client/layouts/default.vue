@@ -7,9 +7,9 @@
         :active-base-layer="map.activeBaseLayer"
         :base-layers="map.baseLayers"
         class="layout-default__map"
-        @create="onMapCreate"
-        @update="onMapUpdate"
-        @delete="onMapDelete"
+        @create="onAreaCreate"
+        @update="onAreaUpdate"
+        @delete="onAreaDelete"
         @baseLayerSwitch="onBaseLayerSwitch"/>
       <kpi-panel />
     </section>
@@ -19,6 +19,7 @@
 <script>
 import { mapState, mapMutations } from "vuex";
 import { AppHeader, MapViewer, KpiPanel } from '../components'
+import turf from '@turf/area'
 
 export default {
   components: { AppHeader, MapViewer, KpiPanel },
@@ -28,10 +29,23 @@ export default {
   methods: {
     ...mapMutations({
       onBaseLayerSwitch: 'project/setBaseLayer',
-      onMapCreate: 'project/createArea',
-      onMapUpdate: 'project/updateArea',
-      onMapDelete: 'project/deleteArea',
+      createArea: 'project/createArea',
+      updateArea: 'project/updateArea',
+      onAreaDelete: 'project/deleteArea',
     }),
+    onAreaCreate(e) {
+      const area = turf(e[0].geometry)
+      console.log(area.toFixed(2))
+      const [projectArea] = e
+
+      this.createArea({ ...projectArea, area })
+    },
+    onAreaUpdate(e) {
+      const area = turf(e[0].geometry)
+      const [projectArea] = e
+
+      this.updateArea({ ...projectArea, area })
+    },
   },
 }
 </script>

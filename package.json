@@ -41,6 +41,7 @@
     "@nuxtjs/proxy": "1.2.4",
     "@nuxtjs/pwa": "2.5.0",
     "@nuxtjs/sitemap": "0.1.1",
+    "@turf/area": "^6.0.1",
     "dotenv": "6.0.0",
     "dotenv-safe": "6.0.0",
     "mapbox-gl": "0.48.0",
