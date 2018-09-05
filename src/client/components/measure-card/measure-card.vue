@@ -7,14 +7,7 @@
       <div class="measure-card__text">
         <h3 class="measure-card__title">{{ measure.title }}</h3>
 
-        <ul class="measure-card__scores">
-          <li
-            v-for="(score, index) in scores"
-            :key="index"
-            class="measure-card__scores__score">
-            {{ score }}
-          </li>
-        </ul>
+        <span class="measure-card__scores">{{ scoresString }}</span>
       </div>
 
       <responsive-image :image="measure.image" class="measure-card__image" />
@@ -22,7 +15,7 @@
 
     <div class="measure-card__actions">
       <button class="measure-card__actions__choose" @click="chooseMeasure">Choose</button>
-      <a href="#" class="measure-card__actions__learn-more" />
+      <a href="#" class="measure-card__actions__learn-more">Learn more</a>
     </div>
   </article>
 </template>
@@ -37,15 +30,15 @@ export default {
       type: Object,
       required: true,
     },
+    scores: {
+      type: Array,
+      required: true,
+    },
   },
-  data() {
-    return {
-      scores: [
-        'Ground water',
-        'Drought',
-        'Pluvial flooding',
-      ],
-    }
+  computed: {
+    scoresString() {
+      return this.scores.join(' - ')
+    },
   },
   methods: {
     chooseMeasure() {
@@ -57,10 +50,14 @@ export default {
 
 <style>
 .measure-card {
-  padding: 1.5rem var(--spacing-default);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px var(--spacing-default);
+  padding-bottom: 10px;
   width: 320px;
   height: 180px;
-  border-left: 8px solid;
+  border-left: 5px solid;
   box-shadow: 2px 2px 15px #ddd;
 }
 
@@ -74,11 +71,16 @@ export default {
 }
 
 .measure-card__title {
+  font-size: var(--font-size-default);
   margin-bottom: var(--spacing-half);
 }
 
 .measure-card__image {
   width: 30%;
+}
+
+.measure-card__image.responsive-image {
+  margin-bottom: 0;
 }
 
 .measure-card__info {
@@ -92,6 +94,33 @@ export default {
 }
 
 .measure-card__scores {
-  font-size: 12px;
+  font-size: var(--font-size-small);
+  font-style: italic;
+}
+
+.measure-card__actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.measure-card__actions__choose {
+  font-size: 14px;
+  font-weight: bold;
+  border: 1px solid var(--text-color);
+  border-radius: var(--border-radius-small);
+  padding: var(--spacing-half) var(--spacing-default);
+}
+
+.measure-card__actions__choose:hover {
+  background-color: var(--text-light-color);
+  border-color: var(--text-light-color);
+  color: var(--background-color);
+}
+
+.measure-card__actions__learn-more {
+  font-size: var(--font-size-small);
+  font-weight: bold;
+  padding-bottom: .2rem;
+  margin-top: auto;
 }
 </style>
