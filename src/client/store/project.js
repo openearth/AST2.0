@@ -3,6 +3,8 @@ import Vue from 'vue'
 export const state = () => ({
   settings: {
     title: 'My project title',
+    projectArea: {},
+    areas: [],
   },
   map: {
     baseLayers: [
@@ -22,5 +24,37 @@ export const mutations = {
   },
   setBaseLayer(state, value) {
     state.map.activeBaseLayer = value
+  },
+  createArea(state, value) {
+    const [{ geometry, type, id }] = value
+    const newArea = { geometry, type, id }
+
+    if (!state.settings.projectArea.id) {
+      return state.settings.projectArea = newArea
+    }
+
+    state.settings.areas.push(newArea)
+  },
+  updateArea(state, value) {
+    const [{ geometry, type, id }] = value
+    const updates = { geometry, type, id }
+
+    const { projectArea } = state.settings
+
+    if (projectArea.id === id) {
+      return state.settings.projectArea = updates
+    }
+
+    const updatedArea = (state.settings.areas.find(area => area.id === id))
+    Object.assign(updatedArea, updates)
+  },
+  deleteArea(state, value) {
+    const [{ id }] = value
+
+    if (projectArea.id === id) {
+      return state.settings.projectArea = {}
+    }
+
+    state.settings.areas = state.settings.areas.filter(area => area.id !== id)
   },
 }
