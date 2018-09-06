@@ -1,12 +1,12 @@
 <template>
   <div class="search">
-    <span v-if="value === ''" class="search__search-icon" />
+    <span v-if="value === ''" class="search__icon search__icon--magnifyglass" />
     <input
       v-model="value"
       class="search__input"
       type="text"
       placeholder="Search">
-    <button class="search__delete-icon" @click="onClear" />
+    <button class="search__icon search__icon--trash" @click="onClear" />
   </div>
 </template>
 
@@ -53,20 +53,19 @@ export default {
   border-color: var(--action-color);
 }
 
-.search__search-icon {
+.search__icon--magnifyglass {
   background-image: url('/images/search.svg');
   background-size: contain;
 }
 
-.search__delete-icon {
+.search__icon--trash {
   background-color: var(--text-color);
   background-image: url('/images/delete.svg');
   background-size: 50%;
   border-radius: 50%;
 }
 
-.search__search-icon,
-.search__delete-icon {
+.search__icon {
   width: 20px;
   height: 20px;
   background-position: center;
