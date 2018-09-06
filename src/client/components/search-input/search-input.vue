@@ -31,7 +31,6 @@ export default {
   methods: {
     onClear() {
       this.value = ''
-      this.$emit('clearSearch')
     },
   },
 }
