@@ -79,6 +79,7 @@ readFile(path.join(__dirname, `${componentsFolder}/index.js`), 'utf8')
   .then(contents => contents
     .split('\n')
     .concat(`export { default as ${namePascal} } from './${nameKebab}'`)
+    .sort()
     .filter(line => line !== '')
     .concat('')
     .join('\n')

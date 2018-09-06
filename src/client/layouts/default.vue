@@ -3,16 +3,36 @@
     <app-header class="layout-default__app-header"/>
     <section class="layout-default__project">
       <nuxt class="layout-default__page"/>
-      <map-viewer class="layout-default__map"/>
+      <map-viewer
+        :active-base-layer="map.activeBaseLayer"
+        :base-layers="map.baseLayers"
+        class="layout-default__map"
+        @create="onMapCreate"
+        @update="onMapUpdate"
+        @delete="onMapDelete"
+        @baseLayerSwitch="onBaseLayerSwitch"/>
       <kpi-panel />
     </section>
   </div>
 </template>
 
 <script>
+import { mapState, mapMutations } from "vuex";
 import { AppHeader, MapViewer, KpiPanel } from '../components'
+
 export default {
   components: { AppHeader, MapViewer, KpiPanel },
+  computed: {
+    ...mapState({ map: state => state.project.map }),
+  },
+  methods: {
+    onMapCreate(event) {console.log(event)},
+    onMapUpdate(event) {console.log(event)},
+    onMapDelete(event) {console.log(event)},
+    ...mapMutations({
+      onBaseLayerSwitch: 'project/setBaseLayer',
+    }),
+  },
 }
 </script>
 

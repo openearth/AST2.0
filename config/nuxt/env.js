@@ -12,4 +12,5 @@ require('dotenv-safe').config() // load env variables from .env file into proces
 module.exports = {
   baseUrl: process.env.URL,
   branch: process.env.BRANCH,
+  MAPBOX_ACCESS_TOKEN: process.env.MAPBOX_ACCESS_TOKEN,
 }
