@@ -13,3 +13,13 @@ export const actions = {
     data.measures.forEach(measure => commit('addMeasure', measure))
   },
 }
+
+export const getters = {
+  orderedMeasures: state => {
+    return [...state].sort((a, b) => {
+      if (a.title < b.title) return -1
+      if (a.title > b.title) return 1
+      return 0
+    })
+  },
+}
