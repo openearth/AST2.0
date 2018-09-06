@@ -48,7 +48,7 @@ export const mutations = {
 }
 
 export const actions = {
-  createArea({ state, commit }, features) {
+  createArea({ state, commit }, [features]) {
     const { projectArea } = state.settings
     const area = turf(features.geometry)
     const newArea = { ...features, properties: { ...features.properties, area } }
@@ -59,7 +59,7 @@ export const actions = {
 
     commit('addArea', newArea)
   },
-  updateArea({ state, commit }, features) {
+  updateArea({ state, commit }, [features]) {
     const { id } = features
     const { projectArea } = state.settings
     const area = turf(features.geometry)

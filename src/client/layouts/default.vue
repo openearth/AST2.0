@@ -7,8 +7,8 @@
         :active-base-layer="map.activeBaseLayer"
         :base-layers="map.baseLayers"
         class="layout-default__map"
-        @create="onAreaCreate"
-        @update="onAreaUpdate"
+        @create="createArea"
+        @update="updateArea"
         @delete="deleteArea"
         @baseLayerSwitch="onBaseLayerSwitch"/>
       <kpi-panel />
@@ -36,14 +36,6 @@ export default {
       updateArea: 'project/updateArea',
       deleteArea: 'project/deleteArea',
     }),
-    onAreaCreate(e) {
-      const [features] = e
-      this.createArea(features)
-    },
-    onAreaUpdate(e) {
-      const [features] = e
-      this.updateArea(features)
-    },
   },
 }
 </script>
