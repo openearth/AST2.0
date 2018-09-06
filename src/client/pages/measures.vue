@@ -88,8 +88,6 @@ export default {
   display: flex;
   justify-content: space-between;
   margin-bottom: var(--spacing-default);
-  padding: var(--spacing-default);
-  background-color: var(--neutral-color);
 }
 
 .measures__list {
