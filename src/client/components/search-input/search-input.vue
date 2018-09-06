@@ -7,7 +7,7 @@
       class="search__input"
       type="text"
       placeholder="Search">
-    <button class="search__icon search__icon--trash" @click="onClear" />
+    <button class="search__icon search__icon--trash" @click="value = ''" />
   </div>
 </template>
 
@@ -27,11 +27,6 @@ export default {
   watch: {
     value(val) {
       this.$emit('onSearch', val)
-    },
-  },
-  methods: {
-    onClear() {
-      this.value = ''
     },
   },
 }

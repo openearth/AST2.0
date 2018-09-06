@@ -9,7 +9,6 @@
         <search-input
           :search-value="searchValue"
           @onSearch="searchMeasures"
-          @clearSearch="searchValue = ''"
         />
         <button class="button" @click="sortItems">{{ !isAlphabeticallyOrdered ? 'A-z' : 'Default' }}</button>
       </div>
@@ -57,9 +56,6 @@ export default {
   methods: {
     sortItems () {
       this.isAlphabeticallyOrdered = !this.isAlphabeticallyOrdered
-    },
-    clearSearch() {
-      this.searchValue = ''
     },
     searchMeasures(val) {
       this.searchValue = val
