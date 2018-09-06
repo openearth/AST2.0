@@ -1,7 +1,6 @@
 <template>
   <div class="project-area">
-    <h2 class="project-area__title">{{ $t('project_area') }}</h2>
-    <div v-if="area">{{ area }}m2</div>
+    <div class="project-area__area">{{ $t('area_size') }}: {{ area }}m2</div>
     
     <form class="project-area__form" @submit="onSubmit">
       <fieldset 
@@ -26,8 +25,7 @@
         </label>
       </fieldset>
     </form>
-    <pre>{{ areaSettings }}</pre>
-  </div>   
+  </div>
 </template>
 
 <script>
@@ -50,7 +48,13 @@ export default {
 </script>
 
 <style>
-.project-area {
-  max-width: 100%;
+.project-area__area {
+  width: 100%;
+  background-color: #E4E4E4;
+  height: 70px;
+  display: block;
+  text-align: center;
+  line-height: 70px;
 }
+
 </style>
