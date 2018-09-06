@@ -1,11 +1,11 @@
 <template>
   <div class="settings">
     <header class="settings__header">
-      <h2>Settings</h2>
+      <h2>{{ $t('settings') }}</h2>
       <nav>
         <ul>
-          <li><nuxt-link to="/en/settings/project-area">Project area</nuxt-link></li>
-          <li><nuxt-link to="/en/settings/general">General</nuxt-link></li>
+          <li><nuxt-link to="/en/settings/project-area">{{ $t('project_area') }}</nuxt-link></li>
+          <li><nuxt-link to="/en/settings/general">{{ $t('general') }}</nuxt-link></li>
         </ul>
       </nav>
     </header>
