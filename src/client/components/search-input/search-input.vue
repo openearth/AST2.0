@@ -45,8 +45,8 @@ export default {
   padding: 0 var(--spacing-half);
   height: 40px;
   background-color: var(--background-color);
-  border-radius: var(--border-radius-small);
   border: 2px solid var(--text-color);
+  border-radius: var(--border-radius-small);
 }
 
 .search:focus-within {
@@ -74,10 +74,11 @@ export default {
 }
 
 .search__input {
+  padding: 0 var(--spacing-half);
   width: 230px;
   height: 100%;
+  background-color: transparent;
   border-style: none;
-  padding: 0 8px;
 }
 
 .search__input:focus {
