@@ -77,7 +77,7 @@ export default {
 }
 
 .measures__header {
-  margin-bottom: var(--spacing-double);
+  margin-bottom: var(--spacing-default);
 }
 
 .measures__list-container {
@@ -87,7 +87,9 @@ export default {
 .measures__options {
   display: flex;
   justify-content: space-between;
-  margin-bottom: var(--spacing-default);
+  margin-bottom: 1.5rem;
+  padding-bottom: var(--spacing-default);
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .measures__list {
@@ -100,14 +102,5 @@ export default {
 .measures__list__item {
   margin-bottom: var(--spacing-double);
   list-style-type: none;
-}
-
-.measures__search {
-  padding: 10px 8px;
-  border-radius: var(--border-radius-small);
-  box-shadow: none;
-  border: 1px solid var(--text-light-color);
-  font-size: 14px;
-  width: 250px;
 }
 </style>

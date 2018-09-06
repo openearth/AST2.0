@@ -3,6 +3,7 @@
     <span v-if="value === ''" class="search__icon search__icon--magnifyglass" />
     <input
       v-model="value"
+      :class="{ 'search__input--active' : value !== '' }"
       class="search__input"
       type="text"
       placeholder="Search">
@@ -38,26 +39,22 @@ export default {
 
 <style>
 .search {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 var(--spacing-half);
+  position: relative;
+  width: 250px;
   height: 40px;
   background-color: var(--background-color);
-  border: 2px solid var(--text-color);
+  border: 1px solid var(--text-light-color);
   border-radius: var(--border-radius-small);
 }
 
-.search:focus-within {
-  border-color: var(--action-color);
-}
-
 .search__icon--magnifyglass {
+  left: var(--spacing-half);
   background-image: url('/images/search.svg');
   background-size: contain;
 }
 
 .search__icon--trash {
+  right: var(--spacing-half);
   background-color: var(--text-color);
   background-image: url('/images/delete.svg');
   background-size: 50%;
@@ -65,6 +62,8 @@ export default {
 }
 
 .search__icon {
+  position: absolute;
+  top: calc(50% - 10px);
   width: 20px;
   height: 20px;
   background-position: center;
@@ -72,14 +71,14 @@ export default {
 }
 
 .search__input {
-  padding: 0 var(--spacing-half);
-  width: 230px;
+  padding: 0 var(--spacing-double);
+  width: 100%;
   height: 100%;
   background-color: transparent;
   border-style: none;
 }
 
-.search__input:focus {
-  outline: none;
+.search__input--active {
+  padding-left: var(--spacing-half);
 }
 </style>
