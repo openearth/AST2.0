@@ -1,5 +1,5 @@
 query ($locale: SiteLocale) {
-  messages: allTranslations(locale: $locale) {
+  translations: allTranslations(locale: $locale) {
     key,
     value
   }
