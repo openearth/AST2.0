@@ -48,10 +48,10 @@ export const mutations = {
 }
 
 export const actions = {
-  createArea({ state, commit }, [features]) {
+  createArea({ state, commit }, [feature]) {
     const { projectArea } = state.settings
-    const area = turf(features.geometry)
-    const newArea = { ...features, properties: { ...features.properties, area } }
+    const area = turf(feature.geometry)
+    const newArea = { ...feature, properties: { ...feature.properties, area } }
 
     if (!projectArea.id) {
       return commit('addProjectArea', newArea)
@@ -59,11 +59,11 @@ export const actions = {
 
     commit('addArea', newArea)
   },
-  updateArea({ state, commit }, [features]) {
-    const { id } = features
+  updateArea({ state, commit }, [feature]) {
+    const { id } = feature
     const { projectArea } = state.settings
-    const area = turf(features.geometry)
-    const updatedArea = { ...features, properties: { ...features.properties, area } }
+    const area = turf(feature.geometry)
+    const updatedArea = { ...feature, properties: { ...feature.properties, area } }
 
     if (projectArea.id === id) {
       return commit('updateProjectArea', updatedArea)
