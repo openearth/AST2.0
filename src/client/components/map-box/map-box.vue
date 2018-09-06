@@ -49,7 +49,7 @@ export default {
       center: [4.916535879906178, 52.36599335162853],
       showZoom: true,
     })
-    this.draw = new MapboxDraw()
+    this.draw = new MapboxDraw({ controls: { combine_features: false, uncombine_features: false } })
     this.navigationControls = new mapboxgl.NavigationControl({ showCompass: false })
 
     this.map.addControl(this.navigationControls, 'bottom-right')

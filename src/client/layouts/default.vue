@@ -9,7 +9,7 @@
         class="layout-default__map"
         @create="onAreaCreate"
         @update="onAreaUpdate"
-        @delete="onAreaDelete"
+        @delete="deleteArea"
         @baseLayerSwitch="onBaseLayerSwitch"/>
       <kpi-panel />
       <span v-if="area" class="project-area">{{ area.toFixed(2) }}m2</span>
@@ -18,9 +18,8 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
+import { mapState, mapMutations, mapActions } from "vuex";
 import { AppHeader, MapViewer, KpiPanel } from '../components'
-import turf from '@turf/area'
 
 export default {
   components: { AppHeader, MapViewer, KpiPanel },
@@ -31,23 +30,19 @@ export default {
     }),
   },
   methods: {
-    ...mapMutations({
-      onBaseLayerSwitch: 'project/setBaseLayer',
+    ...mapMutations({ onBaseLayerSwitch: 'project/setBaseLayer' }),
+    ...mapActions({
       createArea: 'project/createArea',
       updateArea: 'project/updateArea',
-      onAreaDelete: 'project/deleteArea',
+      deleteArea: 'project/deleteArea',
     }),
     onAreaCreate(e) {
-      const area = turf(e[0].geometry)
-      const [projectArea] = e
-
-      this.createArea({ ...projectArea, area })
+      const [features] = e
+      this.createArea(features)
     },
     onAreaUpdate(e) {
-      const area = turf(e[0].geometry)
-      const [projectArea] = e
-
-      this.updateArea({ ...projectArea, area })
+      const [features] = e
+      this.updateArea(features)
     },
   },
 }

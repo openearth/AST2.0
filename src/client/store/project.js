@@ -1,10 +1,11 @@
 import Vue from 'vue'
+import turf from '@turf/area'
 
 export const state = () => ({
+  areas: [],
   settings: {
     title: 'My project title',
     projectArea: {},
-    areas: [],
   },
   map: {
     baseLayers: [
@@ -25,31 +26,58 @@ export const mutations = {
   setBaseLayer(state, value) {
     state.map.activeBaseLayer = value
   },
-  createArea(state, newArea) {
-    if (!state.settings.projectArea.id) {
-      return state.settings.projectArea = newArea
+  addProjectArea(state, value) {
+    return state.settings.projectArea = value
+  },
+  updateProjectArea(state, value) {
+    return state.settings.projectArea = value
+  },
+  deleteProjectArea(state) {
+    return state.settings.projectArea = {}
+  },
+  addArea(state, value) {
+    state.areas.push(value)
+  },
+  updateArea(state, value) {
+    const updatedArea = (state.areas.find(area => area.id === id))
+    Object.assign(updatedArea, value)
+  },
+  deleteArea(state, value) {
+    state.areas = state.areas.filter(area => area.id !== value)
+  },
+}
+
+export const actions = {
+  createArea({ state, commit }, features) {
+    const { projectArea } = state.settings
+    const area = turf(features.geometry)
+    const newArea = { ...features, properties: { ...features.properties, area } }
+
+    if (!projectArea.id) {
+      return commit('addProjectArea', newArea)
     }
 
-    state.settings.areas.push(newArea)
+    commit('addArea', newArea)
   },
-  updateArea(state, updates) {
-    const { id } = updates
+  updateArea({ state, commit }, features) {
+    const { id } = features
+    const { projectArea } = state.settings
+    const area = turf(features.geometry)
+    const updatedArea = { ...features, properties: { ...features.properties, area } }
+
+    if (projectArea.id === id) {
+      return commit('updateProjectArea', updatedArea)
+    }
+
+    commit('updateArea', updatedArea)
+  },
+  deleteArea({ state, commit }, [{ id }]) {
     const { projectArea } = state.settings
 
     if (projectArea.id === id) {
-      return state.settings.projectArea = updates
+      return commit('deleteProjectArea')
     }
 
-    const updatedArea = (state.settings.areas.find(area => area.id === id))
-    Object.assign(updatedArea, updates)
-  },
-  deleteArea(state, [{ id }]) {
-    const { projectArea } = state.settings
-
-    if (projectArea.id === id) {
-      return state.settings.projectArea = {}
-    }
-
-    state.settings.areas = state.settings.areas.filter(area => area.id !== id)
+    commit('deleteArea')
   },
 }
