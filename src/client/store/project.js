@@ -51,7 +51,7 @@ export const actions = {
   createArea({ state, commit }, features) {
     const { projectArea } = state.settings
     const area = turf(features.geometry)
-    const newArea = { ...features, area }
+    const newArea = { ...features, properties: { ...features.properties, area } }
 
     if (!projectArea.id) {
       return commit('addProjectArea', newArea)
@@ -60,10 +60,10 @@ export const actions = {
     commit('addArea', newArea)
   },
   updateArea({ state, commit }, features) {
-    const { id } = updates
+    const { id } = features
     const { projectArea } = state.settings
     const area = turf(features.geometry)
-    const updatedArea = { ...features, area }
+    const updatedArea = { ...features, properties: { ...features.properties, area } }
 
     if (projectArea.id === id) {
       return commit('updateProjectArea', updatedArea)
