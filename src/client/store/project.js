@@ -39,7 +39,7 @@ export const mutations = {
     state.areas.push(value)
   },
   updateArea(state, value) {
-    const updatedArea = (state.areas.find(area => area.id === id))
+    const updatedArea = (state.areas.find(area => area.id === value.id))
     Object.assign(updatedArea, value)
   },
   deleteArea(state, value) {
@@ -78,6 +78,6 @@ export const actions = {
       return commit('deleteProjectArea')
     }
 
-    commit('deleteArea')
+    commit('deleteArea', id)
   },
 }
