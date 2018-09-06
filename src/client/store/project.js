@@ -48,36 +48,42 @@ export const mutations = {
 }
 
 export const actions = {
-  createArea({ state, commit }, [feature]) {
-    const { projectArea } = state.settings
-    const area = turf(feature.geometry)
-    const newArea = { ...feature, properties: { ...feature.properties, area } }
+  createArea({ state, commit }, features) {
+    features.forEach(feature => {
+      const { projectArea } = state.settings
+      const area = turf(feature.geometry)
+      const newArea = { ...feature, properties: { ...feature.properties, area } }
 
-    if (!projectArea.id) {
-      return commit('addProjectArea', newArea)
-    }
+      if (!projectArea.id) {
+        return commit('addProjectArea', newArea)
+      }
 
-    commit('addArea', newArea)
+      commit('addArea', newArea)
+    })
   },
-  updateArea({ state, commit }, [feature]) {
-    const { id } = feature
-    const { projectArea } = state.settings
-    const area = turf(feature.geometry)
-    const updatedArea = { ...feature, properties: { ...feature.properties, area } }
+  updateArea({ state, commit }, features) {
+    features.forEach(feature => {
+      const { id } = feature
+      const { projectArea } = state.settings
+      const area = turf(feature.geometry)
+      const updatedArea = { ...feature, properties: { ...feature.properties, area } }
 
-    if (projectArea.id === id) {
-      return commit('updateProjectArea', updatedArea)
-    }
+      if (projectArea.id === id) {
+        return commit('updateProjectArea', updatedArea)
+      }
 
-    commit('updateArea', updatedArea)
+      commit('updateArea', updatedArea)
+    })
   },
-  deleteArea({ state, commit }, [{ id }]) {
-    const { projectArea } = state.settings
+  deleteArea({ state, commit }, features) {
+    features.forEach(({ id }) => {
+      const { projectArea } = state.settings
 
-    if (projectArea.id === id) {
-      return commit('deleteProjectArea')
-    }
+      if (projectArea.id === id) {
+        return commit('deleteProjectArea')
+      }
 
-    commit('deleteArea', id)
+      commit('deleteArea', id)
+    })
   },
 }
