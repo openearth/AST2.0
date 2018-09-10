@@ -41,7 +41,7 @@ import { mapState, mapMutations } from 'vuex'
 export default {
   computed: {
     ...mapState({
-      projectArea: state => state.project.settings.projectArea,
+      projectArea: state => state.project.settings.area,
       areaSettings: state => state.data.areaSettings,
     }),
     area() { return this.projectArea.properties && this.projectArea.properties.area.toFixed(2) },
