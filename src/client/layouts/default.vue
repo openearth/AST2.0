@@ -10,6 +10,7 @@
         @create="createArea"
         @update="updateArea"
         @delete="deleteArea"
+        @selectionchange="onSelectionchange"
         @baseLayerSwitch="onBaseLayerSwitch"/>
       <kpi-panel />
       <span v-if="area" class="project-area">{{ area.toFixed(2) }}m2</span>
@@ -36,6 +37,9 @@ export default {
       updateArea: 'project/updateArea',
       deleteArea: 'project/deleteArea',
     }),
+    onSelectionchange(event) {
+      console.log(event)
+    },
   },
 }
 </script>
