@@ -1,11 +1,12 @@
 <template>
   <div class="project-area">
-    <div class="project-area__area"><strong>{{ $t('area_size') }}:</strong> {{ area }}m2</div>
+    <div class="project-area__area-size"><strong>{{ $t('area_size') }}:</strong> {{ area }}m2</div>
     
     <form class="project-area__form" @submit.prevent="onSubmit">
-      <fieldset 
-        v-for="setting in areaSettings" 
-        :key="setting.key" 
+      <fieldset
+        v-for="setting in areaSettings"
+        :ref="setting.key" 
+        :key="setting.key"
         class="project-area__input-group">
         
         <legend class="project-area__input-group__legend">{{ setting.title }}</legend>
@@ -16,6 +17,7 @@
           class="project-area__input-group__label">
           
           <input
+            :ref="option.value"
             :id="option.value"
             :name="setting.key"
             :type="setting.multiple ? 'checkbox' : 'radio'"
@@ -33,7 +35,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 
 export default {
   computed: {
@@ -44,21 +46,42 @@ export default {
     area() { return this.projectArea.properties && this.projectArea.properties.area.toFixed(2) },
   },
   methods: {
-    onSubmit() {
-      // TODO handle submit
+    ...mapMutations({ onUpdateAreaSettings: 'project/updateProjectAreaSettings' }),
+    onSubmit(e) {
+      let projectAreaSettings = {}
+
+      this.areaSettings.forEach(setting => {
+        if (setting.multiple) {
+          projectAreaSettings[setting.key] = {}
+        }
+
+        setting.options.forEach(option => {
+          const [{ checked }] = this.$refs[option.value]
+          
+          if (setting.multiple) {
+            return projectAreaSettings[setting.key][option.value] = checked
+          }
+
+          if (checked) {
+            projectAreaSettings[setting.key] = option.value
+          }
+        })
+      })
+
+      this.onUpdateAreaSettings(projectAreaSettings)
     },
   },
 }
 </script>
 
 <style>
-.project-area__area {
+.project-area__area-size {
   width: 100%;
   background-color: #E4E4E4;
   height: 70px;
   font-size: 20px;
-  text-align: center;
   line-height: 70px;
+  text-align: center;
 }
 
 .project-area__form {

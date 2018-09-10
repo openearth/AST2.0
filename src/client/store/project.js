@@ -5,7 +5,10 @@ export const state = () => ({
   areas: [],
   settings: {
     title: 'My project title',
-    projectArea: {},
+    projectArea: {
+      features: {},
+      options: {},
+    },
   },
   map: {
     baseLayers: [
@@ -27,10 +30,10 @@ export const mutations = {
     state.map.activeBaseLayer = value
   },
   addProjectArea(state, value) {
-    return state.settings.projectArea = value
+    return state.settings.projectArea.features = value
   },
   updateProjectArea(state, value) {
-    return state.settings.projectArea = value
+    return state.settings.projectArea.features = value
   },
   deleteProjectArea(state) {
     return state.settings.projectArea = {}
@@ -39,11 +42,14 @@ export const mutations = {
     state.areas.push(value)
   },
   updateArea(state, value) {
-    const updatedArea = (state.areas.find(area => area.id === id))
+    const updatedArea = (state.areas.find(area => area.id === value.id))
     Object.assign(updatedArea, value)
   },
   deleteArea(state, value) {
     state.areas = state.areas.filter(area => area.id !== value)
+  },
+  updateProjectAreaSettings(state, value) {
+    state.settings.projectArea.options = value
   },
 }
 
@@ -53,7 +59,7 @@ export const actions = {
     const area = turf(features.geometry)
     const newArea = { ...features, properties: { ...features.properties, area } }
 
-    if (!projectArea.id) {
+    if (!projectArea.features.id) {
       return commit('addProjectArea', newArea)
     }
 
@@ -65,7 +71,7 @@ export const actions = {
     const area = turf(features.geometry)
     const updatedArea = { ...features, properties: { ...features.properties, area } }
 
-    if (projectArea.id === id) {
+    if (projectArea.features.id === id) {
       return commit('updateProjectArea', updatedArea)
     }
 
@@ -74,7 +80,7 @@ export const actions = {
   deleteArea({ state, commit }, [{ id }]) {
     const { projectArea } = state.settings
 
-    if (projectArea.id === id) {
+    if (projectArea.features.id === id) {
       return commit('deleteProjectArea')
     }
 
