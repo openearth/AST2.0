@@ -26,7 +26,7 @@ export const actions = {
     idsToAdd.forEach(id => commit('addAreaId', id))
 
     if (features.length && !features.find(({ id }) => id === projectArea.id)) {
-        this.$router.push({ path: `/nl/areas` })
+        this.$router.push({ path: `/${rootState.i18n.locale}/areas` })
     }
   },
 }
