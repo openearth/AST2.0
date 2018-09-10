@@ -7,30 +7,34 @@
         :active-base-layer="map.activeBaseLayer"
         :base-layers="map.baseLayers"
         class="layout-default__map"
-        @create="onMapCreate"
-        @update="onMapUpdate"
-        @delete="onMapDelete"
+        @create="createArea"
+        @update="updateArea"
+        @delete="deleteArea"
         @baseLayerSwitch="onBaseLayerSwitch"/>
       <kpi-panel />
+      <span v-if="area" class="project-area">{{ area.toFixed(2) }}m2</span>
     </section>
   </div>
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
+import { mapState, mapMutations, mapActions } from "vuex";
 import { AppHeader, MapViewer, KpiPanel } from '../components'
 
 export default {
   components: { AppHeader, MapViewer, KpiPanel },
   computed: {
-    ...mapState({ map: state => state.project.map }),
+    ...mapState({
+      map: state => state.project.map,
+      area: state => state.project.settings.projectArea.area,
+    }),
   },
   methods: {
-    onMapCreate(event) {console.log(event)},
-    onMapUpdate(event) {console.log(event)},
-    onMapDelete(event) {console.log(event)},
-    ...mapMutations({
-      onBaseLayerSwitch: 'project/setBaseLayer',
+    ...mapMutations({ onBaseLayerSwitch: 'project/setBaseLayer' }),
+    ...mapActions({
+      createArea: 'project/createArea',
+      updateArea: 'project/updateArea',
+      deleteArea: 'project/deleteArea',
     }),
   },
 }
@@ -59,4 +63,9 @@ export default {
   flex: 1;
 }
 
+.project-area {
+  position: absolute;
+  top: var(--spacing-default);
+  right: var(--spacing-default);
+}
 </style>

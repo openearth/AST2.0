@@ -1,8 +1,11 @@
 import Vue from 'vue'
+import turf from '@turf/area'
 
 export const state = () => ({
+  areas: [],
   settings: {
     title: 'My project title',
+    projectArea: {},
   },
   map: {
     baseLayers: [
@@ -22,5 +25,65 @@ export const mutations = {
   },
   setBaseLayer(state, value) {
     state.map.activeBaseLayer = value
+  },
+  addProjectArea(state, value) {
+    return state.settings.projectArea = value
+  },
+  updateProjectArea(state, value) {
+    return state.settings.projectArea = value
+  },
+  deleteProjectArea(state) {
+    return state.settings.projectArea = {}
+  },
+  addArea(state, value) {
+    state.areas.push(value)
+  },
+  updateArea(state, value) {
+    const updatedArea = (state.areas.find(area => area.id === value.id))
+    Object.assign(updatedArea, value)
+  },
+  deleteArea(state, value) {
+    state.areas = state.areas.filter(area => area.id !== value)
+  },
+}
+
+export const actions = {
+  createArea({ state, commit }, features) {
+    features.forEach(feature => {
+      const { projectArea } = state.settings
+      const area = turf(feature.geometry)
+      const newArea = { ...feature, properties: { ...feature.properties, area } }
+
+      if (!projectArea.id) {
+        return commit('addProjectArea', newArea)
+      }
+
+      commit('addArea', newArea)
+    })
+  },
+  updateArea({ state, commit }, features) {
+    features.forEach(feature => {
+      const { id } = feature
+      const { projectArea } = state.settings
+      const area = turf(feature.geometry)
+      const updatedArea = { ...feature, properties: { ...feature.properties, area } }
+
+      if (projectArea.id === id) {
+        return commit('updateProjectArea', updatedArea)
+      }
+
+      commit('updateArea', updatedArea)
+    })
+  },
+  deleteArea({ state, commit }, features) {
+    features.forEach(({ id }) => {
+      const { projectArea } = state.settings
+
+      if (projectArea.id === id) {
+        return commit('deleteProjectArea')
+      }
+
+      commit('deleteArea', id)
+    })
   },
 }
