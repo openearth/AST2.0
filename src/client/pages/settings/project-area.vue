@@ -133,8 +133,8 @@ input[type='checkbox'] {
 
 input[type='checkbox']:before {
   content: '\2714';
-  position: absolute;
   font-size: 18px;
+  position: absolute;
   left: 0;
   bottom: 1px;
   opacity: 0;
@@ -146,15 +146,20 @@ input[type='checkbox']:checked:before {
 }
 
 .project-area__input-group__label {
-  margin-bottom: 12px;
+  margin-bottom: .75rem;
 }
 
 .project-area__form__submit-button {
-  background-color: var(--text-color);
-  color: var(--background-color);
-  padding: var(--spacing-half) var(--spacing-default);
   display: block;
   margin-left: auto;
   margin-top: auto;
+  padding: var(--spacing-half) var(--spacing-default);
+  color: var(--background-color);
+  background-color: #696969;
+  border: none;
+}
+
+.project-area__form__submit-button:hover {
+  cursor: pointer;
 }
 </style>
