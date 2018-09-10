@@ -1,21 +1,21 @@
 <template>
   <div class="project-area">
     <div class="project-area__area-size"><strong>{{ $t('area_size') }}:</strong> {{ area }}m2</div>
-    
+
     <form class="project-area__form" @submit.prevent="onSubmit">
       <fieldset
         v-for="setting in areaSettings"
-        :ref="setting.key" 
+        :ref="setting.key"
         :key="setting.key"
         class="project-area__input-group">
-        
+
         <legend class="project-area__input-group__legend">{{ setting.title }}</legend>
-        
-        <label 
-          v-for="option in setting.options" 
-          :key="option.value" 
+
+        <label
+          v-for="option in setting.options"
+          :key="option.value"
           class="project-area__input-group__label">
-          
+
           <input
             :ref="option.value"
             :id="option.value"
@@ -23,7 +23,7 @@
             :type="setting.multiple ? 'checkbox' : 'radio'"
             :required="setting.multiple ? false : true"
             class="project-area__input-group__input">
-          
+
           {{ option.title }}
         </label>
       </fieldset>
@@ -58,7 +58,7 @@ export default {
 
         setting.options.forEach(option => {
           const [{ checked }] = this.$refs[option.value]
-          
+
           if (setting.multiple) {
             return projectAreaSettings[setting.key][option.value] = checked
           }
@@ -76,6 +76,10 @@ export default {
 </script>
 
 <style>
+.project-area {
+  overflow-y: scroll;
+}
+
 .project-area__area-size {
   font-size: 20px;
   line-height: 70px;
@@ -86,11 +90,8 @@ export default {
 }
 
 .project-area__form {
-  display: flex;
-  flex-flow: column wrap;
   padding: 1.5rem;
   font-size: var(--font-size-medium);
-  height: 80vh;
 }
 
 .project-area__input-group {
@@ -161,5 +162,12 @@ input[type='checkbox']:checked:before {
 
 .project-area__form__submit-button:hover {
   cursor: pointer;
+}
+
+@supports (display: grid) {
+  .project-area__form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
 }
 </style>
