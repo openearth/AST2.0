@@ -21,6 +21,7 @@
             :id="option.value"
             :name="setting.key"
             :type="setting.multiple ? 'checkbox' : 'radio'"
+            :required="setting.multiple ? false : true"
             class="project-area__input-group__input">
           
           {{ option.title }}
@@ -76,28 +77,27 @@ export default {
 
 <style>
 .project-area__area-size {
-  width: 100%;
-  background-color: #E4E4E4;
-  height: 70px;
   font-size: 20px;
   line-height: 70px;
   text-align: center;
+  width: 100%;
+  height: 70px;
+  background-color: #E4E4E4;
 }
 
 .project-area__form {
-  height: 80vh;
-  padding: 1.5rem;
-  font-size: var(--font-size-medium);
   display: flex;
   flex-flow: column wrap;
+  padding: 1.5rem;
+  font-size: var(--font-size-medium);
+  height: 80vh;
 }
 
 .project-area__input-group {
-  width: 45%;
   display: flex;
   flex-direction: column;
-  border: none;
   margin-bottom: var(--spacing-default);
+  border: none;
 }
 
 .project-area__input-group__legend {
@@ -110,13 +110,11 @@ export default {
   height: 25px;
   border: 1px solid var(--text-color);
   box-shadow: none;
-  background-color: transparent;
-  box-shadow: 0;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  transition: border .2s ease-in-out;
   vertical-align: -5px;
+  transition: border .2s ease-in-out;
 }
 
 input[type='radio'] {
