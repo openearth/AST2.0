@@ -8,7 +8,7 @@
   --action-color: #6a9ce4;
   --neutral-color: #f5f5f5;
   --background-color: #fff;
-  --text-color: #4c4c4c;
+  --text-color: #181812;
   --text-light-color: #adadad;
   --focus-color: #42bf9a;
   --success-color: #54a879;
@@ -22,11 +22,11 @@
   --shadow-wide-grey: 0 2px 10px #ccc;
 
 /* fonts */
- --font-size-small: .75rem;
- --font-size-default: 1rem;
- --font-size-medium: 1.125rem;
- --font-size-large: 1.5rem;
- --font-size-extra-large: 1.6875rem;
+ --font-size-small: .75rem; /* 12px */
+ --font-size-default: 1rem; /* 16px */
+ --font-size-medium: 1.125rem; /* 18px */
+ --font-size-large: 1.5rem; /* 24px */
+ --font-size-extra-large: 1.6875rem; /* 27px */
 
   /* spacing */
   --spacing-default: 1rem;
