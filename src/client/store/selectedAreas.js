@@ -11,7 +11,8 @@ export const mutations = {
 }
 
 export const actions = {
-  changeSelection({ state, commit }, features) {
+  changeSelection({ state, commit, rootState }, features) {
+    const { projectArea } = rootState.project.settings
     const isInState = index => state.indexOf(index) !== -1
     const isNotInState = index => state.indexOf(index) === -1
     const getId = obj => obj['id']
@@ -23,5 +24,16 @@ export const actions = {
 
     idsToDelete.forEach(id => commit('removeAreaId', id))
     idsToAdd.forEach(id => commit('addAreaId', id))
+
+    if (features.length && !features.find(({ id }) => id === projectArea.id)) {
+        this.$router.push({ path: `/nl/areas` })
+    }
+  },
+}
+
+export const getters = {
+  features(state, getters, rootState) {
+    return rootState.project.areas
+      .filter(feature => state.indexOf(feature.id) !== -1)
   },
 }
