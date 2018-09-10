@@ -15,16 +15,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 
-export default {
-  computed: {
-    ...mapState({
-      projectSettings: state => state.project.settings,
-    }),
-    projectArea() { return this.projectSettings.projectArea.properties.area.toFixed(2) },
-  },
-}
 </script>
 
 <style>
