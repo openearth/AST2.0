@@ -42,6 +42,10 @@ export const mutations = {
     const updatedArea = (state.areas.find(area => area.id === value.id))
     Object.assign(updatedArea, value)
   },
+  updateAreaProperty(state, { id, propertyObj }) {
+    const areaToUpdate = (state.areas.find(area => area.id === id))
+    Object.assign(areaToUpdate.properties, propertyObj)
+  },
   deleteArea(state, value) {
     state.areas = state.areas.filter(area => area.id !== value)
   },
@@ -73,6 +77,11 @@ export const actions = {
       }
 
       commit('updateArea', updatedArea)
+    })
+  },
+  updateAreaProperties({ commit }, { features, propertyObj }) {
+    features.forEach(({ id }) => {
+      commit('updateAreaProperty', { id, propertyObj })
     })
   },
   deleteArea({ state, commit }, features) {

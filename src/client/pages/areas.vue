@@ -4,6 +4,7 @@
     <ul>
       <li v-for="feature in selectedFeatures" :key="feature.id">
         <p>{{ feature.id }}</p>
+        <nuxt-link to="measures">Choose measure</nuxt-link>
       </li>
     </ul>
   </aside>

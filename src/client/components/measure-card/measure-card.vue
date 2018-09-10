@@ -43,6 +43,7 @@ export default {
   methods: {
     chooseMeasure() {
       // TODO show add measure to selected area
+      this.$emit('choose', this.measure.measureId)
     },
   },
 }
