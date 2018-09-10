@@ -21,9 +21,11 @@
 <style>
 .settings {
   width: 700px;
+  display: flex;
+  flex-direction: column;
 }
 
 .settings__header {
-  height: 100px;
+  flex-shrink: 0;
 }
 </style>
