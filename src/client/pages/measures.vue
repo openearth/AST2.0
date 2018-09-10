@@ -17,7 +17,7 @@
           v-for="measure in filteredMeasuresList"
           :key="measure.id"
           class="measures__list__item">
-          
+
           <measure-card :measure="measure" :scores="scoresArray" />
         </li>
       </ul>
