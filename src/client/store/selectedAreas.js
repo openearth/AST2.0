@@ -18,7 +18,7 @@ export const actions = {
     const getId = obj => obj['id']
 
     const idsToAdd = features.filter(isNotInState).map(getId)
-    const idsToDelete = features.length === 0
+    const idsToDelete = features.length === 0 || features.length === idsToAdd.length
       ? state.map(id => id)
       : features.filter(isInState).map(getId)
 
