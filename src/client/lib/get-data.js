@@ -1,5 +1,11 @@
-export default function ({ locale, slug }) {
-  const url = `/data/${locale}/${slug}.json`
+export default function ({ folder = 'data', locale, slug }) {
+  const url = [folder, locale, slug]
+        .filter(value => value)
+        .join('/')
+        .concat('.json')
+        .replace(/(.+)/, '/$1')
+
+  console.log(url)
 
   if (process.client) {
     // On client load over http
