@@ -69,9 +69,13 @@ export default {
       this.searchValue = val
     },
     onChooseMeasure(measureId) {
+      const measure = this.orderedMeasures.find(measure => measure.measureId === measureId)
       this.$store.dispatch('project/updateAreaProperties', {
         features: this.selectedFeatures,
-        properties: { measure: measureId },
+        properties: {
+          measure: measureId,
+          color: measure.color.hex,
+        },
       })
     },
   },
