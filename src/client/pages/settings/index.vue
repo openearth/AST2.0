@@ -27,5 +27,6 @@
 
 .settings__header {
   flex-shrink: 0;
+  padding: var(--spacing-default);
 }
 </style>
