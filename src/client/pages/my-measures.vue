@@ -71,7 +71,7 @@ export default {
 }
 
 .my-measures__header__title {
-  padding: var(--spacing-half) var(--spacing-default);
+  padding: var(--spacing-default);
   font-size: var(--font-size-default);
 }
 
@@ -83,12 +83,14 @@ export default {
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  margin-bottom: 1px;
   padding: var(--spacing-default);
   width: 100%;
   font-size: var(--font-size-default);
   font-weight: bold;
   list-style-type: none;
   border-left: 5px solid;
+  box-shadow: 1px 1px 5px #ddd;
 }
 
 .my-measures__list__item__button {
@@ -114,6 +116,7 @@ export default {
   background-image: url('/images/triangle.svg');
   background-size: 15px;
   transform: rotate(-90deg);
+  transition: transform .2s ease-in-out;
 }
 
 .icon-triangle--down {
