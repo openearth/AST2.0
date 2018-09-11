@@ -78,7 +78,7 @@ export const actions = {
 
       if (!projectArea.id) {
         commit('addProjectArea', feature)
-        commit('updateProjectAreaProperty', { area })
+        commit('updateProjectAreaProperty', { area, isProjectArea: true })
         return
       }
 
