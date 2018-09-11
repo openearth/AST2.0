@@ -24,10 +24,10 @@
 .app-header__link:before {
   content: '';
   position: absolute;
-  top: 4px;
-  left: -25px;
-  width: 18px;
-  height: 18px;
+  top: 3px;
+  left: -20px;
+  width: 15px;
+  height: 15px;
   background-image: url('/images/tool.svg');
   background-size: contain;
   background-position: center;
