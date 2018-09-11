@@ -17,12 +17,11 @@
           class="project-area__input__label">
 
           <input
-            :ref="option.value"
+            :ref="`${setting.key}-${option.value}`"
             :id="option.value"
             :name="setting.key"
             :type="setting.multiple ? 'checkbox' : 'radio'"
             :required="setting.multiple ? false : true"
-            :class="setting.multiple ? 'input--checkbox' : 'input--radio'"
             class="project-area__input-group__input">
 
           {{ option.title }}
@@ -58,7 +57,7 @@ export default {
         }
 
         setting.options.forEach(option => {
-          const [{ checked }] = this.$refs[option.value]
+          const [{ checked }] = this.$refs[`${setting.key}-${option.value}`]
 
           if (setting.multiple) {
             return projectAreaSettings[setting.key][option.value] = checked
