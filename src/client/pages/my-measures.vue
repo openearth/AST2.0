@@ -5,26 +5,40 @@
     </header>
 
     <section class="my-measures__list-container">
-      <ul v-if="chosenMeasuresList.length" class="my-measures__list">
+      <ul v-if="measureCollection.length" class="my-measures__list">
         <li
-          v-for="(measure, index) in chosenMeasuresList"
+          v-for="({measure, areas}, index) in measureCollection"
           :key="index"
           :style="`border-left-color: ${measure.color.hex}`"
           class="my-measures__list__item">
-          
-          <button 
-            :class="{ 'icon-eye--disabled' : !isAreaVisible }" 
-            class="my-measures__list__item__button icon-eye" 
-            @click="toggleAreaVisibility" />
-          
-          <button 
-            :class="{'icon-triangle--down' : isAreasListVisible }" 
-            class="my-measures__list__item__button icon-triangle"
-            @click="toggleListVisibility"/>
-          
-          <div :style="`background-image: url(${measure.image.url}`" class="my-measures__list__item__image" />
-          
-          <span class="my-measures__list__item__title">{{ measure.title }}</span>
+          <div class="my-measures__item-content">
+            <button
+              :class="{ 'icon-eye--disabled' : !isAreaVisible }"
+              class="my-measures__list__button icon-eye"
+              @click="toggleAreaVisibility" />
+
+            <button
+              :class="{'icon-triangle--down' : shownAreaIds.indexOf(measure.measureId) !== -1 }"
+              class="my-measures__list__button icon-triangle"
+              @click="toggleListVisibility(measure.measureId)"/>
+
+            <div :style="`background-image: url(${measure.image.url}`" class="my-measures__list__item__image" />
+
+            <span class="my-measures__list__item__title">{{ measure.title }}</span>
+          </div>
+
+          <ul v-if="shownAreaIds.indexOf(measure.measureId) !== -1" class="my-measures__item-areas">
+            <li
+              v-for="area in areas"
+              :key="area.id"
+              class="my-measures__item-area">
+              <button
+                :class="{ 'icon-eye--disabled' : !isAreaVisible }"
+                class="my-measures__list__button icon-eye"
+                @click="toggleAreaVisibility" />
+              <span>{{ area.id }}</span>
+            </li>
+          </ul>
         </li>
       </ul>
       <p v-else class="my-measures__text">{{ $t('empty_measures') }}</p>
@@ -42,25 +56,28 @@ export default {
     return {
       isAreasListVisible: false,
       isAreaVisible: true,
+      shownAreaIds: [],
     }
   },
   computed: {
     ...mapState('data', ['measures']),
     ...mapState('project', ['areas']),
     ...mapGetters('selectedAreas', { selectedFeatures: 'features' }),
-    chosenMeasuresIds() { return this.areas.map(area => area.properties.measure)},
-    chosenMeasuresList() { return this.measures.filter(measure => {
-      if (this.chosenMeasuresIds.includes(measure.measureId)) {
-        return measure
-      }
-    })},
+    ...mapGetters('project', ['areasByMeasure']),
+    measureCollection() {
+      return Object.keys(this.areasByMeasure).map(key => this.areasByMeasure[key])
+    },
   },
   methods: {
-    toggleAreaVisibility() {
+    toggleAreaVisibility(measureId) {
       this.isAreaVisible = !this.isAreaVisible
     },
-    toggleListVisibility() {
-      this.isAreasListVisible = !this.isAreasListVisible
+    toggleListVisibility(measureId) {
+      if (this.shownAreaIds.indexOf(measureId) === -1) {
+        this.shownAreaIds.push(measureId)
+      } else {
+        this.shownAreaIds.splice(this.shownAreaIds.indexOf(measureId), 1)
+      }
     },
   },
 }
@@ -86,24 +103,42 @@ export default {
 
 .my-measures__list__item {
   display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  padding: var(--spacing-default);
+  flex-direction: column;
   width: 100%;
-  font-size: var(--font-size-default);
-  font-weight: bold;
   list-style-type: none;
   border-bottom: 1px solid #F2F2F2;
   border-left: 5px solid;
+  font-size: var(--font-size-default);
+  font-weight: bold;
 }
 
-.my-measures__list__item__button {
+.my-measures__item-content {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: var(--spacing-default);
+}
+
+.my-measures__item-areas {
+  display: flex;
+  flex-direction: column;
+  list-style-type: none;
+}
+
+.my-measures__item-area {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.my-measures__list__button {
   margin-right: var(--spacing-half);
   padding: 0;
   background-position: center;
   background-repeat: no-repeat;
   width: 30px;
   height: 30px;
+  flex-shrink: 0;
 }
 
 .icon-eye {

@@ -35,7 +35,8 @@ export const mutations = {
   },
   updateProjectAreaProperty(state, properties) {
     const areaToUpdate = state.settings.projectArea
-    Object.assign(areaToUpdate.properties, properties)
+    const newProperties = { ...areaToUpdate.properties, ...properties }
+    Vue.set(areaToUpdate, 'properties', newProperties)
     Object.keys(properties).forEach(key => {
       MapEventBus.$emit(UPDATE_FEATURE_PROPERTY, {
         featureId: areaToUpdate.id,
@@ -56,7 +57,8 @@ export const mutations = {
   },
   updateAreaProperty(state, { id, properties }) {
     const areaToUpdate = (state.areas.find(area => area.id === id))
-    Object.assign(areaToUpdate.properties, properties)
+    const newProperties = { ...areaToUpdate.properties, ...properties }
+    Vue.set(areaToUpdate, 'properties', newProperties)
     Object.keys(properties).forEach(key => {
       MapEventBus.$emit(UPDATE_FEATURE_PROPERTY, {
         featureId: id,
@@ -117,5 +119,26 @@ export const actions = {
 
       commit('deleteArea', id)
     })
+  },
+}
+
+export const getters = {
+  areasByMeasure: (state, getters, rootState) => {
+    return state.areas.reduce((obj, area) => {
+      const measureId = area.properties.measure
+
+      if (measureId) {
+        if (!obj[measureId]) {
+          obj[measureId] = {
+            measure: rootState.data.measures.find(measure => measure.measureId === measureId),
+            areas: [],
+          }
+        }
+
+        obj[measureId].areas.push(area)
+      }
+
+      return obj
+    }, {})
   },
 }
