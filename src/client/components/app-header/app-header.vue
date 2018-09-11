@@ -18,5 +18,20 @@
 .app-header__link {
   text-decoration: none;
   color: var(--background-color);
+  position: relative;
+}
+
+.app-header__link:before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: -25px;
+  width: 18px;
+  height: 18px;
+  background-image: url('/images/tool.svg');
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  transform: rotate(-80deg);
 }
 </style>
