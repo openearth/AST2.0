@@ -3,6 +3,8 @@
 </template>
 
 <script>
+import MapEventBus, { UPDATE_FEATURE_PROPERTY } from '../../lib/map-event-bus'
+
 export default {
   props: {
     initialShapes: {
@@ -66,6 +68,10 @@ export default {
 
     this.map.on('load', () => {
       this.map.resize()
+    })
+
+    MapEventBus.$on(UPDATE_FEATURE_PROPERTY, ({ featureId, key, value }) => {
+      this.draw.setFeatureProperty(featureId, key, value)
     })
   },
 }

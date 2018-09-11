@@ -71,7 +71,7 @@ export default {
     onChooseMeasure(measureId) {
       this.$store.dispatch('project/updateAreaProperties', {
         features: this.selectedFeatures,
-        propertyObj: { measure: measureId },
+        properties: { measure: measureId },
       })
     },
   },
