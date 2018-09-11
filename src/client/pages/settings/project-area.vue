@@ -91,9 +91,12 @@ export default {
 
 .project-area__form {
   padding: 1.5rem;
+  column-count: 2;
 }
 
 .project-area__input-group {
+  break-inside: avoid;
+  page-break-inside: avoid; /* for Firefox */
   margin-bottom: var(--spacing-default);
 }
 
@@ -105,12 +108,5 @@ export default {
   display: block;
   margin-left: auto;
   margin-top: auto;
-}
-
-@supports (display: grid) {
-  .project-area__form {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
 }
 </style>
