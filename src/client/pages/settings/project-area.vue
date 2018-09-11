@@ -111,8 +111,6 @@ export default {
   height: 25px;
   border: 1px solid var(--text-color);
   box-shadow: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
   appearance: none;
   vertical-align: -5px;
   transition: border .2s ease-in-out;
