@@ -9,7 +9,7 @@
         <li
           v-for="(measure, index) in chosenMeasuresList"
           :key="index"
-          :style="`border-color: ${measure.color.hex}`"
+          :style="`border-left-color: ${measure.color.hex}`"
           class="my-measures__list__item">
           
           <button 
@@ -83,14 +83,13 @@ export default {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  margin-bottom: 1px;
   padding: var(--spacing-default);
   width: 100%;
   font-size: var(--font-size-default);
   font-weight: bold;
   list-style-type: none;
+  border-bottom: 1px solid #F2F2F2;
   border-left: 5px solid;
-  box-shadow: 1px 1px 5px #ddd;
 }
 
 .my-measures__list__item__button {
