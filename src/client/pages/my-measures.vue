@@ -32,10 +32,12 @@
               v-for="area in areas"
               :key="area.id"
               class="my-measures__item-area">
+
               <button
                 :class="{ 'icon-eye--disabled' : !isAreaVisible }"
                 class="my-measures__list__button icon-eye"
                 @click="toggleAreaVisibility" />
+
               <span>{{ area.id }}</span>
             </li>
           </ul>
