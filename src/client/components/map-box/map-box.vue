@@ -4,6 +4,8 @@
 
 <script>
 import MapEventBus, { UPDATE_FEATURE_PROPERTY } from '../../lib/map-event-bus'
+import projectAreaStyles from './project-area-styles'
+import areaStyles from './area-styles'
 
 export default {
   props: {
@@ -41,6 +43,9 @@ export default {
 
   async mounted() {
     const [mapboxgl, MapboxDraw] = await Promise.all([import('mapbox-gl'), import('@mapbox/mapbox-gl-draw')])
+    const defaultStyles = [...new MapboxDraw().options.styles]
+      .filter(style => /\.hot$/.test(style.id))
+      .map(({ source, ...style }) => ({ ...style, id: style.id.replace('.hot', '') }))
 
     mapboxgl.accessToken = process.env.MAPBOX_ACCESS_TOKEN
 
@@ -51,7 +56,11 @@ export default {
       center: [4.916535879906178, 52.36599335162853],
       showZoom: true,
     })
-    this.draw = new MapboxDraw({ controls: { combine_features: false, uncombine_features: false } })
+    this.draw = new MapboxDraw({
+      controls: { combine_features: false, uncombine_features: false },
+      userProperties: true,
+      styles: [...defaultStyles, ...projectAreaStyles, ...areaStyles],
+    })
     this.navigationControls = new mapboxgl.NavigationControl({ showCompass: false })
 
     this.map.addControl(this.navigationControls, 'bottom-right')
