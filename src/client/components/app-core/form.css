@@ -50,11 +50,11 @@ input[type='checkbox'] {
 }
 
 input[type='checkbox']:before {
-  content: '\2714';
-  font-size: 18px;
   position: absolute;
   left: 0;
   bottom: 1px;
+  content: '\2714';
+  font-size: var(--font-size-medium);
   opacity: 0;
   transition: opacity .1s ease-in-out;
 }
