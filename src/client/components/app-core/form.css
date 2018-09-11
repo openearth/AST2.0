@@ -29,3 +29,72 @@
 :-ms-input-placeholder {
   color: var(--text-light-color);
 }
+
+input[type='radio'] {
+  border-radius: 50%;
+  outline: none;
+}
+
+input[type='radio']:hover,
+input[type='checkbox']:hover {
+  cursor: pointer;
+}
+
+input[type='radio']:focus,
+input[type='radio']:checked {
+  border: 7px solid var(--text-color);
+}
+
+input[type='checkbox'] {
+  position: relative;
+}
+
+input[type='checkbox']:before {
+  content: '\2714';
+  font-size: 18px;
+  position: absolute;
+  left: 0;
+  bottom: 1px;
+  opacity: 0;
+  transition: opacity .1s ease-in-out;
+}
+
+input[type='checkbox']:checked:before {
+  opacity: 1;
+}
+
+.form {
+  font-size: var(--font-size-medium);
+}
+
+.fieldset {
+  display: flex;
+  flex-direction: column;
+  border: none;
+}
+
+.legend {
+  margin-bottom: var(--spacing-half);
+  font-weight: bold;
+}
+
+.input--checkbox,
+.input--radio {
+  width: 25px;
+  height: 25px;
+  border: 1px solid var(--text-color);
+  appearance: none;
+  vertical-align: -5px;
+  transition: border .2s ease-in-out;
+}
+
+.submit-button {
+  padding: var(--spacing-half) var(--spacing-default);
+  color: var(--background-color);
+  background-color: #696969;
+  border: none;
+}
+
+.submit-button:hover {
+  cursor: pointer;
+}
