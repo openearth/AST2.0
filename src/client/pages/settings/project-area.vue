@@ -32,7 +32,6 @@
         class="submit-button project-area__form__submit-button"
         value="Next">
     </form>
-    <pre>{{ projectAreaSettings }}</pre>
   </div>
 </template>
 
@@ -43,7 +42,6 @@ export default {
   computed: {
     ...mapState({
       projectArea: state => state.project.settings.area,
-      projectAreaSettings: state => state.project.settings.projectArea,
       areaSettings: state => state.data.areaSettings,
     }),
     area() { return this.projectArea.properties && Math.round(this.projectArea.properties.area) },
