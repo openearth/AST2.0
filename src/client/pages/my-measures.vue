@@ -4,8 +4,8 @@
       <h2 class="my-measures__header__title">{{ $t('your_measures') }}</h2>
     </header>
 
-    <section v-if="chosenMeasuresList.length" class="my-measures__list-container">
-      <ul class="my-measures__list">
+    <section class="my-measures__list-container">
+      <ul v-if="chosenMeasuresList.length" class="my-measures__list">
         <li
           v-for="(measure, index) in chosenMeasuresList"
           :key="index"
@@ -27,9 +27,7 @@
           <span class="my-measures__list__item__title">{{ measure.title }}</span>
         </li>
       </ul>
-    </section>
-    <section v-else>
-      <p>{{ $t('empty_measures') }}</p>
+      <p v-else class="my-measures__text">{{ $t('empty_measures') }}</p>
     </section>
   </aside>
 </template>
@@ -71,16 +69,19 @@ export default {
 <style>
 .my-measures {
   width: 350px;
-  padding: var(--spacing-default);
 }
 
 .my-measures__header__title {
-  padding: var(--spacing-default) 0;
+  padding: var(--spacing-default);
   font-size: var(--font-size-default);
 }
 
 .my-measures__list {
   padding: 0;
+}
+
+.my-measures__text {
+  padding: var(--spacing-default);
 }
 
 .my-measures__list__item {
