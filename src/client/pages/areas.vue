@@ -16,7 +16,7 @@
           <button
             for="area-properties"
             type="submit"
-            class="areas__list__submit-button button--primary"
+            class="button button--primary areas__list__submit-button"
             @click="() => console.log('submit from btn')">
             Done
           </button>
@@ -73,15 +73,7 @@ export default {
 
 .areas__list__submit-button {
   margin-left: auto;
-  background-color: #696969;
-  color: var(--background-color);
-  padding: .3rem .5rem;
-  border: none;
-  border-radius: var(--border-radius-small);
-}
-
-.areas__list__submit-button:hover {
-  background-color: var(--text-light-color);
+  padding: .3rem var(--spacing-half);
 }
 
 .areas__list-item__button {
