@@ -40,7 +40,7 @@ export const getters = {
       return 0
     })
   },
-  getMeasureById: state => id => {
+  measureById: state => id => {
     return state.find(measure => measure.measureId === id)
   },
 }
