@@ -1,39 +1,48 @@
 <template>
   <aside class="areas">
     <h1>{{ $t('your_measures') }}</h1>
+
     <ul class="areas__list">
       <li
         v-for="feature in selectedFeatures"
         :key="feature.id"
         class="areas__list-item">
-        <div class="areas__list-item__header">
+
+        <div :style="`border-color: ${feature.properties.color || '#1C37F8'}`" class="areas__list-item__header">
           <button
             :class="{ 'icon-eye--disabled' : visibleAreas.includes(feature.id) }"
             class="areas__list-item__button icon-eye" />
 
           <p>{{ feature.properties.name }}</p>
+
           <button
             for="area-properties"
             type="submit"
             class="button button--primary areas__list__submit-button"
-            @click.prevent="onSubmit">
+            @click.prevent="() => onSubmit(feature.id)">
             Done
           </button>
         </div>
+
         <div class="area__measure">
           <p class="area__measure__title">Measure:</p>
+
           <div class="area__measure__content">
             <div>
               <p v-if="appliedMeasure" class="area__measure__measure-title">{{ appliedMeasure.title }}</p>
-              <nuxt-link class="button" to="measures">{{ feature.properties.measure ? 'Change measure' : 'Choose measure' }}</nuxt-link>
+              <nuxt-link :class="appliedMeasure ? 'link' : 'button'" to="measures">
+                {{ feature.properties.measure ? 'Change measure' : 'Choose measure' }}
+              </nuxt-link>
             </div>
+
             <div :style="appliedMeasure ? `background-image: url(${ appliedMeasure.image.url })` : ''" class="area__measure__image"/>
           </div>
+
           <form
             id="area-properties"
             class="area__measure__form"
             name="area-properties"
-            @submit.prevent="onSubmit">
+            @submit.prevent="() => onSubmit(feature.id)">
 
             <fieldset v-if="appliedMeasure" >
               <label class="label" for="depth">Area depth(m)</label>
@@ -47,7 +56,6 @@
                   name="depth">
                 <span class="output">{{ areaDepth }}</span>
               </div>
-              
 
               <label class="label" for="inflow">Area inflow(m2)</label>
               <div class="input-range">
@@ -60,7 +68,6 @@
                   name="inflow">
                 <span class="output">{{ areaInflow }}</span>
               </div>
-              
             </fieldset>
 
             <fieldset>
@@ -109,34 +116,28 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('data/measures', ['getMeasureById']),
-    ...mapGetters({
-      selectedFeatures: 'selectedAreas/features',
-    }),
+    ...mapGetters('data/measures', ['measureById']),
+    ...mapGetters({ selectedFeatures: 'selectedAreas/features' }),
     selectedMeasuresIds() { return this.selectedFeatures.map(feature => feature.properties.measure) },
     appliedMeasure() { 
       const id = this.selectedMeasuresIds.join()
-      return this.getMeasureById(id)
+      return this.measureById(id)
     },
   },
   methods: {
     ...mapMutations({
       updateAreaProperty: 'project/updateAreaProperty',
     }),
-    getMeasureById(id) {
-      return this.appliedMeasures.find(measure => measure.measureId === id)
-    },
-    onSubmit() {
+    onSubmit(id) {
       this.updateAreaProperty({
-        id: this.updatedAreaId,
+        id,
         properties: {
           name: this.areaName,
           layerColor: this.layerColor,
+          areaDepth: this.areaDepth,
+          areaInflow: this.areaInflow,
         },
       })
-    },
-    updateAreaId(id) {
-      this.updatedAreaId = id
     },
   },
 }
@@ -162,8 +163,9 @@ export default {
   align-items: center;
   background-color: var(--background-color);
   box-shadow: 1px 1px 5px #ddd;
-  padding: .5rem 1rem;
-  margin-bottom: 1rem;
+  padding: var(--spacing-half) var(--spacing-default);
+  margin-bottom: var(--spacing-default);
+  border-left: 5px solid;
 }
 
 .areas__list__submit-button {
@@ -192,14 +194,14 @@ export default {
 }
 
 .area__measure {
-  margin: 0 1rem;
-  padding-bottom: 1rem;
+  margin: 0 var(--spacing-default);
+  padding-bottom: var(--spacing-default);
 }
 
 .area__measure__title {
   font-size: 12px;
   font-weight: bold;
-  margin-bottom: .5rem;
+  margin-bottom: var(--spacing-half);
 }
 
 .area__measure__content {
@@ -207,9 +209,9 @@ export default {
   justify-content: space-between;
   align-items: center;
   background-color: var(--background-color);
-  padding: 2rem;
-  padding-left: 1rem;
-  margin-bottom: 1rem;
+  padding: var(--spacing-double);
+  padding-left: var(--spacing-default);
+  margin-bottom: var(--spacing-default);
 }
 
 .area__measure__image {
@@ -232,13 +234,8 @@ export default {
   display: block;
 }
 
-fieldset {
-  border: none;
-  padding: 0;
-}
-
 legend {
-  margin-bottom: .5rem;
+  margin-bottom: var(--spacing-half);
   font-size: 12px;
 }
 
@@ -252,15 +249,7 @@ label {
 
 input {
   padding: var(--spacing-half);
-  margin-right: .5rem;
-}
-
-input[type='color'] {
-  padding: 0;
-  border: none;
-  width: 80px;
-  height: 30px;
-  border-radius: var(--border-radius-small);
+  margin-right: var(--spacing-half);
 }
 
 input[type='text'] {
@@ -268,101 +257,31 @@ input[type='text'] {
 }
 
 .area__measure__measure-title {
-  margin-bottom: 1rem;
+  margin-bottom: var(--spacing-default);
   flex-shrink: 1;
-  margin-right: .5rem;
+  margin-right: var(--spacing-half);
 }
 
 input[type='range'] {
   display: inline-block;
   width: 260px;
-  appearance: none;
-  background: transparent;
-}
-
-/* Special styling for WebKit/Blink */
-input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  border: 1px solid #000000;
-  height: 20px;
-  width: 20px;
-  border-radius: 50%;
-  background: #000;
-  cursor: pointer;
-  margin-top: -8px; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
-}
-
-/* All the same stuff for Firefox */
-input[type=range]::-moz-range-thumb {
-  height: 20px;
-  width: 20px;
-  border-radius: 50%;
-  background: #000;
-  cursor: pointer;
-}
-/* All the same stuff for IE */
-input[type=range]::-ms-thumb {
-  border: 1px solid #000000;
-  height: 36px;
-  width: 16px;
-  border-radius: 3px;
-  background: #ffffff;
-  cursor: pointer;
-}
-input[type=range]::-webkit-slider-runnable-track {
-  width: 100%;
-  height: 5px;
-  cursor: pointer;
-  background: #D8D8D8;
-  border-radius: 5px;
-}
-input[type=range]:focus::-webkit-slider-runnable-track {
-  background: #D8D8D8;
-}
-input[type=range]::-moz-range-track {
-  width: 100%;
-  height: 5px;
-  cursor: pointer;
-  background: #D8D8D8;
-  border-radius: 5px;
-}
-input[type=range]::-ms-track {
-  width: 100%;
-  height: 5px;
-  cursor: pointer;
-  background: transparent;
-  border-color: transparent;
-  border-width: 16px 0;
-  color: transparent;
-}
-input[type=range]::-ms-fill-lower {
-  background: #D8D8D8;
-  border-radius: 2.5px;
-}
-input[type=range]:focus::-ms-fill-lower {
-  background: #D8D8D8;
-}
-input[type=range]::-ms-fill-upper {
-  background: #D8D8D8;
-  border-radius: 2.5px;
-}
-input[type=range]:focus::-ms-fill-upper {
-  background: #D8D8D8;
 }
 
 .output {
+  flex-shrink: 0;
+  text-align: center;
+  line-height: 30px;
   width: 40px;
   height: 30px;
   background-color: var(--background-color);
   border: 1px solid var(--neutral-color--medium);
-  flex-shrink: 0;
-  text-align: center;
+  border-radius: var(--border-radius-small);
 }
 
 .input-range {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: var(--spacing-default);
 }
 
