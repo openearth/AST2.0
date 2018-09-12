@@ -77,6 +77,7 @@ export default {
           color: measure.color.hex,
         },
       })
+      this.$router.push(`/${this.$i18n.locale}/areas`)
     },
   },
 }
