@@ -31,3 +31,14 @@ pre {
 a:focus h2 {
   color: var(--focus-color);
 }
+
+.h1,
+h1 {
+  font-size: var(--font-size-default);
+  font-weight: bold;
+}
+
+.text--uppercase {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}

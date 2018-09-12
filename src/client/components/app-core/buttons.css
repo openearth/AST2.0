@@ -6,16 +6,14 @@
   font-size: var(--font-size-default);
   color: var(--neutral-color--dark);
   background-color: var(--background-color);
-  box-shadow: var(--shadow-small-grey);
-  border: 1px solid var(--neutral-color--dark); /* https://twitter.com/AmeliasBrain/status/1026521723888226304 and to match the height of the input fields with the buttons. */
+  border: 1px solid var(--neutral-color--dark);
   border-radius: var(--border-radius-small);
 }
 
 .button:hover,
 .button:focus {
-  color: var(--focus-color);
   cursor: pointer;
-  text-decoration: none;
+  border: 1px solid var(--neutral-color--dark);
 }
 
 .button--primary {
@@ -26,9 +24,9 @@
 
 .button--primary:hover,
 .button--primary:focus {
+  color: var(--background-color);
   background-color: var(--neutral-color--medium);
   border-color: var(--neutral-color--medium);
-  color: var(--background-color);
 }
 
 .button--pending::before {
