@@ -4,7 +4,10 @@ import turf from '@turf/area'
 export const state = () => ({
   areas: [],
   settings: {
-    title: 'My project title',
+    area: {},
+    general: {
+      title: 'My project title',
+    },
     projectArea: {},
   },
   map: {
@@ -27,13 +30,13 @@ export const mutations = {
     state.map.activeBaseLayer = value
   },
   addProjectArea(state, value) {
-    return state.settings.projectArea = value
+    return state.settings.area = value
   },
   updateProjectArea(state, value) {
-    return state.settings.projectArea = value
+    return state.settings.area = value
   },
   deleteProjectArea(state) {
-    return state.settings.projectArea = {}
+    return state.settings.area = {}
   },
   addArea(state, value) {
     state.areas.push(value)
@@ -45,18 +48,20 @@ export const mutations = {
   deleteArea(state, value) {
     state.areas = state.areas.filter(area => area.id !== value)
   },
+  updateProjectAreaSettings(state, value) {
+    state.settings.projectArea = value
+  },
 }
 
 export const actions = {
   createArea({ state, commit }, features) {
     features.forEach(feature => {
-      const { projectArea } = state.settings
       const area = turf(feature.geometry)
       const newArea = { ...feature, properties: { ...feature.properties, area } }
 
-      if (!projectArea.id) {
-        return commit('addProjectArea', newArea)
-      }
+    if (!state.settings.area.id) {
+      return commit('addProjectArea', newArea)
+    }
 
       commit('addArea', newArea)
     })
@@ -64,24 +69,23 @@ export const actions = {
   updateArea({ state, commit }, features) {
     features.forEach(feature => {
       const { id } = feature
-      const { projectArea } = state.settings
       const area = turf(feature.geometry)
       const updatedArea = { ...feature, properties: { ...feature.properties, area } }
 
-      if (projectArea.id === id) {
-        return commit('updateProjectArea', updatedArea)
-      }
+    if (state.settings.area.id === id) {
+      return commit('updateProjectArea', updatedArea)
+    }
 
       commit('updateArea', updatedArea)
     })
   },
   deleteArea({ state, commit }, features) {
     features.forEach(({ id }) => {
-      const { projectArea } = state.settings
+      const { area } = state.settings
 
-      if (projectArea.id === id) {
-        return commit('deleteProjectArea')
-      }
+    if (area.id === id) {
+      return commit('deleteProjectArea')
+    }
 
       commit('deleteArea', id)
     })

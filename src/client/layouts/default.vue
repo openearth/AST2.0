@@ -12,7 +12,6 @@
         @delete="deleteArea"
         @baseLayerSwitch="onBaseLayerSwitch"/>
       <kpi-panel />
-      <span v-if="area" class="project-area">{{ area.toFixed(2) }}m2</span>
     </section>
   </div>
 </template>
@@ -61,11 +60,5 @@ export default {
 
 .layout-default__map {
   flex: 1;
-}
-
-.project-area {
-  position: absolute;
-  top: var(--spacing-default);
-  right: var(--spacing-default);
 }
 </style>
