@@ -1,9 +1,9 @@
 <template>
   <aside>
-    <h1>Areas</h1>
+    <h1>{{ $t('your_measures') }}</h1>
     <ul>
       <li v-for="feature in selectedFeatures" :key="feature.id">
-        <p>{{ feature.id }}</p>
+        <p>{{ feature.properties.name }}</p>
         <nuxt-link to="measures">Choose measure</nuxt-link>
       </li>
     </ul>
