@@ -38,7 +38,8 @@ export const mutations = {
   },
   updateProjectAreaProperty(state, properties) {
     const areaToUpdate = state.settings.area
-    Object.assign(areaToUpdate.properties, properties)
+    const newProperties = { ...areaToUpdate.properties, ...properties }
+    Vue.set(areaToUpdate, 'properties', newProperties)
     Object.keys(properties).forEach(key => {
       MapEventBus.$emit(UPDATE_FEATURE_PROPERTY, {
         featureId: areaToUpdate.id,
