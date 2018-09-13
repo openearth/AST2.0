@@ -37,7 +37,7 @@ export const mutations = {
     return state.settings.area = value
   },
   updateProjectAreaProperty(state, properties) {
-    const areaToUpdate = state.settings.projectArea
+    const areaToUpdate = state.settings.area
     const newProperties = { ...areaToUpdate.properties, ...properties }
     Vue.set(areaToUpdate, 'properties', newProperties)
     Object.keys(properties).forEach(key => {
