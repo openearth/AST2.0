@@ -38,7 +38,7 @@
                 class="my-measures__list__button icon-eye"
                 @click="toggleAreaVisibility" />
 
-              <span>{{ area.id }}</span>
+              <span>{{ area.properties.name }}</span>
             </li>
           </ul>
         </li>

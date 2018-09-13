@@ -10,7 +10,7 @@
 
         <div :style="`border-color: ${feature.properties.color || '#1C37F8'}`" class="areas__list-item__header">
           <button
-            :class="{ 'icon-eye--disabled' : visibleAreas.includes(feature.id) }"
+            :class="{ 'icon-eye--disabled' : visibleAreas.indexOf(feature.id) !== -1 }"
             class="areas__list-item__button icon-eye" />
 
           <p>{{ feature.properties.name }}</p>
@@ -49,10 +49,10 @@
               <div class="input-range">
                 <input
                   :value="feature.properties.areaDepth || 0"
-                  min="0" 
+                  min="0"
                   max="10"
                   step="1"
-                  type="range" 
+                  type="range"
                   name="depth"
                   @change="e => updateAreaProperty({ id: feature.id, properties: { areaDepth: e.target.value }})">
                 <span class="output">{{ feature.properties.areaDepth || 0 }}</span>
@@ -65,7 +65,7 @@
                   min="0"
                   max="10"
                   step="1"
-                  type="range" 
+                  type="range"
                   name="inflow"
                   @change="e => updateAreaProperty({ id: feature.id, properties: { areaInflow: e.target.value }})">
                 <span class="output">{{ feature.properties.areaInflow || 0 }}</span>
@@ -120,7 +120,7 @@ export default {
     ...mapGetters('data/measures', ['measureById']),
     ...mapGetters({ selectedFeatures: 'selectedAreas/features' }),
     selectedMeasuresIds() { return this.selectedFeatures.map(feature => feature.properties.measure) },
-    appliedMeasure() { 
+    appliedMeasure() {
       const id = this.selectedMeasuresIds.join()
       return this.measureById(id)
     },
@@ -129,7 +129,7 @@ export default {
     ...mapMutations({ updateAreaProperty: 'project/updateAreaProperty' }),
     onSubmit(id, currentName) {
       const name = this.areaName === '' ? currentName : this.areaName
-      
+
       this.updateAreaProperty({
         id,
         properties: {
