@@ -136,6 +136,8 @@ export default {
           name,
         },
       })
+
+      this.$router.push(`/${this.$i18n.locale}/my-measures`)
     },
   },
 }
