@@ -5,7 +5,10 @@ import MapEventBus, { UPDATE_FEATURE_PROPERTY } from '../lib/map-event-bus'
 export const state = () => ({
   areas: [],
   settings: {
-    title: 'My project title',
+    area: {},
+    general: {
+      title: 'My project title',
+    },
     projectArea: {},
   },
   map: {
@@ -28,10 +31,10 @@ export const mutations = {
     state.map.activeBaseLayer = value
   },
   addProjectArea(state, value) {
-    return state.settings.projectArea = value
+    return state.settings.area = value
   },
   updateProjectArea(state, value) {
-    return state.settings.projectArea = value
+    return state.settings.area = value
   },
   updateProjectAreaProperty(state, properties) {
     const areaToUpdate = state.settings.projectArea
@@ -46,7 +49,7 @@ export const mutations = {
     })
   },
   deleteProjectArea(state) {
-    return state.settings.projectArea = {}
+    return state.settings.area = {}
   },
   addArea(state, value) {
     state.areas.push(value)
@@ -70,15 +73,17 @@ export const mutations = {
   deleteArea(state, value) {
     state.areas = state.areas.filter(area => area.id !== value)
   },
+  updateProjectAreaSettings(state, value) {
+    state.settings.projectArea = value
+  },
 }
 
 export const actions = {
   createArea({ state, commit }, features) {
     features.forEach(feature => {
-      const { projectArea } = state.settings
       const area = turf(feature.geometry)
 
-      if (!projectArea.id) {
+      if (!state.settings.area.id) {
         commit('addProjectArea', feature)
         commit('updateProjectAreaProperty', { area, isProjectArea: true })
         return
@@ -91,10 +96,9 @@ export const actions = {
   updateArea({ state, commit }, features) {
     features.forEach(feature => {
       const { id } = feature
-      const { projectArea } = state.settings
       const area = turf(feature.geometry)
 
-      if (projectArea.id === id) {
+      if (state.settings.area.id === id) {
         commit('updateProjectArea', feature)
         commit('updateProjectAreaProperty', { area })
         return
@@ -111,11 +115,11 @@ export const actions = {
   },
   deleteArea({ state, commit }, features) {
     features.forEach(({ id }) => {
-      const { projectArea } = state.settings
+      const { area } = state.settings
 
-      if (projectArea.id === id) {
-        return commit('deleteProjectArea')
-      }
+    if (area.id === id) {
+      return commit('deleteProjectArea')
+    }
 
       commit('deleteArea', id)
     })
