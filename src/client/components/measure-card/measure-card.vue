@@ -1,8 +1,8 @@
 <template>
-  <article 
+  <article
     :style="`border-color: ${measure.color.hex}`"
     class="measure-card">
-    
+
     <div class="measure-card__content">
       <div class="measure-card__text">
         <h3 class="measure-card__title">{{ measure.title }}</h3>
@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { ResponsiveImage } from '~/components'
+import ResponsiveImage from '~/components/responsive-image'
 
 export default {
   components: { ResponsiveImage },
@@ -43,6 +43,7 @@ export default {
   methods: {
     chooseMeasure() {
       // TODO show add measure to selected area
+      this.$emit('choose', this.measure.measureId)
     },
   },
 }

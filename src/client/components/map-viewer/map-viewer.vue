@@ -6,6 +6,7 @@
       @create="onCreate"
       @update="onUpdate"
       @delete="onDelete"
+      @selectionchange="onSelectionchange"
     />
     <map-base-layer-switcher
       :base-layers="baseLayers"
@@ -33,6 +34,7 @@ export default {
     onCreate(event) { this.$emit('create', event) },
     onUpdate(event) { this.$emit('update', event) },
     onDelete(event) { this.$emit('delete', event) },
+    onSelectionchange(event) { this.$emit('selectionchange', event) },
     onBaseLayerSwitch(event) { this.$emit('baseLayerSwitch', event) },
   },
 }

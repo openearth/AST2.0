@@ -10,6 +10,7 @@
         @create="createArea"
         @update="updateArea"
         @delete="deleteArea"
+        @selectionchange="selectionChange"
         @baseLayerSwitch="onBaseLayerSwitch"/>
       <kpi-panel />
     </section>
@@ -34,6 +35,7 @@ export default {
       createArea: 'project/createArea',
       updateArea: 'project/updateArea',
       deleteArea: 'project/deleteArea',
+      selectionChange: 'selectedAreas/changeSelection',
     }),
   },
 }

@@ -4,7 +4,7 @@
       <h2>Select a measure</h2>
     </header>
 
-    <section class="measures__list-container">
+    <section v-if="selectedFeatures.length" class="measures__list-container">
       <div class="measures__options">
         <search-input
           :search-value="searchValue"
@@ -17,16 +17,23 @@
           v-for="measure in filteredMeasuresList"
           :key="measure.id"
           class="measures__list__item">
-          
-          <measure-card :measure="measure" :scores="scoresArray" />
+
+          <measure-card
+            :measure="measure"
+            :scores="scoresArray"
+            @choose="onChooseMeasure"/>
         </li>
       </ul>
+    </section>
+
+    <section v-else>
+      <h1>Please select an area first</h1>
     </section>
   </aside>
 </template>
 
 <script>
-import { mapState, mapGetters } from "vuex"
+import { mapState, mapGetters, mapActions } from "vuex"
 import { MeasureCard, SearchInput } from '~/components'
 
 export default {
@@ -44,6 +51,7 @@ export default {
   computed: {
     ...mapState('data', ['measures']),
     ...mapGetters('data/measures', ['orderedMeasures']),
+    ...mapGetters('selectedAreas', { selectedFeatures: 'features' }),
     measuresList() {
       return this.isAlphabeticallyOrdered
         ? this.orderedMeasures
@@ -59,6 +67,16 @@ export default {
     },
     searchMeasures(val) {
       this.searchValue = val
+    },
+    onChooseMeasure(measureId) {
+      const measure = this.orderedMeasures.find(measure => measure.measureId === measureId)
+      this.$store.dispatch('project/updateAreaProperties', {
+        features: this.selectedFeatures,
+        properties: {
+          measure: measureId,
+          color: measure.color.hex,
+        },
+      })
     },
   },
 }

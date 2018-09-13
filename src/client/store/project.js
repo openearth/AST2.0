@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import turf from '@turf/area'
+import MapEventBus, { UPDATE_FEATURE_PROPERTY } from '../lib/map-event-bus'
 
 export const state = () => ({
   areas: [],
@@ -35,6 +36,17 @@ export const mutations = {
   updateProjectArea(state, value) {
     return state.settings.area = value
   },
+  updateProjectAreaProperty(state, properties) {
+    const areaToUpdate = state.settings.area
+    Object.assign(areaToUpdate.properties, properties)
+    Object.keys(properties).forEach(key => {
+      MapEventBus.$emit(UPDATE_FEATURE_PROPERTY, {
+        featureId: areaToUpdate.id,
+        key,
+        value: properties[key],
+      })
+    })
+  },
   deleteProjectArea(state) {
     return state.settings.area = {}
   },
@@ -44,6 +56,17 @@ export const mutations = {
   updateArea(state, value) {
     const updatedArea = (state.areas.find(area => area.id === value.id))
     Object.assign(updatedArea, value)
+  },
+  updateAreaProperty(state, { id, properties }) {
+    const areaToUpdate = (state.areas.find(area => area.id === id))
+    Object.assign(areaToUpdate.properties, properties)
+    Object.keys(properties).forEach(key => {
+      MapEventBus.$emit(UPDATE_FEATURE_PROPERTY, {
+        featureId: id,
+        key,
+        value: properties[key],
+      })
+    })
   },
   deleteArea(state, value) {
     state.areas = state.areas.filter(area => area.id !== value)
@@ -57,26 +80,35 @@ export const actions = {
   createArea({ state, commit }, features) {
     features.forEach(feature => {
       const area = turf(feature.geometry)
-      const newArea = { ...feature, properties: { ...feature.properties, area } }
 
-    if (!state.settings.area.id) {
-      return commit('addProjectArea', newArea)
-    }
+      if (!state.settings.area.id) {
+        commit('addProjectArea', feature)
+        commit('updateProjectAreaProperty', { area, isProjectArea: true })
+        return
+      }
 
-      commit('addArea', newArea)
+      commit('addArea', feature)
+      commit('updateAreaProperty', { id: feature.id, properties: { area } })
     })
   },
   updateArea({ state, commit }, features) {
     features.forEach(feature => {
       const { id } = feature
       const area = turf(feature.geometry)
-      const updatedArea = { ...feature, properties: { ...feature.properties, area } }
 
-    if (state.settings.area.id === id) {
-      return commit('updateProjectArea', updatedArea)
-    }
+      if (state.settings.area.id === id) {
+        commit('updateProjectArea', feature)
+        commit('updateProjectAreaProperty', { area })
+        return
+      }
 
-      commit('updateArea', updatedArea)
+      commit('updateArea', feature)
+      commit('updateAreaProperty', { id, properties: { area } })
+    })
+  },
+  updateAreaProperties({ commit }, { features, properties }) {
+    features.forEach(({ id }) => {
+      commit('updateAreaProperty', { id, properties })
     })
   },
   deleteArea({ state, commit }, features) {
