@@ -2,7 +2,7 @@ import getData from "../lib/get-data";
 
 export default async function ({ store }) {
   if (!store.state.data.measures.length) {
-    store.dispatch('data/measures/getMeasures', 'en')
+    store.dispatch('data/measures/getMeasures', store.state.i18n.locale)
       .then(() => {
         store.dispatch('data/measures/getMeasureProperty', 'cost')
         store.dispatch('data/measures/getMeasureProperty', 'pluvflood')
@@ -14,6 +14,6 @@ export default async function ({ store }) {
   }
 
   if (!store.state.data.areaSettings.length) {
-    store.dispatch('data/areaSettings/getAreaSettings', 'en')
+    store.dispatch('data/areaSettings/getAreaSettings', store.state.i18n.locale)
   }
 }
