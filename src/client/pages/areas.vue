@@ -42,7 +42,7 @@
             id="area-properties"
             class="area__measure__form"
             name="area-properties"
-            @submit.prevent="() => onSubmit(feature.id)">
+            @submit.prevent="() => onSubmit(feature.id, feature.properties.name)">
 
             <fieldset v-if="appliedMeasure" >
               <label class="label" for="depth">{{ $t('area_depth') }}(m)</label>
