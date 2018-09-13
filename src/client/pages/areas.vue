@@ -248,6 +248,7 @@ label {
 input {
   padding: var(--spacing-half);
   margin-right: var(--spacing-half);
+  width: 100%;
 }
 
 input[type='text'] {
