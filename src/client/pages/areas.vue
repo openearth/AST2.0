@@ -19,23 +19,23 @@
             for="area-properties"
             type="submit"
             class="button button--primary areas__list__submit-button"
-            @click.prevent="() => onSubmit(feature.id)">
+            @click.prevent="() => onSubmit(feature.id, feature.properties.name)">
             Done
           </button>
         </div>
 
         <div class="area__measure">
-          <p class="area__measure__title">Measure:</p>
+          <p class="area__measure__title">{{ $t('measure') }}</p>
 
           <div class="area__measure__content">
             <div>
               <p v-if="appliedMeasure" class="area__measure__measure-title">{{ appliedMeasure.title }}</p>
               <nuxt-link :class="appliedMeasure ? 'link' : 'button'" to="measures">
-                {{ feature.properties.measure ? 'Change measure' : 'Choose measure' }}
+                {{ feature.properties.measure ? $t('change_measure') : $t('choose_measure') }}
               </nuxt-link>
             </div>
 
-            <div :style="appliedMeasure ? `background-image: url(${ appliedMeasure.image.url })` : ''" class="area__measure__image"/>
+            <div :style="appliedMeasure ? `background-image: url(${ appliedMeasure.image.url }); border: none;` : ''" class="area__measure__image"/>
           </div>
 
           <form
@@ -45,44 +45,47 @@
             @submit.prevent="() => onSubmit(feature.id)">
 
             <fieldset v-if="appliedMeasure" >
-              <label class="label" for="depth">Area depth(m)</label>
+              <label class="label" for="depth">{{ $t('area_depth') }}(m)</label>
               <div class="input-range">
                 <input
-                  v-model="areaDepth"
+                  :value="feature.properties.areaDepth || 0"
                   min="0" 
                   max="10"
                   step="1"
                   type="range" 
-                  name="depth">
-                <span class="output">{{ areaDepth }}</span>
+                  name="depth"
+                  @change="e => updateAreaProperty({ id: feature.id, properties: { areaDepth: e.target.value }})">
+                <span class="output">{{ feature.properties.areaDepth || 0 }}</span>
               </div>
 
-              <label class="label" for="inflow">Area inflow(m2)</label>
+              <label class="label" for="inflow">{{ $t('area_inflow') }}(m2)</label>
               <div class="input-range">
                 <input
-                  v-model="areaInflow"
+                  :value="feature.properties.areaInflow || 0"
                   min="0"
                   max="10"
                   step="1"
                   type="range" 
-                  name="inflow">
-                <span class="output">{{ areaInflow }}</span>
+                  name="inflow"
+                  @change="e => updateAreaProperty({ id: feature.id, properties: { areaInflow: e.target.value }})">
+                <span class="output">{{ feature.properties.areaInflow || 0 }}</span>
               </div>
             </fieldset>
 
             <fieldset>
-              <label class="text--uppercase" for="area-name">Area name</label>
+              <label class="text--uppercase" for="area-name">{{ $t('area_name') }}</label>
               <input
                 id="area-name"
-                v-model="areaName"
+                :value="areaName || feature.properties.name"
                 :placeholder="feature.properties.name"
                 class="area__measure__form__input"
                 type="text"
-                name="area-name">
+                name="area-name"
+                @change="(e) => areaName = e.target.value">
             </fieldset>
 
-            <fieldset>
-              <legend class="text--uppercase">Layer color</legend>
+            <!-- <fieldset>
+              <legend class="text--uppercase">{{ $t('layer_color') }}</legend>
 
               <label>
                 <input
@@ -91,9 +94,9 @@
                   class="area__measure__form__input"
                   type="color"
                   name="layer-color">
-                Change layer color
+                {{ $t('change_layer_color') }}
               </label>
-            </fieldset>
+            </fieldset> -->
           </form>
         </div>
       </li>
@@ -108,11 +111,9 @@ export default {
   data() {
     return {
       visibleAreas: [],
-      updatedAreaId: '',
       areaName: '',
-      layerColor: "#1C37F8",
-      areaDepth: 0,
-      areaInflow: 0,
+      // updatedAreaId: '',
+      // layerColor: "#1C37F8",
     }
   },
   computed: {
@@ -125,17 +126,14 @@ export default {
     },
   },
   methods: {
-    ...mapMutations({
-      updateAreaProperty: 'project/updateAreaProperty',
-    }),
-    onSubmit(id) {
+    ...mapMutations({ updateAreaProperty: 'project/updateAreaProperty' }),
+    onSubmit(id, currentName) {
+      const name = this.areaName === '' ? currentName : this.areaName
+      
       this.updateAreaProperty({
         id,
         properties: {
-          name: this.areaName,
-          layerColor: this.layerColor,
-          areaDepth: this.areaDepth,
-          areaInflow: this.areaInflow,
+          name,
         },
       })
     },
@@ -289,4 +287,3 @@ input[type='range'] {
   margin-bottom: 0;
 }
 </style>
-
