@@ -7,10 +7,6 @@ body {
   line-height: 1.5;
 }
 
-p {
-  margin-bottom: var(--spacing-default);
-}
-
 figcaption {
   margin-top: var(--spacing-half);
   text-align: center;
@@ -23,15 +19,24 @@ pre {
   background-color: var(--neutral-color);
   border-radius: var(--border-radius-small);
 }
+
 code {
   padding: 3px;
 }
+
 pre {
   margin-bottom: var(--spacing-default);
   padding: var(--spacing-default);
   white-space: pre-wrap;
 }
 
-a:focus h2 {
-  color: var(--focus-color);
+.h1,
+h1 {
+  font-size: var(--font-size-default);
+  font-weight: bold;
+}
+
+.text--uppercase {
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }

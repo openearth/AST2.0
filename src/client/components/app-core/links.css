@@ -30,3 +30,9 @@ a:hover {
     border-radius: .25em;
   }
 }
+
+.link {
+  color: var(--action-color);
+  border-bottom: 1px solid var(--action-color);
+  padding-bottom: .1rem;
+}
