@@ -76,6 +76,12 @@ export const mutations = {
   updateProjectAreaSettings(state, value) {
     state.settings.projectArea = value
   },
+  setProjectAreaSetting(state, { key, value }) {
+    state.settings.projectArea[key] = value
+  },
+  toggleProjectAreaNestedSetting(state, { key, option, value }) {
+    state.settings.projectArea[key][option] = !state.settings.projectArea[key][option]
+  },
 }
 
 export const actions = {
@@ -90,7 +96,7 @@ export const actions = {
       }
 
       commit('addArea', feature)
-      
+
       const areaNumber = state.areas.length
       commit('updateAreaProperty', { id: feature.id, properties: { area, name: `Area-${areaNumber}` } })
     })
@@ -124,6 +130,17 @@ export const actions = {
     }
 
       commit('deleteArea', id)
+    })
+  },
+  bootstrapSettings({ state, commit }, settings) {
+    settings.forEach(setting => {
+      const value = !setting.multiple
+        ? null
+        : setting.options.reduce((obj, option) => ({
+            ...obj,
+            [option.value]: false,
+          }), {})
+      commit('setProjectAreaSetting', { key: setting.key, value })
     })
   },
 }
