@@ -1,35 +1,37 @@
 <template>
-  <aside class="measures">
-    <header class="measures__header">
-      <h2>Select a measure</h2>
-    </header>
+  <md-drawer md-permanent="clipped">
+    <aside class="measures">
+      <header class="measures__header">
+        <h2>Select a measure</h2>
+      </header>
 
-    <section v-if="selectedFeatures.length" class="measures__list-container">
-      <div class="measures__options">
-        <search-input
-          :search-value="searchValue"
-          @onSearch="searchMeasures"
-        />
-        <button class="button" @click="sortItems">{{ !isAlphabeticallyOrdered ? 'A-z' : 'Default' }}</button>
-      </div>
-      <ul class="measures__list">
-        <li
-          v-for="measure in filteredMeasuresList"
-          :key="measure.id"
-          class="measures__list__item">
+      <section v-if="selectedFeatures.length" class="measures__list-container">
+        <div class="measures__options">
+          <search-input
+            :search-value="searchValue"
+            @onSearch="searchMeasures"
+          />
+          <button class="button" @click="sortItems">{{ !isAlphabeticallyOrdered ? 'A-z' : 'Default' }}</button>
+        </div>
+        <ul class="measures__list">
+          <li
+            v-for="measure in filteredMeasuresList"
+            :key="measure.id"
+            class="measures__list__item">
 
-          <measure-card
-            :measure="measure"
-            :scores="scoresArray"
-            @choose="onChooseMeasure"/>
-        </li>
-      </ul>
-    </section>
+            <measure-card
+              :measure="measure"
+              :scores="scoresArray"
+              @choose="onChooseMeasure"/>
+          </li>
+        </ul>
+      </section>
 
-    <section v-else>
-      <h1>Please select an area first</h1>
-    </section>
-  </aside>
+      <section v-else>
+        <h1>Please select an area first</h1>
+      </section>
+    </aside>
+  </md-drawer>
 </template>
 
 <script>

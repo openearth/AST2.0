@@ -1,88 +1,89 @@
 <template>
-  <aside class="areas">
-    <h1>{{ $t('your_measures') }}</h1>
+  <md-drawer md-permanent="clipped">
+    <aside class="areas">
+      <h1>{{ $t('your_measures') }}</h1>
 
-    <ul class="areas__list">
-      <li
-        v-for="feature in selectedFeatures"
-        :key="feature.id"
-        class="areas__list-item">
+      <ul class="areas__list">
+        <li
+          v-for="feature in selectedFeatures"
+          :key="feature.id"
+          class="areas__list-item">
 
-        <div :style="`border-color: ${feature.properties.color || '#1C37F8'}`" class="areas__list-item__header">
-          <button
-            :class="{ 'icon-eye--disabled' : visibleAreas.indexOf(feature.id) !== -1 }"
-            class="areas__list-item__button icon-eye" />
+          <div :style="`border-color: ${feature.properties.color || '#1C37F8'}`" class="areas__list-item__header">
+            <button
+              :class="{ 'icon-eye--disabled' : visibleAreas.indexOf(feature.id) !== -1 }"
+              class="areas__list-item__button icon-eye" />
 
-          <p>{{ feature.properties.name }}</p>
+            <p>{{ feature.properties.name }}</p>
 
-          <button
-            for="area-properties"
-            type="submit"
-            class="button button--primary areas__list__submit-button"
-            @click.prevent="() => onSubmit(feature.id, feature.properties.name)">
-            Done
-          </button>
-        </div>
-
-        <div class="area__measure">
-          <p class="area__measure__title">{{ $t('measure') }}</p>
-
-          <div class="area__measure__content">
-            <div>
-              <p v-if="appliedMeasure" class="area__measure__measure-title">{{ appliedMeasure.title }}</p>
-              <nuxt-link :class="appliedMeasure ? 'link' : 'button'" to="measures">
-                {{ feature.properties.measure ? $t('change_measure') : $t('choose_measure') }}
-              </nuxt-link>
-            </div>
-
-            <div :style="appliedMeasure ? `background-image: url(${ appliedMeasure.image.url }); border: none;` : ''" class="area__measure__image"/>
+            <button
+              for="area-properties"
+              type="submit"
+              class="button button--primary areas__list__submit-button"
+              @click.prevent="() => onSubmit(feature.id, feature.properties.name)">
+              Done
+            </button>
           </div>
 
-          <form
-            id="area-properties"
-            class="area__measure__form"
-            name="area-properties"
-            @submit.prevent="() => onSubmit(feature.id, feature.properties.name)">
+          <div class="area__measure">
+            <p class="area__measure__title">{{ $t('measure') }}</p>
 
-            <fieldset v-if="appliedMeasure" >
-              <label class="label" for="depth">{{ $t('area_depth') }}(m)</label>
-              <div class="input-range">
-                <input
-                  :value="feature.properties.areaDepth || 0"
-                  min="0"
-                  max="10"
-                  step="1"
-                  type="range"
-                  name="depth"
-                  @change="e => updateAreaProperty({ id: feature.id, properties: { areaDepth: e.target.value }})">
-                <span class="output">{{ feature.properties.areaDepth || 0 }}</span>
+            <div class="area__measure__content">
+              <div>
+                <p v-if="appliedMeasure" class="area__measure__measure-title">{{ appliedMeasure.title }}</p>
+                <nuxt-link :class="appliedMeasure ? 'link' : 'button'" to="measures">
+                  {{ feature.properties.measure ? $t('change_measure') : $t('choose_measure') }}
+                </nuxt-link>
               </div>
 
-              <label class="label" for="inflow">{{ $t('area_inflow') }}(m2)</label>
-              <div class="input-range">
-                <input
-                  :value="feature.properties.areaInflow || 0"
-                  min="0"
-                  max="10"
-                  step="1"
-                  type="range"
-                  name="inflow"
-                  @change="e => updateAreaProperty({ id: feature.id, properties: { areaInflow: e.target.value }})">
-                <span class="output">{{ feature.properties.areaInflow || 0 }}</span>
-              </div>
-            </fieldset>
+              <div :style="appliedMeasure ? `background-image: url(${ appliedMeasure.image.url }); border: none;` : ''" class="area__measure__image"/>
+            </div>
 
-            <fieldset>
-              <label class="text--uppercase" for="area-name">{{ $t('area_name') }}</label>
-              <input
-                id="area-name"
-                :value="areaName || feature.properties.name"
-                :placeholder="feature.properties.name"
-                class="area__measure__form__input"
-                type="text"
-                name="area-name"
-                @change="(e) => areaName = e.target.value">
-            </fieldset>
+            <form
+              id="area-properties"
+              class="area__measure__form"
+              name="area-properties"
+              @submit.prevent="() => onSubmit(feature.id, feature.properties.name)">
+
+              <fieldset v-if="appliedMeasure" >
+                <label class="label" for="depth">{{ $t('area_depth') }}(m)</label>
+                <div class="input-range">
+                  <input
+                    :value="feature.properties.areaDepth || 0"
+                    min="0"
+                    max="10"
+                    step="1"
+                    type="range"
+                    name="depth"
+                    @change="e => updateAreaProperty({ id: feature.id, properties: { areaDepth: e.target.value }})">
+                  <span class="output">{{ feature.properties.areaDepth || 0 }}</span>
+                </div>
+
+                <label class="label" for="inflow">{{ $t('area_inflow') }}(m2)</label>
+                <div class="input-range">
+                  <input
+                    :value="feature.properties.areaInflow || 0"
+                    min="0"
+                    max="10"
+                    step="1"
+                    type="range"
+                    name="inflow"
+                    @change="e => updateAreaProperty({ id: feature.id, properties: { areaInflow: e.target.value }})">
+                  <span class="output">{{ feature.properties.areaInflow || 0 }}</span>
+                </div>
+              </fieldset>
+
+              <fieldset>
+                <label class="text--uppercase" for="area-name">{{ $t('area_name') }}</label>
+                <input
+                  id="area-name"
+                  :value="areaName || feature.properties.name"
+                  :placeholder="feature.properties.name"
+                  class="area__measure__form__input"
+                  type="text"
+                  name="area-name"
+                  @change="(e) => areaName = e.target.value">
+              </fieldset>
 
             <!-- <fieldset>
               <legend class="text--uppercase">{{ $t('layer_color') }}</legend>
@@ -97,11 +98,12 @@
                 {{ $t('change_layer_color') }}
               </label>
             </fieldset> -->
-          </form>
-        </div>
-      </li>
-    </ul>
-  </aside>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </aside>
+  </md-drawer>
 </template>
 
 <script>

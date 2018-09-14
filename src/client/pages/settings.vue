@@ -1,17 +1,19 @@
 <template>
-  <div class="settings">
-    <header class="settings__header">
-      <h2>{{ $t('settings') }}</h2>
-      <nav>
-        <ul>
-          <li><nuxt-link :to="`/${this.$i18n.locale}/settings/project-area`">{{ $t('project_area') }}</nuxt-link></li>
-          <li><nuxt-link :to="`/${this.$i18n.locale}/settings/general`">{{ $t('general') }}</nuxt-link></li>
-        </ul>
-      </nav>
-    </header>
+  <md-drawer md-permanent="clipped">
+    <div class="settings">
+      <header class="settings__header">
+        <h2>{{ $t('settings') }}</h2>
+        <nav>
+          <ul>
+            <li><nuxt-link :to="`/${this.$i18n.locale}/settings/project-area`">{{ $t('project_area') }}</nuxt-link></li>
+            <li><nuxt-link :to="`/${this.$i18n.locale}/settings/general`">{{ $t('general') }}</nuxt-link></li>
+          </ul>
+        </nav>
+      </header>
 
-    <nuxt-child />
-  </div>
+      <nuxt-child />
+    </div>
+  </md-drawer>
 </template>
 
 <script>

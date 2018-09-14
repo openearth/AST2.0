@@ -1,13 +1,15 @@
 <template>
-  <div>
-    <h1>Home</h1>
-    <p>Project: <input v-model="projectTitle" >: {{ projectTitle }}</p>
-    <ul>
-      <li><nuxt-link to="/en/about">about</nuxt-link></li>
-      <li><project-export :is-client="isClient" :project="project"/></li>
-      <li><project-import @load="onImport"/></li>
-    </ul>
-  </div>
+  <md-drawer md-permanent="clipped">
+    <div>
+      <h1>Home</h1>
+      <p>Project: <input v-model="projectTitle" >: {{ projectTitle }}</p>
+      <ul>
+        <li><nuxt-link to="/en/about">about</nuxt-link></li>
+        <li><project-export :is-client="isClient" :project="project"/></li>
+        <li><project-import @load="onImport"/></li>
+      </ul>
+    </div>
+  </md-drawer>
 </template>
 
 <script>
