@@ -1,0 +1,13 @@
+{
+  kpiGroups: allKpiGroups {
+    title,
+    key,
+    kpis {
+      title,
+      key,
+      unit {
+        key
+      }
+    }
+  }
+}
