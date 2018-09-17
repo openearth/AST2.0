@@ -3,6 +3,9 @@
   --app-header-height: 80px;
   --app-header-mobile-height: 55px;
   --max-width: 600px;
+  --width--small: 260px;
+  --width--medium: 350px;
+  --width--large: 700px;
 
 /* colors */
   --action-color: #6a9ce4;
