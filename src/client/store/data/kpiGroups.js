@@ -18,3 +18,14 @@ export const actions = {
     data.kpiGroups.forEach(setting => commit('addKpiGroup', setting))
   },
 }
+
+export const getters = {
+  getKpis: (state) => {
+    let kpis = {}
+    state.map(group => {
+      group.kpis.map(kpi => kpis[kpi.key] = 0)
+    })
+
+    return kpis
+  },
+}
