@@ -10,6 +10,7 @@ export const state = () => ({
       title: 'My project title',
     },
     projectArea: {},
+    targets: {},
   },
   map: {
     baseLayers: [
@@ -79,6 +80,12 @@ export const mutations = {
   setProjectAreaSetting(state, { key, value }) {
     state.settings.projectArea[key] = value
   },
+  setTargets(state, { key, value }) {
+    state.settings.targets[key] = value
+  },
+  setTarget(state, { group, key, value }) {
+    state.settings.targets[group][key] = { ...state.settings.targets[group][key], ...value }
+  },
   toggleProjectAreaNestedSetting(state, { key, option, value }) {
     state.settings.projectArea[key][option] = !state.settings.projectArea[key][option]
   },
@@ -132,7 +139,7 @@ export const actions = {
       commit('deleteArea', id)
     })
   },
-  bootstrapSettings({ state, commit }, settings) {
+  bootstrapSettingsProjectArea({ state, commit }, settings) {
     settings.forEach(setting => {
       const value = !setting.multiple
         ? null
@@ -141,6 +148,12 @@ export const actions = {
             [option.value]: false,
           }), {})
       commit('setProjectAreaSetting', { key: setting.key, value })
+    })
+  },
+  bootstrapSettingsTargets({ state, commit }, targets) {
+    targets.forEach(({ key, kpis }) => {
+      const value = kpis.reduce((obj, kpi) => ({ ...obj, [kpi.key]: { include: true, value: null } }), {})
+      commit('setTargets', { key, value })
     })
   },
 }

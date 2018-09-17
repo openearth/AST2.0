@@ -34,10 +34,12 @@ export default {
 .settings-view {
   display: flex;
   flex-direction: column;
+  width: 800px;
 }
 
 .settings-view__content {
   flex: 1;
+  overflow-y: scroll;
 }
 
 .settings-view__action-wrapper {

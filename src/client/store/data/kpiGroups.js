@@ -16,5 +16,6 @@ export const actions = {
   async getKpiGroups({ commit, dispatch }, locale) {
     const data = await getData({ locale, slug: 'kpi-groups' })
     data.kpiGroups.forEach(setting => commit('addKpiGroup', setting))
+    dispatch('project/bootstrapSettingsTargets', data.kpiGroups, { root: true })
   },
 }
