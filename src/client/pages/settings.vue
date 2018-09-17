@@ -3,12 +3,16 @@
     <md-tabs md-sync-route class="settings-view__tabs">
       <md-tab
         id="tab-general"
-        md-label="General"
-        to="/en/settings/general"/>
+        :to="`/${locale}/settings/general`"
+        md-label="General"/>
       <md-tab
         id="tab-project-area"
-        md-label="Project Area"
-        to="/en/settings/project-area"/>
+        :to="`/${locale}/settings/project-area`"
+        md-label="Project Area"/>
+      <md-tab
+        id="tab-project-target"
+        :to="`/${locale}/settings/project-target`"
+        md-label="Project Target"/>
     </md-tabs>
 
     <nuxt-child class="settings-view__content"/>
@@ -18,6 +22,13 @@
     </div>
   </md-drawer>
 </template>
+
+<script>
+import { mapState } from "vuex";
+export default {
+  computed: { ...mapState('i18n', ['locale']) },
+}
+</script>
 
 <style>
 .settings-view {
