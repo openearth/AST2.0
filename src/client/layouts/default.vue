@@ -46,7 +46,7 @@ export default {
       map: state => state.project.map,
       area: state => state.project.settings.projectArea.area,
     }),
-    ...mapGetters(['data/kpiGroups', 'getKpis']),
+    ...mapGetters('data/kpiGroups', ['getKpis']),
   },
   methods: {
     ...mapMutations({ onBaseLayerSwitch: 'project/setBaseLayer' }),

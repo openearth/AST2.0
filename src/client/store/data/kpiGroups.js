@@ -22,8 +22,14 @@ export const actions = {
 export const getters = {
   getKpis: (state) => {
     let kpis = {}
-    state.map(group => {
-      group.kpis.map(kpi => kpis[kpi.key] = 0)
+
+    state.forEach(group => {
+      group.kpis.forEach(kpi => {
+        const randomNum = Math.random() * 10
+        const num = Math.round(randomNum)
+
+        kpis[kpi.key] = num
+      })
     })
 
     return kpis
