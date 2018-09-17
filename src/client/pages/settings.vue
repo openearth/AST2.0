@@ -4,21 +4,21 @@
       <md-tab
         id="tab-general"
         :to="`/${locale}/settings/general`"
-        md-label="General"/>
+        :md-label="$t('general')"/>
       <md-tab
         id="tab-project-area"
         :to="`/${locale}/settings/project-area`"
-        md-label="Project Area"/>
+        :md-label="$t('project_area')"/>
       <md-tab
         id="tab-project-target"
         :to="`/${locale}/settings/project-target`"
-        md-label="Project Target"/>
+        :md-label="$t('project_target')"/>
     </md-tabs>
 
     <nuxt-child class="settings-view__content"/>
 
     <div class="settings-view__action-wrapper">
-      <md-button class="md-primary md-raised">Next</md-button>
+      <md-button class="md-primary md-raised">{{ $t('next') }}</md-button>
     </div>
   </md-drawer>
 </template>
