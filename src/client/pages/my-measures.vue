@@ -1,51 +1,30 @@
 <template>
-  <aside class="my-measures">
-    <header class="my-measures__header">
-      <h2 class="my-measures__header__title">{{ $t('your_measures') }}</h2>
-    </header>
+  <md-drawer md-permanent="clipped">
+    <md-list>
+      <div
+        v-for="({measure, areas}, index) in measureCollection"
+        :key="index"
+        :style="`border-left: 5px solid ${measure.color.hex}`">
+        <div style="display: flex; justify-content: space-between;">
+          <md-subheader>{{ measure.title }}</md-subheader>
+          <md-switch :value="true" />
+        </div>
 
-    <section class="my-measures__list-container">
-      <ul v-if="measureCollection.length" class="my-measures__list">
-        <li
-          v-for="({measure, areas}, index) in measureCollection"
-          :key="index"
-          :style="`border-left-color: ${measure.color.hex}`"
-          class="my-measures__list__item">
-          <div class="my-measures__item-content">
-            <button
-              :class="{ 'icon-eye--disabled' : !isAreaVisible }"
-              class="my-measures__list__button icon-eye"
-              @click="toggleAreaVisibility" />
+        <md-list-item
+          v-for="(area, index) in areas"
+          :key="area.id"
+          :class="{'md-inset': index !== 0}">
+          <md-avatar v-if="index === 0">
+            <img :src="measure.image.url" alt="" >
+          </md-avatar>
+          <span class="md-list-item-text">{{ area.properties.name }}</span>
+          <md-switch :value="true" />
+        </md-list-item>
 
-            <button
-              :class="{'icon-triangle--down' : shownAreaIds.indexOf(measure.measureId) !== -1 }"
-              class="my-measures__list__button icon-triangle"
-              @click="toggleListVisibility(measure.measureId)"/>
-
-            <div :style="`background-image: url(${measure.image.url}`" class="my-measures__list__item__image" />
-
-            <span class="my-measures__list__item__title">{{ measure.title }}</span>
-          </div>
-
-          <ul v-if="shownAreaIds.indexOf(measure.measureId) !== -1" class="my-measures__item-areas">
-            <li
-              v-for="area in areas"
-              :key="area.id"
-              class="my-measures__item-area">
-
-              <button
-                :class="{ 'icon-eye--disabled' : !isAreaVisible }"
-                class="my-measures__list__button icon-eye"
-                @click="toggleAreaVisibility" />
-
-              <span>{{ area.properties.name }}</span>
-            </li>
-          </ul>
-        </li>
-      </ul>
-      <p v-else class="my-measures__text">{{ $t('empty_measures') }}</p>
-    </section>
-  </aside>
+        <md-divider/>
+      </div>
+    </md-list>
+  </md-drawer>
 </template>
 
 <script>
@@ -70,110 +49,5 @@ export default {
       return Object.keys(this.areasByMeasure).map(key => this.areasByMeasure[key])
     },
   },
-  methods: {
-    toggleAreaVisibility(measureId) {
-      this.isAreaVisible = !this.isAreaVisible
-    },
-    toggleListVisibility(measureId) {
-      if (this.shownAreaIds.indexOf(measureId) === -1) {
-        this.shownAreaIds.push(measureId)
-      } else {
-        this.shownAreaIds.splice(this.shownAreaIds.indexOf(measureId), 1)
-      }
-    },
-  },
 }
 </script>
-
-<style>
-.my-measures {
-  width: 350px;
-}
-
-.my-measures__header__title {
-  padding: var(--spacing-default);
-  font-size: var(--font-size-default);
-}
-
-.my-measures__list {
-  padding: 0;
-}
-
-.my-measures__text {
-  padding: var(--spacing-default);
-}
-
-.my-measures__list__item {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  list-style-type: none;
-  border-bottom: 1px solid #F2F2F2;
-  border-left: 5px solid;
-  font-size: var(--font-size-default);
-  font-weight: bold;
-}
-
-.my-measures__item-content {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  padding: var(--spacing-default);
-}
-
-.my-measures__item-areas {
-  display: flex;
-  flex-direction: column;
-  list-style-type: none;
-}
-
-.my-measures__item-area {
-  display: flex;
-  align-items: center;
-  width: 100%;
-}
-
-.my-measures__list__button {
-  margin-right: var(--spacing-half);
-  padding: 0;
-  background-position: center;
-  background-repeat: no-repeat;
-  width: 30px;
-  height: 30px;
-  flex-shrink: 0;
-}
-
-.icon-eye {
-  background-image: url('/images/eye.svg');
-  background-size: 18px;
-  opacity: 1;
-}
-
-.icon-eye--disabled {
-  opacity: .3;
-}
-
-.icon-triangle {
-  background-image: url('/images/triangle.svg');
-  background-size: 15px;
-  transform: rotate(-90deg);
-  transition: transform .2s ease-in-out;
-}
-
-.icon-triangle--down {
-  transform: rotate(0);
-}
-
-.my-measures__list__item__image {
-  margin-right: var(--spacing-default);
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  width: 40px;
-  height: 40px;
-}
-
-.my-measures__list__item__title {
-  max-width: 200px;
-}
-</style>

@@ -1,53 +1,66 @@
 <template>
   <div class="project-area">
-    <div class="project-area__area-size"><strong>{{ $t('area_size') }}:</strong> {{ area }}m2</div>
+    <md-subheader>{{ $t('area_size') }}: {{ area }}</md-subheader>
 
-    <form class="form project-area__form" @submit.prevent="onSubmit">
-      <fieldset
-        v-for="setting in areaSettings"
-        :ref="setting.key"
-        :key="setting.key"
-        class="fieldset project-area__input-group">
+    <form @submit.prevent="onSubmit">
+      <md-list>
+        <md-list-item
+          v-for="setting in areaSettings"
+          :key="setting.key"
+          :md-expand="true"
+          :md-expanded="true">
+          <span class="md-list-item-text">{{ setting.title }}</span>
 
-        <legend class="legend">{{ setting.title }}</legend>
-
-        <label
-          v-for="option in setting.options"
-          :key="option.value"
-          class="project-area__input__label">
-
-          <input
-            :ref="`${setting.key}-${option.value}`"
-            :id="option.value"
-            :name="setting.key"
-            :type="setting.multiple ? 'checkbox' : 'radio'"
-            :required="setting.multiple ? false : true"
-            class="project-area__input-group__input">
-
-          {{ option.title }}
-        </label>
-      </fieldset>
-      <input
-        type="submit"
-        class="submit-button project-area__form__submit-button"
-        value="Next">
+          <md-list slot="md-expand">
+            <md-list-item
+              v-for="option in setting.options"
+              :key="option.value">
+              <md-checkbox
+                v-if="setting.multiple"
+                :value="!projectAreaSettings[setting.key][option.value]"
+                @change="value => setProjectAreaNestedSetting({
+                  key: setting.key,
+                  option: option.value,
+                  value
+                })"
+              />
+              <md-radio
+                v-else
+                :value="projectAreaSettings[setting.key] !== option.value"
+                required
+                @change="value => setProjectAreaSetting({
+                  key: setting.key,
+                  value: option.value,
+                })"
+              />
+              <span class="md-list-item-text">{{ option.title }}</span>
+            </md-list-item>
+          </md-list>
+        </md-list-item>
+      </md-list>
     </form>
   </div>
 </template>
 
 <script>
+import Vue from 'vue'
 import { mapState, mapMutations } from 'vuex'
 
 export default {
   computed: {
     ...mapState({
       projectArea: state => state.project.settings.area,
+      projectAreaSettings: state => state.project.settings.projectArea,
       areaSettings: state => state.data.areaSettings,
     }),
     area() { return this.projectArea.properties && Math.round(this.projectArea.properties.area) },
   },
   methods: {
-    ...mapMutations({ onUpdateAreaSettings: 'project/updateProjectAreaSettings' }),
+    ...mapMutations({
+      onUpdateAreaSettings: 'project/updateProjectAreaSettings',
+      setProjectAreaNestedSetting: 'project/toggleProjectAreaNestedSetting',
+      setProjectAreaSetting: 'project/setProjectAreaSetting',
+    }),
     onSubmit(e) {
       let projectAreaSettings = {}
 

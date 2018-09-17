@@ -1,43 +1,18 @@
 <template>
-  <aside class="measures">
-    <header class="measures__header">
-      <h2>Select a measure</h2>
-    </header>
-
-    <section v-if="selectedFeatures.length" class="measures__list-container">
-      <div class="measures__options">
-        <search-input
-          :search-value="searchValue"
-          @onSearch="searchMeasures"
-        />
-        <button class="button" @click="sortItems">{{ !isAlphabeticallyOrdered ? 'A-z' : 'Default' }}</button>
-      </div>
-      <ul class="measures__list">
-        <li
-          v-for="measure in filteredMeasuresList"
-          :key="measure.id"
-          class="measures__list__item">
-
-          <measure-card
-            :measure="measure"
-            :scores="scoresArray"
-            @choose="onChooseMeasure"/>
-        </li>
-      </ul>
-    </section>
-
-    <section v-else>
-      <h1>Please select an area first</h1>
-    </section>
-  </aside>
+  <md-drawer md-permanent="clipped">
+    <measure-list
+      :measures="filteredMeasuresList"
+      @choose="onChooseMeasure"
+    />
+  </md-drawer>
 </template>
 
 <script>
 import { mapState, mapGetters, mapActions } from "vuex"
-import { MeasureCard, SearchInput } from '~/components'
+import { MeasureCard, SearchInput, MeasureList } from '~/components'
 
 export default {
-  components: { MeasureCard, SearchInput },
+  components: { MeasureCard, SearchInput, MeasureList },
   data() {
     return {
       isAlphabeticallyOrdered: false,
@@ -82,40 +57,3 @@ export default {
   },
 }
 </script>
-
-<style>
-.measures {
-  padding: var(--spacing-double);
-  height: 100%;
-  overflow: scroll;
-  position: relative;
-}
-
-.measures__header {
-  margin-bottom: var(--spacing-default);
-}
-
-.measures__list-container {
-  width: 700px;
-}
-
-.measures__options {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 1.5rem;
-  padding-bottom: var(--spacing-default);
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.measures__list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  padding: 0;
-}
-
-.measures__list__item {
-  margin-bottom: var(--spacing-double);
-  list-style-type: none;
-}
-</style>

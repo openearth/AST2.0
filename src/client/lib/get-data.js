@@ -5,8 +5,6 @@ export default function ({ folder = 'data', locale, slug }) {
         .concat('.json')
         .replace(/(.+)/, '/$1')
 
-  console.log(url)
-
   if (process.client) {
     // On client load over http
     return fetch(url).then(res => res.json())
