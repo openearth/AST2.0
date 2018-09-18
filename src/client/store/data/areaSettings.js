@@ -8,9 +8,9 @@ export const mutations = {
 }
 
 export const actions = {
-  async getAreaSettings(ctx, locale) {
+  async getAreaSettings({ commit, dispatch }, locale) {
     const data = await getData({ locale, slug: 'area-settings' })
-    data.areaSettings.forEach(setting => ctx.commit('addSetting', setting))
-    ctx.dispatch('project/bootstrapSettingsProjectArea', data.areaSettings, { root: true })
+    data.areaSettings.forEach(setting => commit('addSetting', setting))
+    dispatch('project/bootstrapSettingsProjectArea', data.areaSettings, { root: true })
   },
 }

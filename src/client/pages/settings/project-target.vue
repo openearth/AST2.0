@@ -5,6 +5,7 @@
       v-for="(group, index) in kpiGroups"
       :key="index"
       class="project-target__table">
+
       <md-table-toolbar class="project-target__title-toolbar">
         <span class="md-title">{{ group.title }}</span>
       </md-table-toolbar>

@@ -22,6 +22,6 @@ export default async function ({ store }) {
   }
 
   if (!store.state.data.units.length) {
-    store.dispatch('data/units/getUnits', store.state.i18n.locale)
+    store.dispatch('data/units/getUnits')
   }
 }

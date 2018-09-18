@@ -16,12 +16,14 @@ export const actions = {
 }
 
 export const getters = {
-  displayValue: state => (key) => {
+  displayValue: (state, getters, rootState) => (key) => {
     switch(key) {
       case 'currency':
         return '€'
       case 'currency_per_year':
-        return '€/Year'
+        return `€/${rootState.i18n.messages.year}`
+      case 'years':
+        return rootState.i18n.messages.years
       default:
         return state.find(unit => unit.key === key)['metric']
     }
