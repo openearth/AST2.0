@@ -1,12 +1,12 @@
 <template>
-  <ul class="kpi-group">
-    <h2 class="kpi-group__title title">{{ kpiGroup.title }}</h2>
+  <md-list class="kpi-group">
+    <h2 class="kpi-group__title md-title">{{ kpiGroup.title }}</h2>
     
     <li
       v-for="kpi in kpiGroup.kpis"
       :key="kpi.key"
       class="kpi-group__kpi">
-      <span class="kpi-group__kpi-title">{{ kpi.title }}:</span>
+      <span class="md-body-1 kpi-group__kpi-title">{{ kpi.title }}:</span>
 
       <md-progress-bar
         v-if="type === 'bars'"
@@ -16,7 +16,7 @@
 
       <span v-else class="kpi-group__kpi-value">{{ kpiByKey(kpi.key) }}</span>
     </li>
-  </ul>
+  </md-list>
 </template>
 
 <script>
@@ -57,11 +57,11 @@ export default {
   flex-wrap: wrap;
   justify-content: space-between;
   margin-bottom: var(--spacing-half);
+  padding: 0;
 }
 
 .kpi-group__kpi-title {
   margin-bottom: var(--spacing-half);
-  font-size: var(--font-size-small);
   max-width: 90%;
 }
 
