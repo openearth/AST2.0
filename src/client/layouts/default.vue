@@ -15,7 +15,7 @@
           @delete="deleteArea"
           @selectionchange="selectionChange"
           @baseLayerSwitch="onBaseLayerSwitch"/>
-        <kpi-panel />
+        <kpi-panel :kpis="kpis" :kpi-values="kpiValues"/>
       </md-content>
     </div>
     <!-- <section class="layout-default__project">
@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions } from "vuex";
+import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
 import { AppHeader, MapViewer, KpiPanel } from '../components'
 
 export default {
@@ -45,7 +45,9 @@ export default {
     ...mapState({
       map: state => state.project.map,
       area: state => state.project.settings.projectArea.area,
+      kpis: state => state.data.kpiGroups,
     }),
+    ...mapGetters('data/kpiGroups', ['kpiValues']),
   },
   methods: {
     ...mapMutations({ onBaseLayerSwitch: 'project/setBaseLayer' }),

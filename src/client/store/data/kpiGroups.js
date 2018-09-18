@@ -19,3 +19,20 @@ export const actions = {
     dispatch('project/bootstrapSettingsTargets', data.kpiGroups, { root: true })
   },
 }
+
+export const getters = {
+  kpiValues: state => {
+    let values = {}
+
+    state.forEach(group => {
+      group.kpis.forEach(kpi => {
+        const randomNum = Math.random() * 10
+        const num = Math.round(randomNum)
+
+        values[kpi.key] = num
+      })
+    })
+
+    return values
+  },
+}
