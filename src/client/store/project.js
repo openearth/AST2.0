@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import turf from '@turf/area'
 import MapEventBus, { UPDATE_FEATURE_PROPERTY } from '../lib/map-event-bus'
+import { getApiDataForFeature } from "../lib/get-api-data";
 
 export const state = () => ({
   areas: [],
@@ -108,7 +109,7 @@ export const actions = {
       commit('updateAreaProperty', { id: feature.id, properties: { area, name: `Area-${areaNumber}` } })
     })
   },
-  updateArea({ state, commit }, features) {
+  updateArea({ state, commit, dispatch }, features) {
     features.forEach(feature => {
       const { id } = feature
       const area = turf(feature.geometry)
@@ -116,16 +117,24 @@ export const actions = {
       if (state.settings.area.id === id) {
         commit('updateProjectArea', feature)
         commit('updateProjectAreaProperty', { area })
+        dispatch('fetchAreaApiData', state.areas)
         return
       }
 
       commit('updateArea', feature)
       commit('updateAreaProperty', { id, properties: { area } })
+      dispatch('fetchAreaApiData', [feature])
     })
   },
-  updateAreaProperties({ commit }, { features, properties }) {
-    features.forEach(({ id }) => {
-      commit('updateAreaProperty', { id, properties })
+  updateAreaProperties({ state, commit, dispatch }, { features, properties }) {
+    features.forEach(feature => commit('updateAreaProperty', { id: feature.id, properties }))
+    dispatch('fetchAreaApiData', features)
+  },
+  fetchAreaApiData({ state, commit }, features) {
+    features.forEach(async (feature) => {
+      const apiData = await getApiDataForFeature(feature, state.settings.area.properties.area)
+      commit('updateAreaProperty', { id: feature.id, properties: { apiData } })
+      console.log({ apiData, feature })
     })
   },
   deleteArea({ state, commit }, features) {
