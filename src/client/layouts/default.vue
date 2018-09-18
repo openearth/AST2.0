@@ -18,24 +18,10 @@
         <kpi-panel />
       </md-content>
     </div>
-    <!-- <section class="layout-default__project">
-      <nuxt class="layout-default__page"/>
-      <map-viewer
-        :active-base-layer="map.activeBaseLayer"
-        :base-layers="map.baseLayers"
-        class="layout-default__map"
-        @create="createArea"
-        @update="updateArea"
-        @delete="deleteArea"
-        @selectionchange="selectionChange"
-        @baseLayerSwitch="onBaseLayerSwitch"/>
-      <kpi-panel />
-    </section> -->
 
     <md-field>
       <label>Initial Value (Read Only)</label>
       <md-input
-        v-model="initial"
         placeholder="Text input"
         data-layout="numeric"
         @focus="show"/>
@@ -44,43 +30,38 @@
     <transition name="slide-up">
       <vue-touch-keyboard
         v-if="visible"
-        :layout="layout"
+        :layout="numericLayout"
         :cancel="hide"
         :accept="accept"
         :input="input"
         class="custom-keyboard" />
+
+        <!-- <touch-keyboard
+        v-if="visible"
+        :input="input"
+        @cancel="hide"
+        @accept="accept" /> -->
+
     </transition>
   </div>
 </template>
 
 <script>
 import { mapState, mapMutations, mapActions } from "vuex";
-import { AppHeader, MapViewer, KpiPanel } from '../components'
+import { AppHeader, MapViewer, KpiPanel, TouchKeyboard } from '../components'
+import { numericLayout } from '~/assets/custom-keyboard-layout'
 
 export default {
-  components: { AppHeader, MapViewer, KpiPanel },
+  components: { AppHeader, MapViewer, KpiPanel, TouchKeyboard },
   data() {
     return {
       visible: false,
-      layout: {
-        _meta: {
-          "backspace": { func: "backspace", classes: "control" },
-          "accept": { func: "accept", text: "Close", classes: "control featured" },
-          "zero": { key: "0", width: 130 },
-        },
-
-        default: [
-          "1 2 3",
-          "4 5 6",
-          "7 8 9",
-          ". {zero} {backspace} {accept}",
-        ],
-      },
       input: null,
       options: {
         useKbEvents: false,
         preventClickEvent: false,
       },
+      numericLayout,
     }
   },
   computed: {
@@ -103,7 +84,6 @@ export default {
       this.hide();
     },
     show(e) {
-      console.log(e)
       this.input = e.target;
 
       if (!this.visible)
@@ -142,14 +122,20 @@ export default {
 
 .vue-touch-keyboard.custom-keyboard {
   width: 450px;
-  padding: 1rem;
-  background-color: #fafafa;
+  padding: var(--spacing-default);
+  background-color: var(--neutral-color--light);
+  box-shadow: var(--shadow-wide-grey);
 }
 
 .custom-keyboard {
   position: absolute;
   bottom: 0;
   left: calc(50% - 225px);
+  font-family: 'Roboto';
   z-index: var(--layer--popup);
+}
+
+.custom-keyboard .key {
+  border-color: #ddd;
 }
 </style>
