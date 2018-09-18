@@ -10,7 +10,7 @@
 
       <md-progress-bar
         v-if="type === 'bars'"
-        :md-value="kpiTimes10(kpiByKey(kpi.key))"
+        :md-value="valueTimes10(kpiByKey(kpi.key))"
         class="kpi-group__kpi-meter"
       />
 
@@ -37,7 +37,7 @@ export default {
     },
   },
   methods: {
-    kpiTimes10(val) { return val * 10 },
+    valueTimes10(val) { return val * 10 },
     kpiByKey(key) { return this.kpiValues[key] },
   },
 }
