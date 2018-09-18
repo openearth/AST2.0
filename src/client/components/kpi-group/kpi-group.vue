@@ -6,7 +6,7 @@
       v-for="kpi in kpiGroup.kpis"
       :key="kpi.key"
       class="kpi-group__kpi">
-      <span class="kpi-group__kpi-title title title--small">{{ kpi.title }}:</span>
+      <span class="kpi-group__kpi-title">{{ kpi.title }}:</span>
 
       <md-progress-bar
         v-if="type === 'bars'"
@@ -61,6 +61,7 @@ export default {
 
 .kpi-group__kpi-title {
   margin-bottom: var(--spacing-half);
+  font-size: var(--font-size-small);
   max-width: 90%;
 }
 

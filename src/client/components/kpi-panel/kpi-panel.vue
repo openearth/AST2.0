@@ -1,7 +1,7 @@
 <template>
   <section class="kpi-panel">
     <div class="kpi-panel__header">
-      <h4>Results</h4>
+      <h4>{{ $t('results') }}</h4>
 
       <div>
         <md-button class="md-icon-button" @click="displayType = 'numbers'">
