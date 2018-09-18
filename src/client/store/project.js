@@ -186,4 +186,24 @@ export const getters = {
       return obj
     }, {})
   },
+  kpiValues: (state, getters, rootState, rootgetters) => {
+    const areas = state.areas
+    const kpiKeys = rootgetters['data/kpiGroups/kpiKeys']
+
+    if (areas.length) {
+      return areas
+        .map(area => area.properties.apiData)
+        .reduce((obj, item) => {
+          if (item) {
+            kpiKeys.forEach(key => {
+              if (!obj[key]) { obj[key] = 0 }
+              obj[key] = obj[key] + (item[key] || 0)
+            })
+          }
+          return obj
+        }, {})
+    } else {
+      return kpiKeys.reduce((obj, key) => ({ ...obj, [key]: 0 }), {})
+    }
+  },
 }

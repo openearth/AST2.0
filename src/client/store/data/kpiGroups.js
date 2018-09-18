@@ -21,18 +21,15 @@ export const actions = {
 }
 
 export const getters = {
-  kpiValues: state => {
-    let values = {}
+  kpiKeys: state => {
+    let keys = []
 
     state.forEach(group => {
       group.kpis.forEach(kpi => {
-        const randomNum = Math.random() * 10
-        const num = Math.round(randomNum)
-
-        values[kpi.key] = num
+        keys.push(kpi.key)
       })
     })
 
-    return values
+    return keys
   },
 }
