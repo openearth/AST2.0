@@ -32,6 +32,19 @@
       <kpi-panel />
     </section> -->
 
+    <input
+      id="input"
+      type="text" 
+      placeholder="Text input" 
+      data-layout="numeric" 
+      @focus="show" >
+    
+    <vue-touch-keyboard 
+      v-if="visible" 
+      :layout="layout" 
+      :cancel="hide" 
+      :accept="accept" 
+      :input="input" />
   </div>
 </template>
 
@@ -41,6 +54,17 @@ import { AppHeader, MapViewer, KpiPanel } from '../components'
 
 export default {
   components: { AppHeader, MapViewer, KpiPanel },
+  data() {
+    return {
+      visible: false,
+      layout: "normal",
+      input: null,
+      options: {
+        useKbEvents: false,
+        preventClickEvent: false,
+      },
+    }
+  },
   computed: {
     ...mapState({
       map: state => state.project.map,
@@ -55,6 +79,22 @@ export default {
       deleteArea: 'project/deleteArea',
       selectionChange: 'selectedAreas/changeSelection',
     }),
+
+    accept(text) {
+      alert("Input text: " + text);
+      this.hide();
+    },
+    show(e) {
+      console.log(e)
+      this.input = e.target;
+      this.layout = e.target.dataset.layout;
+
+      if (!this.visible)
+        this.visible = true
+    },
+    hide() {
+      this.visible = false;
+    },
   },
 }
 </script>
