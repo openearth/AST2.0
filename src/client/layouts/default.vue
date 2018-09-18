@@ -32,19 +32,24 @@
       <kpi-panel />
     </section> -->
 
-    <input
-      id="input"
-      type="text" 
-      placeholder="Text input" 
-      data-layout="numeric" 
-      @focus="show" >
-    
-    <vue-touch-keyboard 
-      v-if="visible" 
-      :layout="layout" 
-      :cancel="hide" 
-      :accept="accept" 
-      :input="input" />
+    <md-field>
+      <label>Initial Value (Read Only)</label>
+      <md-input
+        v-model="initial"
+        placeholder="Text input"
+        data-layout="numeric"
+        @focus="show"/>
+    </md-field>
+
+    <transition name="slide-up">
+      <vue-touch-keyboard
+        v-if="visible"
+        :layout="layout"
+        :cancel="hide"
+        :accept="accept"
+        :input="input"
+        class="custom-keyboard" />
+    </transition>
   </div>
 </template>
 
@@ -57,7 +62,20 @@ export default {
   data() {
     return {
       visible: false,
-      layout: "normal",
+      layout: {
+        _meta: {
+          "backspace": { func: "backspace", classes: "control" },
+          "accept": { func: "accept", text: "Close", classes: "control featured" },
+          "zero": { key: "0", width: 130 },
+        },
+
+        default: [
+          "1 2 3",
+          "4 5 6",
+          "7 8 9",
+          ". {zero} {backspace} {accept}",
+        ],
+      },
       input: null,
       options: {
         useKbEvents: false,
@@ -81,13 +99,12 @@ export default {
     }),
 
     accept(text) {
-      alert("Input text: " + text);
+      console.log(text)
       this.hide();
     },
     show(e) {
       console.log(e)
       this.input = e.target;
-      this.layout = e.target.dataset.layout;
 
       if (!this.visible)
         this.visible = true
@@ -106,6 +123,7 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  overflow: hidden;
 }
 
 .layout-default__content {
@@ -120,5 +138,18 @@ export default {
 
 .layout-default__map {
   flex: 1;
+}
+
+.vue-touch-keyboard.custom-keyboard {
+  width: 450px;
+  padding: 1rem;
+  background-color: #fafafa;
+}
+
+.custom-keyboard {
+  position: absolute;
+  bottom: 0;
+  left: calc(50% - 225px);
+  z-index: var(--layer--popup);
 }
 </style>
