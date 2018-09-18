@@ -82,7 +82,7 @@ export default {
 
 .language-selector {
   display: inline-block;
-  font-size: var(--font-size-small);
+  font-size: var(--font-size-extra-small);
 }
 .language-selector__open {
   display: none;

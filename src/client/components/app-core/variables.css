@@ -1,20 +1,17 @@
 :root {
-
-  --app-header-height: 80px;
-  --app-header-mobile-height: 55px;
   --max-width: 600px;
-  --width--small: 260px;
-  --width--medium: 350px;
-  --width--large: 700px;
+  --width-small: 265px;
+  --width-medium: 350px;
+  --width-large: 700px;
 
 /* colors */
   --action-color: #6a9ce4;
-  --neutral-color: #fbfbfb;
   --background-color: #fff;
   --text-color: #181812;
   --text-light-color: #adadad;
   --focus-color: #42bf9a;
   --success-color: #54a879;
+  --neutral-color: #fbfbfb;
   --neutral-color--dark: #696969;
   --neutral-color--medium: #adadad;
   --neutral-color--light: #f5f5f5;
@@ -28,7 +25,8 @@
   --shadow-wide-grey: 0 2px 10px #ccc;
 
 /* fonts */
- --font-size-small: .75rem; /* 12px */
+ --font-size-extra-small: .75rem; /* 12px */
+ --font-size-small: .875rem; /* 14px */
  --font-size-default: 1rem; /* 16px */
  --font-size-medium: 1.125rem; /* 18px */
  --font-size-large: 1.5rem; /* 24px */
@@ -36,6 +34,7 @@
 
   /* spacing */
   --spacing-default: 1rem;
+  --spacing-medium: 1.5rem;
   --spacing-double: 2rem;
   --spacing-half: .5rem;
 
