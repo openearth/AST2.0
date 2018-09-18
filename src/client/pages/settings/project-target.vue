@@ -1,16 +1,16 @@
 <template>
   <div>
-    <h2 class="project-target__title md-title">{{ $t('goals_and_key_progress_indicators') }}</h2>
+    <h2 class="project-target__title md-subheading">{{ $t('goals_and_key_progress_indicators') }}</h2>
     <md-table
       v-for="(group, index) in kpiGroups"
       :key="index"
       class="project-target__table">
-      <md-table-toolbar v-if="index === 0">
-        <span class="md-subheading">{{ group.title }}</span>
+      <md-table-toolbar class="project-target__title-toolbar">
+        <span class="md-title">{{ group.title }}</span>
       </md-table-toolbar>
 
       <md-table-row class="project-target__table-row">
-        <md-table-head>{{ group.title }}</md-table-head>
+        <md-table-head>{{ $t('goal') }}</md-table-head>
         <md-table-head>{{ $t('kpi') }}</md-table-head>
         <md-table-head>{{ $t('target_value') }}</md-table-head>
       </md-table-row>
@@ -40,6 +40,9 @@
                 key: kpi.key,
                 value: { value: parseInt(event.target.value, 10) },
             })"/>
+            <span class="md-suffix">
+              {{ unit(kpi.unit) }}
+            </span>
           </md-field>
         </md-table-cell>
       </md-table-row>
@@ -48,7 +51,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
+import { mapState, mapMutations, mapGetters } from "vuex";
 export default {
   computed: {
     ...mapState('data', ['kpiGroups']),
@@ -60,18 +63,21 @@ export default {
     ...mapMutations({
       setTarget: 'project/setTarget',
     }),
+    unit(...args) {
+      return this.$store.getters['data/units/displayValue'](...args)
+    },
   },
 }
 </script>
 
 <style scoped>
 .project-target__title {
-  margin-left: 1rem;
+  margin-left: 1.5rem;
   padding-top: 1rem;
 }
 
-.project-target__table {
-  margin-bottom: 2rem;
+.project-target__title-toolbar {
+  align-items: flex-end;
 }
 
 .md-field {
