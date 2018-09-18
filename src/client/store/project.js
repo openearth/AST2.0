@@ -186,6 +186,37 @@ export const getters = {
       return obj
     }, {})
   },
+  filteredKpiGroups: (state, getters, rootState) => {
+    const filteredKpiKeys = getters.filteredKpiKeys
+    return rootState.data.kpiGroups
+      .map(group => {
+        const kpis = group.kpis
+          .filter(kpi => filteredKpiKeys.indexOf(kpi.key) !== -1)
+        return { ...group, kpis }
+      })
+    .filter(group => group.kpis.length)
+  },
+  filteredKpiKeys: state => {
+    const groups = state.settings.targets
+    const groupsKeys = Object.keys(state.settings.targets)
+    const flatKpiObj = groupsKeys.map(key => groups[key]).reduce((obj, group) => ({ ...obj, ...group }), {})
+    const filteredKpiObj = Object.keys(flatKpiObj).filter(key => flatKpiObj[key].include)
+    return filteredKpiObj
+  },
+  filteredKpiValues: (state, getters) => {
+    const filteredKpiKeys = getters.filteredKpiKeys
+    const kpiValues = getters.kpiValues
+    return filteredKpiKeys.reduce((obj, key) => {
+      return { ...obj, [key]: kpiValues[key] }
+    }, {})
+  },
+  filteredKpiPercentageValues: (state, getters) => {
+    const filteredKpiKeys = getters.filteredKpiKeys
+    const kpiValues = getters.kpiPercentageValues
+    return filteredKpiKeys.reduce((obj, key) => {
+      return { ...obj, [key]: kpiValues[key] }
+    }, {})
+  },
   kpiValues: (state, getters, rootState, rootgetters) => {
     const areas = state.areas
     const kpiKeys = rootgetters['data/kpiGroups/kpiKeys']
@@ -205,5 +236,26 @@ export const getters = {
     } else {
       return kpiKeys.reduce((obj, key) => ({ ...obj, [key]: 0 }), {})
     }
+  },
+  kpiTargetValues: (state, getters) => {
+    const targets = state.settings.targets
+    const filteredKeys = getters.kpiValues
+    return Object.keys(targets)
+      .map(group =>
+        Object.keys(targets[group])
+          .reduce((obj, key) => ({ ...obj, [key]: targets[group][key].value || 0 }), {}))
+      .reduce((obj, item) => ({ ...obj, ...item }), {})
+  },
+  kpiPercentageValues:  (state, getters) => {
+    const kpiValues = getters.kpiValues
+    const kpiTargetValues = getters.kpiTargetValues
+    const keys = Object.keys(kpiValues)
+    return keys.reduce((obj, key) => {
+      const value = (kpiValues[key] || 0) / (kpiTargetValues[key] || 0)
+      return {
+        ...obj,
+        [key]: isNaN(value) ? 0 : parseInt(value * 100, 10),
+      }
+    }, {})
   },
 }

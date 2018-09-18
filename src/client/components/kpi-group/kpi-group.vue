@@ -1,7 +1,7 @@
 <template>
   <ul class="kpi-group">
     <h2 class="kpi-group__title title">{{ kpiGroup.title }}</h2>
-    
+
     <li
       v-for="kpi in kpiGroup.kpis"
       :key="kpi.key"
@@ -10,7 +10,7 @@
 
       <md-progress-bar
         v-if="type === 'bars'"
-        :md-value="valueTimes10(kpiByKey(kpi.key))"
+        :md-value="percentageKpiByKey(kpi.key)"
         class="kpi-group__kpi-meter"
       />
 
@@ -30,6 +30,10 @@ export default {
       type: Object,
       required: true,
     },
+    kpiPercentageValues: {
+      type: Object,
+      required: true,
+    },
     type: {
       type: String,
       required: true,
@@ -39,6 +43,7 @@ export default {
   methods: {
     valueTimes10(val) { return val * 10 },
     kpiByKey(key) { return this.kpiValues[key] },
+    percentageKpiByKey(key) { return this.kpiPercentageValues[key] },
   },
 }
 </script>

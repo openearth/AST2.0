@@ -42,7 +42,7 @@ export async function getApiDataForFeature(feature, projectArea, currentReturnTi
 
   const id = measureId
   const returnTime = currentReturnTime
-  console.log({ currentReturnTime, inflowArea, measureArea, measureDepth, measureId, projectArea, measureId })
+  // console.log({ currentReturnTime, inflowArea, measureArea, measureDepth, measureId, projectArea, measureId })
 
   if (measureId) {
     const apiData = await Promise.all([

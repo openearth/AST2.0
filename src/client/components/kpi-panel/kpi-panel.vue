@@ -20,6 +20,7 @@
       :kpi-group="kpiGroup"
       :type="displayType"
       :kpi-values="kpiValues"
+      :kpi-percentage-values="kpiPercentageValues"
       class="kpi-panel__kpi-group" />
   </section>
 </template>
@@ -35,6 +36,10 @@ export default {
       required: true,
     },
     kpiValues: {
+      type: Object,
+      required: true,
+    },
+    kpiPercentageValues: {
       type: Object,
       required: true,
     },
