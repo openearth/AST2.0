@@ -1,10 +1,9 @@
 import Vue from 'vue'
 import turf from '@turf/area'
-import MapEventBus, { UPDATE_FEATURE_PROPERTY, HIDE_AREA_ON_MAP } from '../lib/map-event-bus'
+import MapEventBus, { UPDATE_FEATURE_PROPERTY, HIDE_AREA_ON_MAP, SHOW_AREA_ON_MAP } from '../lib/map-event-bus'
 
 export const state = () => ({
   areas: [],
-  hiddenAreas: [],
   settings: {
     area: {},
     general: {
@@ -63,17 +62,16 @@ export const mutations = {
     Object.assign(updatedArea, value)
   },
   updateAreaProperty(state, { id, properties }) {
-    console.log(properties)
     const areaToUpdate = (state.areas.find(area => area.id === id))
     const newProperties = { ...areaToUpdate.properties, ...properties }
-    Vue.set(areaToUpdate, 'properties', newProperties)
-    Object.keys(properties).forEach(key => {
-      MapEventBus.$emit(UPDATE_FEATURE_PROPERTY, {
-        featureId: id,
-        key,
-        value: properties[key],
+      Vue.set(areaToUpdate, 'properties', newProperties)
+      Object.keys(properties).forEach(key => {
+        MapEventBus.$emit(UPDATE_FEATURE_PROPERTY, {
+          featureId: id,
+          key,
+          value: properties[key],
+        })
       })
-    })
   },
   deleteArea(state, value) {
     state.areas = state.areas.filter(area => area.id !== value)
@@ -126,11 +124,17 @@ export const actions = {
       commit('updateAreaProperty', { id, properties })
     })
   },
-  hideArea({ commit }, features) {
+  deleteAreaOnMap({ commit }, features) {
     features.forEach(feature => {
-      commit('addHiddenArea', feature)
       MapEventBus.$emit(HIDE_AREA_ON_MAP, {
         featureId: feature.id,
+      })
+    })
+  },
+  addAreaToMap({ commit }, features) {
+    features.forEach(feature => {
+      MapEventBus.$emit(SHOW_AREA_ON_MAP, {
+        features: feature,
       })
     })
   },

@@ -84,14 +84,10 @@ export default {
       // console.log({ key, value, updatedFeature }) // Comment left on purpose for easy debugging
     })
     MapEventBus.$on(HIDE_AREA_ON_MAP, ({ featureId }) => {
-      // console.log(featureId)
-      // console.log(this.draw.delete(featureId))
       this.draw.delete(featureId)
     })
-    MapEventBus.$on(SHOW_AREA_ON_MAP, (feature) => {
-      // console.log(feature)
-      // console.log(this.draw.delete(featureId))
-      this.draw.add(feature)
+    MapEventBus.$on(SHOW_AREA_ON_MAP, ({ features }) => {
+      this.draw.add(features)
     })
   },
 }

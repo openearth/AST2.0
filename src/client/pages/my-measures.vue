@@ -10,7 +10,7 @@
           <md-switch
             :value="measure.measureId"
             v-model="hiddenMeasures"
-            @change="onHideMeasure" />
+            @change="() => onMeasureToggle(measure.measureId)" />
         </div>
 
         <md-list-item
@@ -56,18 +56,21 @@ export default {
     },
   },
   methods: {
-    onHideMeasure() {
-      this.areas.forEach(area => {
-        if (this.hiddenMeasures.includes(area.properties.measure)) {
-          return this.onToggleMeasure(area, true)
-        }
+    onMeasureToggle(id) {
+      const updatedAreas = this.areas.filter(area => area.properties.measure === id)
 
-        this.onToggleMeasure(area, false)
-      })
+      if (this.hiddenMeasures.includes(id)) {
+        this.updateAreasByMeasureVisibility(updatedAreas, true)
+        this.$store.dispatch('project/deleteAreaOnMap', updatedAreas)
+        return
+      }
+
+      this.$store.dispatch('project/addAreaToMap', updatedAreas)
+      this.updateAreasByMeasureVisibility(updatedAreas, false)
     },
-    onToggleMeasure(area, isHidden) {
+    updateAreasByMeasureVisibility(features, isHidden) {
       return this.$store.dispatch('project/updateAreaProperties', {
-        features: [area],
+        features: features,
         properties: {
           hidden: isHidden,
         },
