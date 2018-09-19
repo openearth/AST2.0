@@ -1,6 +1,6 @@
 <template>
   <md-list class="kpi-group">
-    <h2 class="kpi-group__title md-title">{{ kpiGroup.title }}</h2>
+    <h2 class="kpi-group__title md-body-2">{{ kpiGroup.title }}</h2>
     
     <md-list-item
       v-for="kpi in kpiGroup.kpis"
@@ -49,7 +49,7 @@ export default {
 }
 
 .kpi-group__title {
-  margin-bottom: var(--spacing-default);
+  margin-bottom: var(--spacing-half);
 }
 
 .kpi-group__kpi .md-list-item-content {
