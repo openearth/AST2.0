@@ -4,10 +4,13 @@
       <div
         v-for="({measure, areas}, index) in measureCollection"
         :key="index"
-        :style="`border-left: 5px solid ${measure.color.hex}`">
+        :style="!hiddenMeasures.includes(measure.measureId) ? `border-left: 5px solid ${measure.color.hex}` : `border-left: 5px solid #ccc`">
         <div style="display: flex; justify-content: space-between;">
           <md-subheader>{{ measure.title }}</md-subheader>
-          <md-switch :value="true" />
+          <md-switch
+            :value="measure.measureId"
+            v-model="hiddenMeasures"
+            @change="onHideMeasure" />
         </div>
 
         <md-list-item
@@ -24,6 +27,8 @@
         <md-divider/>
       </div>
     </md-list>
+    <pre>hidden: {{ hiddenAreas.map(area => area.properties.name) }}</pre>
+    <pre>shown: {{ shownAreas.map(area => area.properties.name) }}</pre>
   </md-drawer>
 </template>
 
@@ -38,15 +43,35 @@ export default {
       isAreasListVisible: false,
       isAreaVisible: true,
       shownAreaIds: [],
+      hiddenMeasures: [],
     }
   },
   computed: {
     ...mapState('data', ['measures']),
     ...mapState('project', ['areas']),
     ...mapGetters('selectedAreas', { selectedFeatures: 'features' }),
-    ...mapGetters('project', ['areasByMeasure']),
+    ...mapGetters('project', ['areasByMeasure', 'hiddenAreas', 'shownAreas']),
     measureCollection() {
       return Object.keys(this.areasByMeasure).map(key => this.areasByMeasure[key])
+    },
+  },
+  methods: {
+    onHideMeasure() {
+      this.areas.forEach(area => {
+        if (this.hiddenMeasures.includes(area.properties.measure)) {
+          return this.onToggleMeasure(area, true)
+        }
+
+        this.onToggleMeasure(area, false)
+      })
+    },
+    onToggleMeasure(area, isHidden) {
+      return this.$store.dispatch('project/updateAreaProperties', {
+        features: [area],
+        properties: {
+          hidden: isHidden,
+        },
+      })
     },
   },
 }

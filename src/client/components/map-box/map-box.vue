@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import MapEventBus, { UPDATE_FEATURE_PROPERTY } from '../../lib/map-event-bus'
+import MapEventBus, { UPDATE_FEATURE_PROPERTY, HIDE_AREA_ON_MAP, SHOW_AREA_ON_MAP } from '../../lib/map-event-bus'
 import projectAreaStyles from './project-area-styles'
 import areaStyles from './area-styles'
 
@@ -82,6 +82,16 @@ export default {
     MapEventBus.$on(UPDATE_FEATURE_PROPERTY, ({ featureId, key, value }) => {
       const updatedFeature = this.draw.setFeatureProperty(featureId, key, value).get(featureId)
       // console.log({ key, value, updatedFeature }) // Comment left on purpose for easy debugging
+    })
+    MapEventBus.$on(HIDE_AREA_ON_MAP, ({ featureId }) => {
+      // console.log(featureId)
+      // console.log(this.draw.delete(featureId))
+      this.draw.delete(featureId)
+    })
+    MapEventBus.$on(SHOW_AREA_ON_MAP, (feature) => {
+      // console.log(feature)
+      // console.log(this.draw.delete(featureId))
+      this.draw.add(feature)
     })
   },
 }
