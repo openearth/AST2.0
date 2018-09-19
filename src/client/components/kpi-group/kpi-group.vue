@@ -2,7 +2,7 @@
   <md-list class="kpi-group">
     <h2 class="kpi-group__title md-title">{{ kpiGroup.title }}</h2>
     
-    <li
+    <md-list-item
       v-for="kpi in kpiGroup.kpis"
       :key="kpi.key"
       class="kpi-group__kpi">
@@ -15,7 +15,7 @@
       />
 
       <span v-else class="kpi-group__kpi-value">{{ kpiByKey(kpi.key) }}</span>
-    </li>
+    </md-list-item>
   </md-list>
 </template>
 
@@ -52,12 +52,14 @@ export default {
   margin-bottom: var(--spacing-default);
 }
 
-.kpi-group__kpi {
+.kpi-group__kpi .md-list-item-content {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  position: relative;
   margin-bottom: var(--spacing-half);
   padding: 0;
+  min-height: 30px; /* overwrites material ui min-height */
 }
 
 .kpi-group__kpi-title {
@@ -65,7 +67,13 @@ export default {
   max-width: 90%;
 }
 
+.kpi-group__kpi-value {
+  margin-bottom: var(--spacing-half);
+}
+
 .kpi-group__kpi-meter {
+  position: absolute;
+  bottom: 0;
   flex-basis: 100%;
   width: 100%;
 }
