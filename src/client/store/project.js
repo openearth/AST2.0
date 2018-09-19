@@ -101,7 +101,7 @@ export const actions = {
       commit('addArea', feature)
 
       const areaNumber = state.areas.length
-      commit('updateAreaProperty', { id: feature.id, properties: { area, name: `Area-${areaNumber}` } })
+      commit('updateAreaProperty', { id: feature.id, properties: { area, name: `Area-${areaNumber}`, hidden: false } })
     })
   },
   updateArea({ state, commit }, features) {
