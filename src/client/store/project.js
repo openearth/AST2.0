@@ -4,6 +4,7 @@ import MapEventBus, { UPDATE_FEATURE_PROPERTY, HIDE_AREA_ON_MAP, SHOW_AREA_ON_MA
 
 export const state = () => ({
   areas: [],
+  hiddenMeasures: [],
   settings: {
     area: {},
     general: {
@@ -54,8 +55,11 @@ export const mutations = {
   addArea(state, value) {
     state.areas.push(value)
   },
-  addHiddenArea(state, value) {
-    state.hiddenAreas.push(value)
+  hideMeasure(state, value) {
+    state.hiddenMeasures.push(value)
+  },
+  showMeasure(state, value) {
+    state.hiddenMeasures = state.hiddenMeasures.filter(measureId => measureId !== value)
   },
   updateArea(state, value) {
     const updatedArea = (state.areas.find(area => area.id === value.id))
