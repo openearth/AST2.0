@@ -20,48 +20,40 @@
     </div>
 
     <md-field>
-      <label>Initial Value (Read Only)</label>
+      <label>Initial Value</label>>
       <md-input
+        v-model="focusedInput"
         placeholder="Text input"
         data-layout="numeric"
-        @focus="show"/>
+      />
     </md-field>
 
     <transition name="slide-up">
       <vue-touch-keyboard
         v-if="visible"
-        :layout="numericLayout"
         :cancel="hide"
         :accept="accept"
-        :input="input"
+        :input="focusedInput"
+        :layout="numericLayout"
         class="custom-keyboard" />
-
-        <!-- <touch-keyboard
-        v-if="visible"
-        :input="input"
-        @cancel="hide"
-        @accept="accept" /> -->
-
     </transition>
   </div>
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions } from "vuex";
-import { AppHeader, MapViewer, KpiPanel, TouchKeyboard } from '../components'
-import { numericLayout } from '~/assets/custom-keyboard-layout'
+import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
+import { AppHeader, MapViewer, KpiPanel } from '../components'
+import { numericLayout, options } from '~/assets/custom-keyboard-options'
+import { mapFields } from 'vuex-map-fields';
 
 export default {
-  components: { AppHeader, MapViewer, KpiPanel, TouchKeyboard },
+  components: { AppHeader, MapViewer, KpiPanel },
   data() {
     return {
       visible: false,
       input: null,
-      options: {
-        useKbEvents: false,
-        preventClickEvent: false,
-      },
       numericLayout,
+      options,
     }
   },
   computed: {
@@ -69,9 +61,15 @@ export default {
       map: state => state.project.map,
       area: state => state.project.settings.projectArea.area,
     }),
+    ...mapFields([
+      'focusedInput',
+    ]),
   },
   methods: {
-    ...mapMutations({ onBaseLayerSwitch: 'project/setBaseLayer' }),
+    ...mapMutations({ 
+      onBaseLayerSwitch: 'project/setBaseLayer',
+      onInputFocus: 'project/updateFocusedInput',
+    }),
     ...mapActions({
       createArea: 'project/createArea',
       updateArea: 'project/updateArea',
@@ -79,18 +77,39 @@ export default {
       selectionChange: 'selectedAreas/changeSelection',
     }),
 
+    onFocus({ target }) {
+      this.$store.commit('project/updateInput', target.id)
+      // if (this.focusedInput === null) {
+        // console.log({ target })
+        // this.$store.commit('project/updateFocusedInput', target)
+      // }
+
+      this.show(target)
+    },
+    // onBlur({ target }) {
+    //   if ((this.focusedInput === null) && (!target.value.length)) {
+    //     target.blur()
+
+    //     this.hide()
+    //   } else {
+    //     target.focus()
+    //   }
+    // },
     accept(text) {
       console.log(text)
-      this.hide();
+      // this.$store.commit('project/removeFocusedInput')
+      
+      this.hide()
     },
-    show(e) {
-      this.input = e.target;
-
-      if (!this.visible)
+    show(target) {
+      this.input = target
+      
+      if (!this.visible) {
         this.visible = true
+      }
     },
     hide() {
-      this.visible = false;
+      this.visible = false
     },
   },
 }
