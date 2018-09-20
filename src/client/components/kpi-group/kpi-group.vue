@@ -14,7 +14,7 @@
         class="kpi-group__kpi-meter"
       />
 
-      <span v-else class="kpi-group__kpi-value">{{ kpiByKey(kpi.key) }}</span>
+      <span v-else class="kpi-group__kpi-value">{{ Math.round(kpiByKey(kpi.key)) }} {{ unit(kpi.unit) }}</span>
     </md-list-item>
   </md-list>
 </template>
@@ -44,6 +44,9 @@ export default {
     valueTimes10(val) { return val * 10 },
     kpiByKey(key) { return this.kpiValues[key] },
     percentageKpiByKey(key) { return this.kpiPercentageValues[key] },
+    unit(...args) {
+      return this.$store.getters['data/units/displayValue'](...args)
+    },
   },
 }
 </script>
