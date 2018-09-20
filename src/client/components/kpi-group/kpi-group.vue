@@ -1,12 +1,12 @@
 <template>
-  <ul class="kpi-group">
-    <h2 class="kpi-group__title title">{{ kpiGroup.title }}</h2>
+  <md-list class="kpi-group">
+    <h2 class="kpi-group__title md-body-2">{{ kpiGroup.title }}</h2>
 
-    <li
+    <md-list-item
       v-for="kpi in kpiGroup.kpis"
       :key="kpi.key"
       class="kpi-group__kpi">
-      <span class="kpi-group__kpi-title">{{ kpi.title }}:</span>
+      <span class="md-body-1 kpi-group__kpi-title">{{ kpi.title }}:</span>
 
       <md-progress-bar
         v-if="type === 'bars'"
@@ -15,8 +15,8 @@
       />
 
       <span v-else class="kpi-group__kpi-value">{{ kpiByKey(kpi.key) }}</span>
-    </li>
-  </ul>
+    </md-list-item>
+  </md-list>
 </template>
 
 <script>
@@ -54,23 +54,31 @@ export default {
 }
 
 .kpi-group__title {
-  margin-bottom: var(--spacing-default);
+  margin-bottom: var(--spacing-half);
 }
 
-.kpi-group__kpi {
+.kpi-group__kpi .md-list-item-content {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  position: relative;
   margin-bottom: var(--spacing-half);
+  padding: 0;
+  min-height: 30px; /* overwrites material ui min-height */
 }
 
 .kpi-group__kpi-title {
   margin-bottom: var(--spacing-half);
-  font-size: var(--font-size-small);
   max-width: 90%;
 }
 
+.kpi-group__kpi-value {
+  margin-bottom: var(--spacing-half);
+}
+
 .kpi-group__kpi-meter {
+  position: absolute;
+  bottom: 0;
   flex-basis: 100%;
   width: 100%;
 }
