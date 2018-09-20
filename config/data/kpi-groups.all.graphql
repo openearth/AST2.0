@@ -1,0 +1,13 @@
+query ($locale: SiteLocale) {
+  kpiGroups: allKpiGroups(locale: $locale) {
+    title,
+    key,
+    kpis {
+      title,
+      key,
+      unit {
+        key
+      }
+    }
+  }
+}
