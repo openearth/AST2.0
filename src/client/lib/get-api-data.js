@@ -28,33 +28,33 @@ export async function getApiDataForFeature(feature, projectArea, currentReturnTi
   const {
     measure,
     area,
-    areaInflow = 1,
-    areaDepth = 1,
+    areaInflow,
+    areaDepth,
   } = feature.properties
 
   const measureArea = area
   const measureId = parseInt(measure, 10)
-  const inflowArea = parseInt(measureArea, 10)
-  const inflow = parseInt(measureArea, 10)
+  const inflowArea = area *  parseInt(areaInflow, 10)
+  const inflow = area * parseInt(areaInflow, 10)
 
   const measureDepth = parseInt(areaDepth, 10)
   const depth = parseInt(areaDepth, 10)
 
   const id = measureId
   const returnTime = currentReturnTime
-  // console.log({ currentReturnTime, inflowArea, measureArea, measureDepth, measureId, projectArea, measureId })
 
   if (measureId) {
     const apiData = await Promise.all([
-      getApiData('heatstress-cost', { measureArea, measureId }),
-      getApiData('heatstress-temperature', { measureArea, measureId, projectArea }),
-      getApiData('heatstress-waterquality', { measureArea, measureId }),
-      getApiData('pluvflood', { measureArea, measureId, currentReturnTime, projectArea, inflowArea, measureDepth }),
+      // getApiData('heatstress-cost', { measureArea, measureId }),
+      // getApiData('heatstress-temperature', { measureArea, measureId, projectArea }),
+      // getApiData('heatstress-waterquality', { measureArea, measureId }),
+      // getApiData('pluvflood', { measureArea, measureId, currentReturnTime, projectArea, inflowArea, measureDepth }),
 
-      // getRealApiData('heatstress/cost', { area, id }),
-      // getRealApiData('heatstress/temperature', { area, id, projectArea }),
-      // getRealApiData('heatstress/waterquality', { area, id }),
-      // getRealApiData('pluvflood', { area, id, returnTime, inflow, depth, projectArea }),
+      // getRealApiData('measures', { area, id }),
+      getRealApiData('heatstress/cost', { area, id }),
+      getRealApiData('heatstress/temperature', { area, id, projectArea }),
+      getRealApiData('heatstress/waterquality', { area, id }),
+      getRealApiData('pluvflood', { area, id, returnTime, inflow, depth, projectArea }),
 
       Promise.resolve({ data: { storageCapacity: measureArea * areaDepth } }),
     ])

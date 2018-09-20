@@ -134,7 +134,6 @@ export const actions = {
     features.forEach(async (feature) => {
       const apiData = await getApiDataForFeature(feature, state.settings.area.properties.area)
       commit('updateAreaProperty', { id: feature.id, properties: { apiData } })
-      console.log({ apiData, feature })
     })
   },
   deleteArea({ state, commit }, features) {
