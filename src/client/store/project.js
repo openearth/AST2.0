@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import turf from '@turf/area'
-import MapEventBus, { UPDATE_FEATURE_PROPERTY, HIDE_AREA_ON_MAP, SHOW_AREA_ON_MAP } from '../lib/map-event-bus'
+import MapEventBus, { UPDATE_FEATURE_PROPERTY } from '../lib/map-event-bus'
 
 export const state = () => ({
   areas: [],
@@ -128,20 +128,6 @@ export const actions = {
       commit('updateAreaProperty', { id, properties })
     })
   },
-  deleteAreaOnMap({ commit }, features) {
-    features.forEach(feature => {
-      MapEventBus.$emit(HIDE_AREA_ON_MAP, {
-        featureId: feature.id,
-      })
-    })
-  },
-  addAreaToMap({ commit }, features) {
-    features.forEach(feature => {
-      MapEventBus.$emit(SHOW_AREA_ON_MAP, {
-        features: feature,
-      })
-    })
-  },
   deleteArea({ state, commit }, features) {
     features.forEach(({ id }) => {
       const { area } = state.settings
@@ -151,6 +137,26 @@ export const actions = {
     }
 
       commit('deleteArea', id)
+    })
+  },
+  toggleMeasureVisibility({ state, commit, dispatch }, id) {
+    if (state.hiddenMeasures.indexOf(id) === -1) {
+      commit('hideMeasure', id)
+    } else {
+      commit('showMeasure', id)
+    }
+    
+    return dispatch('updateAreasByMeasureVisibility', id)
+  },
+  updateAreasByMeasureVisibility({ state, dispatch }, id) {
+    const updatedAreas = state.areas.filter(area => area.properties.measure === id)
+    const isHidden = state.hiddenMeasures.indexOf(id) !== -1
+
+    return dispatch('updateAreaProperties', {
+      features: updatedAreas,
+      properties: {
+        hidden: isHidden,
+      },
     })
   },
   bootstrapSettings({ state, commit }, settings) {
@@ -164,6 +170,7 @@ export const actions = {
       commit('setProjectAreaSetting', { key: setting.key, value })
     })
   },
+
 }
 
 export const getters = {

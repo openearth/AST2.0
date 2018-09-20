@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import MapEventBus, { UPDATE_FEATURE_PROPERTY, HIDE_AREA_ON_MAP, SHOW_AREA_ON_MAP } from '../../lib/map-event-bus'
+import MapEventBus, { UPDATE_FEATURE_PROPERTY } from '../../lib/map-event-bus'
 import projectAreaStyles from './project-area-styles'
 import areaStyles from './area-styles'
 
@@ -50,7 +50,6 @@ export default {
         style.filter.push(['!has', 'user_measure'])
         return style
       })
-    console.log({ areaStyles, defaultStyles, projectAreaStyles })
     mapboxgl.accessToken = process.env.MAPBOX_ACCESS_TOKEN
 
     this.map = new mapboxgl.Map({
@@ -86,12 +85,6 @@ export default {
     MapEventBus.$on(UPDATE_FEATURE_PROPERTY, ({ featureId, key, value }) => {
       const updatedFeature = this.draw.setFeatureProperty(featureId, key, value).get(featureId)
       // console.log({ key, value, updatedFeature }) // Comment left on purpose for easy debugging
-    })
-    MapEventBus.$on(HIDE_AREA_ON_MAP, ({ featureId }) => {
-      this.draw.delete(featureId)
-    })
-    MapEventBus.$on(SHOW_AREA_ON_MAP, ({ features }) => {
-      this.draw.add(features)
     })
   },
 }
