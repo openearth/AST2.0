@@ -46,7 +46,11 @@ export default {
     const defaultStyles = [...new MapboxDraw().options.styles]
       .filter(style => /\.hot$/.test(style.id))
       .map(({ source, ...style }) => ({ ...style, id: style.id.replace('.hot', '') }))
-
+      .map(style => {
+        style.filter.push(['!has', 'user_measure'])
+        return style
+      })
+    console.log({ areaStyles, defaultStyles, projectAreaStyles })
     mapboxgl.accessToken = process.env.MAPBOX_ACCESS_TOKEN
 
     this.map = new mapboxgl.Map({
