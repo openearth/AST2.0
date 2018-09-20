@@ -1,3 +1,5 @@
+import cloneDeep from 'lodash/cloneDeep'
+
 export default [
   {
     'id': 'area-polygon-fill-inactive',
@@ -142,4 +144,27 @@ export default [
       },
     },
   },
-]
+].reduce((list, style) => {
+  const hiddenStyle = cloneDeep(style)
+  const shownStyle = cloneDeep(style)
+  hiddenStyle.id = `${hiddenStyle.id}-hidden`
+
+  hiddenStyle.filter.push(['==', 'user_hidden', true])
+
+  if (hiddenStyle.layout) {
+    hiddenStyle.layout.visibility = 'none'
+  } else {
+    hiddenStyle.layout = { visibility: 'none' }
+  }
+
+  shownStyle.id = `${shownStyle.id}-shown`
+  shownStyle.filter.push(['==', 'user_hidden', false])
+
+  if (shownStyle.layout) {
+    shownStyle.layout.visibility = 'visible'
+  } else {
+    shownStyle.layout = { visibility: 'visible' }
+  }
+
+  return [...list, hiddenStyle, shownStyle]
+}, [])
