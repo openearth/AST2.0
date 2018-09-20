@@ -45,16 +45,16 @@ export async function getApiDataForFeature(feature, projectArea, currentReturnTi
 
   if (measureId) {
     const apiData = await Promise.all([
-      // getApiData('heatstress-cost', { measureArea, measureId }),
-      // getApiData('heatstress-temperature', { measureArea, measureId, projectArea }),
-      // getApiData('heatstress-waterquality', { measureArea, measureId }),
-      // getApiData('pluvflood', { measureArea, measureId, currentReturnTime, projectArea, inflowArea, measureDepth }),
+      getApiData('heatstress-cost', { measureArea, measureId }),
+      getApiData('heatstress-temperature', { measureArea, measureId, projectArea }),
+      getApiData('heatstress-waterquality', { measureArea, measureId }),
+      getApiData('pluvflood', { measureArea, measureId, currentReturnTime, projectArea, inflowArea, measureDepth }),
 
       // getRealApiData('measures', { area, id }),
-      getRealApiData('heatstress/cost', { area, id }),
-      getRealApiData('heatstress/temperature', { area, id, projectArea }),
-      getRealApiData('heatstress/waterquality', { area, id }),
-      getRealApiData('pluvflood', { area, id, returnTime, inflow, depth, projectArea }),
+      // getRealApiData('heatstress/cost', { area, id }),
+      // getRealApiData('heatstress/temperature', { area, id, projectArea }),
+      // getRealApiData('heatstress/waterquality', { area, id }),
+      // getRealApiData('pluvflood', { area, id, returnTime, inflow, depth, projectArea }),
 
       Promise.resolve({ data: { storageCapacity: measureArea * areaDepth } }),
     ])
