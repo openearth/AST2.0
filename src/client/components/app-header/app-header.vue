@@ -10,6 +10,11 @@
         class="md-primary md-icon-button">
         <md-icon>build</md-icon>
       </md-button>
+      <md-button
+        :to="`/${this.$i18n.locale}/settings/`"
+        class="md-primary md-icon-button">
+        <md-icon>settings</md-icon>
+      </md-button>
     </div>
   </md-toolbar>
 </template>
