@@ -29,6 +29,7 @@
     </md-list>
     <pre>hidden: {{ hiddenAreas.map(area => area.properties.name) }}</pre>
     <pre>shown: {{ shownAreas.map(area => area.properties.name) }}</pre>
+    <pre>active: {{ activeMeasures }}</pre>
   </md-drawer>
 </template>
 
@@ -51,6 +52,7 @@ export default {
     ...mapState('project', ['areas']),
     ...mapGetters('selectedAreas', { selectedFeatures: 'features' }),
     ...mapGetters('project', ['areasByMeasure', 'hiddenAreas', 'shownAreas']),
+    ...mapGetters('data/measures', ['activeMeasures']),
     measureCollection() {
       return Object.keys(this.areasByMeasure).map(key => this.areasByMeasure[key])
     },
@@ -60,11 +62,13 @@ export default {
       const updatedAreas = this.areas.filter(area => area.properties.measure === id)
 
       if (this.hiddenMeasures.includes(id)) {
+        // this.$store.commit('project/hideMeasure', id)
         this.updateAreasByMeasureVisibility(updatedAreas, true)
-        this.$store.dispatch('project/deleteAreaOnMap', updatedAreas)
+        // this.$store.dispatch('project/deleteAreaOnMap', updatedAreas)
         return
       }
 
+      this.$store.commit('project/showMeasure', id)
       this.$store.dispatch('project/addAreaToMap', updatedAreas)
       this.updateAreasByMeasureVisibility(updatedAreas, false)
     },
