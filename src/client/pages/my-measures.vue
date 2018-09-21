@@ -45,10 +45,7 @@ export default {
     ...mapState('data', ['measures']),
     ...mapState('project', ['areas']),
     ...mapGetters('selectedAreas', { selectedFeatures: 'features' }),
-    ...mapGetters('project', ['areasByMeasure']),
-    measureCollection() {
-      return Object.keys(this.areasByMeasure).map(key => this.areasByMeasure[key])
-    },
+    ...mapGetters('project', ['areasByMeasure', 'measureCollection']),
   },
   mounted() {
     MapEventBus.$emit(REDRAW)

@@ -185,6 +185,9 @@ export const getters = {
       return obj
     }, {})
   },
+  measureCollection: (state, getters) => {
+    return Object.keys(getters.areasByMeasure).map(key => getters.areasByMeasure[key])
+  },
   filteredKpiGroups: (state, getters, rootState) => {
     const filteredKpiKeys = getters.filteredKpiKeys
     return rootState.data.kpiGroups
