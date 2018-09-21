@@ -30,6 +30,7 @@
 <script>
 import { mapState, mapGetters, mapActions } from "vuex"
 import { MeasureCard, SearchInput } from '~/components'
+import MapEventBus, { REDRAW } from "../lib/map-event-bus";
 
 export default {
   components: { MeasureCard, SearchInput },
@@ -48,6 +49,9 @@ export default {
     measureCollection() {
       return Object.keys(this.areasByMeasure).map(key => this.areasByMeasure[key])
     },
+  },
+  mounted() {
+    MapEventBus.$emit(REDRAW)
   },
 }
 </script>

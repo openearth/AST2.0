@@ -10,6 +10,7 @@
 <script>
 import { mapState, mapGetters, mapActions } from "vuex"
 import { MeasureCard, SearchInput, MeasureList } from '~/components'
+import MapEventBus, { REDRAW } from "../lib/map-event-bus";
 
 export default {
   components: { MeasureCard, SearchInput, MeasureList },
@@ -35,6 +36,9 @@ export default {
     filteredMeasuresList() {
       return this.measuresList.filter(item => item.title.toLowerCase().indexOf(this.searchValue.toLowerCase()) !== -1)
     },
+  },
+  mounted() {
+    MapEventBus.$emit(REDRAW)
   },
   methods: {
     sortItems () {

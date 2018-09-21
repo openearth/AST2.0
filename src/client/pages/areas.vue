@@ -108,6 +108,7 @@
 
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
+import MapEventBus, { REDRAW } from "../lib/map-event-bus";
 
 export default {
   data() {
@@ -126,6 +127,9 @@ export default {
       const id = this.selectedMeasuresIds.join()
       return this.measureById(id)
     },
+  },
+  mounted() {
+    MapEventBus.$emit(REDRAW)
   },
   methods: {
     ...mapActions({ updateAreaProperties: 'project/updateAreaProperties' }),
