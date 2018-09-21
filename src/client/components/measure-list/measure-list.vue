@@ -1,7 +1,5 @@
 <template>
   <div>
-    <md-subheader class="md-title">Measure List</md-subheader>
-
     <md-toolbar md-elevation="0">
       <div class="md-toolbar-row">
         <div class="md-toolbar-section-start">

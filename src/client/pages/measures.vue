@@ -1,5 +1,9 @@
 <template>
   <md-drawer md-permanent="clipped" class="measures">
+    <md-toolbar md-elevation="0">
+      <span class="md-title">{{ $t('measures') }}</span>
+    </md-toolbar>
+
     <measure-list
       :measures="filteredMeasuresList"
       @choose="onChooseMeasure"

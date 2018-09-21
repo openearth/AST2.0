@@ -1,5 +1,8 @@
 <template>
   <md-drawer md-permanent="clipped">
+    <md-toolbar md-elevation="0">
+      <span class="md-title">{{ $t('your_measures') }}</span>
+    </md-toolbar>
     <md-list>
       <div
         v-for="({measure, areas}, index) in measureCollection"
