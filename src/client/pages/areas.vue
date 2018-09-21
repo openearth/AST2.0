@@ -1,5 +1,6 @@
 <template>
   <md-drawer md-permanent="clipped">
+    <!--
     <aside class="areas">
       <h1>{{ $t('your_measures') }}</h1>
 
@@ -15,14 +16,6 @@
               class="areas__list-item__button icon-eye" />
 
             <p>{{ feature.properties.name }}</p>
-
-            <button
-              for="area-properties"
-              type="submit"
-              class="button button--primary areas__list__submit-button"
-              @click.prevent="() => onSubmit(feature.id, feature.properties.name)">
-              Done
-            </button>
           </div>
 
           <div class="area__measure">
@@ -82,24 +75,81 @@
                   class="area__measure__form__input"
                   type="text"
                   name="area-name"
-                  @change="(e) => areaName = e.target.value">
+                  @input="e => updateAreaProperty({ id: feature.id, properties: { name: e.target.value }})">
               </fieldset>
-
-            <!-- <fieldset>
-              <legend class="text--uppercase">{{ $t('layer_color') }}</legend>
-
-              <label>
-                <input
-                  id="layer-color"
-                  v-model="layerColor"
-                  class="area__measure__form__input"
-                  type="color"
-                  name="layer-color">
-                {{ $t('change_layer_color') }}
-              </label>
-            </fieldset> -->
             </form>
           </div>
+        </li>
+      </ul>
+    </aside>
+    -->
+    <aside>
+      <md-toolbar md-elevation="0">
+        <span class="md-title">{{ $t('your_measures') }}</span>
+      </md-toolbar>
+
+      <ul class="areas__list">
+        <li
+          v-for="feature in selectedFeatures"
+          :key="feature.id"
+          class="areas__item">
+          <md-card>
+            <div :style="`border-left-color: ${appliedMeasure ? appliedMeasure.color.hex: 'transparent'}`" class="areas__item-content">
+              <md-card-header>
+                <md-avatar class="areas__avatar">
+                  <img
+                    v-if="appliedMeasure"
+                    :src="appliedMeasure.image.url"
+                    alt="Avatar">
+                </md-avatar>
+
+                <div class="md-title">{{ feature.properties.name }}</div>
+                <div class="md-subhead areas__subhead">{{ appliedMeasure ? appliedMeasure.title : '&nbsp;' }}</div>
+              </md-card-header>
+
+              <md-card-content class="areass__card-content">
+                <md-field>
+                  <label>{{ $t('area_name') }}</label>
+                  <md-input
+                    :value="feature.properties.name"
+                    @input="name => updateAreaProperty({ id: feature.id, properties: { name }})"/>
+                </md-field>
+
+                <span class="md-body-2">{{ $t('measure') }}</span>
+                <div class="areas__choose-wrapper">
+                  <div class="areas__choose-content">
+                    <template v-if="appliedMeasure">
+                      <p>{{ appliedMeasure.title }}</p>
+                      <md-button :to="`/${locale}/measures`" class="md-primary">{{ $t('change_measure') }}</md-button>
+                    </template>
+
+                    <template v-else>
+                      <md-button :to="`/${locale}/measures`" class="md-raised md-primary">{{ $t('choose_measure') }}</md-button>
+                    </template>
+                  </div>
+                  <div class="areas__choose-icon">
+                    <img v-if="appliedMeasure" :src="appliedMeasure.image.url" >
+                  </div>
+                </div>
+
+                <input-range
+                  v-if="appliedMeasure"
+                  :value="feature.properties.areaDepth"
+                  label="Measure Depth"
+                  min="0"
+                  max="10"
+                  @change="value => updateAreaProperties({ features: [feature], properties: { areaDepth: parseInt(value, 10) }})"/>
+
+                <input-range
+                  v-if="appliedMeasure"
+                  :value="feature.properties.areaInflow"
+                  label="Inflow Area"
+                  min="0"
+                  max="10"
+                  @change="value => updateAreaProperties({ features: [feature], properties: { areaInflow: parseInt(value) }})"/>
+              </md-card-content>
+            </div>
+          </md-card>
         </li>
       </ul>
     </aside>
@@ -107,19 +157,23 @@
 </template>
 
 <script>
-import { mapGetters, mapActions, mapMutations } from "vuex";
+import { mapGetters, mapActions, mapMutations, mapState } from "vuex";
 import MapEventBus, { REDRAW } from "../lib/map-event-bus";
+import { InputRange } from '../components'
 
 export default {
+  components: { InputRange },
   data() {
     return {
       visibleAreas: [],
       areaName: '',
+      value: 2,
       // updatedAreaId: '',
       // layerColor: "#1C37F8",
     }
   },
   computed: {
+    ...mapState('i18n', ['locale']),
     ...mapGetters('data/measures', ['measureById']),
     ...mapGetters({ selectedFeatures: 'selectedAreas/features' }),
     selectedMeasuresIds() { return this.selectedFeatures.map(feature => feature.properties.measure) },
@@ -134,24 +188,64 @@ export default {
   methods: {
     ...mapActions({ updateAreaProperties: 'project/updateAreaProperties' }),
     ...mapMutations({ updateAreaProperty: 'project/updateAreaProperty' }),
-    onSubmit(id, currentName) {
-      const name = this.areaName === '' ? currentName : this.areaName
-
-      this.updateAreaProperty({
-        id,
-        properties: {
-          name,
-        },
-      })
-
-      this.$router.push(`/${this.$i18n.locale}/my-measures`)
-    },
   },
 }
 </script>
 
 <style>
-.areas {
+.areas__list {
+  list-style: none;
+  padding: 1rem;
+}
+
+.areas__item {
+  margin-bottom: 1rem;
+}
+
+.areas__item-content {
+  border-left-width: 5px;
+  border-left-style: solid;
+}
+
+.areas__avatar {
+  background-color: lightgrey;
+}
+
+.areas__choose-wrapper {
+  display: flex;
+  align-items: center;
+  padding-bottom: 2rem;
+}
+
+.areas__choose-content {
+  flex: 1;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.areas__choose-icon {
+  width: 100px;
+  height: 100px;
+  border: 5px solid lightgrey;
+  border-radius: 3px;
+}
+
+.areas__choose-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background-color: lightgrey;
+}
+
+.areas__subhead {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* .areas {
   background-color: var(--neutral-color);
   width: 350px;
 }
@@ -295,5 +389,5 @@ input[type='range'] {
 
 .label {
   margin-bottom: 0;
-}
+} */
 </style>
