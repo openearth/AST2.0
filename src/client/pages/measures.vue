@@ -1,5 +1,5 @@
 <template>
-  <md-drawer md-permanent="clipped">
+  <md-drawer md-permanent="clipped" class="measures">
     <measure-list
       :measures="filteredMeasuresList"
       @choose="onChooseMeasure"
@@ -63,3 +63,9 @@ export default {
   },
 }
 </script>
+
+<style>
+.measures {
+  width: var(--width-extra-large)
+}
+</style>
