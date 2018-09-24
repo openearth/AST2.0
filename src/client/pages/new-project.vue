@@ -15,6 +15,7 @@
 <script>
 import { mapState, mapMutations } from "vuex";
 import { ProjectExport, ProjectImport } from "../components";
+import MapEventBus, { REDRAW } from "../lib/map-event-bus";
 
 export default {
   components: { ProjectExport, ProjectImport },
@@ -30,6 +31,7 @@ export default {
   },
   mounted() {
     this.isClient = true
+    MapEventBus.$emit(REDRAW)
   },
   methods: {
     ...mapMutations({ import: 'project/import' }),
