@@ -20,11 +20,12 @@
     </div>
 
     <md-field>
-      <label>Initial Value</label>>
+      <label>Initial Value</label>
       <md-input
-        v-model="focusedInput"
+        ref="myInput"
+        v-model="myInput"
         placeholder="Text input"
-        data-layout="numeric"
+        @focus="(e) => { return onFocus(e)}"
       />
     </md-field>
 
@@ -33,7 +34,7 @@
         v-if="visible"
         :cancel="hide"
         :accept="accept"
-        :input="focusedInput"
+        :input="input"
         :layout="numericLayout"
         class="custom-keyboard" />
     </transition>
@@ -54,21 +55,22 @@ export default {
       input: null,
       numericLayout,
       options,
+      myInput: '',
     }
   },
   computed: {
     ...mapState({
       map: state => state.project.map,
       area: state => state.project.settings.projectArea.area,
+      focusedInput: state => state.focusedInput.inputElement,
     }),
-    ...mapFields([
-      'focusedInput',
-    ]),
   },
   methods: {
-    ...mapMutations({ 
+    ...mapMutations({
       onBaseLayerSwitch: 'project/setBaseLayer',
-      onInputFocus: 'project/updateFocusedInput',
+      updateFocusedInput: 'focusedInput/updateFocusedInput',
+      removeFocusedInput: 'focusedInput/removeFocusedInput',
+      updateInputValue: 'focusedInput/updateInputValue',
     }),
     ...mapActions({
       createArea: 'project/createArea',
@@ -78,32 +80,19 @@ export default {
     }),
 
     onFocus({ target }) {
-      this.$store.commit('project/updateInput', target.id)
-      // if (this.focusedInput === null) {
-        // console.log({ target })
-        // this.$store.commit('project/updateFocusedInput', target)
-      // }
-
+      const inputToString = target.toString()
+      this.updateFocusedInput(inputToString)
       this.show(target)
     },
-    // onBlur({ target }) {
-    //   if ((this.focusedInput === null) && (!target.value.length)) {
-    //     target.blur()
-
-    //     this.hide()
-    //   } else {
-    //     target.focus()
-    //   }
-    // },
     accept(text) {
-      console.log(text)
-      // this.$store.commit('project/removeFocusedInput')
-      
+      this.updateInputValue(text)
+      this.removeFocusedInput()
+
       this.hide()
     },
     show(target) {
       this.input = target
-      
+
       if (!this.visible) {
         this.visible = true
       }

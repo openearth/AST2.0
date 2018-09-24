@@ -1,10 +1,9 @@
 import Vue from 'vue'
 import turf from '@turf/area'
 import MapEventBus, { UPDATE_FEATURE_PROPERTY } from '../lib/map-event-bus'
-import { getField, updateField } from 'vuex-map-fields';
 
 export const state = () => ({
-  focusedInput: '',
+  // focusedInput: null,
   areas: [],
   settings: {
     area: {},
@@ -84,13 +83,12 @@ export const mutations = {
   toggleProjectAreaNestedSetting(state, { key, option, value }) {
     state.settings.projectArea[key][option] = !state.settings.projectArea[key][option]
   },
-  updateInput(state, value) {
-    state.focusedInput.name = value
-  },
-  removeFocusedInput(state) {
-    state.focusedInput = null
-  },
-  updateField,
+  // updateFocusedInput(state, { target }) {
+  //   state.focusedInput = target
+  // },
+  // removeFocusedInput(state) {
+  //   state.focusedInput = null
+  // },
 }
 
 export const actions = {
@@ -173,5 +171,4 @@ export const getters = {
       return obj
     }, {})
   },
-  getField,
 }
