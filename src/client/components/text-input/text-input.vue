@@ -1,6 +1,6 @@
 <template>
-  <md-field class="numeric-input">
-    <label>{{ label }}</label>
+  <md-field :md-clearable="mdClearable" class="numeric-input">
+    <label v-if="!hideLabel">{{ label }}</label>
     <md-input
       ref="inputElement"
       :value="value"
@@ -17,7 +17,7 @@
 
     <md-button
       v-if="!forceKeyboard"
-      class="md-icon-button md-dense"
+      class="text-input__keyboard-button md-icon-button md-dense"
       @click="onFocus">
       <md-icon>keyboard</md-icon>
     </md-button>
@@ -31,7 +31,7 @@ export default {
   props: {
     label: {
       type: String,
-      required: true,
+      default: '',
     },
     value: {
       type: String,
@@ -42,6 +42,14 @@ export default {
       default: () => {},
     },
     forceKeyboard: {
+      type: Boolean,
+      default: false,
+    },
+    hideLabel: {
+      type: Boolean,
+      default: false,
+    },
+    mdClearable: {
       type: Boolean,
       default: false,
     },
@@ -71,5 +79,9 @@ export default {
   position: absolute;
   width: 100%;
   height: 100%;
+}
+
+.md-clearable .text-input__keyboard-button {
+  margin-right: 32px;
 }
 </style>

@@ -9,18 +9,23 @@
         class="input-range__range"
         type="range"
         v-on="inputListeners">
-      <md-field class="input-range__number">
-        <md-input
-          :value="value"
-          type="number"
-          v-on="inputListeners"/>
-      </md-field>
+      <numeric-input
+        :label="label"
+        :value="stringValue"
+        :on-change="value => $emit('change', parseInt(value, 10))"
+        class="input-range__number"
+        force-keyboard
+        hide-label
+      />
     </div>
   </div>
 </template>
 
 <script>
+import NumericInput from "../numeric-input";
+
 export default {
+  components: { NumericInput },
   props: {
     label: {
       type: String,
@@ -58,6 +63,9 @@ export default {
           },
         }
       )
+    },
+    stringValue () {
+      return String(this.value)
     },
   },
 }

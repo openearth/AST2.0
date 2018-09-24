@@ -1,6 +1,6 @@
 <template>
   <md-field class="numeric-input">
-    <label>{{ label }}</label>
+    <label v-if="!hideLabel">{{ label }}</label>
     <md-input
       ref="inputElement"
       :value="value"
@@ -32,7 +32,7 @@ export default {
   props: {
     label: {
       type: String,
-      required: true,
+      default: '',
     },
     value: {
       type: String,
@@ -43,6 +43,10 @@ export default {
       default: () => {},
     },
     forceKeyboard: {
+      type: Boolean,
+      default: false,
+    },
+    hideLabel: {
       type: Boolean,
       default: false,
     },
