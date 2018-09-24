@@ -50,6 +50,8 @@ export default {
         properties: {
           measure: measureId,
           color: measure.color.hex,
+          areaInflow: 1,
+          areaDepth: 1,
         },
       })
       this.$router.push(`/${this.$i18n.locale}/areas`)

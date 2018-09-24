@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import turf from '@turf/area'
 import MapEventBus, { UPDATE_FEATURE_PROPERTY } from '../lib/map-event-bus'
+import { getApiDataForFeature } from "../lib/get-api-data";
+import { isString } from 'util';
 
 export const state = () => ({
   areas: [],
@@ -11,6 +13,7 @@ export const state = () => ({
       title: 'My project title',
     },
     projectArea: {},
+    targets: {},
   },
   map: {
     baseLayers: [
@@ -86,6 +89,12 @@ export const mutations = {
   setProjectAreaSetting(state, { key, value }) {
     state.settings.projectArea[key] = value
   },
+  setTargets(state, { key, value }) {
+    state.settings.targets[key] = value
+  },
+  setTarget(state, { group, key, value }) {
+    state.settings.targets[group][key] = { ...state.settings.targets[group][key], ...value }
+  },
   toggleProjectAreaNestedSetting(state, { key, option, value }) {
     state.settings.projectArea[key][option] = !state.settings.projectArea[key][option]
   },
@@ -108,7 +117,7 @@ export const actions = {
       commit('updateAreaProperty', { id: feature.id, properties: { area, name: `Area-${areaNumber}`, hidden: false } })
     })
   },
-  updateArea({ state, commit }, features) {
+  updateArea({ state, commit, dispatch }, features) {
     features.forEach(feature => {
       const { id } = feature
       const area = turf(feature.geometry)
@@ -116,16 +125,23 @@ export const actions = {
       if (state.settings.area.id === id) {
         commit('updateProjectArea', feature)
         commit('updateProjectAreaProperty', { area })
+        dispatch('fetchAreaApiData', state.areas)
         return
       }
 
       commit('updateArea', feature)
       commit('updateAreaProperty', { id, properties: { area } })
+      dispatch('fetchAreaApiData', [feature])
     })
   },
-  updateAreaProperties({ commit }, { features, properties }) {
-    features.forEach(({ id }) => {
-      commit('updateAreaProperty', { id, properties })
+  updateAreaProperties({ state, commit, dispatch }, { features, properties }) {
+    features.forEach(feature => commit('updateAreaProperty', { id: feature.id, properties }))
+    dispatch('fetchAreaApiData', features)
+  },
+  fetchAreaApiData({ state, commit }, features) {
+    features.forEach(async (feature) => {
+      const apiData = await getApiDataForFeature(feature, state.settings.area.properties.area)
+      commit('updateAreaProperty', { id: feature.id, properties: { apiData } })
     })
   },
   deleteArea({ state, commit }, features) {
@@ -145,7 +161,7 @@ export const actions = {
     } else {
       commit('showMeasure', id)
     }
-    
+
     return dispatch('updateAreasByMeasureVisibility', id)
   },
   updateAreasByMeasureVisibility({ state, dispatch }, id) {
@@ -159,7 +175,7 @@ export const actions = {
       },
     })
   },
-  bootstrapSettings({ state, commit }, settings) {
+  bootstrapSettingsProjectArea({ state, commit }, settings) {
     settings.forEach(setting => {
       const value = !setting.multiple
         ? null
@@ -170,7 +186,12 @@ export const actions = {
       commit('setProjectAreaSetting', { key: setting.key, value })
     })
   },
-
+  bootstrapSettingsTargets({ state, commit }, targets) {
+    targets.forEach(({ key, kpis }) => {
+      const value = kpis.reduce((obj, kpi) => ({ ...obj, [kpi.key]: { include: true, value: null } }), {})
+      commit('setTargets', { key, value })
+    })
+  },
 }
 
 export const getters = {
@@ -192,10 +213,76 @@ export const getters = {
       return obj
     }, {})
   },
-  hiddenAreas: (state) => {
-    return state.areas.filter(area => area.properties.hidden)
+  filteredKpiGroups: (state, getters, rootState) => {
+    const filteredKpiKeys = getters.filteredKpiKeys
+    return rootState.data.kpiGroups
+      .map(group => {
+        const kpis = group.kpis
+          .filter(kpi => filteredKpiKeys.indexOf(kpi.key) !== -1)
+        return { ...group, kpis }
+      })
+    .filter(group => group.kpis.length)
   },
-  shownAreas: (state) => {
-    return state.areas.filter(area => !area.properties.hidden)
+  filteredKpiKeys: state => {
+    const groups = state.settings.targets
+    const groupsKeys = Object.keys(state.settings.targets)
+    const flatKpiObj = groupsKeys.map(key => groups[key]).reduce((obj, group) => ({ ...obj, ...group }), {})
+    const filteredKpiObj = Object.keys(flatKpiObj).filter(key => flatKpiObj[key].include)
+    return filteredKpiObj
+  },
+  filteredKpiValues: (state, getters) => {
+    const filteredKpiKeys = getters.filteredKpiKeys
+    const kpiValues = getters.kpiValues
+    return filteredKpiKeys.reduce((obj, key) => {
+      return { ...obj, [key]: kpiValues[key] }
+    }, {})
+  },
+  filteredKpiPercentageValues: (state, getters) => {
+    const filteredKpiKeys = getters.filteredKpiKeys
+    const kpiValues = getters.kpiPercentageValues
+    return filteredKpiKeys.reduce((obj, key) => {
+      return { ...obj, [key]: kpiValues[key] }
+    }, {})
+  },
+  kpiValues: (state, getters, rootState, rootgetters) => {
+    const areas = state.areas.filter(area => !area.properties.hidden)
+    const kpiKeys = rootgetters['data/kpiGroups/kpiKeys']
+
+    if (areas.length) {
+      return areas
+        .map(area => area.properties.apiData)
+        .reduce((obj, item) => {
+          if (item) {
+            kpiKeys.forEach(key => {
+              if (!obj[key]) { obj[key] = 0 }
+              obj[key] = obj[key] + (item[key] || 0)
+            })
+          }
+          return obj
+        }, {})
+    } else {
+      return kpiKeys.reduce((obj, key) => ({ ...obj, [key]: 0 }), {})
+    }
+  },
+  kpiTargetValues: (state, getters) => {
+    const targets = state.settings.targets
+    const filteredKeys = getters.kpiValues
+    return Object.keys(targets)
+      .map(group =>
+        Object.keys(targets[group])
+          .reduce((obj, key) => ({ ...obj, [key]: targets[group][key].value || 0 }), {}))
+      .reduce((obj, item) => ({ ...obj, ...item }), {})
+  },
+  kpiPercentageValues:  (state, getters) => {
+    const kpiValues = getters.kpiValues
+    const kpiTargetValues = getters.kpiTargetValues
+    const keys = Object.keys(kpiValues)
+    return keys.reduce((obj, key) => {
+      const value = (kpiValues[key] || 0) / (kpiTargetValues[key] || 1)
+      return {
+        ...obj,
+        [key]: isNaN(value) ? 0 : parseInt(value * 100, 10),
+      }
+    }, {})
   },
 }

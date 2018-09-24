@@ -89,10 +89,6 @@ export default {
 </script>
 
 <style>
-.project-area {
-  overflow-y: scroll;
-}
-
 .project-area__area-size {
   font-size: 20px;
   line-height: 70px;

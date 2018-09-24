@@ -16,22 +16,20 @@ export const actions = {
   async getKpiGroups({ commit, dispatch }, locale) {
     const data = await getData({ locale, slug: 'kpi-groups' })
     data.kpiGroups.forEach(setting => commit('addKpiGroup', setting))
+    dispatch('project/bootstrapSettingsTargets', data.kpiGroups, { root: true })
   },
 }
 
 export const getters = {
-  kpiValues: state => {
-    let values = {}
+  kpiKeys: state => {
+    let keys = []
 
     state.forEach(group => {
       group.kpis.forEach(kpi => {
-        const randomNum = Math.random() * 10
-        const num = Math.round(randomNum)
-
-        values[kpi.key] = num
+        keys.push(kpi.key)
       })
     })
 
-    return values
+    return keys
   },
 }

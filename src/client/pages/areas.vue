@@ -46,30 +46,30 @@
               @submit.prevent="() => onSubmit(feature.id, feature.properties.name)">
 
               <fieldset v-if="appliedMeasure" >
-                <label class="label" for="depth">{{ $t('area_depth') }}(m)</label>
+                <label class="label" for="depth">{{ $t('area_depth') }}</label>
                 <div class="input-range">
                   <input
-                    :value="feature.properties.areaDepth || 0"
+                    :value="feature.properties.areaDepth"
                     min="0"
                     max="10"
                     step="1"
                     type="range"
                     name="depth"
-                    @change="e => updateAreaProperty({ id: feature.id, properties: { areaDepth: e.target.value }})">
-                  <span class="output">{{ feature.properties.areaDepth || 0 }}</span>
+                    @change="e => updateAreaProperties({ features: [feature], properties: { areaDepth: e.target.value }})">
+                  <span class="output">{{ feature.properties.areaDepth }}</span>
                 </div>
 
-                <label class="label" for="inflow">{{ $t('area_inflow') }}(m2)</label>
+                <label class="label" for="inflow">{{ $t('area_inflow') }}</label>
                 <div class="input-range">
                   <input
-                    :value="feature.properties.areaInflow || 0"
+                    :value="feature.properties.areaInflow"
                     min="0"
                     max="10"
                     step="1"
                     type="range"
                     name="inflow"
-                    @change="e => updateAreaProperty({ id: feature.id, properties: { areaInflow: e.target.value }})">
-                  <span class="output">{{ feature.properties.areaInflow || 0 }}</span>
+                    @change="e => updateAreaProperties({ features: [feature], properties: { areaInflow: e.target.value }})">
+                  <span class="output">{{ feature.properties.areaInflow }}</span>
                 </div>
               </fieldset>
 
@@ -107,7 +107,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from "vuex";
+import { mapGetters, mapActions, mapMutations } from "vuex";
 
 export default {
   data() {
@@ -128,6 +128,7 @@ export default {
     },
   },
   methods: {
+    ...mapActions({ updateAreaProperties: 'project/updateAreaProperties' }),
     ...mapMutations({ updateAreaProperty: 'project/updateAreaProperty' }),
     onSubmit(id, currentName) {
       const name = this.areaName === '' ? currentName : this.areaName

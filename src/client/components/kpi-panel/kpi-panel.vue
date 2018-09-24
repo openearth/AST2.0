@@ -4,11 +4,17 @@
       <h4 class="md-title">{{ $t('results') }}</h4>
 
       <div>
-        <md-button class="md-icon-button" @click="displayType = 'numbers'">
+        <md-button
+          :class="{'md-primary': displayType === 'numbers'}"
+          class="md-icon-button"
+          @click="displayType = 'numbers'">
           <md-icon>format_list_numbered_rtl</md-icon>
         </md-button>
 
-        <md-button class="md-icon-button" @click="displayType = 'bars'">
+        <md-button
+          :class="{'md-primary': displayType === 'bars'}"
+          class="md-icon-button"
+          @click="displayType = 'bars'">
           <md-icon>insert_chart_outlined</md-icon>
         </md-button>
       </div>
@@ -20,6 +26,7 @@
       :kpi-group="kpiGroup"
       :type="displayType"
       :kpi-values="kpiValues"
+      :kpi-percentage-values="kpiPercentageValues"
       class="kpi-panel__kpi-group" />
   </section>
 </template>
@@ -38,6 +45,10 @@ export default {
       type: Object,
       required: true,
     },
+    kpiPercentageValues: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {
@@ -50,7 +61,7 @@ export default {
 <style>
 .kpi-panel {
   padding: var(--spacing-default);
-  width: var(--width-small);
+  width: var(--width-medium);
 }
 
 .kpi-panel__header {
