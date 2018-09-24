@@ -19,15 +19,7 @@
       </md-content>
     </div>
 
-    <md-field>
-      <label>Initial Value</label>
-      <md-input
-        ref="myInput"
-        v-model="myInput"
-        placeholder="Text input"
-        @focus="(e) => { return onFocus(e)}"
-      />
-    </md-field>
+    <numeric-input :label="'My input'" @focused="onFocus" />
 
     <transition name="slide-up">
       <vue-touch-keyboard
@@ -43,19 +35,18 @@
 
 <script>
 import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
-import { AppHeader, MapViewer, KpiPanel } from '../components'
+import { AppHeader, MapViewer, KpiPanel, NumericInput } from '../components'
 import { numericLayout, options } from '~/assets/custom-keyboard-options'
 import { mapFields } from 'vuex-map-fields';
 
 export default {
-  components: { AppHeader, MapViewer, KpiPanel },
+  components: { AppHeader, MapViewer, KpiPanel, NumericInput },
   data() {
     return {
       visible: false,
       input: null,
       numericLayout,
       options,
-      myInput: '',
     }
   },
   computed: {
@@ -79,8 +70,9 @@ export default {
       selectionChange: 'selectedAreas/changeSelection',
     }),
 
-    onFocus({ target }) {
+    onFocus(target) {
       const inputToString = target.toString()
+
       this.updateFocusedInput(inputToString)
       this.show(target)
     },
