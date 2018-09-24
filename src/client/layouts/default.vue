@@ -19,49 +19,53 @@
       </md-content>
     </div>
 
-    <numeric-input :label="'My input'" @focused="onFocus" />
+    <numeric-input
+      :label="'My first input'"
+      :value="projectAreaSettings.slope"
+      :on-change="value => setProjectAreaSetting({
+        key: 'slope',
+        value: value,
+      })"
+    />
+    <numeric-input
+      :label="'My second input'"
+      :value="projectAreaSettings.soil"
+      :force-keyboard="true"
+      :on-change="value => setProjectAreaSetting({
+        key: 'soil',
+        value: value,
+      })"
+    />
 
-    <transition name="slide-up">
-      <vue-touch-keyboard
-        v-if="visible"
-        :cancel="hide"
-        :accept="accept"
-        :input="input"
-        :layout="numericLayout"
-        class="custom-keyboard" />
-    </transition>
+    <virtual-keyboard class="layout-default__virtual-keyboard"/>
   </div>
 </template>
 
 <script>
 import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
-import { AppHeader, MapViewer, KpiPanel, NumericInput } from '../components'
-import { numericLayout, options } from '~/assets/custom-keyboard-options'
+import { AppHeader, MapViewer, KpiPanel, NumericInput, VirtualKeyboard } from '../components'
 import { mapFields } from 'vuex-map-fields';
 
 export default {
-  components: { AppHeader, MapViewer, KpiPanel, NumericInput },
+  components: { AppHeader, MapViewer, KpiPanel, NumericInput, VirtualKeyboard },
   data() {
     return {
       visible: false,
       input: null,
-      numericLayout,
-      options,
     }
   },
   computed: {
     ...mapState({
       map: state => state.project.map,
       area: state => state.project.settings.projectArea.area,
+      projectAreaSettings: state => state.project.settings.projectArea,
       focusedInput: state => state.focusedInput.inputElement,
     }),
   },
   methods: {
     ...mapMutations({
       onBaseLayerSwitch: 'project/setBaseLayer',
-      updateFocusedInput: 'focusedInput/updateFocusedInput',
-      removeFocusedInput: 'focusedInput/removeFocusedInput',
-      updateInputValue: 'focusedInput/updateInputValue',
+      setProjectAreaSetting: 'project/setProjectAreaSetting',
     }),
     ...mapActions({
       createArea: 'project/createArea',
@@ -104,6 +108,7 @@ export default {
   flex-direction: column;
   height: 100vh;
   overflow: hidden;
+  position: relative;
 }
 
 .layout-default__content {
@@ -120,22 +125,10 @@ export default {
   flex: 1;
 }
 
-.vue-touch-keyboard.custom-keyboard {
-  width: 450px;
-  padding: var(--spacing-default);
-  background-color: var(--neutral-color--light);
-  box-shadow: var(--shadow-wide-grey);
-}
-
-.custom-keyboard {
+.layout-default__virtual-keyboard {
   position: absolute;
-  bottom: 0;
-  left: calc(50% - 225px);
-  font-family: 'Roboto';
-  z-index: var(--layer--popup);
-}
-
-.custom-keyboard .key {
-  border-color: #ddd;
+  width: 100vw;
+  height: 100vh;
+  z-index: 5;
 }
 </style>
