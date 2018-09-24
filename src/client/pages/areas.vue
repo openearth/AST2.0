@@ -11,7 +11,7 @@
           :key="feature.id"
           class="areas__item">
           <md-card>
-            <div :style="`border-left-color: ${appliedMeasure ? appliedMeasure.color.hex: 'transparent'}`" class="areas__item-content">
+            <div :style="`border-left-color: ${appliedMeasure ? appliedMeasure.color.hex : 'transparent'}`" class="areas__item-content">
               <md-card-header>
                 <md-avatar class="areas__avatar">
                   <img
@@ -84,7 +84,6 @@ export default {
     return {
       visibleAreas: [],
       areaName: '',
-      value: 2,
     }
   },
   computed: {
@@ -110,11 +109,11 @@ export default {
 <style>
 .areas__list {
   list-style: none;
-  padding: 1rem;
+  padding: var(--spacing-default);
 }
 
 .areas__item {
-  margin-bottom: 1rem;
+  margin-bottom: var(--spacing-default);
 }
 
 .areas__item-content {
@@ -129,7 +128,7 @@ export default {
 .areas__choose-wrapper {
   display: flex;
   align-items: center;
-  padding-bottom: 2rem;
+  padding-bottom: var(--spacing-double);
 }
 
 .areas__choose-content {
