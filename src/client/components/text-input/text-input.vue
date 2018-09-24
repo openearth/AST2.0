@@ -4,7 +4,6 @@
     <md-input
       ref="inputElement"
       :value="value"
-      type="number"
       @change="event => onChange(event.target.value)"
       @input="value => onChange(value)"
     />

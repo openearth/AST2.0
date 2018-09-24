@@ -18,84 +18,31 @@
         <kpi-panel />
       </md-content>
     </div>
-
-    <numeric-input
-      :label="'My first input'"
-      :value="projectAreaSettings.slope"
-      :on-change="value => setProjectAreaSetting({
-        key: 'slope',
-        value: value,
-      })"
-    />
-    <numeric-input
-      :label="'My second input'"
-      :value="projectAreaSettings.soil"
-      :force-keyboard="true"
-      :on-change="value => setProjectAreaSetting({
-        key: 'soil',
-        value: value,
-      })"
-    />
-
     <virtual-keyboard class="layout-default__virtual-keyboard"/>
   </div>
 </template>
 
 <script>
 import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
-import { AppHeader, MapViewer, KpiPanel, NumericInput, VirtualKeyboard } from '../components'
+import { AppHeader, MapViewer, KpiPanel, VirtualKeyboard } from '../components'
 import { mapFields } from 'vuex-map-fields';
 
 export default {
-  components: { AppHeader, MapViewer, KpiPanel, NumericInput, VirtualKeyboard },
-  data() {
-    return {
-      visible: false,
-      input: null,
-    }
-  },
+  components: { AppHeader, MapViewer, KpiPanel, VirtualKeyboard },
   computed: {
     ...mapState({
       map: state => state.project.map,
       area: state => state.project.settings.projectArea.area,
-      projectAreaSettings: state => state.project.settings.projectArea,
-      focusedInput: state => state.focusedInput.inputElement,
     }),
   },
   methods: {
-    ...mapMutations({
-      onBaseLayerSwitch: 'project/setBaseLayer',
-      setProjectAreaSetting: 'project/setProjectAreaSetting',
-    }),
+    ...mapMutations({ onBaseLayerSwitch: 'project/setBaseLayer' }),
     ...mapActions({
       createArea: 'project/createArea',
       updateArea: 'project/updateArea',
       deleteArea: 'project/deleteArea',
       selectionChange: 'selectedAreas/changeSelection',
     }),
-
-    onFocus(target) {
-      const inputToString = target.toString()
-
-      this.updateFocusedInput(inputToString)
-      this.show(target)
-    },
-    accept(text) {
-      this.updateInputValue(text)
-      this.removeFocusedInput()
-
-      this.hide()
-    },
-    show(target) {
-      this.input = target
-
-      if (!this.visible) {
-        this.visible = true
-      }
-    },
-    hide() {
-      this.visible = false
-    },
   },
 }
 </script>

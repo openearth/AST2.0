@@ -20,6 +20,7 @@
 
 <script>
   import { mapState, mapMutations } from "vuex";
+  import { numericLayout } from "../../assets/custom-keyboard-options";
 
   export default {
     data: function() {
@@ -47,7 +48,7 @@
         if (newValue) {
           this.visible = true
           this.value = this.inputElementRef.value
-          this.layout = this.inputElementRef.type === 'number' ? 'numeric' : 'normal'
+          this.layout = this.inputElementRef.type === 'number' ? numericLayout : 'normal'
         }
       },
     },

@@ -3,7 +3,6 @@ import turf from '@turf/area'
 import MapEventBus, { UPDATE_FEATURE_PROPERTY } from '../lib/map-event-bus'
 
 export const state = () => ({
-  // focusedInput: null,
   areas: [],
   settings: {
     area: {},
@@ -83,12 +82,6 @@ export const mutations = {
   toggleProjectAreaNestedSetting(state, { key, option, value }) {
     state.settings.projectArea[key][option] = !state.settings.projectArea[key][option]
   },
-  // updateFocusedInput(state, { target }) {
-  //   state.focusedInput = target
-  // },
-  // removeFocusedInput(state) {
-  //   state.focusedInput = null
-  // },
 }
 
 export const actions = {
