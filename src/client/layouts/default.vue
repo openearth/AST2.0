@@ -15,7 +15,10 @@
           @delete="deleteArea"
           @selectionchange="selectionChange"
           @baseLayerSwitch="onBaseLayerSwitch"/>
-        <kpi-panel />
+        <kpi-panel
+          :kpis="filteredKpiGroups"
+          :kpi-values="filteredKpiValues"
+          :kpi-percentage-values="filteredKpiPercentageValues"/>
       </md-content>
     </div>
     <virtual-keyboard class="layout-default__virtual-keyboard"/>
@@ -34,6 +37,7 @@ export default {
       map: state => state.project.map,
       area: state => state.project.settings.projectArea.area,
     }),
+    ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups']),
   },
   methods: {
     ...mapMutations({ onBaseLayerSwitch: 'project/setBaseLayer' }),

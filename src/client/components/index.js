@@ -1,5 +1,7 @@
 export { default as AppHeader } from './app-header'
 export { default as FixedRatio } from './fixed-ratio'
+export { default as InputRange } from './input-range'
+export { default as KpiGroup } from './kpi-group'
 export { default as KpiPanel } from './kpi-panel'
 export { default as LanguageSelector } from './language-selector'
 export { default as LazyLoad } from './lazy-load'
