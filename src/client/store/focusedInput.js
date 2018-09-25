@@ -25,3 +25,10 @@ export const mutations = {
   },
 }
 
+export const getters = {
+  inputtedValue(state) {
+    return document.querySelector(state.inputElement)
+      ? document.querySelector(state.inputElement).value
+      : ''
+  },
+}
