@@ -256,7 +256,7 @@ export const getters = {
       const value = (kpiValues[key] || 0) / (kpiTargetValues[key] || 0)
       return {
         ...obj,
-        [key]: isNaN(value) ? 0 : parseInt(value * 100, 10),
+        [key]: isNaN(value) ? 0 : parseFloat(value * 100, 10),
       }
     }, {})
   },

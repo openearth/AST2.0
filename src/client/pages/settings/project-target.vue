@@ -34,13 +34,13 @@
         <md-table-cell width="60%">
           <numeric-input
             :label="kpi.title"
-            :value="targets[group.key][kpi.key].value"
-            hide-label
-            @change="event => setTarget({
+            :value="String(targets[group.key][kpi.key].value || '')"
+            :on-change="value => setTarget({
               group: group.key,
               key: kpi.key,
-              value: { value: parseInt(event.target.value, 10) },
+              value: { value },
             })"
+            hide-label
           >
             <span class="md-suffix">
               {{ unit(kpi.unit) }}

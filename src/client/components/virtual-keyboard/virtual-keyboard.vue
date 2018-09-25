@@ -27,10 +27,10 @@
     data: function() {
       return {
         value: '',
-        layout: "normal",
+        layout: textLayout,
         input: null,
         options: {
-          useKbEvents: true,
+          useKbEvents: false,
           preventClickEvent: false,
         },
       };
@@ -49,7 +49,7 @@
         if (newValue) {
           this.visible = true
           this.value = this.inputElementRef.value
-          this.layout = this.inputElementRef.type === 'number' ? numericLayout : textLayout
+          this.layout = this.inputElementRef.dataset.type === 'number' ? numericLayout : textLayout
         }
       },
     },

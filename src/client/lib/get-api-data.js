@@ -33,12 +33,12 @@ export async function getApiDataForFeature(feature, projectArea, currentReturnTi
   } = feature.properties
 
   const measureArea = area
-  const measureId = parseInt(measure, 10)
-  const inflowArea = area *  parseInt(areaInflow, 10)
-  const inflow = area * parseInt(areaInflow, 10)
+  const measureId = parseFloat(measure, 10)
+  const inflowArea = area *  parseFloat(areaInflow, 10)
+  const inflow = area * parseFloat(areaInflow, 10)
 
-  const measureDepth = parseInt(areaDepth, 10)
-  const depth = parseInt(areaDepth, 10)
+  const measureDepth = parseFloat(areaDepth, 10)
+  const depth = parseFloat(areaDepth, 10)
 
   const id = measureId
   const returnTime = currentReturnTime

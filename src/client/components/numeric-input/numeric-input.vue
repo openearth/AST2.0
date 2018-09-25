@@ -1,13 +1,14 @@
 <template>
-  <md-field class="numeric-input">
+  <md-field :class="{'md-invalid': error}" class="numeric-input">
     <label v-if="!hideLabel">{{ label }}</label>
     <md-input
       ref="inputElement"
       :value="value"
-      type="number"
-      @change="event => onChange(event.target.value)"
-      @input="value => onChange(value)"
+      data-type="number"
+      @change="event => validateNumber(event.target.value)"
+      @input="value => validateNumber(value)"
     />
+    <span class="md-error">{{ $t('input_should_be_number') }}</span>
 
     <slot />
 
@@ -51,6 +52,7 @@ export default {
       default: false,
     },
   },
+  data: () => ({ error: false }),
   methods: {
     ...mapMutations({
       setFocusedInput: 'focusedInput/setFocusedInput',
@@ -62,6 +64,18 @@ export default {
         label: this.label,
       })
       this.$refs.inputElement.$el.focus()
+    },
+    validateNumber(input) {
+      const parsedFloat = parseFloat(input, 10)
+      const inputIsNaN = isNaN(parsedFloat)
+
+      if (!inputIsNaN) {
+        this.error = false
+      } else {
+        this.error = true
+      }
+
+      this.onChange(/\.$/.test(input) ? input : parseFloat(input, 10))
     },
   },
 }

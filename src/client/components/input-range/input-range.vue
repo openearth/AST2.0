@@ -12,7 +12,7 @@
       <numeric-input
         :label="label"
         :value="stringValue"
-        :on-change="value => $emit('change', parseInt(value, 10))"
+        :on-change="value => $emit('change', isNaN(value) ? null : value)"
         class="input-range__number"
         force-keyboard
         hide-label
@@ -32,7 +32,7 @@ export default {
       default: '',
     },
     value: {
-      type: Number,
+      type: [Number, String],
       default: 0,
     },
     min: {
@@ -65,7 +65,7 @@ export default {
       )
     },
     stringValue () {
-      return String(this.value)
+      return String(this.value === null ? '' : this.value)
     },
   },
 }

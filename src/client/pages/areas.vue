@@ -54,7 +54,7 @@
                   label="Measure Depth"
                   min="0"
                   max="10"
-                  @change="value => updateAreaProperties({ features: [feature], properties: { areaDepth: parseInt(value, 10) }})"/>
+                  @change="value => updateAreaProperties({ features: [feature], properties: { areaDepth: value }})"/>
 
                 <input-range
                   v-if="appliedMeasure"
@@ -62,7 +62,7 @@
                   label="Inflow Area"
                   min="0"
                   max="10"
-                  @change="value => updateAreaProperties({ features: [feature], properties: { areaInflow: parseInt(value) }})"/>
+                  @change="value => updateAreaProperties({ features: [feature], properties: { areaInflow: value }})"/>
               </md-card-content>
             </div>
           </md-card>
