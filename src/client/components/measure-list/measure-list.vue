@@ -3,10 +3,11 @@
     <md-toolbar md-elevation="0">
       <div class="md-toolbar-row">
         <div class="md-toolbar-section-start">
-          <md-field md-clearable>
-            <label>Search</label>
-            <md-input v-model="searchValue"/>
-          </md-field>
+          <text-input
+            :value="searchValue"
+            :on-change="value => searchValue = value"
+            md-clearable
+            label="search" />
         </div>
 
         <div class="md-toolbar-section-end">
@@ -38,8 +39,9 @@
 
 <script>
 import { MeasureCard } from "..";
+import TextInput from '../text-input'
 export default {
-  components: { MeasureCard },
+  components: { MeasureCard, TextInput },
   props: {
     measures: {
       type: Array,

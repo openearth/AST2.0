@@ -32,19 +32,20 @@
           />
         </md-table-cell>
         <md-table-cell width="60%">
-          <md-field>
-            <md-input
-              :value="targets[group.key][kpi.key].value"
-              type="number"
-              @change="event => setTarget({
-                group: group.key,
-                key: kpi.key,
-                value: { value: parseInt(event.target.value, 10) },
-            })"/>
+          <numeric-input
+            :label="kpi.title"
+            :value="String(targets[group.key][kpi.key].value || '')"
+            :on-change="value => setTarget({
+              group: group.key,
+              key: kpi.key,
+              value: { value },
+            })"
+            hide-label
+          >
             <span class="md-suffix">
               {{ unit(kpi.unit) }}
             </span>
-          </md-field>
+          </numeric-input>
         </md-table-cell>
       </md-table-row>
     </md-table>
@@ -52,8 +53,10 @@
 </template>
 
 <script>
+import { NumericInput } from "../../components";
 import { mapState, mapMutations, mapGetters } from "vuex";
 export default {
+  components: { NumericInput },
   computed: {
     ...mapState('data', ['kpiGroups']),
     ...mapState({

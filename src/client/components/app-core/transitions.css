@@ -1,0 +1,13 @@
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: all .4s ease;
+}
+
+.slide-up-leave-active {
+  transition: all .4s ease;
+}
+
+.slide-up-enter,
+.slide-up-leave-to {
+  transform: translatey(100%);
+}
