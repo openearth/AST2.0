@@ -63,9 +63,6 @@ export default {
   },
   methods: {
     ...mapActions({ updateAreaProperties: 'project/updateAreaProperties' }),
-    onMeasureToggle(id) {
-      this.$store.dispatch('project/toggleMeasureVisibility', id)
-    },
   },
 }
 </script>

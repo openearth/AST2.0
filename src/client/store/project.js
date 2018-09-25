@@ -2,7 +2,6 @@ import Vue from 'vue'
 import turf from '@turf/area'
 import MapEventBus, { UPDATE_FEATURE_PROPERTY } from '../lib/map-event-bus'
 import { getApiDataForFeature } from "../lib/get-api-data";
-import { isString } from 'util';
 
 export const state = () => ({
   areas: [],
@@ -141,9 +140,9 @@ export const actions = {
     features.forEach(({ id }) => {
       const { area } = state.settings
 
-    if (area.id === id) {
-      return commit('deleteProjectArea')
-    }
+      if (area.id === id) {
+        return commit('deleteProjectArea')
+      }
 
       commit('deleteArea', id)
     })
@@ -181,9 +180,6 @@ export const getters = {
         }
 
         obj[measureId].areas.push(area)
-        // obj[measureId].someAreasAreShown = obj[measureId].areas.reduce((boolean, area) => {
-        //   return boolean || !area.properties.hidden
-        // }, false)
         obj[measureId].someAreasAreShown = obj[measureId].areas.some(area => !area.properties.hidden)
       }
 
