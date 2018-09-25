@@ -6,7 +6,6 @@ import { isString } from 'util';
 
 export const state = () => ({
   areas: [],
-  hiddenMeasures: [],
   settings: {
     area: {},
     general: {
@@ -57,12 +56,6 @@ export const mutations = {
   },
   addArea(state, value) {
     state.areas.push(value)
-  },
-  hideMeasure(state, value) {
-    state.hiddenMeasures.push(value)
-  },
-  showMeasure(state, value) {
-    state.hiddenMeasures = state.hiddenMeasures.filter(measureId => measureId !== value)
   },
   updateArea(state, value) {
     const updatedArea = (state.areas.find(area => area.id === value.id))
@@ -155,26 +148,6 @@ export const actions = {
       commit('deleteArea', id)
     })
   },
-  toggleMeasureVisibility({ state, commit, dispatch }, id) {
-    if (state.hiddenMeasures.indexOf(id) === -1) {
-      commit('hideMeasure', id)
-    } else {
-      commit('showMeasure', id)
-    }
-
-    return dispatch('updateAreasByMeasureVisibility', id)
-  },
-  updateAreasByMeasureVisibility({ state, dispatch }, id) {
-    const updatedAreas = state.areas.filter(area => area.properties.measure === id)
-    const isHidden = state.hiddenMeasures.indexOf(id) !== -1
-
-    return dispatch('updateAreaProperties', {
-      features: updatedAreas,
-      properties: {
-        hidden: isHidden,
-      },
-    })
-  },
   bootstrapSettingsProjectArea({ state, commit }, settings) {
     settings.forEach(setting => {
       const value = !setting.multiple
@@ -208,6 +181,10 @@ export const getters = {
         }
 
         obj[measureId].areas.push(area)
+        // obj[measureId].someAreasAreShown = obj[measureId].areas.reduce((boolean, area) => {
+        //   return boolean || !area.properties.hidden
+        // }, false)
+        obj[measureId].someAreasAreShown = obj[measureId].areas.some(area => !area.properties.hidden)
       }
 
       return obj

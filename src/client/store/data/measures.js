@@ -43,8 +43,4 @@ export const getters = {
   measureById: state => id => {
     return state.find(measure => measure.measureId === id)
   },
-  visibleMeasures: (state, getters, rootState) => {
-    const hiddenMeasures = rootState.project.hiddenMeasures
-    return state.filter(measure => hiddenMeasures.indexOf(measure.measureId) === -1)
-  },
 }
