@@ -1,7 +1,7 @@
 <template>
   <md-toolbar class="md-primary">
     <div class="md-toolbar-section-start">
-      <h2 class="md-title">AST 2.0</h2>
+      <h2 class="md-title">{{ $t('ast') }}</h2>
     </div>
 
     <div class="md-toolbar-section-end">

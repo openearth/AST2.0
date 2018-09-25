@@ -1,5 +1,9 @@
 <template>
-  <md-drawer md-permanent="clipped">
+  <md-drawer md-permanent="clipped" class="measures">
+    <md-toolbar md-elevation="0">
+      <span class="md-title">{{ $t('measures') }}</span>
+    </md-toolbar>
+
     <measure-list
       :measures="filteredMeasuresList"
       @choose="onChooseMeasure"
@@ -10,6 +14,7 @@
 <script>
 import { mapState, mapGetters, mapActions } from "vuex"
 import { MeasureCard, SearchInput, MeasureList } from '~/components'
+import MapEventBus, { REDRAW } from "../lib/map-event-bus";
 
 export default {
   components: { MeasureCard, SearchInput, MeasureList },
@@ -36,6 +41,9 @@ export default {
       return this.measuresList.filter(item => item.title.toLowerCase().indexOf(this.searchValue.toLowerCase()) !== -1)
     },
   },
+  mounted() {
+    MapEventBus.$emit(REDRAW)
+  },
   methods: {
     sortItems () {
       this.isAlphabeticallyOrdered = !this.isAlphabeticallyOrdered
@@ -59,3 +67,9 @@ export default {
   },
 }
 </script>
+
+<style>
+.measures {
+  width: var(--width-extra-large)
+}
+</style>

@@ -1,5 +1,8 @@
 <template>
   <md-drawer md-permanent="clipped">
+    <md-toolbar md-elevation="0">
+      <span class="md-title">{{ $t('your_measures') }}</span>
+    </md-toolbar>
     <md-list>
       <div
         v-for="({measure, areas}, index) in measureCollection"
@@ -32,6 +35,7 @@
 <script>
 import { mapState, mapGetters, mapActions } from "vuex"
 import { MeasureCard, SearchInput } from '~/components'
+import MapEventBus, { REDRAW } from "../lib/map-event-bus";
 
 export default {
   components: { MeasureCard, SearchInput },
@@ -45,10 +49,10 @@ export default {
     ...mapState('data', ['measures']),
     ...mapState('project', ['areas', 'hiddenMeasures']),
     ...mapGetters('selectedAreas', { selectedFeatures: 'features' }),
-    ...mapGetters('project', ['areasByMeasure']),
-    measureCollection() {
-      return Object.keys(this.areasByMeasure).map(key => this.areasByMeasure[key])
-    },
+    ...mapGetters('project', ['areasByMeasure', 'measureCollection']),
+  },
+  mounted() {
+    MapEventBus.$emit(REDRAW)
   },
   methods: {
     onMeasureToggle(id) {

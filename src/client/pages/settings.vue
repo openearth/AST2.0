@@ -25,8 +25,13 @@
 
 <script>
 import { mapState } from "vuex";
+import MapEventBus, { REDRAW } from "../lib/map-event-bus"
+
 export default {
   computed: { ...mapState('i18n', ['locale']) },
+  mounted() {
+    MapEventBus.$emit(REDRAW)
+  },
 }
 </script>
 

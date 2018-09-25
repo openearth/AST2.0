@@ -8,7 +8,7 @@
     </md-card-media>
 
     <md-card-content :style="`border-top-color: ${measure.color.hex}`" class="measure-card__content">
-      <div class="md-title">{{ measure.title }}</div>
+      <div class="md-subheading">{{ measure.title }}</div>
       <div class="md-subhead">{{ scoresString }}</div>
     </md-card-content>
 
@@ -62,6 +62,6 @@ export default {
 
 .measure-card__img {
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 </style>
