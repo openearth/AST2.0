@@ -21,29 +21,17 @@
           :kpi-percentage-values="filteredKpiPercentageValues"/>
       </md-content>
     </div>
-    <!-- <section class="layout-default__project">
-      <nuxt class="layout-default__page"/>
-      <map-viewer
-        :active-base-layer="map.activeBaseLayer"
-        :base-layers="map.baseLayers"
-        class="layout-default__map"
-        @create="createArea"
-        @update="updateArea"
-        @delete="deleteArea"
-        @selectionchange="selectionChange"
-        @baseLayerSwitch="onBaseLayerSwitch"/>
-      <kpi-panel />
-    </section> -->
-
+    <virtual-keyboard class="layout-default__virtual-keyboard"/>
   </div>
 </template>
 
 <script>
 import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
-import { AppHeader, MapViewer, KpiPanel } from '../components'
+import { AppHeader, MapViewer, KpiPanel, VirtualKeyboard } from '../components'
+import { mapFields } from 'vuex-map-fields';
 
 export default {
-  components: { AppHeader, MapViewer, KpiPanel },
+  components: { AppHeader, MapViewer, KpiPanel, VirtualKeyboard },
   computed: {
     ...mapState({
       map: state => state.project.map,
@@ -70,6 +58,8 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  overflow: hidden;
+  position: relative;
 }
 
 .layout-default__content {
@@ -84,5 +74,12 @@ export default {
 
 .layout-default__map {
   flex: 1;
+}
+
+.layout-default__virtual-keyboard {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  z-index: 5;
 }
 </style>

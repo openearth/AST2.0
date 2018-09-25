@@ -7,6 +7,10 @@ html {
   box-sizing: border-box;
 }
 
+body {
+  overflow: hidden;
+}
+
 figure {
   margin: 0 auto;
 }

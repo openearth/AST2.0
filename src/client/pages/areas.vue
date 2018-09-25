@@ -25,12 +25,11 @@
               </md-card-header>
 
               <md-card-content class="areass__card-content">
-                <md-field>
-                  <label>{{ $t('area_name') }}</label>
-                  <md-input
-                    :value="feature.properties.name"
-                    @input="name => updateAreaProperty({ id: feature.id, properties: { name }})"/>
-                </md-field>
+                <text-input
+                  :label="$t('area_name')"
+                  :value="feature.properties.name"
+                  :on-change="name => updateAreaProperty({ id: feature.id, properties: { name }})"
+                />
 
                 <span class="md-body-2">{{ $t('measure') }}</span>
                 <div class="areas__choose-wrapper">
@@ -55,7 +54,7 @@
                   label="Measure Depth"
                   min="0"
                   max="10"
-                  @change="value => updateAreaProperties({ features: [feature], properties: { areaDepth: parseInt(value, 10) }})"/>
+                  @change="value => updateAreaProperties({ features: [feature], properties: { areaDepth: value }})"/>
 
                 <input-range
                   v-if="appliedMeasure"
@@ -63,7 +62,7 @@
                   label="Inflow Area"
                   min="0"
                   max="10"
-                  @change="value => updateAreaProperties({ features: [feature], properties: { areaInflow: parseInt(value) }})"/>
+                  @change="value => updateAreaProperties({ features: [feature], properties: { areaInflow: value }})"/>
               </md-card-content>
             </div>
           </md-card>
@@ -76,10 +75,11 @@
 <script>
 import { mapGetters, mapActions, mapMutations, mapState } from "vuex";
 import MapEventBus, { REDRAW } from "../lib/map-event-bus";
-import { InputRange } from '../components'
+import InputRange from '../components/input-range'
+import TextInput from '../components/text-input'
 
 export default {
-  components: { InputRange },
+  components: { InputRange, TextInput },
   data() {
     return {
       visibleAreas: [],
