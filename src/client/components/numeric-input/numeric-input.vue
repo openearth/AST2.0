@@ -69,13 +69,12 @@ export default {
       const parsedFloat = parseFloat(input, 10)
       const inputIsNaN = isNaN(parsedFloat)
 
-      if (!inputIsNaN) {
-        this.error = false
-      } else {
+      if (inputIsNaN) {
         this.error = true
+        } else {
+        this.error = false
       }
-
-      this.onChange(/\.$/.test(input) ? input : parseFloat(input, 10))
+      this.onChange(input)
     },
   },
 }
