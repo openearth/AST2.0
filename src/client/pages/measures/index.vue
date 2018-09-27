@@ -1,21 +1,20 @@
 <template>
   <md-drawer md-permanent="clipped" class="measures">
-    <!-- <md-toolbar md-elevation="0">
+    <md-toolbar md-elevation="0">
       <span class="md-title">{{ $t('measures') }}</span>
     </md-toolbar>
 
     <measure-list
       :measures="filteredMeasuresList"
       @choose="onChooseMeasure"
-    /> -->
-    <nuxt-child />
+    />
   </md-drawer>
 </template>
 
 <script>
 import { mapState, mapGetters, mapActions } from "vuex"
 import { MeasureCard, SearchInput, MeasureList } from '~/components'
-import MapEventBus, { REDRAW } from "../lib/map-event-bus";
+import MapEventBus, { REDRAW } from "~/lib/map-event-bus";
 
 export default {
   components: { MeasureCard, SearchInput, MeasureList },

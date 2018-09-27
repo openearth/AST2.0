@@ -13,7 +13,7 @@
     </md-card-content>
 
     <md-card-actions>
-      <md-button>Learn More</md-button>
+      <md-button @click="$router.push(`/${$i18n.locale}/measures/${measure.slug}`)">Learn More</md-button>
       <md-button class="md-primary" @click="chooseMeasure">Choose</md-button>
     </md-card-actions>
   </md-card>

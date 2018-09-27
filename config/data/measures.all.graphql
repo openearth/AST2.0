@@ -13,6 +13,7 @@ query ($locale: SiteLocale) {
       width,
       height
     },
+    summary,
     images {
       title,
       image {
@@ -22,5 +23,6 @@ query ($locale: SiteLocale) {
         height
       },
     }
+    content,
   }
 }
