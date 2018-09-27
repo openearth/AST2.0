@@ -41,7 +41,6 @@ export default {
     },
   },
   methods: {
-    valueTimes10(val) { return val * 10 },
     kpiByKey(key) { return this.kpiValues[key] },
     percentageKpiByKey(key) { return this.kpiPercentageValues[key] },
     unit(...args) {

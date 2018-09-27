@@ -63,14 +63,14 @@ export const mutations = {
   updateAreaProperty(state, { id, properties }) {
     const areaToUpdate = (state.areas.find(area => area.id === id))
     const newProperties = { ...areaToUpdate.properties, ...properties }
-    Vue.set(areaToUpdate, 'properties', newProperties)
-    Object.keys(properties).forEach(key => {
-      MapEventBus.$emit(UPDATE_FEATURE_PROPERTY, {
-        featureId: id,
-        key,
-        value: properties[key],
+      Vue.set(areaToUpdate, 'properties', newProperties)
+      Object.keys(properties).forEach(key => {
+        MapEventBus.$emit(UPDATE_FEATURE_PROPERTY, {
+          featureId: id,
+          key,
+          value: properties[key],
+        })
       })
-    })
   },
   deleteArea(state, value) {
     state.areas = state.areas.filter(area => area.id !== value)
@@ -106,7 +106,7 @@ export const actions = {
       commit('addArea', feature)
 
       const areaNumber = state.areas.length
-      commit('updateAreaProperty', { id: feature.id, properties: { area, name: `Area-${areaNumber}` } })
+      commit('updateAreaProperty', { id: feature.id, properties: { area, name: `Area-${areaNumber}`, hidden: false } })
     })
   },
   updateArea({ state, commit, dispatch }, features) {
@@ -140,9 +140,9 @@ export const actions = {
     features.forEach(({ id }) => {
       const { area } = state.settings
 
-    if (area.id === id) {
-      return commit('deleteProjectArea')
-    }
+      if (area.id === id) {
+        return commit('deleteProjectArea')
+      }
 
       commit('deleteArea', id)
     })
@@ -180,6 +180,7 @@ export const getters = {
         }
 
         obj[measureId].areas.push(area)
+        obj[measureId].someAreasAreShown = obj[measureId].areas.some(area => !area.properties.hidden)
       }
 
       return obj
@@ -220,7 +221,7 @@ export const getters = {
     }, {})
   },
   kpiValues: (state, getters, rootState, rootgetters) => {
-    const areas = state.areas
+    const areas = state.areas.filter(area => !area.properties.hidden)
     const kpiKeys = rootgetters['data/kpiGroups/kpiKeys']
 
     if (areas.length) {
@@ -253,7 +254,7 @@ export const getters = {
     const kpiTargetValues = getters.kpiTargetValues
     const keys = Object.keys(kpiValues)
     return keys.reduce((obj, key) => {
-      const value = (kpiValues[key] || 0) / (kpiTargetValues[key] || 0)
+      const value = (kpiValues[key] || 0) / (kpiTargetValues[key] || 1)
       return {
         ...obj,
         [key]: isNaN(value) ? 0 : parseFloat(value * 100, 10),
