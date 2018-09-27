@@ -63,6 +63,7 @@ export default {
 }
 
 .layout-default__content {
+  overflow-y: scroll;
   display: flex;
   flex: 1;
 }
