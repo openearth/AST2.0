@@ -1,5 +1,5 @@
 <template>
-  <md-drawer md-permanent="clipped" class="measures">
+  <div>
     <md-toolbar md-elevation="0">
       <span class="md-title">{{ $t('measures') }}</span>
     </md-toolbar>
@@ -8,7 +8,7 @@
       :measures="filteredMeasuresList"
       @choose="onChooseMeasure"
     />
-  </md-drawer>
+  </div>
 </template>
 
 <script>
@@ -70,6 +70,6 @@ export default {
 
 <style>
 .measures {
-  width: var(--width-extra-large)
+  width: var(--width-large)
 }
 </style>

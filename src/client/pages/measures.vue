@@ -71,6 +71,6 @@ export default {
 
 <style>
 .measures {
-  width: var(--width-extra-large)
+  width: var(--width-large)
 }
 </style>
