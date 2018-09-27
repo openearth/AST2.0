@@ -245,7 +245,7 @@ export const getters = {
     return Object.keys(targets)
       .map(group =>
         Object.keys(targets[group])
-          .reduce((obj, key) => ({ ...obj, [key]: targets[group][key].value || 0 }), {}))
+          .reduce((obj, key) => ({ ...obj, [key]: parseFloat(targets[group][key].value, 10) || 0 }), {}))
       .reduce((obj, item) => ({ ...obj, ...item }), {})
   },
   kpiPercentageValues:  (state, getters) => {
