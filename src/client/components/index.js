@@ -1,5 +1,6 @@
 export { default as AppHeader } from './app-header'
 export { default as FixedRatio } from './fixed-ratio'
+export { default as ImageCarousel } from './image-carousel'
 export { default as InputRange } from './input-range'
 export { default as KpiGroup } from './kpi-group'
 export { default as KpiPanel } from './kpi-panel'

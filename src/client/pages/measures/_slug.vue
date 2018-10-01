@@ -5,13 +5,14 @@
       <md-button
         :disabled="!selectedFeatures.length"
         class="md-raised md-primary"
-        @click="() => { updateAreaProperties({ features: selectedFeatures, properties: { measure: measure.measureId, color: measure.color.hex }})}">{{ $t('choose') }}</md-button>
+        @click="() => onChoose(measure.measureId, measure.color.hex)">{{ $t('choose') }}</md-button>
     </div>
 
     <header class="measure__header">
       <div class="measure__image">
         <img :src="measure.image.url">
       </div>
+
       <div>
         <h2 class="md-title measure__title">{{ measure.title }}</h2>
         <md-chip
@@ -23,20 +24,7 @@
 
     <rich-text :text="measure.summary" />
 
-    <carousel
-      :per-page="1"
-      class="measure__carousel">
-      <slide
-        v-for="(image, index) in measure.images"
-        :key="index"
-        :data-index="index"
-        :data-name="`image-${index}`">
-
-        <fixed-ratio :height="2" :width="3">
-          <img :src="image.image.url" class="md-image" >
-        </fixed-ratio>
-      </slide>
-    </carousel>
+    <image-carousel :images="measure.images"/>
 
     <rich-text :text="measure.content" />
   </div>
@@ -44,11 +32,10 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex"
-import { RichText, FixedRatio } from '~/components'
-import { Carousel, Slide } from 'vue-carousel'
+import { RichText, FixedRatio, ImageCarousel } from '~/components'
 
 export default {
-  components: { RichText, FixedRatio, Carousel, Slide },
+  components: { RichText, FixedRatio, ImageCarousel },
   asyncData ({ params }) {
     return { slug: params.slug }
   },
@@ -59,6 +46,15 @@ export default {
   },
   methods: {
     ...mapActions({ updateAreaProperties: 'project/updateAreaProperties' }),
+    onChoose(id, color) {
+      return this.updateAreaProperties({
+        features: this.selectedFeatures,
+        properties: {
+          measure: id,
+          color,
+        },
+      })
+    },
   },
 }
 </script>
@@ -88,16 +84,6 @@ export default {
 .measure__image {
   width: 100px;
   margin-right: var(--spacing-double);
-}
-
-.measure__carousel {
-  margin-bottom: var(--spacing-double);
-}
-
-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 
 .measure__tag:not(:last-child) {
