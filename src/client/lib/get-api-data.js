@@ -13,7 +13,7 @@ export function getApiData(uri, body) {
 
 export function getRealApiData(uri, body) {
   return fetch(
-    `http://tl-ng045.xtr.deltares.nl/api/${uri}`,
+    `https://tl-ng045.xtr.deltares.nl/api/${uri}`,
     {
       method: 'POST',
       headers: {
