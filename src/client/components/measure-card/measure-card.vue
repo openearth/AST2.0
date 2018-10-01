@@ -13,8 +13,8 @@
     </md-card-content>
 
     <md-card-actions>
-      <md-button @click="$router.push(`/${$i18n.locale}/measures/${measure.slug}`)">Learn More</md-button>
-      <md-button class="md-primary" @click="chooseMeasure">Choose</md-button>
+      <md-button :to="`/${$i18n.locale}/measures/${measure.slug}`">{{ $t('learn_more') }}</md-button>
+      <md-button class="md-primary" @click="chooseMeasure">{{ $t('choose') }}</md-button>
     </md-card-actions>
   </md-card>
 </template>
