@@ -14,13 +14,16 @@
     </div>
 
     <div class="new-project__action-wrapper">
-      <md-button :to="`/${locale}/settings/general/`" class="md-raised md-primary">{{ $t('next') }}</md-button>
+      <md-button
+        :to="`/${locale}/settings/general/`"
+        :disabled="!createdProjectArea"
+        class="md-raised md-primary">{{ $t('next') }}</md-button>
     </div>
   </md-drawer>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import MapEventBus, { REDRAW } from "../lib/map-event-bus"
 
 export default {
@@ -29,6 +32,7 @@ export default {
   computed: {
     ...mapState('i18n', ['locale']),
     ...mapState('project', ['settings']),
+    ...mapGetters('flow', ['createdProjectArea']),
   },
   mounted() {
     MapEventBus.$emit(REDRAW)

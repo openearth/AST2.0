@@ -11,6 +11,7 @@
         :md-label="$t('project_area')"/>
       <md-tab
         id="tab-project-target"
+        :md-disabled="!filledInRequiredProjectAreaSettings"
         :to="`/${locale}/settings/project-target`"
         :md-label="$t('project_target')"/>
     </md-tabs>
@@ -18,18 +19,25 @@
     <nuxt-child class="settings-view__content"/>
 
     <div class="settings-view__action-wrapper">
-      <md-button :to="`/${locale}/project`" class="md-primary md-raised">{{ $t('next') }}</md-button>
+      <md-button
+        :to="`/${locale}/project`"
+        :disabled="!filledInTargets"
+        class="md-primary md-raised">{{ $t('next') }}</md-button>
     </div>
   </md-drawer>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import MapEventBus, { REDRAW } from "../lib/map-event-bus"
 
 export default {
-  computed: { ...mapState('i18n', ['locale']) },
   layout: 'settings',
+  middleware: ['settings-root'],
+  computed: {
+    ...mapState('i18n', ['locale']),
+    ...mapGetters('flow', ['filledInRequiredProjectAreaSettings', 'filledInTargets']),
+  },
   mounted() {
     MapEventBus.$emit(REDRAW)
   },

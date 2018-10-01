@@ -164,7 +164,7 @@ export const actions = {
   },
   bootstrapSettingsTargets({ state, commit }, targets) {
     targets.forEach(({ key, kpis }) => {
-      const value = kpis.reduce((obj, kpi) => ({ ...obj, [kpi.key]: { include: true, value: null } }), {})
+      const value = kpis.reduce((obj, kpi) => ({ ...obj, [kpi.key]: { include: true, value: "0" } }), {})
       commit('setTargets', { key, value })
     })
   },
