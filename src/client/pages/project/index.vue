@@ -42,7 +42,7 @@
 <script>
 import { mapState, mapGetters, mapActions } from "vuex"
 import { MeasureCard, SearchInput } from '~/components'
-import MapEventBus, { REDRAW } from "../lib/map-event-bus";
+import MapEventBus, { REDRAW } from "../../lib/map-event-bus";
 
 export default {
   components: { MeasureCard, SearchInput },

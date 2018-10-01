@@ -14,7 +14,7 @@
 <script>
 import { mapState, mapGetters, mapActions } from "vuex"
 import { MeasureCard, SearchInput, MeasureList } from '~/components'
-import MapEventBus, { REDRAW } from "../lib/map-event-bus";
+import MapEventBus, { REDRAW } from "../../lib/map-event-bus";
 
 export default {
   components: { MeasureCard, SearchInput, MeasureList },
@@ -62,7 +62,7 @@ export default {
           areaDepth: 1,
         },
       })
-      this.$router.push(`/${this.$i18n.locale}/areas`)
+      this.$router.push(`/${this.$i18n.locale}/project/areas`)
     },
   },
 }

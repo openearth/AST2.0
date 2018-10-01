@@ -36,11 +36,11 @@
                   <div class="areas__choose-content">
                     <template v-if="appliedMeasure">
                       <p>{{ appliedMeasure.title }}</p>
-                      <md-button :to="`/${locale}/measures`" class="md-primary">{{ $t('change_measure') }}</md-button>
+                      <md-button :to="`/${locale}/project/measures`" class="md-primary">{{ $t('change_measure') }}</md-button>
                     </template>
 
                     <template v-else>
-                      <md-button :to="`/${locale}/measures`" class="md-raised md-primary">{{ $t('choose_measure') }}</md-button>
+                      <md-button :to="`/${locale}/project/measures`" class="md-raised md-primary">{{ $t('choose_measure') }}</md-button>
                     </template>
                   </div>
                   <div class="areas__choose-icon">
@@ -74,9 +74,9 @@
 
 <script>
 import { mapGetters, mapActions, mapMutations, mapState } from "vuex";
-import MapEventBus, { REDRAW } from "../lib/map-event-bus";
-import InputRange from '../components/input-range'
-import TextInput from '../components/text-input'
+import MapEventBus, { REDRAW } from "../../lib/map-event-bus";
+import InputRange from '../../components/input-range'
+import TextInput from '../../components/text-input'
 
 export default {
   components: { InputRange, TextInput },

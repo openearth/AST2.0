@@ -6,7 +6,7 @@
 
     <div class="md-toolbar-section-end">
       <md-button
-        :to="`/${this.$i18n.locale}/my-measures`"
+        :to="`/${this.$i18n.locale}/project/`"
         class="md-primary md-icon-button">
         <md-icon>build</md-icon>
       </md-button>
