@@ -27,6 +27,11 @@
     <image-carousel :images="measure.images"/>
 
     <rich-text :text="measure.content" />
+
+    <a
+      :href="measure.externalLinkUrl"
+      class="measure__external-link"
+      target="_blank">{{ measure.externalLinkLabel }}</a>
   </div>
 </template>
 
@@ -88,5 +93,10 @@ export default {
 
 .measure__tag:not(:last-child) {
   margin-right: .2rem
+}
+
+.measure__external-link {
+  margin-left: auto;
+  display: block;
 }
 </style>
