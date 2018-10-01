@@ -28,7 +28,8 @@
               value: { include: !!value },
             })"
           />
-          {{ kpi.title }}</md-table-cell>
+          {{ kpi.title }}
+        </md-table-cell>
         <md-table-cell width="60%">
           <numeric-input
             :label="kpi.title"
