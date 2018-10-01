@@ -19,25 +19,36 @@
         @selectionchange="selectionChange"
         @baseLayerSwitch="onBaseLayerSwitch"/>
     </div>
+
+    <transition name="slide-up">
+      <app-disclaimer
+        v-if="!legalAccepted"
+        class="layout-modal__disclaimer"
+        @accepted="acceptLegal"/>
+    </transition>
   </div>
 </template>
 
 <script>
 import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
-import { AppHeader, MapViewer, KpiPanel, VirtualKeyboard } from '../components'
+import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard } from '../components'
 import { mapFields } from 'vuex-map-fields';
 
 export default {
-  components: { AppHeader, MapViewer, KpiPanel, VirtualKeyboard },
+  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard },
   computed: {
     ...mapState({
       map: state => state.project.map,
       area: state => state.project.settings.projectArea.area,
+      legalAccepted: state => state.project.legalAccepted,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups']),
   },
   methods: {
-    ...mapMutations({ onBaseLayerSwitch: 'project/setBaseLayer' }),
+    ...mapMutations({
+      onBaseLayerSwitch: 'project/setBaseLayer',
+      acceptLegal: 'project/acceptLegal',
+    }),
     ...mapActions({
       createArea: 'project/createArea',
       updateArea: 'project/updateArea',
@@ -85,5 +96,11 @@ export default {
 
 .layout-modal__page {
   padding: var(--spacing-default);
+}
+
+.layout-modal__disclaimer {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
 }
 </style>

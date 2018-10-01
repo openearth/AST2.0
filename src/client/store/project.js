@@ -4,6 +4,7 @@ import MapEventBus, { UPDATE_FEATURE_PROPERTY } from '../lib/map-event-bus'
 import { getApiDataForFeature } from "../lib/get-api-data";
 
 export const state = () => ({
+  legalAccepted: false,
   areas: [],
   settings: {
     area: {},
@@ -89,6 +90,9 @@ export const mutations = {
   },
   toggleProjectAreaNestedSetting(state, { key, option, value }) {
     state.settings.projectArea[key][option] = !state.settings.projectArea[key][option]
+  },
+  acceptLegal(state) {
+    state.legalAccepted = true
   },
 }
 
