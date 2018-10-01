@@ -12,7 +12,7 @@ export const mutations = {
 
 export const actions = {
   changeSelection({ state, commit, rootState }, features) {
-    const { projectArea } = rootState.project.settings
+    const { area } = rootState.project.settings
     const isInState = index => state.indexOf(index) !== -1
     const isNotInState = index => state.indexOf(index) === -1
     const getId = obj => obj['id']
@@ -25,9 +25,8 @@ export const actions = {
     idsToDelete.forEach(id => commit('removeAreaId', id))
     idsToAdd.forEach(id => commit('addAreaId', id))
 
-    if (features.length && !features.find(({ id }) => id === projectArea.id)) {
-      console.log('select')
-        this.$router.push({ path: `/${rootState.i18n.locale}/project/areas` })
+    if (features.length && !features.find(({ id }) => id === area.id)) {
+      this.$router.push({ path: `/${rootState.i18n.locale}/project/areas` })
     }
   },
 }

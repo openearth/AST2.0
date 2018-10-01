@@ -4,7 +4,7 @@
     <p class="md-body-1 page-index__intro">{{ $t('welcome_intro') }}</p>
 
     <div class="page-index__actions">
-      <md-button class="md-raised md-primary">
+      <md-button :to="`/${locale}/new-project/`" class="md-raised md-primary">
         {{ $t('start_new_project') }}
       </md-button>
       <div class="page-index__divider" />
@@ -12,11 +12,21 @@
         {{ $t('import_exisiting_project') }}
       </md-button>
     </div>
-</div></template>
+  </div>
+</template>
 
 <script>
+import { mapState } from "vuex";
+import MapEventBus, { REDRAW } from "../lib/map-event-bus"
+
 export default {
   layout: 'modal',
+  computed: {
+    ...mapState('i18n', ['locale']),
+  },
+  mounted() {
+    MapEventBus.$emit(REDRAW)
+  },
 }
 </script>
 

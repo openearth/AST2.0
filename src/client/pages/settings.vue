@@ -29,6 +29,7 @@ import MapEventBus, { REDRAW } from "../lib/map-event-bus"
 
 export default {
   computed: { ...mapState('i18n', ['locale']) },
+  layout: 'settings',
   mounted() {
     MapEventBus.$emit(REDRAW)
   },
