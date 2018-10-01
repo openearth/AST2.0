@@ -8,4 +8,7 @@
 </script>
 
 <style>
+.measures {
+  width: var(--width-large)
+}
 </style>
