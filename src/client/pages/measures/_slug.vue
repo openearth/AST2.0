@@ -1,67 +1,64 @@
 <template>
   <div class="measure">
-    <h2 class="measure__title">{{ measure.title }}</h2>
-    <nuxt-link :to="`/${$i18n.locale}/measures`" class="measure__link">Back to measures list</nuxt-link>
+    <div class="measure__actions">
+      <nuxt-link :to="`/${$i18n.locale}/measures`" class="md-link measure__link">&#x2190; {{ $t('back') }}</nuxt-link>
+      <md-button
+        :disabled="!selectedFeatures.length"
+        class="md-raised md-primary"
+        @click="() => { updateAreaProperties({ features: selectedFeatures, properties: { measure: measure.measureId, color: measure.color.hex }})}">{{ $t('choose') }}</md-button>
+    </div>
+
+    <header class="measure__header">
+      <div class="measure__image">
+        <img :src="measure.image.url">
+      </div>
+      <div>
+        <h2 class="md-title measure__title">{{ measure.title }}</h2>
+        <md-chip
+          v-for="tag in measure.climateEffectTags"
+          :key="tag.key"
+          class="measure__tag">{{ tag.title }}</md-chip>
+      </div>
+    </header>
+
     <rich-text :text="measure.summary" />
-    <div class="measure__carousel">
-      <div
+
+    <carousel
+      :per-page="1"
+      class="measure__carousel">
+      <slide
         v-for="(image, index) in measure.images"
         :key="index"
-        :class="itemClass(index)"
-        class="carousel__item">
-        <img :src="image.image.url" >
-      </div>
-    </div>
-    <button @click="previousImage">prev</button>
-    <button @click="nextImage">next</button>
+        :data-index="index"
+        :data-name="`image-${index}`">
+
+        <fixed-ratio :height="2" :width="3">
+          <img :src="image.image.url" class="md-image" >
+        </fixed-ratio>
+      </slide>
+    </carousel>
+
     <rich-text :text="measure.content" />
   </div>
 </template>
 
 <script>
-import { mapState, mapGetters } from "vuex"
-import { RichText, ResponsiveImage, SearchInput, MeasureList } from '~/components'
+import { mapGetters, mapActions } from "vuex"
+import { RichText, FixedRatio } from '~/components'
+import { Carousel, Slide } from 'vue-carousel'
 
 export default {
-  components: { SearchInput, MeasureList, RichText, ResponsiveImage },
+  components: { RichText, FixedRatio, Carousel, Slide },
   asyncData ({ params }) {
     return { slug: params.slug }
   },
-  data() {
-    return {
-      currentIndex: 0,
-    }
-  },
   computed: {
+    ...mapGetters('selectedAreas', { selectedFeatures: 'features' }),
     ...mapGetters('data/measures', ['measureDetails']),
     measure() { return this.measureDetails(this.slug)},
   },
   methods: {
-    itemClass(index) {
-      if (index === this.currentIndex) {
-        return 'carousel__item--active'
-      }
-
-      if (index < this.currentIndex) {
-        return 'carousel__item--seen'
-      }
-
-      return ''
-    },
-    nextImage() {
-      if (this.currentIndex === (this.measure.images.length - 1)) {
-        return this.currentIndex = 0
-      }
-
-      this.currentIndex++
-    },
-    previousImage() {
-      if (this.currentIndex === 0) {
-        return this.currentIndex = this.measures.length - 1
-      }
-
-      this.currentIndex--
-    },
+    ...mapActions({ updateAreaProperties: 'project/updateAreaProperties' }),
   },
 }
 </script>
@@ -72,44 +69,38 @@ export default {
   position: relative;
 }
 
-.measure__link {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
+.measure__actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-double);
+}
+
+.measure__header {
+  display: flex;
+  margin-bottom: var(--spacing-double);
 }
 
 .measure__title {
-  margin-top: 1.5rem;
+  margin-bottom: var(--spacing-default);
+}
+
+.measure__image {
+  width: 100px;
+  margin-right: var(--spacing-double);
 }
 
 .measure__carousel {
-  height: 400px;
+  margin-bottom: var(--spacing-double);
+}
+
+img {
   width: 100%;
-  position: relative;
-  display: inline-block;
-  overflow: hidden;
-}
-
-.carousel__item {
-  position: absolute;
-  transform: translateX(100%);
-  width: 100%;
-  height: 400px;
-  background-color: #ccc;
-  transition: transform .5s ease-in-out;
-}
-
-.carousel__item--active {
-  transform: translateX(0);
-  transition: transform .5s ease-in-out;
-}
-
-.carousel__item--seen {
-  transform: translateX(-100%);
-  transition: transform .5s ease-in-out;
-}
-
-.carousel__item img {
+  height: 100%;
   object-fit: cover;
+}
+
+.measure__tag:not(:last-child) {
+  margin-right: .2rem
 }
 </style>

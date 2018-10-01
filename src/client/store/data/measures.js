@@ -44,7 +44,6 @@ export const getters = {
     return state.find(measure => measure.measureId === id)
   },
   measureDetails: state => slug => {
-    const { title, summary, content, images } = state.find(measure => measure.slug === slug)
-    return { title, summary, content, images }
+    return state.find(measure => measure.slug === slug)
   },
 }
