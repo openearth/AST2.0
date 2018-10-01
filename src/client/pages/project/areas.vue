@@ -79,6 +79,7 @@ import InputRange from '../../components/input-range'
 import TextInput from '../../components/text-input'
 
 export default {
+  middleware: ['access-level-settings'],
   components: { InputRange, TextInput },
   data() {
     return {

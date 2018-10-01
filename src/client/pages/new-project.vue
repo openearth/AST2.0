@@ -14,7 +14,7 @@
     </div>
 
     <div class="new-project__action-wrapper">
-      <md-button :to="`/${locale}/settings/`" class="md-raised md-primary">{{ $t('next') }}</md-button>
+      <md-button :to="`/${locale}/settings/general/`" class="md-raised md-primary">{{ $t('next') }}</md-button>
     </div>
   </md-drawer>
 </template>
@@ -25,6 +25,7 @@ import MapEventBus, { REDRAW } from "../lib/map-event-bus"
 
 export default {
   layout: 'settings',
+  middleware: ['access-level-legal'],
   computed: {
     ...mapState('i18n', ['locale']),
     ...mapState('project', ['settings']),

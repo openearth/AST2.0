@@ -17,6 +17,7 @@ import { MeasureCard, SearchInput, MeasureList } from '~/components'
 import MapEventBus, { REDRAW } from "../../lib/map-event-bus";
 
 export default {
+  middleware: ['access-level-settings'],
   components: { MeasureCard, SearchInput, MeasureList },
   data() {
     return {

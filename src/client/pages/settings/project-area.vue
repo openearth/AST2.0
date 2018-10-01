@@ -47,6 +47,7 @@ import Vue from 'vue'
 import { mapState, mapMutations } from 'vuex'
 
 export default {
+  middleware: ['access-level-project-area'],
   computed: {
     ...mapState({
       projectArea: state => state.project.settings.area,

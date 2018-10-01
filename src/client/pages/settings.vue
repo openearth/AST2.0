@@ -18,7 +18,7 @@
     <nuxt-child class="settings-view__content"/>
 
     <div class="settings-view__action-wrapper">
-      <md-button class="md-primary md-raised">{{ $t('next') }}</md-button>
+      <md-button :to="`/${locale}/project`" class="md-primary md-raised">{{ $t('next') }}</md-button>
     </div>
   </md-drawer>
 </template>
