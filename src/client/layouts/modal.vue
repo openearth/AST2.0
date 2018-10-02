@@ -12,12 +12,8 @@
       <map-viewer
         :active-base-layer="map.activeBaseLayer"
         :base-layers="map.baseLayers"
-        class="layout-modal__map"
-        @create="createArea"
-        @update="updateArea"
-        @delete="deleteArea"
-        @selectionchange="selectionChange"
-        @baseLayerSwitch="onBaseLayerSwitch"/>
+        :interactive="false"
+        class="layout-modal__map"/>
     </div>
 
     <transition name="slide-up">
@@ -30,7 +26,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
+import { mapState, mapMutations, mapGetters } from "vuex";
 import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard } from '../components'
 import { mapFields } from 'vuex-map-fields';
 
@@ -46,14 +42,7 @@ export default {
   },
   methods: {
     ...mapMutations({
-      onBaseLayerSwitch: 'project/setBaseLayer',
       acceptLegal: 'project/acceptLegal',
-    }),
-    ...mapActions({
-      createArea: 'project/createArea',
-      updateArea: 'project/updateArea',
-      deleteArea: 'project/deleteArea',
-      selectionChange: 'selectedAreas/changeSelection',
     }),
   },
 }

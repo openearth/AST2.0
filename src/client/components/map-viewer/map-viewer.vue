@@ -2,6 +2,10 @@
   <div class="map-viewer">
     <map-box
       :active-base-layer="activeBaseLayer"
+      :interactive="interactive"
+      :point="point"
+      :line="line"
+      :polygon="polygon"
       class="map-viewer__map"
       @create="onCreate"
       @update="onUpdate"
@@ -28,6 +32,22 @@ export default {
     baseLayers: {
       type: Array,
       default: () => ([]),
+    },
+    interactive: {
+      type: Boolean,
+      default: true,
+    },
+    point: {
+      type: Boolean,
+      default: true,
+    },
+    line: {
+      type: Boolean,
+      default: true,
+    },
+    polygon: {
+      type: Boolean,
+      default: true,
     },
   },
   methods: {

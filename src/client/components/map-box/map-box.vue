@@ -17,6 +17,22 @@ export default {
       type: String,
       required: true,
     },
+    interactive: {
+      type: Boolean,
+      default: true,
+    },
+    point: {
+      type: Boolean,
+      default: true,
+    },
+    line: {
+      type: Boolean,
+      default: true,
+    },
+    polygon: {
+      type: Boolean,
+      default: true,
+    },
   },
 
   data: () => ({
@@ -60,7 +76,14 @@ export default {
       showZoom: true,
     })
     this.draw = new MapboxDraw({
-      controls: { combine_features: false, uncombine_features: false },
+      controls: {
+        combine_features: false,
+        uncombine_features: false,
+        point: this.interactive && this.point,
+        line_string: this.interactive && this.line,
+        polygon: this.interactive && this.polygon,
+        trash: this.interactive,
+      },
       userProperties: true,
       styles: [...defaultStyles, ...projectAreaStyles, ...areaStyles],
     })

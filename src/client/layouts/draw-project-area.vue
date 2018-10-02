@@ -1,15 +1,18 @@
 <template>
-  <div class="layout-settings">
+  <div class="layout-draw-project-area">
     <app-header />
 
-    <div class="layout-settings__content">
+    <div class="layout-draw-project-area__content">
       <nuxt />
 
-      <md-content class="layout-settings__map-wrapper">
+      <md-content class="layout-draw-project-area__map-wrapper">
         <map-viewer
           :active-base-layer="map.activeBaseLayer"
           :base-layers="map.baseLayers"
-          class="layout-settings__map"
+          :point="false"
+          :line="false"
+          :polygon="!area"
+          class="layout-draw-project-area__map"
           @create="createArea"
           @update="updateArea"
           @delete="deleteArea"
@@ -17,7 +20,7 @@
           @baseLayerSwitch="onBaseLayerSwitch"/>
       </md-content>
     </div>
-    <virtual-keyboard class="layout-settings__virtual-keyboard"/>
+    <virtual-keyboard class="layout-draw-project-area__virtual-keyboard"/>
   </div>
 </template>
 
@@ -50,7 +53,7 @@ export default {
 <style>
 @import '../components/app-core/index.css';
 
-.layout-settings {
+.layout-draw-project-area {
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -58,22 +61,22 @@ export default {
   position: relative;
 }
 
-.layout-settings__content {
+.layout-draw-project-area__content {
   overflow-y: scroll;
   display: flex;
   flex: 1;
 }
 
-.layout-settings__map-wrapper {
+.layout-draw-project-area__map-wrapper {
   flex: 1;
   display: flex;
 }
 
-.layout-settings__map {
+.layout-draw-project-area__map {
   flex: 1;
 }
 
-.layout-settings__virtual-keyboard {
+.layout-draw-project-area__virtual-keyboard {
   position: absolute;
   width: 100vw;
   height: 100vh;

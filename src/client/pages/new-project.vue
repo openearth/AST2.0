@@ -27,7 +27,7 @@ import { mapState, mapGetters } from "vuex";
 import MapEventBus, { REDRAW } from "../lib/map-event-bus"
 
 export default {
-  layout: 'settings',
+  layout: 'draw-project-area',
   middleware: ['access-level-legal'],
   computed: {
     ...mapState('i18n', ['locale']),
