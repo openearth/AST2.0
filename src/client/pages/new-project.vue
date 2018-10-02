@@ -1,43 +1,58 @@
 <template>
-  <md-drawer md-permanent="clipped">
-    <div>
-      <h1>Home</h1>
-      <p>Project: <input v-model="projectTitle" >: {{ projectTitle }}</p>
-      <ul>
-        <li><nuxt-link to="/en/about">about</nuxt-link></li>
-        <li><project-export :is-client="isClient" :project="project"/></li>
-        <li><project-import @load="onImport"/></li>
-      </ul>
+  <md-drawer md-permanent="clipped" class="new-project">
+    <md-toolbar md-elevation="0">
+      <span class="md-title">{{ $t('project_area') }}</span>
+    </md-toolbar>
+
+    <div class="new-project__content">
+      <md-list>
+        <md-list-item>
+          <p>{{ $t('area_size') }}: <span v-if="settings.area.properties">{{ settings.area.properties.area }}</span></p>
+        </md-list-item>
+        <md-divider />
+      </md-list>
+    </div>
+
+    <div class="new-project__action-wrapper">
+      <md-button
+        :to="`/${locale}/settings/project-area/`"
+        :disabled="!createdProjectArea"
+        class="md-raised md-primary">{{ $t('next') }}</md-button>
     </div>
   </md-drawer>
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
-import { ProjectExport, ProjectImport } from "../components";
-import MapEventBus, { REDRAW } from "../lib/map-event-bus";
+import { mapState, mapGetters } from "vuex";
+import MapEventBus, { REDRAW } from "../lib/map-event-bus"
 
 export default {
-  components: { ProjectExport, ProjectImport },
-  data: () => ({
-    isClient: false,
-  }),
+  layout: 'draw-project-area',
+  middleware: ['access-level-legal'],
   computed: {
-    ...mapState(['project']),
-    projectTitle: {
-      get() {return this.$store.state.project.settings.title},
-      set(value) {  this.$store.commit('project/setTitle', value)},
-    },
+    ...mapState('i18n', ['locale']),
+    ...mapState('project', ['settings']),
+    ...mapGetters('flow', ['createdProjectArea']),
   },
   mounted() {
-    this.isClient = true
     MapEventBus.$emit(REDRAW)
-  },
-  methods: {
-    ...mapMutations({ import: 'project/import' }),
-    onImport(projectFile) {
-      this.import(projectFile)
-    },
   },
 }
 </script>
+
+<style>
+.new-project {
+  display: flex;
+  flex-direction: column;
+}
+
+.new-project__content {
+  flex: 1;
+  overflow-y: scroll;
+}
+
+.new-project__action-wrapper {
+  display: flex;
+  justify-content: flex-end;
+}
+</style>

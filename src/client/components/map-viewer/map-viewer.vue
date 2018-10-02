@@ -2,6 +2,13 @@
   <div class="map-viewer">
     <map-box
       :active-base-layer="activeBaseLayer"
+      :interactive="interactive"
+      :point="point"
+      :line="line"
+      :polygon="polygon"
+      :is-project="isProject"
+      :project-area="projectArea"
+      :areas="areas"
       class="map-viewer__map"
       @create="onCreate"
       @update="onUpdate"
@@ -28,6 +35,34 @@ export default {
     baseLayers: {
       type: Array,
       default: () => ([]),
+    },
+    interactive: {
+      type: Boolean,
+      default: true,
+    },
+    point: {
+      type: Boolean,
+      default: true,
+    },
+    line: {
+      type: Boolean,
+      default: true,
+    },
+    polygon: {
+      type: Boolean,
+      default: true,
+    },
+    isProject: {
+      type: Boolean,
+      required: true,
+    },
+    projectArea: {
+      type: Object,
+      default: () => {},
+    },
+    areas: {
+      type: Array,
+      default: () => [],
     },
   },
   methods: {

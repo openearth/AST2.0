@@ -1,3 +1,4 @@
+export { default as AppDisclaimer } from './app-disclaimer'
 export { default as AppHeader } from './app-header'
 export { default as AppMenu } from './app-menu'
 export { default as FixedRatio } from './fixed-ratio'

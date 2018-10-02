@@ -1,5 +1,5 @@
 query ($locale: SiteLocale) {
-  translations: allTranslations(locale: $locale) {
+  translations: allTranslations(locale: $locale, first: 1000000) {
     key,
     value
   }
