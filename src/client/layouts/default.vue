@@ -1,6 +1,10 @@
 <template>
   <div class="layout-default">
-    <app-header />
+    <app-header @onShowNavigation="showNavigation = true"/>
+    <app-menu
+      :show-navigation="showNavigation"
+      :title="$t('ast')"
+      @onCloseNavigation="showNavigation = false"/>
 
     <div class="layout-default__content">
       <nuxt />
@@ -27,11 +31,16 @@
 
 <script>
 import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
-import { AppHeader, MapViewer, KpiPanel, VirtualKeyboard } from '../components'
+import { AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu } from '../components'
 import { mapFields } from 'vuex-map-fields';
 
 export default {
-  components: { AppHeader, MapViewer, KpiPanel, VirtualKeyboard },
+  components: { AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu },
+    data() {
+    return {
+      showNavigation: false,
+    }
+  },
   computed: {
     ...mapState({
       map: state => state.project.map,

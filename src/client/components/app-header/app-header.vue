@@ -1,6 +1,10 @@
 <template>
   <md-toolbar class="md-primary">
     <div class="md-toolbar-section-start">
+      <md-button class="md-icon-button" @click="() => $emit('onShowNavigation')">
+        <md-icon>menu</md-icon>
+      </md-button>
+
       <h2 class="md-title">{{ $t('ast') }}</h2>
     </div>
 
