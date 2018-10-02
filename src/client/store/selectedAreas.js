@@ -11,7 +11,7 @@ export const mutations = {
 }
 
 export const actions = {
-  changeSelection({ state, commit, rootState }, features) {
+  changeSelection({ state, commit, rootState, rootGetters }, features) {
     const { area } = rootState.project.settings
     const isInState = index => state.indexOf(index) !== -1
     const isNotInState = index => state.indexOf(index) === -1
@@ -27,6 +27,10 @@ export const actions = {
 
     if (features.length && !features.find(({ id }) => id === area.id)) {
       this.$router.push({ path: `/${rootState.i18n.locale}/project/areas` })
+    }
+
+    if (!features.length && rootGetters['flow/currentFilledInLevel'].level >= 5) {
+      this.$router.push({ path: `/${rootState.i18n.locale}/project` })
     }
   },
 }
