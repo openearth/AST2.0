@@ -62,7 +62,12 @@
                 min="0"
                 max="10"
                 @change="value => updateAreaProperties({ features: [feature], properties: { areaInflow: value }})"/>
+
             </md-card-content>
+
+            <md-card-actions>
+              <md-button :to="`/${locale}/project/`">{{ $t('done') }}</md-button>
+            </md-card-actions>
           </div>
         </md-card>
       </li>

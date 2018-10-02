@@ -2,7 +2,7 @@
   <div class="project-area">
     <md-toolbar md-elevation="0" class="md-transparent">
       <span class="md-subheading">{{ $t('area_size') }}: {{ area }}</span>
-      <md-button :to="`/${locale}/new-project`">{{ $t('change_area') }}</md-button>
+      <md-button :to="`/${locale}/new-project`" class="md-primary">{{ $t('change_area') }}</md-button>
     </md-toolbar>
 
     <form @submit.prevent="onSubmit">
