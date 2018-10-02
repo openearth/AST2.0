@@ -1,75 +1,73 @@
 <template>
-  <md-drawer md-permanent="clipped">
-    <aside>
-      <md-toolbar md-elevation="0">
-        <span class="md-title">{{ $t('selected_measures') }}</span>
-      </md-toolbar>
+  <aside>
+    <md-toolbar md-elevation="0">
+      <span class="md-title">{{ $t('selected_measures') }}</span>
+    </md-toolbar>
 
-      <ul class="areas__list">
-        <li
-          v-for="feature in selectedFeatures"
-          :key="feature.id"
-          class="areas__item">
-          <md-card>
-            <div :style="`border-left-color: ${appliedMeasure ? appliedMeasure.color.hex : 'transparent'}`" class="areas__item-content">
-              <md-card-header>
-                <md-avatar class="areas__avatar">
-                  <img
-                    v-if="appliedMeasure"
-                    :src="appliedMeasure.image.url"
-                    alt="Avatar">
-                </md-avatar>
+    <ul class="areas__list">
+      <li
+        v-for="feature in selectedFeatures"
+        :key="feature.id"
+        class="areas__item">
+        <md-card>
+          <div :style="`border-left-color: ${appliedMeasure ? appliedMeasure.color.hex : 'transparent'}`" class="areas__item-content">
+            <md-card-header>
+              <md-avatar class="areas__avatar">
+                <img
+                  v-if="appliedMeasure"
+                  :src="appliedMeasure.image.url"
+                  alt="Avatar">
+              </md-avatar>
 
-                <div class="md-title">{{ feature.properties.name }}</div>
-                <div class="md-subhead areas__subhead">{{ appliedMeasure ? appliedMeasure.title : '&nbsp;' }}</div>
-              </md-card-header>
+              <div class="md-title">{{ feature.properties.name }}</div>
+              <div class="md-subhead areas__subhead">{{ appliedMeasure ? appliedMeasure.title : '&nbsp;' }}</div>
+            </md-card-header>
 
-              <md-card-content class="areass__card-content">
-                <text-input
-                  :label="$t('area_name')"
-                  :value="feature.properties.name"
-                  :on-change="name => updateAreaProperty({ id: feature.id, properties: { name }})"
-                />
+            <md-card-content class="areass__card-content">
+              <text-input
+                :label="$t('area_name')"
+                :value="feature.properties.name"
+                :on-change="name => updateAreaProperty({ id: feature.id, properties: { name }})"
+              />
 
-                <span class="md-body-2">{{ $t('measure') }}</span>
-                <div class="areas__choose-wrapper">
-                  <div class="areas__choose-content">
-                    <template v-if="appliedMeasure">
-                      <p>{{ appliedMeasure.title }}</p>
-                      <md-button :to="`/${locale}/project/measures`" class="md-primary">{{ $t('change_measure') }}</md-button>
-                    </template>
+              <span class="md-body-2">{{ $t('measure') }}</span>
+              <div class="areas__choose-wrapper">
+                <div class="areas__choose-content">
+                  <template v-if="appliedMeasure">
+                    <p>{{ appliedMeasure.title }}</p>
+                    <md-button :to="`/${locale}/project/measures`" class="md-primary">{{ $t('change_measure') }}</md-button>
+                  </template>
 
-                    <template v-else>
-                      <md-button :to="`/${locale}/project/measures`" class="md-raised md-primary">{{ $t('choose_measure') }}</md-button>
-                    </template>
-                  </div>
-                  <div class="areas__choose-icon">
-                    <img v-if="appliedMeasure" :src="appliedMeasure.image.url" >
-                  </div>
+                  <template v-else>
+                    <md-button :to="`/${locale}/project/measures`" class="md-raised md-primary">{{ $t('choose_measure') }}</md-button>
+                  </template>
                 </div>
+                <div class="areas__choose-icon">
+                  <img v-if="appliedMeasure" :src="appliedMeasure.image.url" >
+                </div>
+              </div>
 
-                <input-range
-                  v-if="appliedMeasure"
-                  :value="feature.properties.areaDepth"
-                  label="Measure Depth"
-                  min="0"
-                  max="10"
-                  @change="value => updateAreaProperties({ features: [feature], properties: { areaDepth: value }})"/>
+              <input-range
+                v-if="appliedMeasure"
+                :value="feature.properties.areaDepth"
+                label="Measure Depth"
+                min="0"
+                max="10"
+                @change="value => updateAreaProperties({ features: [feature], properties: { areaDepth: value }})"/>
 
-                <input-range
-                  v-if="appliedMeasure"
-                  :value="feature.properties.areaInflow"
-                  label="Inflow Area"
-                  min="0"
-                  max="10"
-                  @change="value => updateAreaProperties({ features: [feature], properties: { areaInflow: value }})"/>
-              </md-card-content>
-            </div>
-          </md-card>
-        </li>
-      </ul>
-    </aside>
-  </md-drawer>
+              <input-range
+                v-if="appliedMeasure"
+                :value="feature.properties.areaInflow"
+                label="Inflow Area"
+                min="0"
+                max="10"
+                @change="value => updateAreaProperties({ features: [feature], properties: { areaInflow: value }})"/>
+            </md-card-content>
+          </div>
+        </md-card>
+      </li>
+    </ul>
+  </aside>
 </template>
 
 <script>
