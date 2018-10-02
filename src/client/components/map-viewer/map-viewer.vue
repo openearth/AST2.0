@@ -6,6 +6,9 @@
       :point="point"
       :line="line"
       :polygon="polygon"
+      :is-project="isProject"
+      :project-area="projectArea"
+      :areas="areas"
       class="map-viewer__map"
       @create="onCreate"
       @update="onUpdate"
@@ -48,6 +51,18 @@ export default {
     polygon: {
       type: Boolean,
       default: true,
+    },
+    isProject: {
+      type: Boolean,
+      required: true,
+    },
+    projectArea: {
+      type: Object,
+      default: () => {},
+    },
+    areas: {
+      type: Array,
+      default: () => [],
     },
   },
   methods: {

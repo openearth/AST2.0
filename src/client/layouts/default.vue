@@ -9,6 +9,9 @@
         <map-viewer
           :active-base-layer="map.activeBaseLayer"
           :base-layers="map.baseLayers"
+          :project-area="projectArea"
+          :areas="areas"
+          :is-project="true"
           class="layout-default__map"
           @create="createArea"
           @update="updateArea"
@@ -35,7 +38,8 @@ export default {
   computed: {
     ...mapState({
       map: state => state.project.map,
-      area: state => state.project.settings.projectArea.area,
+      areas: state => state.project.areas,
+      projectArea: state => state.project.settings.area,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups']),
   },
