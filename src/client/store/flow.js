@@ -55,7 +55,7 @@ export const getters = {
     if (getters.filledInRequiredProjectAreaSettings) {
       level = level + 1 // 3
     } else {
-      return { level, uri: `/${locale}/settings/project-area` }
+      return { level, uri: `/${locale}/settings/project-area/` }
     }
 
     if (getters.filledInTargets) {
