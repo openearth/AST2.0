@@ -1,4 +1,15 @@
 import isObject from 'lodash/isObject'
+import getViewPath from '../lib/get-view-path'
+
+export const state = () => ({
+  fullPath: {},
+})
+
+export const mutations = {
+  setRoute(state, { fullPath }) {
+    state.fullPath = fullPath
+  },
+}
 
 export const getters = {
   acceptedLegal(state, getters, rootState) {
@@ -55,5 +66,17 @@ export const getters = {
 
     level = level + 1 // 5
     return { level, uri: '' }
+  },
+  isNewProjectView({ fullPath }) {
+    const view = getViewPath({ fullPath })
+    return !!view.path.find(part => part === 'new-project')
+  },
+  isSettingsView({ fullPath }) {
+    const view = getViewPath({ fullPath })
+    return !!view.path.find(part => part === 'settings')
+  },
+  isProjectView({ fullPath }) {
+    const view = getViewPath({ fullPath })
+    return !!view.path.find(part => part === 'project')
   },
 }

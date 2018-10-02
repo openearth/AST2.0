@@ -29,7 +29,7 @@ export const actions = {
       this.$router.push({ path: `/${rootState.i18n.locale}/project/areas` })
     }
 
-    if (!features.length && rootGetters['flow/currentFilledInLevel'].level >= 5) {
+    if (!features.length && !rootGetters['flow/isNewProjectView']) {
       this.$router.push({ path: `/${rootState.i18n.locale}/project` })
     }
   },
