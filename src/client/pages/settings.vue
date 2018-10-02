@@ -17,17 +17,23 @@
 
     <nuxt-child class="settings-view__content"/>
 
-    <div class="settings-view__action-wrapper">
+    <transition-group
+      name="list-complete"
+      class="settings-view__action-wrapper"
+      tag="div">
       <md-button
+        v-if="!isLastTab"
+        :key="1"
         :to="`/${locale}/settings/${nextTabKey}/`"
         :disabled="nextTabDisabled"
         :class="{'md-primary': !filledInRequiredProjectAreaSettings}"
         class="md-raised">{{ $t('next') }}</md-button>
       <md-button
         v-if="filledInRequiredProjectAreaSettings"
+        :key="2"
         :to="`/${locale}/project`"
         class="md-primary md-raised">{{ $t('done') }}</md-button>
-    </div>
+    </transition-group>
   </md-drawer>
 </template>
 
@@ -57,10 +63,13 @@ export default {
   computed: {
     ...mapState('i18n', ['locale']),
     ...mapGetters('flow', ['createdProjectArea', 'filledInRequiredProjectAreaSettings', 'filledInTargets']),
-    nextTabIndex() {
+    currentTabIndex() {
       const path = this.$route.fullPath.replace(`/${this.locale}/settings/`, '').replace('/', '')
       const obj = this.tabs.find(tab => tab.key === path)
-      const index = this.tabs.indexOf(obj)
+      return this.tabs.indexOf(obj)
+    },
+    nextTabIndex() {
+      const index = this.currentTabIndex
       return index + 1 < this.tabs.length ? index + 1 : index
     },
     nextTabKey() {
@@ -68,6 +77,9 @@ export default {
     },
     nextTabDisabled() {
       return !this[this.tabs[this.nextTabIndex].validatorKey]
+    },
+    isLastTab() {
+      return this.currentTabIndex === (this.tabs.length - 1)
     },
   },
   mounted() {
