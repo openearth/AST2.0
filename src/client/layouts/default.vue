@@ -4,6 +4,7 @@
     <app-menu
       :show-navigation="showNavigation"
       :title="$t('ast')"
+      :is-project="true"
       @onCloseNavigation="showNavigation = false"/>
 
     <div class="layout-default__content">
