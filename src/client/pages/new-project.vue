@@ -15,7 +15,7 @@
 
     <div class="new-project__action-wrapper">
       <md-button
-        :to="`/${locale}/settings/general/`"
+        :to="`/${locale}/settings/project-area/`"
         :disabled="!createdProjectArea"
         class="md-raised md-primary">{{ $t('next') }}</md-button>
     </div>

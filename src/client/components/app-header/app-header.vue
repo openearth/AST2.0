@@ -9,7 +9,7 @@
         <md-button
           v-if="currentFilledInLevel.level >= 2"
           :key="2"
-          :to="`/${this.$i18n.locale}/settings/general`"
+          :to="`/${this.$i18n.locale}/settings/project-area`"
           class="md-primary md-icon-button">
           <md-icon>settings</md-icon>
         </md-button>
