@@ -1,6 +1,7 @@
 <template>
   <carousel
     :per-page="1"
+    :navigation-enabled="true"
     class="image-carousel">
     <slide
       v-for="(image, index) in images"
