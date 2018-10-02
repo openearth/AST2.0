@@ -7,13 +7,6 @@
     <div class="md-toolbar-section-end">
       <transition-group name="list-complete" >
         <md-button
-          v-if="currentFilledInLevel.level >= 5"
-          :key="1"
-          :to="`/${this.$i18n.locale}/project/`"
-          class="md-primary md-icon-button">
-          <md-icon>build</md-icon>
-        </md-button>
-        <md-button
           v-if="currentFilledInLevel.level >= 2"
           :key="2"
           :to="`/${this.$i18n.locale}/settings/general`"
