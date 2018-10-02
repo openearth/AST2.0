@@ -158,7 +158,7 @@ export default {
         type: 'line',
         paint: {
           'line-color': color || '#088',
-          'line-width': 5,
+          'line-width': id === 'projectArea' ? 5 : 3,
         },
       }
       const fillDetails = {
@@ -166,7 +166,7 @@ export default {
         type: 'fill',
         paint: {
           'fill-color': color || '#088',
-          'fill-opacity': id === 'projectArea' ? 0.1 : 0.2,
+          'fill-opacity': id === 'projectArea' ? 0 : 0.1,
         },
       }
       const baseObj = {
@@ -184,7 +184,7 @@ export default {
       }
       const line = Object.assign({}, baseObj, lineDetails)
       const fill = Object.assign({}, baseObj, fillDetails)
-      this.map.addLayer(fill)
+      // this.map.addLayer(fill)
       this.map.addLayer(line)
     },
   },
