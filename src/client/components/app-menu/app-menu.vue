@@ -78,13 +78,13 @@
             :to="`/${$i18n.locale}/`"
             class="app-menu__link md-list-item-text">{{ $t('legal') }}</nuxt-link>
         </md-list-item>
+
         <md-list-item>
           <nuxt-link
             :to="`/${$i18n.locale}/documentation`"
             class="app-menu__link md-list-item-text">{{ $t('documentation') }}</nuxt-link>
         </md-list-item>
       </md-list>
-
     </md-drawer>
   </div>
 </template>
