@@ -104,18 +104,17 @@
       },
       acceptedLegal: {
         type: Boolean,
+        required: true,
         default: false,
       },
       createdProjectArea: {
         type: Boolean,
+        required: true,
         default: false,
       },
       filledInRequiredSettings: {
         type: Boolean,
-        default: false,
-      },
-      filledInTargets: {
-        type: Boolean,
+        required: true,
         default: false,
       },
     },
