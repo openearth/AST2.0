@@ -1,3 +1,4 @@
+export { default as AppDisclaimer } from './app-disclaimer'
 export { default as AppHeader } from './app-header'
 export { default as FixedRatio } from './fixed-ratio'
 export { default as ImageCarousel } from './image-carousel'
