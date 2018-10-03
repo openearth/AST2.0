@@ -1,5 +1,5 @@
 <template>
-  <md-drawer md-permanent="clipped" class="measures">
+  <div>
     <md-toolbar md-elevation="0">
       <span class="md-title">{{ $t('measures') }}</span>
     </md-toolbar>
@@ -8,15 +8,16 @@
       :measures="filteredMeasuresList"
       @choose="onChooseMeasure"
     />
-  </md-drawer>
+  </div>
 </template>
 
 <script>
 import { mapState, mapGetters, mapActions } from "vuex"
 import { MeasureCard, SearchInput, MeasureList } from '~/components'
-import MapEventBus, { REDRAW } from "../lib/map-event-bus";
+import MapEventBus, { REDRAW } from "../../lib/map-event-bus";
 
 export default {
+  middleware: ['access-level-settings'],
   components: { MeasureCard, SearchInput, MeasureList },
   data() {
     return {
@@ -62,7 +63,7 @@ export default {
           areaDepth: 1,
         },
       })
-      this.$router.push(`/${this.$i18n.locale}/areas`)
+      this.$router.push(`/${this.$i18n.locale}/project/areas`)
     },
   },
 }

@@ -5,20 +5,25 @@
     </div>
 
     <div class="md-toolbar-section-end">
-      <md-button
-        :to="`/${this.$i18n.locale}/my-measures`"
-        class="md-primary md-icon-button">
-        <md-icon>build</md-icon>
-      </md-button>
-      <md-button
-        :to="`/${this.$i18n.locale}/settings/`"
-        class="md-primary md-icon-button">
-        <md-icon>settings</md-icon>
-      </md-button>
+      <transition-group name="list-complete" >
+        <md-button
+          v-if="currentFilledInLevel.level >= 2"
+          :key="2"
+          :to="`/${this.$i18n.locale}/settings/project-area/`"
+          class="md-primary md-icon-button">
+          <md-icon>settings</md-icon>
+        </md-button>
+      </transition-group>
     </div>
   </md-toolbar>
 </template>
 
-<style>
+<script>
+import { mapGetters } from "vuex";
+export default {
+  computed: {
+    ...mapGetters('flow', ['currentFilledInLevel']),
+  },
+}
+</script>
 
-</style>

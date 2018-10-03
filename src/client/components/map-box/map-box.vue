@@ -17,6 +17,34 @@ export default {
       type: String,
       required: true,
     },
+    interactive: {
+      type: Boolean,
+      default: true,
+    },
+    point: {
+      type: Boolean,
+      default: true,
+    },
+    line: {
+      type: Boolean,
+      default: true,
+    },
+    polygon: {
+      type: Boolean,
+      default: true,
+    },
+    isProject: {
+      type: Boolean,
+      required: true,
+    },
+    projectArea: {
+      type: Object,
+      default: () => {},
+    },
+    areas: {
+      type: Array,
+      default: () => [],
+    },
   },
 
   data: () => ({
@@ -32,6 +60,9 @@ export default {
   computed: {
     activeStyle() {
       return this.styles[this.activeBaseLayer]
+    },
+    hasProjectArea() {
+      return !!this.projectArea.properties
     },
   },
 
@@ -60,7 +91,14 @@ export default {
       showZoom: true,
     })
     this.draw = new MapboxDraw({
-      controls: { combine_features: false, uncombine_features: false },
+      controls: {
+        combine_features: false,
+        uncombine_features: false,
+        point: this.interactive && this.point,
+        line_string: this.interactive && this.line,
+        polygon: this.interactive && this.polygon,
+        trash: this.interactive,
+      },
       userProperties: true,
       styles: [...defaultStyles, ...projectAreaStyles, ...areaStyles],
     })
@@ -80,16 +118,75 @@ export default {
 
     this.map.on('load', () => {
       this.map.resize()
+      this.fillMap()
     })
 
     MapEventBus.$on(UPDATE_FEATURE_PROPERTY, ({ featureId, key, value }) => {
-      const updatedFeature = this.draw.setFeatureProperty(featureId, key, value).get(featureId)
-      // console.log({ key, value, updatedFeature }) // Comment left on purpose for easy debugging
+      if (this.draw.get(featureId) !== undefined) {
+        const updatedFeature = this.draw.setFeatureProperty(featureId, key, value).get(featureId)
+        // console.log({ key, value, updatedFeature }) // Comment left on purpose for easy debugging
+      }
     })
 
     MapEventBus.$on(REDRAW, () => {
       this.map.resize()
     })
+  },
+  methods: {
+    fillMap() {
+      if (!this.interactive) {
+        this.hasProjectArea && this.addGeojsonLayer({ ...this.projectArea, id: 'projectArea' })
+        this.areas.forEach(area => this. addGeojsonLayer(area))
+        return
+      }
+
+      if (this.isProject) {
+        this.hasProjectArea && this.addGeojsonLayer({ ...this.projectArea, id: 'projectArea' })
+        this.areas.forEach(area => this.draw.add(area))
+      } else {
+        this.areas.forEach(area => this. addGeojsonLayer(area))
+        this.hasProjectArea && this.draw.add(this.projectArea)
+      }
+    },
+    addGeojsonLayer({ properties = {}, type, geometry, id }) {
+      const color = id === 'projectArea'
+        ? projectAreaStyles[0].paint['fill-color']
+        : properties.color
+
+      const lineDetails = {
+        id: `${properties.name || id}-line`,
+        type: 'line',
+        paint: {
+          'line-color': color || '#088',
+          'line-width': id === 'projectArea' ? 5 : 3,
+        },
+      }
+      const fillDetails = {
+        id: `${properties.name || id}-fill`,
+        type: 'fill',
+        paint: {
+          'fill-color': color || '#088',
+          'fill-opacity': id === 'projectArea' ? 0 : 0.1,
+        },
+      }
+      const baseObj = {
+        'source': {
+          'type': 'geojson',
+          'data': {
+            'type': type,
+            'geometry': {
+              'type': geometry.type,
+              'coordinates': geometry.coordinates,
+            },
+          },
+        },
+        'layout': {},
+      }
+      const line = Object.assign({}, baseObj, lineDetails)
+      const fill = Object.assign({}, baseObj, fillDetails)
+      // this.map.addLayer(fill)
+      this.map.addLayer(line)
+    },
   },
 }
 </script>
