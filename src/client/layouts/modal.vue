@@ -1,6 +1,13 @@
 <template>
   <div class="layout-modal">
-    <app-header />
+    <app-header @onShowNavigation="showNavigation = true"/>
+    <app-menu
+      :show-navigation="showNavigation"
+      :title="$t('ast')"
+      :accepted-legal="acceptedLegal"
+      :created-project-area="createdProjectArea"
+      :filled-in-required-settings="filledInRequiredProjectAreaSettings"
+      @onCloseNavigation="showNavigation = false"/>
 
     <div class="layout-modal__content">
       <div class="layout-modal__page-wrapper">
@@ -30,11 +37,16 @@
 
 <script>
 import { mapState, mapMutations, mapGetters } from "vuex";
-import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard } from '../components'
+import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu } from '../components'
 import { mapFields } from 'vuex-map-fields';
 
 export default {
-  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard },
+  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu },
+  data() {
+    return {
+      showNavigation: false,
+    }
+  },
   computed: {
     ...mapState({
       map: state => state.project.map,
@@ -43,6 +55,7 @@ export default {
       legalAccepted: state => state.project.legalAccepted,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups']),
+    ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings']),
   },
   methods: {
     ...mapMutations({

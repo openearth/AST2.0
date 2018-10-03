@@ -4,7 +4,9 @@
     <app-menu
       :show-navigation="showNavigation"
       :title="$t('ast')"
-      :is-project="true"
+      :accepted-legal="acceptedLegal"
+      :created-project-area="createdProjectArea"
+      :filled-in-required-settings="filledInRequiredProjectAreaSettings"
       @onCloseNavigation="showNavigation = false"/>
 
     <div class="layout-default__content">
@@ -40,7 +42,7 @@ import { mapFields } from 'vuex-map-fields';
 
 export default {
   components: { AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu },
-    data() {
+  data() {
     return {
       showNavigation: false,
     }
@@ -52,6 +54,7 @@ export default {
       projectArea: state => state.project.settings.area,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups']),
+    ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings']),
   },
   methods: {
     ...mapMutations({ onBaseLayerSwitch: 'project/setBaseLayer' }),

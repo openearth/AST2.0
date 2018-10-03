@@ -13,8 +13,33 @@
       <md-list>
         <md-list-item>
           <md-button
-            :href="`/${$i18n.locale}/settings/general`"
-            :disabled="isProject"
+            :to="`/${$i18n.locale}/new-project/`"
+            :disabled="!acceptedLegal"
+            class="app-menu__button">
+            <md-icon>add</md-icon>
+            <span class="md-body-1">
+              {{ $t('new_project') }}
+            </span>
+          </md-button>
+        </md-list-item>
+
+        <md-list-item>
+          <md-button
+            :to="`/${$i18n.locale}/`"
+            :disabled="!acceptedLegal"
+            class="app-menu__button">
+            <md-icon>folder_open</md-icon>
+            <span class="md-body-1">
+              {{ $t('open_project') }}
+            </span>
+          </md-button>
+        </md-list-item>
+        <md-divider />
+
+        <md-list-item>
+          <md-button
+            :to="`/${$i18n.locale}/settings/project-area/`"
+            :disabled="!createdProjectArea"
             class="app-menu__button">
             <md-icon>settings</md-icon>
             <span class="md-body-1">
@@ -25,8 +50,8 @@
 
         <md-list-item>
           <md-button
-            :href="`/${$i18n.locale}/settings/general`"
-            :disabled="isProject"
+            :to="`/${$i18n.locale}/`"
+            :disabled="!createdProjectArea"
             class="app-menu__button">
             <md-icon>save</md-icon>
             <span class="md-body-1">
@@ -37,25 +62,12 @@
 
         <md-list-item>
           <md-button
-            :href="`/${$i18n.locale}/settings/general`"
-            :disabled="isProject"
+            :to="`/${$i18n.locale}/`"
+            :disabled="!filledInRequiredSettings"
             class="app-menu__button">
             <md-icon>publish</md-icon>
             <span class="md-body-1">
               {{ $t('export_project') }}
-            </span>
-          </md-button>
-        </md-list-item>
-        <md-divider />
-
-        <md-list-item>
-          <md-button
-            :href="`/${$i18n.locale}/`"
-            :disabled="isProject"
-            class="app-menu__button">
-            <md-icon>folder_open</md-icon>
-            <span class="md-body-1">
-              {{ $t('open_project') }}
             </span>
           </md-button>
         </md-list-item>
@@ -90,7 +102,19 @@
         required: false,
         default: '',
       },
-      isProject: {
+      acceptedLegal: {
+        type: Boolean,
+        default: false,
+      },
+      createdProjectArea: {
+        type: Boolean,
+        default: false,
+      },
+      filledInRequiredSettings: {
+        type: Boolean,
+        default: false,
+      },
+      filledInTargets: {
         type: Boolean,
         default: false,
       },
