@@ -136,23 +136,16 @@
     flex-grow: 1;
   }
 
-  .app-menu__button .md-ripple {
-    padding: 0;
-  }
-
   .app-menu__button .md-button-content {
     flex-grow: 1;
   }
 
   .app-menu .md-list-item-content {
-    padding: 0 0;
+    padding-left: 0;
   }
 
   .app-menu .app-menu__button.md-button {
     text-transform: none;
-    margin: 0 0;
-    padding: var(--spacing-half) var(--spacing-default);
-    height: 100%;
   }
 
   .app-menu .app-menu__button .md-icon {
@@ -164,6 +157,6 @@
   }
 
   .app-menu__link {
-    padding: var(--spacing-half) var(--spacing-default);
+    padding: 0 var(--spacing-default);
   }
 </style>
