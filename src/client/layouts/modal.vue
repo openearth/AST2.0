@@ -22,6 +22,7 @@
     <transition name="slide-up">
       <app-disclaimer
         v-if="!legalAccepted"
+        :disclaimer="disclaimer"
         class="layout-modal__disclaimer"
         @accepted="acceptLegal"/>
     </transition>
@@ -31,10 +32,15 @@
 <script>
 import { mapState, mapMutations, mapGetters } from "vuex";
 import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard } from '../components'
-import { mapFields } from 'vuex-map-fields';
+import getData from '~/lib/get-data'
 
 export default {
   components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard },
+  data() {
+    return {
+      disclaimer: {},
+    }
+  },
   computed: {
     ...mapState({
       map: state => state.project.map,
@@ -43,6 +49,11 @@ export default {
       legalAccepted: state => state.project.legalAccepted,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups']),
+  },
+  async beforeMount() {
+    const locale = this.$i18n.locale
+    const data =  await getData({ locale, slug: 'disclaimer' })
+    this.disclaimer = { ...data.disclaimer }
   },
   methods: {
     ...mapMutations({
