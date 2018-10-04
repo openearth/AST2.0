@@ -13,7 +13,7 @@
     </md-card-content>
 
     <md-card-actions>
-      <md-button :to="`/${$i18n.locale}/measures/${measure.slug}`">{{ $t('learn_more') }}</md-button>
+      <md-button :to="`/${$i18n.locale}/project/measures/${measure.slug}`">{{ $t('learn_more') }}</md-button>
       <md-button class="md-primary" @click="chooseMeasure">{{ $t('choose') }}</md-button>
     </md-card-actions>
   </md-card>

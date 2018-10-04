@@ -9,6 +9,6 @@
 
 <style>
 .measures {
-  width: var(--width-large)
+  width:  100%;
 }
 </style>
