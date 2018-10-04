@@ -7,7 +7,8 @@
       :accepted-legal="acceptedLegal"
       :created-project-area="createdProjectArea"
       :filled-in-required-settings="filledInRequiredProjectAreaSettings"
-      @onCloseNavigation="showNavigation = false"/>
+      @onCloseNavigation="showNavigation = false"
+      @saveProject="saveProject"/>
 
     <div class="layout-default__content">
       <nuxt />
@@ -63,6 +64,7 @@ export default {
       updateArea: 'project/updateArea',
       deleteArea: 'project/deleteArea',
       selectionChange: 'selectedAreas/changeSelection',
+      saveProject: 'project/saveProject',
     }),
   },
 }

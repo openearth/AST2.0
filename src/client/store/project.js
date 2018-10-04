@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import turf from '@turf/area'
+import FileSaver from 'file-saver'
 import MapEventBus, { UPDATE_FEATURE_PROPERTY } from '../lib/map-event-bus'
 import { getApiDataForFeature } from "../lib/get-api-data";
 
@@ -167,6 +168,10 @@ export const actions = {
       const value = kpis.reduce((obj, kpi) => ({ ...obj, [kpi.key]: { include: true, value: "0" } }), {})
       commit('setTargets', { key, value })
     })
+  },
+  saveProject({ state }) {
+    const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' })
+    return FileSaver.saveAs(blob, 'project.json')
   },
 }
 

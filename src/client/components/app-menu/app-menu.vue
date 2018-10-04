@@ -50,9 +50,9 @@
 
         <md-list-item>
           <md-button
-            :to="`/${$i18n.locale}/`"
             :disabled="!createdProjectArea"
-            class="app-menu__button">
+            class="app-menu__button"
+            @click="$emit('saveProject')">
             <md-icon>save</md-icon>
             <span class="md-body-1">
               {{ $t('save_project') }}
@@ -138,6 +138,7 @@
 
   .app-menu__button .md-button-content {
     flex-grow: 1;
+    text-align: left;
   }
 
   .app-menu .md-list-item-content {
