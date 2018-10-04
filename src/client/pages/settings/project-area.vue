@@ -18,7 +18,8 @@
               <md-checkbox
                 v-if="setting.multiple"
                 :value="!projectAreaSettings[setting.key][option.value]"
-                @change="value => setProjectAreaNestedSetting({
+                @change="value => updateProjectAreaSetting({
+                  type: 'checkbox',
                   key: setting.key,
                   option: option.value,
                   value
@@ -28,7 +29,8 @@
                 v-else
                 :value="projectAreaSettings[setting.key] !== option.value"
                 required
-                @change="value => setProjectAreaSetting({
+                @change="value => updateProjectAreaSetting({
+                  type: 'radio',
                   key: setting.key,
                   value: option.value,
                 })"
@@ -44,7 +46,7 @@
 
 <script>
 import Vue from 'vue'
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapMutations, mapActions } from 'vuex'
 
 export default {
   computed: {
@@ -57,9 +59,11 @@ export default {
   },
   methods: {
     ...mapMutations({
-      onUpdateAreaSettings: 'project/updateProjectAreaSettings',
       setProjectAreaNestedSetting: 'project/toggleProjectAreaNestedSetting',
       setProjectAreaSetting: 'project/setProjectAreaSetting',
+    }),
+    ...mapActions({
+      updateProjectAreaSetting: 'project/updateProjectAreaSetting',
     }),
   },
 }

@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import turf from '@turf/area'
 import MapEventBus, { UPDATE_FEATURE_PROPERTY } from '../lib/map-event-bus'
-import { getApiDataForFeature } from "../lib/get-api-data";
+import { getApiDataForFeature, getRankedMeasures } from "../lib/get-api-data";
 
 export const state = () => ({
   areas: [],
@@ -75,9 +75,9 @@ export const mutations = {
   deleteArea(state, value) {
     state.areas = state.areas.filter(area => area.id !== value)
   },
-  updateProjectAreaSettings(state, value) {
-    state.settings.projectArea = value
-  },
+  // updateProjectAreaSettings(state, value) {
+  //   state.settings.projectArea = value
+  // },
   setProjectAreaSetting(state, { key, value }) {
     state.settings.projectArea[key] = value
   },
@@ -163,6 +163,15 @@ export const actions = {
       const value = kpis.reduce((obj, kpi) => ({ ...obj, [kpi.key]: { include: true, value: null } }), {})
       commit('setTargets', { key, value })
     })
+  },
+  updateProjectAreaSetting({ state, commit, rootGetters }, type, options ) {
+    if (type === 'checkbox') {
+      commit('toggleProjectAreaNestedSetting', { key, option, value })
+    }
+
+    if (type === 'radio') {
+      commit('setProjectAreaSetting', { key, value })
+    }
   },
 }
 
