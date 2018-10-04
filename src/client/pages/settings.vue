@@ -17,10 +17,7 @@
 
     <nuxt-child class="settings-view__content"/>
 
-    <transition-group
-      name="list-complete"
-      class="settings-view__action-wrapper"
-      tag="div">
+    <div class="settings-view__action-wrapper">
       <md-button
         v-if="!isLastTab"
         :key="1"
@@ -33,7 +30,7 @@
         :key="2"
         :to="`/${locale}/project`"
         class="md-primary md-raised">{{ $t('done') }}</md-button>
-    </transition-group>
+    </div>
   </md-drawer>
 </template>
 
