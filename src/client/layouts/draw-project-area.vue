@@ -14,13 +14,16 @@
           :areas="areas"
           :point="false"
           :line="false"
-          :polygon="!hasProjectArea"
+          :polygon="true"
+          :map-center="center"
+          :map-zoom="zoom"
           class="layout-draw-project-area__map"
           @create="createArea"
           @update="updateArea"
           @delete="deleteArea"
           @selectionchange="selectionChange"
-          @baseLayerSwitch="onBaseLayerSwitch"/>
+          @baseLayerSwitch="onBaseLayerSwitch"
+          @move="setMapPosition"/>
       </md-content>
     </div>
     <virtual-keyboard class="layout-draw-project-area__virtual-keyboard"/>
@@ -38,8 +41,9 @@ export default {
     ...mapState({
       map: state => state.project.map,
       projectArea: state => state.project.settings.area,
-      hasProjectArea: state => !!state.project.settings.area.properties,
       areas: state => state.project.areas,
+      center: state => state.project.map.center,
+      zoom: state => state.project.map.zoom,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups']),
   },
@@ -50,6 +54,7 @@ export default {
       updateArea: 'project/updateArea',
       deleteArea: 'project/deleteArea',
       selectionChange: 'selectedAreas/changeSelection',
+      setMapPosition: 'project/setMapPosition',
     }),
   },
 }

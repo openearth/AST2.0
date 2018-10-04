@@ -5,22 +5,23 @@
     </div>
 
     <div class="md-toolbar-section-end">
-      <transition-group name="list-complete" >
-        <md-button
-          v-if="currentFilledInLevel.level >= 2"
-          :key="2"
-          :to="`/${this.$i18n.locale}/settings/project-area/`"
-          class="md-primary md-icon-button">
-          <md-icon>settings</md-icon>
-        </md-button>
-      </transition-group>
+      <md-button
+        v-if="currentFilledInLevel.level >= LEVEL_PROJECT_AREA"
+        :key="2"
+        :to="`/${this.$i18n.locale}/settings/project-area/`"
+        class="md-primary md-icon-button">
+        <md-icon>settings</md-icon>
+      </md-button>
     </div>
   </md-toolbar>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
+import { LEVEL_PROJECT_AREA } from "../../lib/flow-levels";
+
 export default {
+  data: () => ({ LEVEL_PROJECT_AREA }),
   computed: {
     ...mapGetters('flow', ['currentFilledInLevel']),
   },

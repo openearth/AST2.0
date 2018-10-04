@@ -1,5 +1,13 @@
 import isObject from 'lodash/isObject'
 import getViewPath from '../lib/get-view-path'
+import {
+  LEVEL_NO_LEGAL,
+  LEVEL_LEGAL,
+  LEVEL_PROJECT_AREA,
+  LEVEL_PROJECT_AREA_SETTINGS,
+  LEVEL_PROJECT_SETTINGS,
+  LEVEL_SETTINGS,
+} from "../lib/flow-levels";
 
 export const state = () => ({
   fullPath: {},
@@ -36,36 +44,30 @@ export const getters = {
       .filter(value => value === null || value === '' || isNaN(parseFloat(value, 10)))
       .length
   },
+  filledInSettings(state, getters) {
+    return getters.filledInRequiredProjectAreaSettings &&
+           getters.filledInTargets
+  },
   currentFilledInLevel(state, getters, rootState) {
     const { locale } = rootState.i18n
-    let level = 0;
 
-    if (getters.acceptedLegal) {
-      level = level + 1 // 1
-    } else {
-      return { level, uri: `/${locale}/` }
+    if (!getters.acceptedLegal) {
+      return { level: LEVEL_NO_LEGAL, uri: `/${locale}/` }
     }
 
-    if (getters.createdProjectArea) {
-      level = level + 1 // 2
-    } else {
-      return { level, uri: `/${locale}/new-project/` }
+    if (!getters.createdProjectArea) {
+      return { level: LEVEL_LEGAL, uri: `/${locale}/new-project/` }
     }
 
-    if (getters.filledInRequiredProjectAreaSettings) {
-      level = level + 1 // 3
-    } else {
-      return { level, uri: `/${locale}/settings/project-area/` }
+    if (!getters.filledInRequiredProjectAreaSettings) {
+      return { level: LEVEL_PROJECT_AREA, uri: `/${locale}/settings/project-area/` }
     }
 
-    if (getters.filledInTargets) {
-      level = level + 1 // 4
-    } else {
-      return { level, uri:  `/${locale}/settings/project-target` }
+    if(!getters.filledInTargets) {
+      return { level: LEVEL_PROJECT_AREA_SETTINGS, uri: `/${locale}/settings/project-target/` }
     }
 
-    level = level + 1 // 5
-    return { level, uri: '' }
+    return { level: LEVEL_SETTINGS, uri: `/${locale}/project/` }
   },
   isNewProjectView({ fullPath }) {
     const view = getViewPath({ fullPath })
