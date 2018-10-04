@@ -1,33 +1,25 @@
 <template>
-  <div class="layout-default">
+  <div class="layout-inactive-map">
     <app-header />
 
-    <div class="layout-default__content">
+    <div class="layout-inactive-map__content">
       <nuxt />
 
-      <md-content class="layout-default__map-wrapper">
+      <md-content class="layout-inactive-map__map-wrapper">
         <map-viewer
           :active-base-layer="map.activeBaseLayer"
           :base-layers="map.baseLayers"
           :project-area="projectArea"
-          :areas="areas"
           :is-project="true"
+          :areas="areas"
+          :interactive="false"
           :map-center="center"
           :map-zoom="zoom"
-          class="layout-default__map"
-          @create="createArea"
-          @update="updateArea"
-          @delete="deleteArea"
-          @selectionchange="selectionChange"
-          @baseLayerSwitch="onBaseLayerSwitch"
+          class="layout-inactive-map__map"
           @move="setMapPosition"/>
-        <kpi-panel
-          :kpis="filteredKpiGroups"
-          :kpi-values="filteredKpiValues"
-          :kpi-percentage-values="filteredKpiPercentageValues"/>
       </md-content>
     </div>
-    <virtual-keyboard class="layout-default__virtual-keyboard"/>
+    <virtual-keyboard class="layout-inactive-map__virtual-keyboard"/>
   </div>
 </template>
 
@@ -49,12 +41,7 @@ export default {
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups']),
   },
   methods: {
-    ...mapMutations({ onBaseLayerSwitch: 'project/setBaseLayer' }),
     ...mapActions({
-      createArea: 'project/createArea',
-      updateArea: 'project/updateArea',
-      deleteArea: 'project/deleteArea',
-      selectionChange: 'selectedAreas/changeSelection',
       setMapPosition: 'project/setMapPosition',
     }),
   },
@@ -64,7 +51,7 @@ export default {
 <style>
 @import '../components/app-core/index.css';
 
-.layout-default {
+.layout-inactive-map {
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -72,22 +59,22 @@ export default {
   position: relative;
 }
 
-.layout-default__content {
+.layout-inactive-map__content {
   overflow-y: scroll;
   display: flex;
   flex: 1;
 }
 
-.layout-default__map-wrapper {
+.layout-inactive-map__map-wrapper {
   flex: 1;
   display: flex;
 }
 
-.layout-default__map {
+.layout-inactive-map__map {
   flex: 1;
 }
 
-.layout-default__virtual-keyboard {
+.layout-inactive-map__virtual-keyboard {
   position: absolute;
   width: 100vw;
   height: 100vh;

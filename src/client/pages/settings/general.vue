@@ -5,3 +5,9 @@
     </header>
   </aside>
 </template>
+
+<script>
+export default {
+  middleware: ['access-level-project-area'],
+}
+</script>
