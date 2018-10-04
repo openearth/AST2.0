@@ -3,7 +3,7 @@
  */
 module.exports = {
   scrollBehavior,
-  middleware: ['core-data'],
+  middleware: ['core-data', 'store-route'],
 }
 
 /**

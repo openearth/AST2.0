@@ -56,6 +56,7 @@
 import { NumericInput } from "../../components";
 import { mapState, mapMutations, mapGetters } from "vuex";
 export default {
+  middleware: ['access-level-project-area-settings'],
   components: { NumericInput },
   computed: {
     ...mapState('data', ['kpiGroups']),

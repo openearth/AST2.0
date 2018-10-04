@@ -1,45 +1,44 @@
 <template>
-  <div class="layout-default">
+  <div class="layout-draw-project-area">
     <app-header />
 
-    <div class="layout-default__content">
+    <div class="layout-draw-project-area__content">
       <nuxt />
 
-      <md-content class="layout-default__map-wrapper">
+      <md-content class="layout-draw-project-area__map-wrapper">
         <map-viewer
           :active-base-layer="map.activeBaseLayer"
           :base-layers="map.baseLayers"
           :project-area="projectArea"
+          :is-project="false"
           :areas="areas"
-          :is-project="true"
-          class="layout-default__map"
+          :point="false"
+          :line="false"
+          :polygon="true"
+          class="layout-draw-project-area__map"
           @create="createArea"
           @update="updateArea"
           @delete="deleteArea"
           @selectionchange="selectionChange"
           @baseLayerSwitch="onBaseLayerSwitch"/>
-        <kpi-panel
-          :kpis="filteredKpiGroups"
-          :kpi-values="filteredKpiValues"
-          :kpi-percentage-values="filteredKpiPercentageValues"/>
       </md-content>
     </div>
-    <virtual-keyboard class="layout-default__virtual-keyboard"/>
+    <virtual-keyboard class="layout-draw-project-area__virtual-keyboard"/>
   </div>
 </template>
 
 <script>
 import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
-import { AppHeader, MapViewer, KpiPanel, VirtualKeyboard } from '../components'
+import { AppHeader, MapViewer, VirtualKeyboard } from '../components'
 import { mapFields } from 'vuex-map-fields';
 
 export default {
-  components: { AppHeader, MapViewer, KpiPanel, VirtualKeyboard },
+  components: { AppHeader, MapViewer, VirtualKeyboard },
   computed: {
     ...mapState({
       map: state => state.project.map,
-      areas: state => state.project.areas,
       projectArea: state => state.project.settings.area,
+      areas: state => state.project.areas,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups']),
   },
@@ -58,7 +57,7 @@ export default {
 <style>
 @import '../components/app-core/index.css';
 
-.layout-default {
+.layout-draw-project-area {
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -66,22 +65,22 @@ export default {
   position: relative;
 }
 
-.layout-default__content {
+.layout-draw-project-area__content {
   overflow-y: scroll;
   display: flex;
   flex: 1;
 }
 
-.layout-default__map-wrapper {
+.layout-draw-project-area__map-wrapper {
   flex: 1;
   display: flex;
 }
 
-.layout-default__map {
+.layout-draw-project-area__map {
   flex: 1;
 }
 
-.layout-default__virtual-keyboard {
+.layout-draw-project-area__virtual-keyboard {
   position: absolute;
   width: 100vw;
   height: 100vh;

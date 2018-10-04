@@ -1,6 +1,9 @@
 <template>
   <div class="project-area">
-    <md-subheader>{{ $t('area_size') }}: {{ area }}</md-subheader>
+    <md-toolbar md-elevation="0" class="md-transparent">
+      <span class="md-subheading">{{ $t('area_size') }}: {{ area }}</span>
+      <md-button :to="`/${locale}/new-project`" class="md-primary">{{ $t('change_area') }}</md-button>
+    </md-toolbar>
 
     <form>
       <md-list>
@@ -49,8 +52,10 @@ import Vue from 'vue'
 import { mapState, mapMutations, mapActions } from 'vuex'
 
 export default {
+  middleware: ['access-level-project-area'],
   computed: {
     ...mapState({
+      locale: state => state.i18n.locale,
       projectArea: state => state.project.settings.area,
       projectAreaSettings: state => state.project.settings.projectArea,
       areaSettings: state => state.data.areaSettings,
