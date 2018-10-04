@@ -17,23 +17,24 @@
 
     <nuxt-child class="settings-view__content"/>
 
-    <transition-group
-      name="list-complete"
-      class="settings-view__action-wrapper"
-      tag="div">
-      <md-button
-        v-if="!isLastTab"
-        :key="1"
-        :to="`/${locale}/settings/${nextTabKey}/`"
-        :disabled="nextTabDisabled"
-        :class="{'md-primary': !filledInRequiredProjectAreaSettings}"
-        class="md-raised">{{ $t('next') }}</md-button>
-      <md-button
-        v-if="filledInRequiredProjectAreaSettings"
-        :key="2"
-        :to="`/${locale}/project`"
-        class="md-primary md-raised">{{ $t('done') }}</md-button>
-    </transition-group>
+    <div class="settings-view__action-wrapper">
+      <transition name="slide-up">
+        <md-button
+          v-if="!isLastTab"
+          :key="1"
+          :to="`/${locale}/settings/${nextTabKey}/`"
+          :disabled="nextTabDisabled"
+          :class="{'md-primary': !filledInRequiredProjectAreaSettings}"
+          class="md-raised">{{ $t('next') }}</md-button>
+      </transition>
+      <transition name="slide-up">
+        <md-button
+          v-if="filledInRequiredProjectAreaSettings"
+          :key="2"
+          :to="`/${locale}/project`"
+          class="md-primary md-raised">{{ $t('done') }}</md-button>
+      </transition>
+    </div>
   </md-drawer>
 </template>
 
