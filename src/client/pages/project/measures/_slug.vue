@@ -1,7 +1,7 @@
 <template>
   <div class="measure">
     <div class="measure__actions">
-      <nuxt-link :to="`/${$i18n.locale}/measures`" class="md-link measure__link">&#x2190; {{ $t('back') }}</nuxt-link>
+      <nuxt-link :to="`/${$i18n.locale}/project/measures/`" class="md-link measure__link">&#x2190; {{ $t('back') }}</nuxt-link>
       <md-button
         :disabled="!selectedFeatures.length"
         class="md-raised md-primary"
@@ -52,13 +52,16 @@ export default {
   methods: {
     ...mapActions({ updateAreaProperties: 'project/updateAreaProperties' }),
     onChoose(id, color) {
-      return this.updateAreaProperties({
+      this.updateAreaProperties({
         features: this.selectedFeatures,
         properties: {
           measure: id,
           color,
+          areaInflow: 1,
+          areaDepth: 1,
         },
       })
+      this.$router.push(`/${this.$i18n.locale}/project/areas`)
     },
   },
 }
