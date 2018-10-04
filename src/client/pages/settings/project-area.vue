@@ -2,7 +2,7 @@
   <div class="project-area">
     <md-subheader>{{ $t('area_size') }}: {{ area }}</md-subheader>
 
-    <form @submit.prevent="onSubmit">
+    <form>
       <md-list>
         <md-list-item
           v-for="setting in areaSettings"
@@ -61,29 +61,6 @@ export default {
       setProjectAreaNestedSetting: 'project/toggleProjectAreaNestedSetting',
       setProjectAreaSetting: 'project/setProjectAreaSetting',
     }),
-    onSubmit(e) {
-      let projectAreaSettings = {}
-
-      this.areaSettings.forEach(setting => {
-        if (setting.multiple) {
-          projectAreaSettings[setting.key] = {}
-        }
-
-        setting.options.forEach(option => {
-          const [{ checked }] = this.$refs[`${setting.key}-${option.value}`]
-
-          if (setting.multiple) {
-            return projectAreaSettings[setting.key][option.value] = checked
-          }
-
-          if (checked) {
-            projectAreaSettings[setting.key] = option.value
-          }
-        })
-      })
-
-      this.onUpdateAreaSettings(projectAreaSettings)
-    },
   },
 }
 </script>
