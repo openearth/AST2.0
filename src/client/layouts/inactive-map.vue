@@ -1,6 +1,13 @@
 <template>
   <div class="layout-inactive-map">
-    <app-header />
+    <app-header @onShowNavigation="showNavigation = true"/>
+    <app-menu
+      :show-navigation="showNavigation"
+      :title="$t('ast')"
+      :accepted-legal="acceptedLegal"
+      :created-project-area="createdProjectArea"
+      :filled-in-required-settings="filledInRequiredProjectAreaSettings"
+      @onCloseNavigation="showNavigation = false"/>
 
     <div class="layout-inactive-map__content">
       <nuxt />
@@ -13,7 +20,10 @@
           :is-project="true"
           :areas="areas"
           :interactive="false"
-          class="layout-inactive-map__map"/>
+          :map-center="center"
+          :map-zoom="zoom"
+          class="layout-inactive-map__map"
+          @move="setMapPosition"/>
       </md-content>
     </div>
     <virtual-keyboard class="layout-inactive-map__virtual-keyboard"/>
@@ -22,18 +32,31 @@
 
 <script>
 import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
-import { AppHeader, MapViewer, KpiPanel, VirtualKeyboard } from '../components'
+import { AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu } from '../components'
 import { mapFields } from 'vuex-map-fields';
 
 export default {
-  components: { AppHeader, MapViewer, KpiPanel, VirtualKeyboard },
+  components: { AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu },
+  data() {
+    return {
+      showNavigation: false,
+    }
+  },
   computed: {
     ...mapState({
       map: state => state.project.map,
       areas: state => state.project.areas,
       projectArea: state => state.project.settings.area,
+      center: state => state.project.map.center,
+      zoom: state => state.project.map.zoom,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups']),
+    ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings']),
+  },
+  methods: {
+    ...mapActions({
+      setMapPosition: 'project/setMapPosition',
+    }),
   },
 }
 </script>

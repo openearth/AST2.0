@@ -1,6 +1,13 @@
 <template>
   <div class="layout-draw-project-area">
-    <app-header />
+    <app-header @onShowNavigation="showNavigation = true"/>
+    <app-menu
+      :show-navigation="showNavigation"
+      :title="$t('ast')"
+      :accepted-legal="acceptedLegal"
+      :created-project-area="createdProjectArea"
+      :filled-in-required-settings="filledInRequiredProjectAreaSettings"
+      @onCloseNavigation="showNavigation = false"/>
 
     <div class="layout-draw-project-area__content">
       <nuxt />
@@ -14,13 +21,16 @@
           :areas="areas"
           :point="false"
           :line="false"
-          :polygon="!hasProjectArea"
+          :polygon="true"
+          :map-center="center"
+          :map-zoom="zoom"
           class="layout-draw-project-area__map"
           @create="createArea"
           @update="updateArea"
           @delete="deleteArea"
           @selectionchange="selectionChange"
-          @baseLayerSwitch="onBaseLayerSwitch"/>
+          @baseLayerSwitch="onBaseLayerSwitch"
+          @move="setMapPosition"/>
       </md-content>
     </div>
     <virtual-keyboard class="layout-draw-project-area__virtual-keyboard"/>
@@ -29,19 +39,26 @@
 
 <script>
 import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
-import { AppHeader, MapViewer, VirtualKeyboard } from '../components'
+import { AppHeader, MapViewer, VirtualKeyboard, AppMenu } from '../components'
 import { mapFields } from 'vuex-map-fields';
 
 export default {
-  components: { AppHeader, MapViewer, VirtualKeyboard },
+  components: { AppHeader, MapViewer, VirtualKeyboard, AppMenu },
+  data() {
+    return {
+      showNavigation: false,
+    }
+  },
   computed: {
     ...mapState({
       map: state => state.project.map,
       projectArea: state => state.project.settings.area,
-      hasProjectArea: state => !!state.project.settings.area.properties,
       areas: state => state.project.areas,
+      center: state => state.project.map.center,
+      zoom: state => state.project.map.zoom,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups']),
+    ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings']),
   },
   methods: {
     ...mapMutations({ onBaseLayerSwitch: 'project/setBaseLayer' }),
@@ -50,6 +67,7 @@ export default {
       updateArea: 'project/updateArea',
       deleteArea: 'project/deleteArea',
       selectionChange: 'selectedAreas/changeSelection',
+      setMapPosition: 'project/setMapPosition',
     }),
   },
 }

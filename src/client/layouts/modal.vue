@@ -1,6 +1,13 @@
 <template>
   <div class="layout-modal">
-    <app-header />
+    <app-header @onShowNavigation="showNavigation = true"/>
+    <app-menu
+      :show-navigation="showNavigation"
+      :title="$t('ast')"
+      :accepted-legal="acceptedLegal"
+      :created-project-area="createdProjectArea"
+      :filled-in-required-settings="filledInRequiredProjectAreaSettings"
+      @onCloseNavigation="showNavigation = false"/>
 
     <div class="layout-modal__content">
       <div class="layout-modal__page-wrapper">
@@ -16,7 +23,10 @@
         :is-project="true"
         :areas="areas"
         :interactive="false"
-        class="layout-modal__map"/>
+        :map-center="center"
+        :map-zoom="zoom"
+        class="layout-modal__map"
+        @move="setMapPosition"/>
     </div>
 
     <transition name="slide-up">
@@ -30,15 +40,16 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapGetters } from "vuex";
-import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard } from '../components'
+import { mapState, mapMutations, mapGetters, mapActions } from "vuex";
+import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu } from '../components'
 import getData from '~/lib/get-data'
 
 export default {
-  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard },
+  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu },
   data() {
     return {
       disclaimer: {},
+      showNavigation: false,
     }
   },
   computed: {
@@ -47,8 +58,11 @@ export default {
       areas: state => state.project.areas,
       projectArea: state => state.project.settings.area,
       legalAccepted: state => state.project.legalAccepted,
+      center: state => state.project.map.center,
+      zoom: state => state.project.map.zoom,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups']),
+    ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings']),
   },
   async beforeMount() {
     const locale = this.$i18n.locale
@@ -58,6 +72,9 @@ export default {
   methods: {
     ...mapMutations({
       acceptLegal: 'project/acceptLegal',
+    }),
+    ...mapActions({
+      setMapPosition: 'project/setMapPosition',
     }),
   },
 }
