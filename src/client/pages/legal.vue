@@ -13,6 +13,7 @@ import { RichText } from '~/components'
 import getData from '~/lib/get-data'
 
 export default {
+  layout: 'inactive-map',
   components: { RichText },
   async asyncData({ params, store }) {
     const { locale } = store.state.i18n
