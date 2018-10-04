@@ -20,7 +20,10 @@
           :is-project="true"
           :areas="areas"
           :interactive="false"
-          class="layout-inactive-map__map"/>
+          :map-center="center"
+          :map-zoom="zoom"
+          class="layout-inactive-map__map"
+          @move="setMapPosition"/>
       </md-content>
     </div>
     <virtual-keyboard class="layout-inactive-map__virtual-keyboard"/>
@@ -44,9 +47,16 @@ export default {
       map: state => state.project.map,
       areas: state => state.project.areas,
       projectArea: state => state.project.settings.area,
+      center: state => state.project.map.center,
+      zoom: state => state.project.map.zoom,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings']),
+  },
+  methods: {
+    ...mapActions({
+      setMapPosition: 'project/setMapPosition',
+    }),
   },
 }
 </script>

@@ -19,12 +19,15 @@
           :project-area="projectArea"
           :areas="areas"
           :is-project="true"
+          :map-center="center"
+          :map-zoom="zoom"
           class="layout-default__map"
           @create="createArea"
           @update="updateArea"
           @delete="deleteArea"
           @selectionchange="selectionChange"
-          @baseLayerSwitch="onBaseLayerSwitch"/>
+          @baseLayerSwitch="onBaseLayerSwitch"
+          @move="setMapPosition"/>
         <kpi-panel
           :kpis="filteredKpiGroups"
           :kpi-values="filteredKpiValues"
@@ -52,6 +55,8 @@ export default {
       map: state => state.project.map,
       areas: state => state.project.areas,
       projectArea: state => state.project.settings.area,
+      center: state => state.project.map.center,
+      zoom: state => state.project.map.zoom,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings']),
@@ -63,6 +68,7 @@ export default {
       updateArea: 'project/updateArea',
       deleteArea: 'project/deleteArea',
       selectionChange: 'selectedAreas/changeSelection',
+      setMapPosition: 'project/setMapPosition',
     }),
   },
 }

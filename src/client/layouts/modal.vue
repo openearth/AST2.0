@@ -23,7 +23,10 @@
         :is-project="true"
         :areas="areas"
         :interactive="false"
-        class="layout-modal__map"/>
+        :map-center="center"
+        :map-zoom="zoom"
+        class="layout-modal__map"
+        @move="setMapPosition"/>
     </div>
 
     <transition name="slide-up">
@@ -36,7 +39,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapGetters } from "vuex";
+import { mapState, mapMutations, mapGetters, mapActions } from "vuex";
 import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu } from '../components'
 import { mapFields } from 'vuex-map-fields';
 
@@ -53,6 +56,8 @@ export default {
       areas: state => state.project.areas,
       projectArea: state => state.project.settings.area,
       legalAccepted: state => state.project.legalAccepted,
+      center: state => state.project.map.center,
+      zoom: state => state.project.map.zoom,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings']),
@@ -60,6 +65,9 @@ export default {
   methods: {
     ...mapMutations({
       acceptLegal: 'project/acceptLegal',
+    }),
+    ...mapActions({
+      setMapPosition: 'project/setMapPosition',
     }),
   },
 }
