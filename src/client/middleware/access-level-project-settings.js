@@ -1,6 +1,10 @@
-export default function ({ redirect, store, route }) {
+import hasFlowLevel from "../lib/has-flow-level";
+import { LEVEL_PROJECT_SETTINGS } from "../lib/flow-levels";
+
+export default function ({ redirect, store }) {
+  const hasLevelInStore = hasFlowLevel(store)
   const currentLevel = store.getters['flow/currentFilledInLevel']
-  if (currentLevel.level < 4) {
+  if (!hasLevelInStore(LEVEL_PROJECT_SETTINGS)) {
     redirect(currentLevel.uri)
   }
 }
