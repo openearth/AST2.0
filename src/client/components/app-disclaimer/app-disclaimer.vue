@@ -54,6 +54,10 @@ export default {
   margin-bottom: var(--spacing-half);
 }
 
+.app-disclaimer__link {
+  color: #fff !important;
+}
+
 .app-disclaimer__footer {
   display: flex;
   justify-content: space-between;
