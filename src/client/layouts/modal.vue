@@ -52,8 +52,8 @@ export default {
   },
   async beforeMount() {
     const locale = this.$i18n.locale
-    const data =  await getData({ locale, slug: 'disclaimer' })
-    this.disclaimer = { ...data.disclaimer }
+    const data =  await getData({ locale, slug: 'legal' })
+    this.disclaimer = { ...data.legal.disclaimer }
   },
   methods: {
     ...mapMutations({

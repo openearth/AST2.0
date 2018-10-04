@@ -1,7 +1,0 @@
-query ($locale: SiteLocale) {
-  disclaimer(locale: $locale) {
-    title,
-    content,
-    footer,
-  }
-}
