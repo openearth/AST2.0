@@ -1,40 +1,43 @@
 <template>
   <md-drawer md-permanent="clipped" class="legal">
+    <button class="md-link" @click="$router.go(-1)">&#x2190; {{ $t('back') }}</button>
     <div class="new-project__content">
-      <h1>Terms and conditions</h1>
+      <h1 class="md-title">{{ legal.title }}</h1>
+      <rich-text :text="legal.content" />
     </div>
   </md-drawer>
 </template>
 
 <script>
-import { mapState, mapGetters } from "vuex";
-import MapEventBus, { REDRAW } from "../lib/map-event-bus"
+import { RichText } from '~/components'
+import getData from '~/lib/get-data'
 
 export default {
-  computed: {
-    ...mapState('i18n', ['locale']),
-    ...mapState('project', ['settings']),
-    ...mapGetters('flow', ['createdProjectArea']),
-  },
-  mounted() {
-    MapEventBus.$emit(REDRAW)
+  components: { RichText },
+  async asyncData({ params, store }) {
+    const { locale } = store.state.i18n
+    const data = await getData({ locale, slug: 'legal' })
+    return { legal: { ...data.legal } }
   },
 }
 </script>
 
 <style>
-.new-project {
-  display: flex;
-  flex-direction: column;
+.legal {
+  width: var(--width-large);
+  padding: var(--spacing-double);
 }
 
-.new-project__content {
-  flex: 1;
-  overflow-y: scroll;
+.legal p {
+  margin-bottom: var(--spacing-default);
 }
 
-.new-project__action-wrapper {
-  display: flex;
-  justify-content: flex-end;
+.legal .md-link {
+  margin: 0;
+  padding: 0;
+  color: var(--action-color);
+  display: block;
+  margin-left: auto;
+  margin-bottom: var(--spacing-double);
 }
 </style>
