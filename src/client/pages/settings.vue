@@ -1,6 +1,10 @@
 <template>
   <md-drawer md-permanent="clipped" class="settings-view">
     <md-tabs md-sync-route class="settings-view__tabs">
+      <template slot="md-tab" slot-scope="{ tab }">
+        <div :class="{'settings-view__tab-error': tab.data.error}">{{ tab.label }}</div>
+      </template>
+
       <md-tab
         id="tab-general"
         :to="`/${locale}/settings/general/`"
@@ -11,29 +15,33 @@
         :md-label="$t('project_area')"/>
       <md-tab
         id="tab-project-target"
+        :md-disabled="!filledInRequiredProjectAreaSettings"
+        :md-template-data="{ error: !filledInTargets }"
         :to="`/${locale}/settings/project-target/`"
         :md-label="$t('project_target')"/>
     </md-tabs>
 
     <nuxt-child class="settings-view__content"/>
 
-    <transition-group
-      name="list-complete"
-      class="settings-view__action-wrapper"
-      tag="div">
-      <md-button
-        v-if="!isLastTab"
-        :key="1"
-        :to="`/${locale}/settings/${nextTabKey}/`"
-        :disabled="nextTabDisabled"
-        :class="{'md-primary': !filledInRequiredProjectAreaSettings}"
-        class="md-raised">{{ $t('next') }}</md-button>
-      <md-button
-        v-if="filledInRequiredProjectAreaSettings"
-        :key="2"
-        :to="`/${locale}/project`"
-        class="md-primary md-raised">{{ $t('done') }}</md-button>
-    </transition-group>
+    <div class="settings-view__action-wrapper">
+      <transition name="slide-up">
+        <md-button
+          v-if="!isLastTab"
+          :key="1"
+          :to="`/${locale}/settings/${nextTabKey}/`"
+          :disabled="nextTabDisabled"
+          :class="{'md-primary': !filledInRequiredProjectAreaSettings}"
+          class="md-raised">{{ $t('next') }}</md-button>
+      </transition>
+      <transition name="slide-up">
+        <md-button
+          v-if="filledInRequiredProjectAreaSettings"
+          :disabled="!filledInSettings"
+          :key="2"
+          :to="`/${locale}/project`"
+          class="md-primary md-raised">{{ $t('done') }}</md-button>
+      </transition>
+    </div>
   </md-drawer>
 </template>
 
@@ -62,7 +70,7 @@ export default {
   }),
   computed: {
     ...mapState('i18n', ['locale']),
-    ...mapGetters('flow', ['createdProjectArea', 'filledInRequiredProjectAreaSettings', 'filledInTargets']),
+    ...mapGetters('flow', ['createdProjectArea', 'filledInRequiredProjectAreaSettings', 'filledInTargets', 'filledInSettings']),
     currentTabIndex() {
       const path = this.$route.fullPath.replace(`/${this.locale}/settings/`, '').replace('/', '')
       const obj = this.tabs.find(tab => tab.key === path)
@@ -103,5 +111,19 @@ export default {
 .settings-view__action-wrapper {
   display: flex;
   justify-content: flex-end;
+}
+
+.settings-view__tab-error {
+  position: relative;
+}
+
+.settings-view__tab-error::after {
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: red;
+  content: '';
+  position: absolute;
+  border-radius: 100%;
+  transform: translate(25%, 25%)
 }
 </style>

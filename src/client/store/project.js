@@ -20,12 +20,24 @@ export const state = () => ({
       { key: 'satellite', label: 'Satellite' },
     ],
     activeBaseLayer: 'default',
+    zoom: 16.5,
+    center: {
+      lat: 52.36599335162853,
+      lng: 4.916535879906178,
+    },
   },
 })
 
 export const mutations = {
   import(state, file) {
     Vue.set(state, 'settings', file.settings)
+  },
+  setMapZoom(state, value) {
+    state.map.zoom = value
+  },
+  setMapCenter(state, value) {
+    state.map.center.lat = value.lat
+    state.map.center.lng = value.lng
   },
   setTitle(state, value) {
     state.settings.title = value
@@ -97,6 +109,10 @@ export const mutations = {
 }
 
 export const actions = {
+  setMapPosition({ commit }, { zoom, center }) {
+    zoom && commit('setMapZoom', zoom)
+    center && commit('setMapCenter', center)
+  },
   createArea({ state, commit }, features) {
     features.forEach(feature => {
       const area = turf(feature.geometry)

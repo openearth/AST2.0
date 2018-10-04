@@ -45,6 +45,14 @@ export default {
       type: Array,
       default: () => [],
     },
+    mapZoom: {
+      type: Number,
+      default: 0,
+    },
+    mapCenter: {
+      type: Object,
+      default: () => ({ lat: 0, lng: 0 }),
+    },
   },
 
   data: () => ({
@@ -73,6 +81,8 @@ export default {
   },
 
   async mounted() {
+    const mapZoom = this.mapZoom
+    const { lat, lng } = this.mapCenter
     const [mapboxgl, MapboxDraw] = await Promise.all([import('mapbox-gl'), import('@mapbox/mapbox-gl-draw')])
     const defaultStyles = [...new MapboxDraw().options.styles]
       .filter(style => /\.hot$/.test(style.id))
@@ -83,54 +93,57 @@ export default {
       })
     mapboxgl.accessToken = process.env.MAPBOX_ACCESS_TOKEN
 
-    this.map = new mapboxgl.Map({
-      container: this.$refs.map,
-      style: this.activeStyle,
-      zoom: 16.5,
-      center: [4.916535879906178, 52.36599335162853],
-      showZoom: true,
-    })
-    this.draw = new MapboxDraw({
-      controls: {
-        combine_features: false,
-        uncombine_features: false,
-        point: this.interactive && this.point,
-        line_string: this.interactive && this.line,
-        polygon: this.interactive && this.polygon,
-        trash: this.interactive,
-      },
-      userProperties: true,
-      styles: [...defaultStyles, ...projectAreaStyles, ...areaStyles],
-    })
-    this.navigationControls = new mapboxgl.NavigationControl({ showCompass: false })
+    if (this.$refs.map) {
+      this.map = new mapboxgl.Map({
+        container: this.$refs.map,
+        style: this.activeStyle,
+        zoom: this.mapZoom,
+        center: [lng, lat],
+        showZoom: true,
+      })
+      this.draw = new MapboxDraw({
+        controls: {
+          combine_features: false,
+          uncombine_features: false,
+          point: this.interactive && this.point,
+          line_string: this.interactive && this.line,
+          polygon: this.interactive && this.polygon,
+          trash: this.interactive,
+        },
+        userProperties: true,
+        styles: [...defaultStyles, ...projectAreaStyles, ...areaStyles],
+      })
+      this.navigationControls = new mapboxgl.NavigationControl({ showCompass: false })
 
-    this.map.addControl(this.navigationControls, 'bottom-right')
-    this.map.addControl(this.draw, 'top-left')
+      this.map.addControl(this.navigationControls, 'bottom-right')
+      this.map.addControl(this.draw, 'top-left')
 
-    this.initialShapes.forEach(shape => {
-      this.draw.add(shape)
-    })
+      this.initialShapes.forEach(shape => {
+        this.draw.add(shape)
+      })
 
-    this.map.on('draw.create', event => this.$emit('create', event.features))
-    this.map.on('draw.update', event => this.$emit('update', event.features))
-    this.map.on('draw.delete', event => this.$emit('delete', event.features))
-    this.map.on('draw.selectionchange', event => this.$emit('selectionchange', event.features))
+      this.map.on('draw.create', event => this.$emit('create', event.features))
+      this.map.on('draw.update', event => this.$emit('update', event.features))
+      this.map.on('draw.delete', event => this.$emit('delete', event.features))
+      this.map.on('draw.selectionchange', event => this.$emit('selectionchange', event.features))
+      this.map.on('move', event => this.$emit('move', { center: this.map.getCenter(), zoom: this.map.getZoom() }))
 
-    this.map.on('load', () => {
-      this.map.resize()
-      this.fillMap()
-    })
+      this.map.on('load', () => {
+        this.map.resize()
+        this.fillMap()
+      })
 
-    MapEventBus.$on(UPDATE_FEATURE_PROPERTY, ({ featureId, key, value }) => {
-      if (this.draw.get(featureId) !== undefined) {
-        const updatedFeature = this.draw.setFeatureProperty(featureId, key, value).get(featureId)
-        // console.log({ key, value, updatedFeature }) // Comment left on purpose for easy debugging
-      }
-    })
+      MapEventBus.$on(UPDATE_FEATURE_PROPERTY, ({ featureId, key, value }) => {
+        if (this.draw.get(featureId) !== undefined) {
+          const updatedFeature = this.draw.setFeatureProperty(featureId, key, value).get(featureId)
+          // console.log({ key, value, updatedFeature }) // Comment left on purpose for easy debugging
+        }
+      })
 
-    MapEventBus.$on(REDRAW, () => {
-      this.map.resize()
-    })
+      MapEventBus.$on(REDRAW, () => {
+        this.map.resize()
+      })
+    }
   },
   methods: {
     fillMap() {
