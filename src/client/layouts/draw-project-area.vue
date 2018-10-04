@@ -14,7 +14,7 @@
           :areas="areas"
           :point="false"
           :line="false"
-          :polygon="!hasProjectArea"
+          :polygon="true"
           class="layout-draw-project-area__map"
           @create="createArea"
           @update="updateArea"
@@ -38,7 +38,6 @@ export default {
     ...mapState({
       map: state => state.project.map,
       projectArea: state => state.project.settings.area,
-      hasProjectArea: state => !!state.project.settings.area.properties,
       areas: state => state.project.areas,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups']),
