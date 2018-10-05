@@ -7,7 +7,9 @@
       :accepted-legal="acceptedLegal"
       :created-project-area="createdProjectArea"
       :filled-in-required-settings="filledInRequiredProjectAreaSettings"
-      @onCloseNavigation="showNavigation = false"/>
+      @onCloseNavigation="showNavigation = false"
+      @saveProject="saveProject"
+      @importProject="onFileInput"/>
 
     <div class="layout-modal__content">
       <div class="layout-modal__page-wrapper">
@@ -36,7 +38,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapGetters } from "vuex";
+import { mapState, mapMutations, mapGetters, mapActions } from "vuex";
 import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu } from '../components'
 import { mapFields } from 'vuex-map-fields';
 
@@ -55,12 +57,20 @@ export default {
       legalAccepted: state => state.project.legalAccepted,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups']),
-    ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings']),
+    ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel']),
   },
   methods: {
     ...mapMutations({
       acceptLegal: 'project/acceptLegal',
     }),
+    ...mapActions({
+      importProject: 'project/importProject',
+      saveProject: 'project/saveProject',
+    }),
+    async onFileInput(event) {
+      this.importProject(event)
+        .then(() => this.$router.push(this.currentFilledInLevel.uri))
+    },
   },
 }
 </script>

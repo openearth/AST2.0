@@ -3,6 +3,7 @@ import turf from '@turf/area'
 import FileSaver from 'file-saver'
 import MapEventBus, { UPDATE_FEATURE_PROPERTY } from '../lib/map-event-bus'
 import { getApiDataForFeature } from "../lib/get-api-data";
+import getLoadedFileContents from '../lib/get-loaded-file-contents'
 
 export const state = () => ({
   legalAccepted: false,
@@ -26,7 +27,7 @@ export const state = () => ({
 
 export const mutations = {
   import(state, file) {
-    Vue.set(state, 'settings', file.settings)
+    Object.keys(file).forEach(key => Vue.set(state, key, file[key]))
   },
   setTitle(state, value) {
     state.settings.title = value
@@ -168,6 +169,10 @@ export const actions = {
       const value = kpis.reduce((obj, kpi) => ({ ...obj, [kpi.key]: { include: true, value: "0" } }), {})
       commit('setTargets', { key, value })
     })
+  },
+  async importProject({ state, commit, rootGetters }, event) {
+    const loadedProject = await getLoadedFileContents(event)
+    commit('import', loadedProject)
   },
   saveProject({ state }) {
     const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' })

@@ -23,16 +23,22 @@
           </md-button>
         </md-list-item>
 
-        <md-list-item>
+        <md-list-item class="app-menu__open-folder">
           <md-button
             :to="`/${$i18n.locale}/`"
             :disabled="!acceptedLegal"
-            class="app-menu__button">
+            class="app-menu__button app-menu__open-folder-button">
             <md-icon>folder_open</md-icon>
             <span class="md-body-1">
               {{ $t('open_project') }}
             </span>
           </md-button>
+          <input
+            v-if="acceptedLegal"
+            class="app-menu__input-file"
+            type="file"
+            accept="application/json"
+            @change="event => $emit('importProject', event)">
         </md-list-item>
         <md-divider />
 
@@ -159,5 +165,27 @@
 
   .app-menu__link {
     padding: 0 var(--spacing-default);
+  }
+
+  .app-menu__open-folder {
+    z-index: 0;
+  }
+
+  .app-menu__open-folder-button {
+    z-index: 0;
+  }
+
+  .app-menu__input-file {
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    opacity: 0;
+    z-index: 1;
+  }
+
+  .app-menu__input-file:hover {
+    cursor: pointer;
   }
 </style>

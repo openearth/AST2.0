@@ -7,7 +7,9 @@
       :accepted-legal="acceptedLegal"
       :created-project-area="createdProjectArea"
       :filled-in-required-settings="filledInRequiredProjectAreaSettings"
-      @onCloseNavigation="showNavigation = false"/>
+      @onCloseNavigation="showNavigation = false"
+      @saveProject="saveProject"
+      @importProject="onFileInput"/>
 
     <div class="layout-draw-project-area__content">
       <nuxt />
@@ -53,7 +55,7 @@ export default {
       areas: state => state.project.areas,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups']),
-    ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings']),
+    ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel']),
   },
   methods: {
     ...mapMutations({ onBaseLayerSwitch: 'project/setBaseLayer' }),
@@ -62,7 +64,13 @@ export default {
       updateArea: 'project/updateArea',
       deleteArea: 'project/deleteArea',
       selectionChange: 'selectedAreas/changeSelection',
+      importProject: 'project/importProject',
+      saveProject: 'project/saveProject',
     }),
+    async onFileInput(event) {
+      this.importProject(event)
+        .then(() => this.$router.push(this.currentFilledInLevel.uri))
+    },
   },
 }
 </script>
