@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import turf from '@turf/area'
 import MapEventBus, { UPDATE_FEATURE_PROPERTY } from '../lib/map-event-bus'
-import { getApiDataForFeature, getRankedMeasures } from "../lib/get-api-data";
+import { getApiDataForFeature, getRankedMeasures, getRealApiData, getScores, getApiData } from "../lib/get-api-data";
 
 export const state = () => ({
   legalAccepted: false,
@@ -184,13 +184,27 @@ export const actions = {
       commit('setTargets', { key, value })
     })
   },
-  updateProjectAreaSetting({ state, commit, rootGetters }, type, options ) {
+  async updateProjectAreaSetting({ state, commit, rootState, rootGetters }, payload ) {
+    const { type } = payload
+
     if (type === 'checkbox') {
+      const { key, option, value } = payload
       commit('toggleProjectAreaNestedSetting', { key, option, value })
     }
 
     if (type === 'radio') {
+      const { key, value } = payload
       commit('setProjectAreaSetting', { key, value })
+    }
+
+    const filledInRequiredProjectAreaSettings = rootGetters['flow/filledInRequiredProjectAreaSettings']
+
+    if (filledInRequiredProjectAreaSettings) {
+      const { projectArea } = state.settings
+      const settings = rootState.data.areaSettings
+
+      const rankedMeasures = await getRankedMeasures(projectArea, settings)
+      // TODO: commit ranked measures to state
     }
   },
 }

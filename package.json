@@ -49,6 +49,7 @@
     "nuxt": "1.4.2",
     "nuxt-i18n": "5.2.1",
     "query-string": "6.1.0",
+    "to-camel-case": "^1.0.0",
     "unfetch": "3.1.1",
     "vue": "2.5.17",
     "vue-carousel": "^0.14.0",
