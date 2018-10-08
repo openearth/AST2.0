@@ -88,9 +88,6 @@ export const mutations = {
   deleteArea(state, value) {
     state.areas = state.areas.filter(area => area.id !== value)
   },
-  // updateProjectAreaSettings(state, value) {
-  //   state.settings.projectArea = value
-  // },
   setProjectAreaSetting(state, { key, value }) {
     state.settings.projectArea[key] = value
   },
@@ -204,7 +201,8 @@ export const actions = {
       const settings = rootState.data.areaSettings
 
       const rankedMeasures = await getRankedMeasures(projectArea, settings)
-      // TODO: commit ranked measures to state
+
+      commit('data/measures/addMeasuresRanking', rankedMeasures, { root: true })
     }
   },
 }

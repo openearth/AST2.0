@@ -30,12 +30,12 @@ export default {
   },
   computed: {
     ...mapState('data', ['measures']),
-    ...mapGetters('data/measures', ['orderedMeasures']),
+    ...mapGetters('data/measures', ['orderedMeasures', 'measuresBySystemSuitability']),
     ...mapGetters('selectedAreas', { selectedFeatures: 'features' }),
     measuresList() {
       return this.isAlphabeticallyOrdered
         ? this.orderedMeasures
-        : this.measures
+        : this.measuresBySystemSuitability
     },
     filteredMeasuresList() {
       return this.measuresList.filter(item => item.title.toLowerCase().indexOf(this.searchValue.toLowerCase()) !== -1)

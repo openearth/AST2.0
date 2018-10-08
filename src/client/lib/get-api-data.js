@@ -73,46 +73,21 @@ export async function getApiDataForFeature(feature, projectArea, currentReturnTi
 
 export async function getRankedMeasures(projectArea, settings) {
   const requestBody = formatRequestBody(projectArea, settings)
-  const rankedMeasures = await getApiData('measure-ranking', requestBody)
-  // return rankedMeasures
+  const { data } = await getApiData('measure-ranking', requestBody)
+  const { rankedMeasures } = data
 
-  const dummyData = {
-    "subsurface_characteristic": "High",
-    "surface":  "Flat_roofs",
-    "multifunctionality":  0.7,
-    "soil": "Sand",
-    "slope": "Flat_area_on_high_ground",
-    "scales": {
-      "City": true,
-      "Neighbourhood": true,
-      "Street": false,
-      "Building": true,
-    },
-    "climate_capacity": {
-      "Heatstress_Threshold_Capacity": true,
-      "Heatstress_Coping_Capacity": true,
-      "Drought_Threshold_Capacity": true,
-      "Drought_Coping_Capacity": true,
-      "Flood_Threshold_Capacity": true,
-      "Flood_Coping_Capacity": true,
-    },
-    "site_suitability": {
-      "Red_space": true,
-      "Grey_space":  true,
-      "Green_space_-_private__gardens":  true,
-      "Undeveloped_land_and_Green_space_-_no_recreational_use":  true,
-      "Green_space_-_recreational_use_&_urban_farming":  true,
-      "Grey_green_space_-_sports_playground":  true,
-      "Blue_space":  true,
-    },
-  }
+  // to get real data the 'subsurface_characteristics' and 'scale' keys have to be changed in dato
+  // subsurface_characteristic => subsurface_characteristics, scales => scale
+
   // getting data from real api
-  const data = await getScores()
-  const scores = data.result['selection_scores']
+  // const data = await getScores()
+  // const scores = data.result['selection_scores']
 
-  const realRankedMeasures = await getRealApiData('selection', { ...dummyData, scores })
-  console.log(realRankedMeasures)
+  // const rankedMeasures = await getRealApiData('selection', { ...projectArea, scores })
+  // console.log(rankedMeasures)
+  return rankedMeasures
 }
+
 
 function toArray(obj) {
   const arr = Object.keys(obj).filter(key => obj[key] === true)
@@ -126,6 +101,7 @@ function capitalizeFirstLetter(str) {
 function formatRequestBody(projectArea, settings) {
   let body = {}
 
+  // only necessary when using our api
   settings.forEach(setting => {
     const { key, multiple } = setting
     const camelCaseKey = camel(key)
@@ -142,5 +118,15 @@ function formatRequestBody(projectArea, settings) {
   })
 
   body['climateCapacity'] = [...body['climateCapacity'], ...copingArray]
+
+  // only necessary when using real api
+  // body['climate_capacity'] = { ...projectArea['climate_capacity'] }
+
+  // Object.keys(projectArea['climate_capacity']).forEach(item => {
+  //   console.log(item)
+  //   const key = item.replace('Threshold', 'Coping')
+  //   body['climate_capacity'][key] = projectArea['climate_capacity'][item]
+  // })
+
   return body
 }
