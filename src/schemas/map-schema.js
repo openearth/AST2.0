@@ -20,5 +20,15 @@ export default {
         },
       },
     },
+    center: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['lat', 'lng'],
+      properties: {
+        lat: { type: 'number' },
+        lng: { type: 'number' },
+      },
+    },
+    zoom: { type: 'number' },
   },
 }
