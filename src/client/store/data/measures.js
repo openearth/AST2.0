@@ -43,4 +43,7 @@ export const getters = {
   measureById: state => id => {
     return state.find(measure => measure.measureId === id)
   },
+  measureDetails: state => slug => {
+    return state.find(measure => measure.slug === slug)
+  },
 }

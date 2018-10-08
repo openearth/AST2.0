@@ -9,11 +9,14 @@
       :is-project="isProject"
       :project-area="projectArea"
       :areas="areas"
+      :map-zoom="mapZoom"
+      :map-center="mapCenter"
       class="map-viewer__map"
       @create="onCreate"
       @update="onUpdate"
       @delete="onDelete"
       @selectionchange="onSelectionchange"
+      @move="onMove"
     />
     <map-base-layer-switcher
       :base-layers="baseLayers"
@@ -64,6 +67,14 @@ export default {
       type: Array,
       default: () => [],
     },
+    mapCenter: {
+      type: Object,
+      default: () => ({ lat: 0, lng: 0 }),
+    },
+    mapZoom: {
+      type: Number,
+      default: 0,
+    },
   },
   methods: {
     onCreate(event) { this.$emit('create', event) },
@@ -71,6 +82,7 @@ export default {
     onDelete(event) { this.$emit('delete', event) },
     onSelectionchange(event) { this.$emit('selectionchange', event) },
     onBaseLayerSwitch(event) { this.$emit('baseLayerSwitch', event) },
+    onMove(event) { this.$emit('move', event) },
   },
 }
 </script>

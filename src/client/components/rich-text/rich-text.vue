@@ -1,5 +1,5 @@
 <template>
-  <div class="rich-text" v-html="text"/>
+  <div class="rich-text" v-html="text" />
 </template>
 
 <script>
@@ -20,6 +20,10 @@ export default {
   width: 100%;
   max-width: var(--max-width);
   margin-bottom: var(--spacing-double);
+}
+
+.rich-text p:not(:last-child) {
+  margin-bottom: var(--spacing-default);
 }
 
 .rich-text td {

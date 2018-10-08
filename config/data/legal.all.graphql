@@ -1,0 +1,11 @@
+query ($locale: SiteLocale) {
+  legal(locale: $locale) {
+    title,
+    content,
+    disclaimer {
+      title,
+      content,
+      footer,
+    }
+  }
+}
