@@ -198,7 +198,7 @@ export const actions = {
   },
   saveProject({ state }) {
     const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' })
-    return FileSaver.saveAs(blob, 'project.json')
+    return FileSaver.saveAs(blob, 'ast_project.json')
   },
 }
 
