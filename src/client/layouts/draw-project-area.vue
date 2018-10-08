@@ -24,12 +24,15 @@
           :point="false"
           :line="false"
           :polygon="true"
+          :map-center="center"
+          :map-zoom="zoom"
           class="layout-draw-project-area__map"
           @create="createArea"
           @update="updateArea"
           @delete="deleteArea"
           @selectionchange="selectionChange"
-          @baseLayerSwitch="onBaseLayerSwitch"/>
+          @baseLayerSwitch="onBaseLayerSwitch"
+          @move="setMapPosition"/>
       </md-content>
     </div>
     <virtual-keyboard class="layout-draw-project-area__virtual-keyboard"/>
@@ -53,6 +56,8 @@ export default {
       map: state => state.project.map,
       projectArea: state => state.project.settings.area,
       areas: state => state.project.areas,
+      center: state => state.project.map.center,
+      zoom: state => state.project.map.zoom,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel']),
@@ -66,6 +71,7 @@ export default {
       selectionChange: 'selectedAreas/changeSelection',
       importProject: 'project/importProject',
       saveProject: 'project/saveProject',
+      setMapPosition: 'project/setMapPosition',
     }),
     async onFileInput(event) {
       this.importProject(event)

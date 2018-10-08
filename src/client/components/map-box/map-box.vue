@@ -45,6 +45,14 @@ export default {
       type: Array,
       default: () => [],
     },
+    mapZoom: {
+      type: Number,
+      default: 0,
+    },
+    mapCenter: {
+      type: Object,
+      default: () => ({ lat: 0, lng: 0 }),
+    },
   },
 
   data: () => ({
@@ -73,6 +81,8 @@ export default {
   },
 
   async mounted() {
+    const mapZoom = this.mapZoom
+    const { lat, lng } = this.mapCenter
     const [mapboxgl, MapboxDraw] = await Promise.all([import('mapbox-gl'), import('@mapbox/mapbox-gl-draw')])
     const defaultStyles = [...new MapboxDraw().options.styles]
       .filter(style => /\.hot$/.test(style.id))
@@ -87,8 +97,8 @@ export default {
       this.map = new mapboxgl.Map({
         container: this.$refs.map,
         style: this.activeStyle,
-        zoom: 16.5,
-        center: [4.916535879906178, 52.36599335162853],
+        zoom: this.mapZoom,
+        center: [lng, lat],
         showZoom: true,
       })
       this.draw = new MapboxDraw({
@@ -116,6 +126,7 @@ export default {
       this.map.on('draw.update', event => this.$emit('update', event.features))
       this.map.on('draw.delete', event => this.$emit('delete', event.features))
       this.map.on('draw.selectionchange', event => this.$emit('selectionchange', event.features))
+      this.map.on('move', event => this.$emit('move', { center: this.map.getCenter(), zoom: this.map.getZoom() }))
 
       this.map.on('load', () => {
         this.map.resize()

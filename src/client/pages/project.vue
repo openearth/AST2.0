@@ -29,9 +29,9 @@ export default {
     ...mapGetters('selectedAreas', { selectedFeatures: 'features' }),
     ...mapGetters('project', ['areasByMeasure', 'measureCollection']),
     drawerWidth() {
-      const [view] = getViewPath(this.$route).reversedPath
-      const isLarge = this.largeViews.indexOf(view) !== -1
-      const isExtraLarge = this.extraLargeViews.indexOf(view) !== -1
+      const [view, parentView] = getViewPath(this.$route).reversedPath
+      const isLarge = this.largeViews.indexOf(view) !== -1 || this.largeViews.indexOf(parentView) !== -1
+      const isExtraLarge = this.extraLargeViews.indexOf(view) !== -1 || this.extraLargeViews.indexOf(parentView) !== -1
       let viewWidth = 'medium'
 
       viewWidth = isExtraLarge ? 'extra-large' : viewWidth

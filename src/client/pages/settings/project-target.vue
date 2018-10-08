@@ -7,12 +7,11 @@
       class="project-target__table">
 
       <md-table-toolbar class="project-target__title-toolbar">
-        <span class="md-title">{{ group.title }}</span>
+        <span class="md-subheading">{{ group.title }}</span>
       </md-table-toolbar>
 
       <md-table-row class="project-target__table-row">
         <md-table-head>{{ $t('goal') }}</md-table-head>
-        <md-table-head>{{ $t('kpi') }}</md-table-head>
         <md-table-head>{{ $t('target_value') }}</md-table-head>
       </md-table-row>
 
@@ -20,8 +19,7 @@
         v-for="kpi in group.kpis"
         :key="kpi.key"
         class="project-target__table-row">
-        <md-table-cell width="33%">{{ kpi.title }}</md-table-cell>
-        <md-table-cell width="7%">
+        <md-table-cell width="40%">
           <md-checkbox
             :value="!targets[group.key][kpi.key].include"
             @change="value => setTarget({
@@ -30,6 +28,7 @@
               value: { include: !!value },
             })"
           />
+          {{ kpi.title }}
         </md-table-cell>
         <md-table-cell width="60%">
           <numeric-input
@@ -89,5 +88,9 @@ export default {
   margin: 0;
   padding: 0;
   min-height: 32px;
+}
+
+.md-table {
+  display: block;
 }
 </style>

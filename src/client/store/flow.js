@@ -1,5 +1,6 @@
 import isObject from 'lodash/isObject'
 import getViewPath from '../lib/get-view-path'
+import isValidNumber from '../lib/is-valid-number'
 import {
   LEVEL_NO_LEGAL,
   LEVEL_LEGAL,
@@ -41,8 +42,12 @@ export const getters = {
     return !filteredKpiKeys
       .map(key => flatObject[key])
       .map(obj => obj.value)
-      .filter(value => value === null || value === '' || isNaN(parseFloat(value, 10)))
+      .filter(value => value === null || value === '' || isNaN(parseFloat(value, 10)) || !isValidNumber(value))
       .length
+  },
+  filledInSettings(state, getters) {
+    return getters.filledInRequiredProjectAreaSettings &&
+           getters.filledInTargets
   },
   currentFilledInLevel(state, getters, rootState) {
     const { locale } = rootState.i18n
@@ -52,15 +57,17 @@ export const getters = {
     }
 
     if (!getters.createdProjectArea) {
-      return { level: LEVEL_LEGAL, uri: `/${locale}/` }
+      return { level: LEVEL_LEGAL, uri: `/${locale}/new-project/` }
     }
 
     if (!getters.filledInRequiredProjectAreaSettings) {
-      return { level: LEVEL_PROJECT_AREA, uri: `/${locale}/new-project/` }
+      return { level: LEVEL_PROJECT_AREA, uri: `/${locale}/settings/project-area/` }
     }
 
-    // return { level: LEVEL_PROJECT_AREA_SETTINGS, uri: `/${locale}/settings/project-area/` }
-    // return { level: LEVEL_PROJECT_SETTINGS, uri:  `/${locale}/settings/project-target` }
+    if(!getters.filledInTargets) {
+      return { level: LEVEL_PROJECT_AREA_SETTINGS, uri: `/${locale}/settings/project-target/` }
+    }
+
     return { level: LEVEL_SETTINGS, uri: `/${locale}/project/` }
   },
   isNewProjectView({ fullPath }) {

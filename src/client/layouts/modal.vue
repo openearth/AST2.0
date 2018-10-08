@@ -25,12 +25,16 @@
         :is-project="true"
         :areas="areas"
         :interactive="false"
-        class="layout-modal__map"/>
+        :map-center="center"
+        :map-zoom="zoom"
+        class="layout-modal__map"
+        @move="setMapPosition"/>
     </div>
 
     <transition name="slide-up">
       <app-disclaimer
         v-if="!legalAccepted"
+        :disclaimer="disclaimer"
         class="layout-modal__disclaimer"
         @accepted="acceptLegal"/>
     </transition>
@@ -40,12 +44,13 @@
 <script>
 import { mapState, mapMutations, mapGetters, mapActions } from "vuex";
 import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu } from '../components'
-import { mapFields } from 'vuex-map-fields';
+import getData from '~/lib/get-data'
 
 export default {
   components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu },
   data() {
     return {
+      disclaimer: {},
       showNavigation: false,
     }
   },
@@ -55,9 +60,16 @@ export default {
       areas: state => state.project.areas,
       projectArea: state => state.project.settings.area,
       legalAccepted: state => state.project.legalAccepted,
+      center: state => state.project.map.center,
+      zoom: state => state.project.map.zoom,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel']),
+  },
+  async beforeMount() {
+    const locale = this.$i18n.locale
+    const data =  await getData({ locale, slug: 'legal' })
+    this.disclaimer = { ...data.legal.disclaimer }
   },
   methods: {
     ...mapMutations({
@@ -66,6 +78,7 @@ export default {
     ...mapActions({
       importProject: 'project/importProject',
       saveProject: 'project/saveProject',
+      setMapPosition: 'project/setMapPosition',
     }),
     async onFileInput(event) {
       this.importProject(event)

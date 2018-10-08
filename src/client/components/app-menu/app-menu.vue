@@ -81,7 +81,7 @@
 
         <md-list-item>
           <nuxt-link
-            :to="`/${$i18n.locale}/`"
+            :to="`/${$i18n.locale}/legal/`"
             class="app-menu__link md-list-item-text">{{ $t('legal') }}</nuxt-link>
         </md-list-item>
 
@@ -165,6 +165,7 @@
 
   .app-menu__link {
     padding: 0 var(--spacing-default);
+    color: var(--text-color) !important; /* override vue-material link color */
   }
 
   .app-menu__open-folder {
