@@ -45,6 +45,7 @@
     "dotenv": "6.0.0",
     "dotenv-safe": "6.0.0",
     "file-saver": "2.0.0-rc.3",
+    "jsonschema": "1.2.4",
     "mapbox-gl": "0.48.0",
     "normalize.css": "8.0.0",
     "nuxt": "1.4.2",

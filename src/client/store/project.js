@@ -4,6 +4,7 @@ import FileSaver from 'file-saver'
 import MapEventBus, { UPDATE_FEATURE_PROPERTY } from '../lib/map-event-bus'
 import { getApiDataForFeature } from "../lib/get-api-data";
 import getLoadedFileContents from '../lib/get-loaded-file-contents'
+import validateProject from '../lib/validate-project'
 
 export const state = () => ({
   legalAccepted: false,
@@ -170,9 +171,14 @@ export const actions = {
       commit('setTargets', { key, value })
     })
   },
-  async importProject({ state, commit, rootGetters }, event) {
+  async importProject({ state, commit, rootGetters, rootState }, event) {
     const loadedProject = await getLoadedFileContents(event)
-    commit('import', loadedProject)
+    const validProject = validateProject(loadedProject, rootState.data)
+    if (validProject.valid) {
+      commit('import', loadedProject)
+    } else {
+      console.error(validProject.errors)
+    }
   },
   saveProject({ state }) {
     const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' })

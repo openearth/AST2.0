@@ -88,6 +88,10 @@ export default {
   opacity: 0;
 }
 
+.page-index__input-file:hover {
+  cursor: pointer;
+}
+
 @supports (display: grid) {
   .page-index__actions {
     display: grid;
