@@ -1,6 +1,13 @@
 <template>
   <div class="layout-draw-project-area">
-    <app-header />
+    <app-header @onShowNavigation="showNavigation = true"/>
+    <app-menu
+      :show-navigation="showNavigation"
+      :title="$t('ast')"
+      :accepted-legal="acceptedLegal"
+      :created-project-area="createdProjectArea"
+      :filled-in-required-settings="filledInRequiredProjectAreaSettings"
+      @onCloseNavigation="showNavigation = false"/>
 
     <div class="layout-draw-project-area__content">
       <nuxt />
@@ -32,11 +39,16 @@
 
 <script>
 import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
-import { AppHeader, MapViewer, VirtualKeyboard } from '../components'
+import { AppHeader, MapViewer, VirtualKeyboard, AppMenu } from '../components'
 import { mapFields } from 'vuex-map-fields';
 
 export default {
-  components: { AppHeader, MapViewer, VirtualKeyboard },
+  components: { AppHeader, MapViewer, VirtualKeyboard, AppMenu },
+  data() {
+    return {
+      showNavigation: false,
+    }
+  },
   computed: {
     ...mapState({
       map: state => state.project.map,
@@ -46,6 +58,7 @@ export default {
       zoom: state => state.project.map.zoom,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups']),
+    ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings']),
   },
   methods: {
     ...mapMutations({ onBaseLayerSwitch: 'project/setBaseLayer' }),

@@ -1,5 +1,6 @@
 export { default as AppDisclaimer } from './app-disclaimer'
 export { default as AppHeader } from './app-header'
+export { default as AppMenu } from './app-menu'
 export { default as FixedRatio } from './fixed-ratio'
 export { default as InputRange } from './input-range'
 export { default as KpiGroup } from './kpi-group'
