@@ -28,6 +28,7 @@
 
 <script>
 import { mapMutations } from "vuex";
+import isValidNumber from '../../lib/is-valid-number'
 
 export default {
   props: {
@@ -52,7 +53,11 @@ export default {
       default: false,
     },
   },
-  data: () => ({ error: false }),
+  computed: {
+    error() {
+      return !isValidNumber(this.value)
+    },
+  },
   methods: {
     ...mapMutations({
       setFocusedInput: 'focusedInput/setFocusedInput',
@@ -65,15 +70,8 @@ export default {
       })
       this.$refs.inputElement.$el.focus()
     },
-    validateNumber(input) {
-      const parsedFloat = parseFloat(input, 10)
-      const inputIsNaN = isNaN(parsedFloat)
-
-      if (inputIsNaN) {
-        this.error = true
-        } else {
-        this.error = false
-      }
+    validateNumber(_input) {
+      const input = _input.replace(',', '.')
       this.onChange(input)
     },
   },

@@ -1,5 +1,6 @@
 import isObject from 'lodash/isObject'
 import getViewPath from '../lib/get-view-path'
+import isValidNumber from '../lib/is-valid-number'
 import {
   LEVEL_NO_LEGAL,
   LEVEL_LEGAL,
@@ -41,7 +42,7 @@ export const getters = {
     return !filteredKpiKeys
       .map(key => flatObject[key])
       .map(obj => obj.value)
-      .filter(value => value === null || value === '' || isNaN(parseFloat(value, 10)))
+      .filter(value => value === null || value === '' || isNaN(parseFloat(value, 10)) || !isValidNumber(value))
       .length
   },
   filledInSettings(state, getters) {

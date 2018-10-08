@@ -2,11 +2,21 @@
   <transition name="slide-up">
     <div v-if="inputElementRef" class="virtual-keyboard">
       <div class="virtual-keyboard__wrapper">
-        <md-field class="virtual-keyboard__input md-theme-default md-focused">
+        <md-field
+          v-if="inputElementRef.dataset.type !== 'number'"
+          class="virtual-keyboard__input md-theme-default md-focused">
           <label>{{ label }}</label>
           <md-input :value="value" />
           <div class="virtual-keyboard__input-overlay"/>
         </md-field>
+        <div class="virtual-keyboard__input">
+          <numeric-input
+            v-if="inputElementRef.dataset.type === 'number'"
+            :label="label"
+            :value="value"
+            class="md-focused"/>
+          <div class="virtual-keyboard__input-overlay"/>
+        </div>
         <vue-touch-keyboard
           :layout="layout"
           :cancel="hide"
@@ -22,8 +32,11 @@
 <script>
   import { mapState, mapMutations } from "vuex";
   import { numericLayout, textLayout } from "../../assets/custom-keyboard-options";
+  import NumericInput from '../numeric-input'
 
   export default {
+    components: { NumericInput },
+
     data: function() {
       return {
         value: '',
@@ -103,5 +116,6 @@
   background-color: transparent;
   width: 100%;
   height: 100%;
+  top: 0;
 }
 </style>
