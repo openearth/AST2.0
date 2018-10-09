@@ -52,7 +52,7 @@ export default {
       return !!this.title
     },
     formattedTitle() {
-      return startCase(this.title.replace('.json', ''))
+      return startCase(this.title)
     },
   },
 }

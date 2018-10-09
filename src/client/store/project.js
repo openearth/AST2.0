@@ -194,7 +194,7 @@ export const actions = {
     const levelBefore = rootGetters['flow/currentFilledInLevel'].level
     const { map } = loadedProject
 
-    loadedProject.settings.general.title = name
+    loadedProject.settings.general.title = name.replace('.json', '')
 
     if (validProject.valid) {
       commit('import', loadedProject)
