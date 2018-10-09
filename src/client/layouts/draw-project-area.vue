@@ -1,6 +1,6 @@
 <template>
   <div class="layout-draw-project-area">
-    <app-header @onShowNavigation="showMenu"/>
+    <app-header :title="title" @onShowNavigation="showMenu"/>
     <app-menu
       :show-navigation="showNavigation"
       :title="$t('ast')"
@@ -54,6 +54,7 @@ export default {
       center: state => state.project.map.center,
       zoom: state => state.project.map.zoom,
       showNavigation: state => state.appMenu.show,
+      title: state => state.project.settings.general.title,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel']),
