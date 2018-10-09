@@ -60,17 +60,12 @@ export default {
   flex-direction: column;
   align-items: space-between;
   justify-content: space-between;
-  border-left: 5px solid;
+  border-left-width: 5px;
+  border-left-style: solid;
 }
 
 .measure-card__title {
   font-size: 20px;
-}
-
-.measure-card__content {
-  border-top-width: 5px;
-  border-top-style: solid;
-  flex: 1;
 }
 
 .measure-card__img {
