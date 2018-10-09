@@ -29,7 +29,7 @@
         class="measure-list__item">
         <measure-card
           :measure="measure"
-          :scores="[]"
+          :scores="measure.climateEffectTags"
           class="measure-list__card"
           @choose="choose"/>
       </li>
@@ -88,14 +88,12 @@ export default {
   list-style: none;
   padding: 0;
   display: grid;
-  grid-gap: 1rem;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  padding: 1rem;
+  grid-gap: var(--spacing-default);
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  padding: var(--spacing-default);
 }
-
 
 .measure-list__card {
   height: 100%;
 }
-
 </style>
