@@ -21,7 +21,18 @@ export function getRealApiData(uri, body) {
       },
       body: JSON.stringify(body),
     }
-  ).then(res => res.json())
+  )
+  .then(res => res.text())
+  .then(text =>
+    text
+      .replace(/^"/, '')
+      .replace(/"$/m, '')
+      .replace(/\\"/g, '"')
+      .replace(/system_suitability/g, 'systemSuitability')
+  )
+  .then(json => {console.log({ json }); return json })
+  .then(json => JSON.parse(json))
+  .then(json => {console.log({ json }); return json })
 }
 
 export async function getApiDataForFeature(feature, projectArea, currentReturnTime = 1) {
