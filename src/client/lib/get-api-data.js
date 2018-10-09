@@ -24,10 +24,6 @@ export function getRealApiData(uri, body) {
   ).then(res => res.json())
 }
 
-export function getScores() {
-  return fetch(`https://tl-ng045.xtr.deltares.nl/api/scores`).then(res => res.json())
-}
-
 export async function getApiDataForFeature(feature, projectArea, currentReturnTime = 1) {
   const {
     measure,
