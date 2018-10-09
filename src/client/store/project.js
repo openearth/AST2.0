@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import turf from '@turf/area'
 import MapEventBus, { UPDATE_FEATURE_PROPERTY } from '../lib/map-event-bus'
-import { getApiDataForFeature, getRankedMeasures, getRealApiData, getScores, getApiData } from "../lib/get-api-data";
+import { getApiDataForFeature, getRankedMeasures } from "../lib/get-api-data";
 
 export const state = () => ({
   legalAccepted: false,
