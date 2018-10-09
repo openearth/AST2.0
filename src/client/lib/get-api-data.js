@@ -51,11 +51,6 @@ export async function getApiDataForFeature(feature, projectArea, currentReturnTi
 
   if (measureId) {
     const apiData = await Promise.all([
-      // getApiData('heatstress-cost', { measureArea, measureId }),
-      // getApiData('heatstress-temperature', { measureArea, measureId, projectArea }),
-      // getApiData('heatstress-waterquality', { measureArea, measureId }),
-      // getApiData('pluvflood', { measureArea, measureId, currentReturnTime, projectArea, inflowArea, measureDepth }),
-
       // getRealApiData('measures', { area, id }),
       getRealApiData('heatstress/cost', { area, id }),
       getRealApiData('heatstress/temperature', { area, id, projectArea }),
@@ -71,62 +66,20 @@ export async function getApiDataForFeature(feature, projectArea, currentReturnTi
   }
 }
 
-export async function getRankedMeasures(projectArea, settings) {
-  const requestBody = formatRequestBody(projectArea, settings)
-  const { data } = await getApiData('measure-ranking', requestBody)
-  const { rankedMeasures } = data
+export async function getRankedMeasures(projectArea) {
+  const requestBody = formatRequestBody(projectArea)
+  const rankedMeasures = await getRealApiData('selection', requestBody)
 
-  // to get real data the 'subsurface_characteristics' and 'scale' keys have to be changed in dato
-  // subsurface_characteristic => subsurface_characteristics, scales => scale
-
-  // getting data from real api
-  // const data = await getScores()
-  // const scores = data.result['selection_scores']
-
-  // const rankedMeasures = await getRealApiData('selection', { ...projectArea, scores })
-  // console.log(rankedMeasures)
   return rankedMeasures
 }
 
+function formatRequestBody(projectArea) {
+  let body = { ...projectArea }
 
-function toArray(obj) {
-  const arr = Object.keys(obj).filter(key => obj[key] === true)
-  return arr.map(item => capitalizeFirstLetter(item))
-}
-
-function capitalizeFirstLetter(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1)
-}
-
-function formatRequestBody(projectArea, settings) {
-  let body = {}
-
-  // only necessary when using our api
-  settings.forEach(setting => {
-    const { key, multiple } = setting
-    const camelCaseKey = camel(key)
-
-    if (multiple) {
-      body[camelCaseKey] = toArray(projectArea[key])
-    } else {
-      body[camelCaseKey] = capitalizeFirstLetter(projectArea[key])
-    }
+  Object.keys(projectArea['capacity']).forEach(key => {
+    const newKey = key.replace('Coping', 'Prevention')
+    body['capacity'][newKey] = projectArea['capacity'][key]
   })
-
-  const copingArray = body['climateCapacity'].map(item => {
-    return item.replace('Threshold', 'Coping')
-  })
-
-  body['climateCapacity'] = [...body['climateCapacity'], ...copingArray]
-
-  // only necessary when using real api
-  // body['climate_capacity'] = { ...projectArea['climate_capacity'] }
-
-  // Object.keys(projectArea['climate_capacity']).forEach(item => {
-  //   console.log(item)
-  //   const key = item.replace('Threshold', 'Coping')
-  //   body['climate_capacity'][key] = projectArea['climate_capacity'][item]
-  // })
 
   return body
 }

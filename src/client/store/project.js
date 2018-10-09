@@ -181,7 +181,7 @@ export const actions = {
       commit('setTargets', { key, value })
     })
   },
-  async updateProjectAreaSetting({ state, commit, rootState, rootGetters }, payload ) {
+  async updateProjectAreaSetting({ state, commit, rootGetters }, payload ) {
     const { type } = payload
 
     if (type === 'checkbox') {
@@ -198,9 +198,7 @@ export const actions = {
 
     if (filledInRequiredProjectAreaSettings) {
       const { projectArea } = state.settings
-      const settings = rootState.data.areaSettings
-
-      const rankedMeasures = await getRankedMeasures(projectArea, settings)
+      const rankedMeasures = await getRankedMeasures(projectArea)
 
       commit('data/measures/addMeasuresRanking', rankedMeasures, { root: true })
     }
