@@ -19,7 +19,7 @@ export const mutations = {
     const measures = state.filter(measure => measure.measureId !== '0')
 
     measures.forEach(measure => {
-      const rankedMeasure = rankedMeasures.find(item => measure.measureId === String(item.id))
+      const rankedMeasure = rankedMeasures.find(item => measure.measureId === String(item.ast_id))
 
       Vue.set(measure, 'systemSuitability', rankedMeasure.systemSuitability)
     })
