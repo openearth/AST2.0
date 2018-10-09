@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import turf from '@turf/area'
 import FileSaver from 'file-saver'
-import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION } from '../lib/map-event-bus'
+import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS } from '../lib/map-event-bus'
 import { getApiDataForFeature } from "../lib/get-api-data";
 import getLoadedFileContents from '../lib/get-loaded-file-contents'
 import validateProject from '../lib/validate-project'
@@ -196,6 +196,8 @@ export const actions = {
     if (validProject.valid) {
       commit('import', loadedProject)
       const levelAfter = rootGetters['flow/currentFilledInLevel'].level
+
+      MapEventBus.$emit(RELOAD_LAYERS)
 
       // This check exist because we have different map instances. If the level
       // is not the same, we switch of layout and thus do not need to fly

@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import MapEventBus, { UPDATE_FEATURE_PROPERTY, REDRAW, REPOSITION } from '../../lib/map-event-bus'
+import MapEventBus, { UPDATE_FEATURE_PROPERTY, REDRAW, REPOSITION, RELOAD_LAYERS } from '../../lib/map-event-bus'
 import projectAreaStyles from './project-area-styles'
 import areaStyles from './area-styles'
 
@@ -145,7 +145,12 @@ export default {
       })
 
       MapEventBus.$on(REPOSITION, ({ center, zoom }) => {
-        this.map.flyTo({ center, zoom })
+        this.$nextTick(() => this.map.flyTo({ center, zoom }))
+      })
+
+      MapEventBus.$on(RELOAD_LAYERS, () => {
+        this.clearMap()
+        this.$nextTick(this.fillMap)
       })
     }
   },
@@ -153,10 +158,15 @@ export default {
     MapEventBus.$off()
   },
   methods: {
+    clearMap() {
+      this.map.getLayer('projectArea-line') && this.map.removeLayer('projectArea-line')
+      this.map.getSource('projectArea-line') && this.map.removeSource('projectArea-line')
+      this.draw.deleteAll()
+    },
     fillMap() {
       if (!this.interactive) {
         this.hasProjectArea && this.addGeojsonLayer({ ...this.projectArea, id: 'projectArea' })
-        this.areas.forEach(area => this. addGeojsonLayer(area))
+        this.areas.forEach(area => this.addGeojsonLayer(area))
         return
       }
 
@@ -164,7 +174,7 @@ export default {
         this.hasProjectArea && this.addGeojsonLayer({ ...this.projectArea, id: 'projectArea' })
         this.areas.forEach(area => this.draw.add(area))
       } else {
-        this.areas.forEach(area => this. addGeojsonLayer(area))
+        this.areas.forEach(area => this.addGeojsonLayer(area))
         this.hasProjectArea && this.draw.add(this.projectArea)
       }
     },
@@ -203,7 +213,7 @@ export default {
         'layout': {},
       }
       const line = Object.assign({}, baseObj, lineDetails)
-      const fill = Object.assign({}, baseObj, fillDetails)
+      // const fill = Object.assign({}, baseObj, fillDetails)
       // this.map.addLayer(fill)
       this.map.addLayer(line)
     },
