@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import turf from '@turf/area'
 import FileSaver from 'file-saver'
-import MapEventBus, { UPDATE_FEATURE_PROPERTY } from '../lib/map-event-bus'
+import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION } from '../lib/map-event-bus'
 import { getApiDataForFeature } from "../lib/get-api-data";
 import getLoadedFileContents from '../lib/get-loaded-file-contents'
 import validateProject from '../lib/validate-project'
@@ -190,8 +190,18 @@ export const actions = {
   async importProject({ state, commit, rootGetters, rootState }, event) {
     const loadedProject = await getLoadedFileContents(event)
     const validProject = validateProject(loadedProject, rootState.data)
+    const levelBefore = rootGetters['flow/currentFilledInLevel'].level
+    const { map } = loadedProject
+
     if (validProject.valid) {
       commit('import', loadedProject)
+      const levelAfter = rootGetters['flow/currentFilledInLevel'].level
+
+      // This check exist because we have different map instances. If the level
+      // is not the same, we switch of layout and thus do not need to fly
+      if (levelBefore === levelAfter) {
+        MapEventBus.$emit(REPOSITION, { zoom: map.zoom, center: map.center })
+      }
     } else {
       console.error(validProject.errors)
     }

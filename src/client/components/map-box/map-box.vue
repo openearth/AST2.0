@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import MapEventBus, { UPDATE_FEATURE_PROPERTY, REDRAW } from '../../lib/map-event-bus'
+import MapEventBus, { UPDATE_FEATURE_PROPERTY, REDRAW, REPOSITION } from '../../lib/map-event-bus'
 import projectAreaStyles from './project-area-styles'
 import areaStyles from './area-styles'
 
@@ -143,7 +143,14 @@ export default {
       MapEventBus.$on(REDRAW, () => {
         this.map.resize()
       })
+
+      MapEventBus.$on(REPOSITION, ({ center, zoom }) => {
+        this.map.flyTo({ center, zoom })
+      })
     }
+  },
+  beforeDestroy() {
+    MapEventBus.$off()
   },
   methods: {
     fillMap() {
