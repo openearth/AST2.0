@@ -38,11 +38,10 @@ export default {
   },
   computed: {
     scoresString() {
-      const string = this.scores.reduce((acc, curr) => {
-        console.log(acc, curr)
+      const scores = this.scores.reduce((acc, curr) => {
         return [...acc, curr.title]
       }, [])
-      return string.join(' - ')
+      return scores.join(' - ')
     },
   },
   methods: {
