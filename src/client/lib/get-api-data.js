@@ -1,5 +1,3 @@
-const camel = require('to-camel-case')
-
 export function getApiData(uri, body) {
   return fetch(
     `https://ast-measure-api.now.sh/v2/${uri}/measure-model`,
