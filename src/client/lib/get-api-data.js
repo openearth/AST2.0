@@ -22,17 +22,7 @@ export function getRealApiData(uri, body) {
       body: JSON.stringify(body),
     }
   )
-  .then(res => res.text())
-  .then(text =>
-    text
-      .replace(/^"/, '')
-      .replace(/"$/m, '')
-      .replace(/\\"/g, '"')
-      .replace(/system_suitability/g, 'systemSuitability')
-  )
-  .then(json => {console.log({ json }); return json })
-  .then(json => JSON.parse(json))
-  .then(json => {console.log({ json }); return json })
+  .then(res => res.json())
 }
 
 export async function getApiDataForFeature(feature, projectArea, currentReturnTime = 1) {
@@ -56,7 +46,6 @@ export async function getApiDataForFeature(feature, projectArea, currentReturnTi
 
   if (measureId) {
     const apiData = await Promise.all([
-      // getRealApiData('measures', { area, id }),
       getRealApiData('heatstress/cost', { area, id }),
       getRealApiData('heatstress/temperature', { area, id, projectArea }),
       getRealApiData('heatstress/waterquality', { area, id }),
@@ -73,9 +62,9 @@ export async function getApiDataForFeature(feature, projectArea, currentReturnTi
 
 export async function getRankedMeasures(projectArea) {
   const requestBody = formatRequestBody(projectArea)
-  const rankedMeasures = await getRealApiData('selection', requestBody)
+  const { result } = await getRealApiData('selection', requestBody)
 
-  return rankedMeasures
+  return result
 }
 
 function formatRequestBody(projectArea) {

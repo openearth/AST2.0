@@ -21,7 +21,7 @@ export const mutations = {
     measures.forEach(measure => {
       const rankedMeasure = rankedMeasures.find(item => measure.measureId === String(item.ast_id))
 
-      Vue.set(measure, 'systemSuitability', rankedMeasure.systemSuitability)
+      Vue.set(measure, 'systemSuitability', rankedMeasure.system_suitability)
     })
   },
 }
