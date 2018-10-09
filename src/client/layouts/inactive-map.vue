@@ -1,13 +1,13 @@
 <template>
   <div class="layout-inactive-map">
-    <app-header @onShowNavigation="showNavigation = true"/>
+    <app-header @onShowNavigation="showMenu"/>
     <app-menu
       :show-navigation="showNavigation"
       :title="$t('ast')"
       :accepted-legal="acceptedLegal"
       :created-project-area="createdProjectArea"
       :filled-in-required-settings="filledInRequiredProjectAreaSettings"
-      @onCloseNavigation="showNavigation = false"
+      @onCloseNavigation="hideMenu"
       @saveProject="saveProject"
       @importProject="onFileInput"/>
 
@@ -39,11 +39,6 @@ import { mapFields } from 'vuex-map-fields';
 
 export default {
   components: { AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu },
-  data() {
-    return {
-      showNavigation: false,
-    }
-  },
   computed: {
     ...mapState({
       map: state => state.project.map,
@@ -51,6 +46,7 @@ export default {
       projectArea: state => state.project.settings.area,
       center: state => state.project.map.center,
       zoom: state => state.project.map.zoom,
+      showNavigation: state => state.appMenu.show,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel']),
@@ -60,6 +56,10 @@ export default {
       importProject: 'project/importProject',
       saveProject: 'project/saveProject',
       setMapPosition: 'project/setMapPosition',
+    }),
+    ...mapMutations({
+      showMenu: 'appMenu/showMenu',
+      hideMenu: 'appMenu/hideMenu',
     }),
     async onFileInput(event) {
       this.importProject(event)

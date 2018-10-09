@@ -205,6 +205,8 @@ export const actions = {
     } else {
       console.error(validProject.errors)
     }
+
+    commit('appMenu/hideMenu', null, { root: true })
   },
   saveProject({ state }) {
     const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' })
