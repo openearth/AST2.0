@@ -35,7 +35,7 @@ export default {
     measuresList() {
       return this.isAlphabeticallyOrdered
         ? this.orderedMeasures
-        : this.measuresBySystemSuitability
+        : this.measuresBySystemSuitability || this.measures
     },
     filteredMeasuresList() {
       return this.measuresList.filter(item => item.title.toLowerCase().indexOf(this.searchValue.toLowerCase()) !== -1)
