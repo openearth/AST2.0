@@ -83,7 +83,7 @@ export default {
   async mounted() {
     const mapZoom = this.mapZoom
     const { lat, lng } = this.mapCenter
-    const [mapboxgl, MapboxDraw] = await Promise.all([import('mapbox-gl'), import('@mapbox/mapbox-gl-draw')])
+    const [mapboxgl, MapboxDraw, MapboxGeocoder] = await Promise.all([import('mapbox-gl'), import('@mapbox/mapbox-gl-draw'), import('@mapbox/mapbox-gl-geocoder')])
     const defaultStyles = [...new MapboxDraw().options.styles]
       .filter(style => /\.hot$/.test(style.id))
       .map(({ source, ...style }) => ({ ...style, id: style.id.replace('.hot', '') }))
@@ -117,6 +117,9 @@ export default {
 
       this.map.addControl(this.navigationControls, 'bottom-right')
       this.map.addControl(this.draw, 'top-left')
+      this.map.addControl(new MapboxGeocoder({
+        accessToken: mapboxgl.accessToken,
+      }))
 
       this.initialShapes.forEach(shape => {
         this.draw.add(shape)

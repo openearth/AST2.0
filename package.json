@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "@mapbox/mapbox-gl-draw": "1.0.9",
+    "@mapbox/mapbox-gl-geocoder": "^2.3.0",
     "@nuxtjs/proxy": "1.2.4",
     "@nuxtjs/pwa": "2.5.0",
     "@nuxtjs/sitemap": "0.1.1",
