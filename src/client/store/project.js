@@ -1,7 +1,10 @@
 import Vue from 'vue'
 import turf from '@turf/area'
-import MapEventBus, { UPDATE_FEATURE_PROPERTY } from '../lib/map-event-bus'
+import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS } from '../lib/map-event-bus'
 import { getApiDataForFeature, getRankedMeasures } from "../lib/get-api-data";
+import FileSaver from 'file-saver'
+import getLoadedFileContents from '../lib/get-loaded-file-contents'
+import validateProject from '../lib/validate-project'
 
 export const state = () => ({
   legalAccepted: false,
@@ -9,7 +12,7 @@ export const state = () => ({
   settings: {
     area: {},
     general: {
-      title: 'My project title',
+      title: '',
     },
     projectArea: {},
     targets: {},
@@ -30,7 +33,7 @@ export const state = () => ({
 
 export const mutations = {
   import(state, file) {
-    Vue.set(state, 'settings', file.settings)
+    Object.keys(file).forEach(key => Vue.set(state, key, file[key]))
   },
   setMapZoom(state, value) {
     state.map.zoom = value
@@ -202,6 +205,38 @@ export const actions = {
 
       commit('data/measures/addMeasuresRanking', rankedMeasures, { root: true })
     }
+  },
+  async importProject({ state, commit, rootGetters, rootState }, event) {
+    const { name } = event.target.files[0]
+    const loadedProject = await getLoadedFileContents(event)
+    const validProject = validateProject(loadedProject, rootState.data)
+    const levelBefore = rootGetters['flow/currentFilledInLevel'].level
+    const { map } = loadedProject
+
+    loadedProject.settings.general.title = name.replace('.json', '')
+
+    if (validProject.valid) {
+      commit('import', loadedProject)
+      const levelAfter = rootGetters['flow/currentFilledInLevel'].level
+
+      MapEventBus.$emit(RELOAD_LAYERS)
+
+      // This check exist because we have different map instances. If the level
+      // is not the same, we switch of layout and thus do not need to fly
+      if (levelBefore === levelAfter) {
+        MapEventBus.$emit(REPOSITION, { zoom: map.zoom, center: map.center })
+      }
+    } else {
+      console.error(validProject.errors)
+    }
+
+    commit('appMenu/hideMenu', null, { root: true })
+  },
+  saveProject({ state, commit }) {
+    const { title } = state.settings.general
+    const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' })
+    commit('appMenu/hideMenu', null, { root: true })
+    return FileSaver.saveAs(blob, `${title || 'ast_project'}.json`)
   },
 }
 

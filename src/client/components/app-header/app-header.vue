@@ -5,8 +5,21 @@
         <md-icon>menu</md-icon>
       </md-button>
 
-      <h2 class="md-title">{{ $t('ast') }}</h2>
+      <h2
+        :class="{
+          'md-subheading': hasTitle,
+          'md-title': !hasTitle
+        }"
+      >{{ $t('ast') }}</h2>
     </div>
+
+    <small
+      v-if="hasTitle"
+      :class="{
+        'md-subheading': !hasTitle,
+        'md-title': hasTitle
+      }"
+    >{{ formattedTitle }}</small>
 
     <div class="md-toolbar-section-end">
       <md-button
@@ -21,13 +34,26 @@
 </template>
 
 <script>
+import startCase from 'lodash/startCase'
 import { mapGetters } from "vuex";
 import { LEVEL_PROJECT_AREA } from "../../lib/flow-levels";
 
 export default {
+  props: {
+    title: {
+      type: String,
+      default: '',
+    },
+  },
   data: () => ({ LEVEL_PROJECT_AREA }),
   computed: {
     ...mapGetters('flow', ['currentFilledInLevel']),
+    hasTitle() {
+      return !!this.title
+    },
+    formattedTitle() {
+      return startCase(this.title)
+    },
   },
 }
 </script>

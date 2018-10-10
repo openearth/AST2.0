@@ -1,13 +1,15 @@
 <template>
   <div class="layout-modal">
-    <app-header @onShowNavigation="showNavigation = true"/>
+    <app-header :title="title" @onShowNavigation="showMenu"/>
     <app-menu
       :show-navigation="showNavigation"
       :title="$t('ast')"
       :accepted-legal="acceptedLegal"
       :created-project-area="createdProjectArea"
       :filled-in-required-settings="filledInRequiredProjectAreaSettings"
-      @onCloseNavigation="showNavigation = false"/>
+      @onCloseNavigation="hideMenu"
+      @saveProject="saveProject"
+      @importProject="onFileInput"/>
 
     <div class="layout-modal__content">
       <div class="layout-modal__page-wrapper">
@@ -49,7 +51,6 @@ export default {
   data() {
     return {
       disclaimer: {},
-      showNavigation: false,
     }
   },
   computed: {
@@ -60,9 +61,11 @@ export default {
       legalAccepted: state => state.project.legalAccepted,
       center: state => state.project.map.center,
       zoom: state => state.project.map.zoom,
+      showNavigation: state => state.appMenu.show,
+      title: state => state.project.settings.general.title,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups']),
-    ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings']),
+    ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel']),
   },
   async beforeMount() {
     const locale = this.$i18n.locale
@@ -72,10 +75,18 @@ export default {
   methods: {
     ...mapMutations({
       acceptLegal: 'project/acceptLegal',
+      showMenu: 'appMenu/showMenu',
+      hideMenu: 'appMenu/hideMenu',
     }),
     ...mapActions({
+      importProject: 'project/importProject',
+      saveProject: 'project/saveProject',
       setMapPosition: 'project/setMapPosition',
     }),
+    async onFileInput(event) {
+      this.importProject(event)
+        .then(() => this.$router.push(this.currentFilledInLevel.uri))
+    },
   },
 }
 </script>
