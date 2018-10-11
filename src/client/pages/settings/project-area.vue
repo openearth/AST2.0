@@ -49,7 +49,7 @@
 
 <script>
 import Vue from 'vue'
-import { mapState, mapMutations, mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
   middleware: ['access-level-project-area'],
@@ -63,10 +63,6 @@ export default {
     area() { return this.projectArea.properties && Math.round(this.projectArea.properties.area) },
   },
   methods: {
-    ...mapMutations({
-      setProjectAreaNestedSetting: 'project/toggleProjectAreaNestedSetting',
-      setProjectAreaSetting: 'project/setProjectAreaSetting',
-    }),
     ...mapActions({
       updateProjectAreaSetting: 'project/updateProjectAreaSetting',
     }),
