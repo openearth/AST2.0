@@ -72,9 +72,9 @@ export async function getRankedMeasures(projectArea) {
 function formatRequestBody(projectArea) {
   let body = _.cloneDeep(projectArea)
 
-  Object.keys(projectArea['capacity']).forEach(key => {
+  Object.keys(body['capacity']).forEach(key => {
     const newKey = key.replace('Coping', 'Prevention')
-    body['capacity'][newKey] = projectArea['capacity'][key]
+    body['capacity'][newKey] = body['capacity'][key]
   })
 
   body['multifunctionality'] = parseFloat(body['multifunctionality'])
