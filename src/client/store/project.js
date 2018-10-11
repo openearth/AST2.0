@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import turf from '@turf/area'
-import FileSaver from 'file-saver'
 import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS } from '../lib/map-event-bus'
-import { getApiDataForFeature } from "../lib/get-api-data";
+import { getApiDataForFeature, getRankedMeasures } from "../lib/get-api-data";
+import FileSaver from 'file-saver'
 import getLoadedFileContents from '../lib/get-loaded-file-contents'
 import validateProject from '../lib/validate-project'
 
@@ -90,9 +90,6 @@ export const mutations = {
   },
   deleteArea(state, value) {
     state.areas = state.areas.filter(area => area.id !== value)
-  },
-  updateProjectAreaSettings(state, value) {
-    state.settings.projectArea = value
   },
   setProjectAreaSetting(state, { key, value }) {
     state.settings.projectArea[key] = value
@@ -186,6 +183,28 @@ export const actions = {
       const value = kpis.reduce((obj, kpi) => ({ ...obj, [kpi.key]: { include: true, value: "0" } }), {})
       commit('setTargets', { key, value })
     })
+  },
+  async updateProjectAreaSetting({ state, commit, rootGetters }, payload ) {
+    const { type } = payload
+
+    if (type === 'checkbox') {
+      const { key, option, value } = payload
+      commit('toggleProjectAreaNestedSetting', { key, option, value })
+    }
+
+    if (type === 'radio') {
+      const { key, value } = payload
+      commit('setProjectAreaSetting', { key, value })
+    }
+
+    const filledInRequiredProjectAreaSettings = rootGetters['flow/filledInRequiredProjectAreaSettings']
+
+    if (filledInRequiredProjectAreaSettings) {
+      const { projectArea } = state.settings
+      const rankedMeasures = await getRankedMeasures(projectArea)
+
+      commit('data/measures/addMeasuresRanking', rankedMeasures, { root: true })
+    }
   },
   async importProject({ state, commit, rootGetters, rootState }, event) {
     const { name } = event.target.files[0]

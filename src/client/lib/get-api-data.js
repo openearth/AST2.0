@@ -21,7 +21,8 @@ export function getRealApiData(uri, body) {
       },
       body: JSON.stringify(body),
     }
-  ).then(res => res.json())
+  )
+  .then(res => res.json())
 }
 
 export async function getApiDataForFeature(feature, projectArea, currentReturnTime = 1) {
@@ -45,16 +46,10 @@ export async function getApiDataForFeature(feature, projectArea, currentReturnTi
 
   if (measureId) {
     const apiData = await Promise.all([
-      getApiData('heatstress-cost', { measureArea, measureId }),
-      getApiData('heatstress-temperature', { measureArea, measureId, projectArea }),
-      getApiData('heatstress-waterquality', { measureArea, measureId }),
-      getApiData('pluvflood', { measureArea, measureId, currentReturnTime, projectArea, inflowArea, measureDepth }),
-
-      // getRealApiData('measures', { area, id }),
-      // getRealApiData('heatstress/cost', { area, id }),
-      // getRealApiData('heatstress/temperature', { area, id, projectArea }),
-      // getRealApiData('heatstress/waterquality', { area, id }),
-      // getRealApiData('pluvflood', { area, id, returnTime, inflow, depth, projectArea }),
+      getRealApiData('heatstress/cost', { area, id }),
+      getRealApiData('heatstress/temperature', { area, id, projectArea }),
+      getRealApiData('heatstress/waterquality', { area, id }),
+      getRealApiData('pluvflood', { area, id, returnTime, inflow, depth, projectArea }),
 
       Promise.resolve({ data: { storageCapacity: measureArea * areaDepth } }),
     ])
@@ -63,4 +58,24 @@ export async function getApiDataForFeature(feature, projectArea, currentReturnTi
   } else {
     return Promise.resolve({})
   }
+}
+
+export async function getRankedMeasures(projectArea) {
+  const requestBody = formatRequestBody(projectArea)
+  const { result } = await getRealApiData('selection', requestBody)
+
+  return result
+}
+
+function formatRequestBody(projectArea) {
+  let body = { ...projectArea }
+
+  Object.keys(projectArea['capacity']).forEach(key => {
+    const newKey = key.replace('Coping', 'Prevention')
+    body['capacity'][newKey] = projectArea['capacity'][key]
+  })
+
+  body['multifunctionality'] = parseFloat(body['multifunctionality'])
+
+  return body
 }
