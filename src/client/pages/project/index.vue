@@ -10,20 +10,20 @@
         :style="someAreasAreShown ? `border-left-color: ${measure.color.hex}` : `border-left-color: #ccc`"
         class="legend__item">
         <div class="legend__item-header">
+          <md-avatar class="legend__item-avatar">
+            <img :src="measure.image.url" alt="" >
+          </md-avatar>
           <md-subheader>{{ measure.title }}</md-subheader>
           <md-switch
             :value="!someAreasAreShown"
+            class="legend__item-toggle"
             @change="value => updateAreaProperties({ features: areas, properties: { hidden: !value }})"
           />
         </div>
 
         <md-list-item
-          v-for="(area, index) in areas"
-          :key="area.id"
-          :class="{'md-inset': index !== 0}">
-          <md-avatar v-if="index === 0">
-            <img :src="measure.image.url" alt="" >
-          </md-avatar>
+          v-for="area in areas"
+          :key="area.id">
           <span class="md-list-item-text">{{ area.properties.name }}</span>
           <md-switch
             :value="area.properties.hidden"
@@ -75,6 +75,14 @@ export default {
 
 .legend__item-header {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+}
+
+.legend__item-avatar {
+  margin: 0 0 0 var(--spacing-default);
+}
+
+.legend__item-toggle {
+  margin-left: auto;
 }
 </style>
