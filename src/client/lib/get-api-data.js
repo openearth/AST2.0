@@ -75,5 +75,7 @@ function formatRequestBody(projectArea) {
     body['capacity'][newKey] = projectArea['capacity'][key]
   })
 
+  body['multifunctionality'] = parseFloat(body['multifunctionality'])
+
   return body
 }
