@@ -1,0 +1,5 @@
+query ($locale: SiteLocale) {
+  documentation(locale: $locale) {
+    title,
+  }
+}
