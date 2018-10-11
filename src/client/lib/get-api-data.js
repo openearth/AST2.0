@@ -1,3 +1,5 @@
+const _ = require('lodash')
+
 export function getApiData(uri, body) {
   return fetch(
     `https://ast-measure-api.now.sh/v2/${uri}/measure-model`,
@@ -68,7 +70,7 @@ export async function getRankedMeasures(projectArea) {
 }
 
 function formatRequestBody(projectArea) {
-  let body = { ...projectArea }
+  let body = _.cloneDeep(projectArea)
 
   Object.keys(projectArea['capacity']).forEach(key => {
     const newKey = key.replace('Coping', 'Prevention')
