@@ -3,9 +3,18 @@
 </template>
 
 <script>
-import MapEventBus, { UPDATE_FEATURE_PROPERTY, REDRAW, REPOSITION, RELOAD_LAYERS, MODE } from '../../lib/map-event-bus'
 import projectAreaStyles from './project-area-styles'
 import areaStyles from './area-styles'
+import MapEventBus, {
+  UPDATE_FEATURE_PROPERTY,
+  REDRAW,
+  REPOSITION,
+  RELOAD_LAYERS,
+  MODE,
+  DELETE,
+  ZOOM_IN,
+  ZOOM_OUT,
+} from '../../lib/map-event-bus'
 
 export default {
   props: {
@@ -99,17 +108,10 @@ export default {
         style: this.activeStyle,
         zoom: this.mapZoom,
         center: [lng, lat],
-        showZoom: true,
+        showZoom: false,
       })
       this.draw = new MapboxDraw({
-        controls: {
-          combine_features: false,
-          uncombine_features: false,
-          point: this.interactive && this.point,
-          line_string: this.interactive && this.line,
-          polygon: this.interactive && this.polygon,
-          trash: this.interactive,
-        },
+        displayControlsDefault: false,
         userProperties: true,
         styles: [...defaultStyles, ...projectAreaStyles, ...areaStyles],
       })
@@ -132,6 +134,7 @@ export default {
       this.map.on('load', () => {
         this.map.resize()
         this.fillMap()
+        this.$emit('modechange', this.draw.getMode())
       })
 
       MapEventBus.$on(UPDATE_FEATURE_PROPERTY, ({ featureId, key, value }) => {
@@ -155,6 +158,15 @@ export default {
       })
 
       MapEventBus.$on(MODE, this.draw.changeMode)
+
+      MapEventBus.$on(DELETE, () => {
+        const { features } = this.draw.getSelected()
+        const ids = features.map(({ id }) => id)
+        this.draw.delete(ids)
+      })
+
+      MapEventBus.$on(ZOOM_IN, () => this.map.zoomIn())
+      MapEventBus.$on(ZOOM_OUT, () => this.map.zoomOut())
     }
   },
   beforeDestroy() {
