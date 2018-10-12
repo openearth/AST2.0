@@ -91,10 +91,16 @@ export default {
 .map-viewer {
   display: flex;
   position: relative;
+  overflow: hidden;
 }
 
 .map-viewer__map {
-  flex: 1;
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .map-viewer__layer-switcher {
