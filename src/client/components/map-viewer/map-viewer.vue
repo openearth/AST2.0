@@ -18,6 +18,15 @@
       @selectionchange="onSelectionchange"
       @move="onMove"
     />
+
+    <map-controls
+      :line="true"
+      :polygon="true"
+      :point="true"
+      @mode-line="changeMode('draw_line_string')"
+      @mode-polygon="changeMode('draw_polygon')"
+      @mode-point="changeMode('draw_point')"/>
+
     <map-base-layer-switcher
       :base-layers="baseLayers"
       class="map-viewer__layer-switcher"
@@ -26,10 +35,13 @@
 </template>
 
 <script>
-import { MapBox, MapBaseLayerSwitcher } from "..";
+import MapEventBus, { MODE } from "../../lib/map-event-bus";
+import MapBox from "../map-box";
+import MapBaseLayerSwitcher from "../map-base-layer-switcher";
+import MapControls from "../map-controls";
 
 export default {
-  components: { MapBox, MapBaseLayerSwitcher },
+  components: { MapBox, MapBaseLayerSwitcher, MapControls },
   props: {
     activeBaseLayer: {
       type: String,
@@ -83,6 +95,9 @@ export default {
     onSelectionchange(event) { this.$emit('selectionchange', event) },
     onBaseLayerSwitch(event) { this.$emit('baseLayerSwitch', event) },
     onMove(event) { this.$emit('move', event) },
+    changeMode(mode) {
+      MapEventBus.$emit(MODE, mode)
+    },
   },
 }
 </script>
@@ -100,7 +115,7 @@ export default {
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%);
+  /* transform: translate(-50%, -50%); */
 }
 
 .map-viewer__layer-switcher {

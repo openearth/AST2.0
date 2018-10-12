@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import MapEventBus, { UPDATE_FEATURE_PROPERTY, REDRAW, REPOSITION, RELOAD_LAYERS } from '../../lib/map-event-bus'
+import MapEventBus, { UPDATE_FEATURE_PROPERTY, REDRAW, REPOSITION, RELOAD_LAYERS, MODE } from '../../lib/map-event-bus'
 import projectAreaStyles from './project-area-styles'
 import areaStyles from './area-styles'
 
@@ -127,6 +127,7 @@ export default {
       this.map.on('draw.delete', event => this.$emit('delete', event.features))
       this.map.on('draw.selectionchange', event => this.$emit('selectionchange', event.features))
       this.map.on('move', event => this.$emit('move', { center: this.map.getCenter(), zoom: this.map.getZoom() }))
+      this.map.on('draw.modechange', event => this.$emit('modechange', event.mode))
 
       this.map.on('load', () => {
         this.map.resize()
@@ -152,6 +153,8 @@ export default {
         this.clearMap()
         this.$nextTick(this.fillMap)
       })
+
+      MapEventBus.$on(MODE, this.draw.changeMode)
     }
   },
   beforeDestroy() {
