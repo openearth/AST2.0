@@ -21,10 +21,10 @@
     />
 
     <map-controls
-      :line="true"
-      :polygon="true"
-      :point="true"
-      :trash="true"
+      :line="interactive && line"
+      :polygon="interactive && polygon"
+      :point="interactive && point"
+      :trash="interactive"
       :current-mode="currentMode"
       class="map-viewer__controls--draw"
       @setMode="setMode"

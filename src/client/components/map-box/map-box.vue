@@ -14,6 +14,7 @@ import MapEventBus, {
   DELETE,
   ZOOM_IN,
   ZOOM_OUT,
+  SELECT,
 } from '../../lib/map-event-bus'
 
 export default {
@@ -162,11 +163,18 @@ export default {
       MapEventBus.$on(DELETE, () => {
         const { features } = this.draw.getSelected()
         const ids = features.map(({ id }) => id)
+        this.$emit('delete', features)
         this.draw.delete(ids)
       })
 
       MapEventBus.$on(ZOOM_IN, () => this.map.zoomIn())
       MapEventBus.$on(ZOOM_OUT, () => this.map.zoomOut())
+
+      MapEventBus.$on(SELECT, (id) => {
+        if (id) {
+          this.draw.changeMode('direct_select', { featureId: id })
+        }
+      })
     }
   },
   beforeDestroy() {

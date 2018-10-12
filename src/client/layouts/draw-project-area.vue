@@ -23,7 +23,7 @@
           :areas="areas"
           :point="false"
           :line="false"
-          :polygon="true"
+          :polygon="!projectArea.id"
           :map-center="center"
           :map-zoom="zoom"
           :current-mode="mapMode"
