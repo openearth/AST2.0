@@ -30,5 +30,18 @@ export default {
       },
     },
     zoom: { type: 'number' },
+    wmsLayers: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['id', 'showLegend', 'visible'],
+        properties: {
+          id: { type: 'string' },
+          showLegend: { type: 'boolean' },
+          visible: { type: 'boolean' },
+        },
+      },
+    },
   },
 }
