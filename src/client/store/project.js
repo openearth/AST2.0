@@ -110,6 +110,23 @@ export const mutations = {
   acceptLegal(state) {
     state.legalAccepted = true
   },
+  setLayerOpacity(state, { id, value }) {
+    state.map.wmsLayers.forEach(layer => {
+      if (id === layer.id) {
+        layer.opacity = value
+      }
+    })
+  },
+  setLayerVisibility(state, { id, value }) {
+    state.map.wmsLayers.forEach(layer => {
+      if (id === layer.id) {
+        layer.visible = value
+        layer.showLegend = value
+      } else {
+        layer.showLegend = false
+      }
+    })
+  },
 }
 
 export const actions = {

@@ -31,7 +31,9 @@
       :current-mode="currentMode"
       class="map-viewer__controls--draw"
       @setMode="setMode"
-      @trash="onClickDelete"/>
+      @trash="onClickDelete"
+      @layer-opacity-change="setLayerOpacity"
+      @layer-visibility-change="setLayerVisibility"/>
 
     <map-controls
       :zoom-in="interactive"
@@ -121,6 +123,10 @@ export default {
   methods: {
     ...mapActions({
       setMode: 'map/setMode',
+    }),
+    ...mapMutations({
+      setLayerOpacity: 'project/setLayerOpacity',
+      setLayerVisibility: 'project/setLayerVisibility',
     }),
     onCreate(event) { this.$emit('create', event) },
     onUpdate(event) { this.$emit('update', event) },

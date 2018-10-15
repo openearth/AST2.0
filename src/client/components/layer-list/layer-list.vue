@@ -15,7 +15,9 @@
 
           <span class="md-list-item-text">{{ layer.title }}</span>
 
-          <md-switch :value="!layer.visible"/>
+          <md-switch
+            :value="!layer.visible"
+            @change="value => $emit('visibility-change', { id: layer.id, value: !!value })"/>
 
           <md-button
             class="md-icon-button md-list-action"
@@ -34,10 +36,11 @@
           <md-list>
             <md-list-item class="md-inset">
               <input-range
-                :value="String(layer.opacity)"
+                :value="String(layer.opacity * 100)"
                 min="0"
-                max="1"
-                label="opacity"/>
+                max="100"
+                label="opacity"
+                @change="value => $emit('opacity-change', { id: layer.id, value: parseFloat(value / 100) })"/>
             </md-list-item>
           </md-list>
         </div>

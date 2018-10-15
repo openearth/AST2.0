@@ -43,7 +43,9 @@
       </md-button>
       <layer-list
         :layers="wmsLayers"
-        class="map-controls__layer-list"/>
+        class="map-controls__layer-list"
+        @opacity-change="event => $emit('layer-opacity-change', event)"
+        @visibility-change="event => $emit('layer-visibility-change', event)"/>
     </li>
 
     <li v-if="zoomIn" class="map-controls__item map-controls__item--zoom-in">
