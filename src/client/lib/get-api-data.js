@@ -1,4 +1,4 @@
-const _ = require('lodash')
+import cloneDeep from 'lodash/cloneDeep'
 
 export function getApiData(uri, body) {
   return fetch(
@@ -70,7 +70,7 @@ export async function getRankedMeasures(projectArea) {
 }
 
 function formatRequestBody(projectArea) {
-  let body = _.cloneDeep(projectArea)
+  let body = cloneDeep(projectArea)
 
   Object.keys(body['capacity']).forEach(key => {
     const newKey = key.replace('Coping', 'Prevention')
