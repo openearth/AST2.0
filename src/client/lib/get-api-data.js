@@ -1,3 +1,5 @@
+import cloneDeep from 'lodash/cloneDeep'
+
 export function getApiData(uri, body) {
   return fetch(
     `https://ast-measure-api.now.sh/v2/${uri}/measure-model`,
@@ -68,11 +70,11 @@ export async function getRankedMeasures(projectArea) {
 }
 
 function formatRequestBody(projectArea) {
-  let body = { ...projectArea }
+  let body = cloneDeep(projectArea)
 
-  Object.keys(projectArea['capacity']).forEach(key => {
+  Object.keys(body['capacity']).forEach(key => {
     const newKey = key.replace('Coping', 'Prevention')
-    body['capacity'][newKey] = projectArea['capacity'][key]
+    body['capacity'][newKey] = body['capacity'][key]
   })
 
   return body
