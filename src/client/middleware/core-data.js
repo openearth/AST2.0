@@ -24,4 +24,8 @@ export default async function ({ store }) {
   if (!store.state.data.units.length) {
     store.dispatch('data/units/getUnits')
   }
+
+  if (!store.state.data.wmsLayers.length) {
+    store.dispatch('data/wmsLayers/getWmsLayers', store.state.i18n.locale)
+  }
 }

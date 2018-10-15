@@ -1,0 +1,9 @@
+query ($locale: SiteLocale) {
+  wmsLayers: allWmsLayers(locale: $locale){
+    id,
+    title,
+    layerType,
+    url,
+    tilesize
+  }
+}

@@ -28,6 +28,7 @@ export const state = () => ({
       lat: 52.36599335162853,
       lng: 4.916535879906178,
     },
+    wmsLayers: [],
   },
 })
 
@@ -99,6 +100,9 @@ export const mutations = {
   },
   setTarget(state, { group, key, value }) {
     state.settings.targets[group][key] = { ...state.settings.targets[group][key], ...value }
+  },
+  setWmsLayer(state, layer) {
+    state.map.wmsLayers.push(layer)
   },
   toggleProjectAreaNestedSetting(state, { key, option, value }) {
     state.settings.projectArea[key][option] = !state.settings.projectArea[key][option]
@@ -186,6 +190,11 @@ export const actions = {
     targets.forEach(({ key, kpis }) => {
       const value = kpis.reduce((obj, kpi) => ({ ...obj, [kpi.key]: { include: true, value: "0" } }), {})
       commit('setTargets', { key, value })
+    })
+  },
+  bootstrapWmsLayers({ state, commit }, layers) {
+    layers.forEach(layer => {
+      commit('setWmsLayer', { id: layer.id, visible: true, showLegend: false })
     })
   },
   async updateProjectAreaSetting({ state, commit, rootGetters }, payload ) {
@@ -327,7 +336,7 @@ export const getters = {
           .reduce((obj, key) => ({ ...obj, [key]: parseFloat(targets[group][key].value, 10) || 0 }), {}))
       .reduce((obj, item) => ({ ...obj, ...item }), {})
   },
-  kpiPercentageValues:  (state, getters) => {
+  kpiPercentageValues: (state, getters) => {
     const kpiValues = getters.kpiValues
     const kpiTargetValues = getters.kpiTargetValues
     const keys = Object.keys(kpiValues)
@@ -338,5 +347,16 @@ export const getters = {
         [key]: isNaN(value) ? 0 : parseFloat(value * 100, 10),
       }
     }, {})
+  },
+  wmsLayersVisible: (state, getters, rootState) => {
+    return state.map.wmsLayers
+      .filter(layer => layer.visible)
+      .map(({ id }) => rootState.data.wmsLayers.find(layer => layer.id === id))
+  },
+  wmsLayerLegend: (state, getters, rootState) => {
+    const [layer] = state.map.wmsLayers
+      .filter(layer => layer.showLegend)
+      .map(({ id }) => rootState.data.wmsLayers.find(layer => layer.id === id))
+    return layer
   },
 }
