@@ -3,6 +3,7 @@ query ($locale: SiteLocale) {
     title,
     key
     multiple,
+    isSelect,
     options {
       title,
       value
