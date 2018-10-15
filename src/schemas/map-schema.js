@@ -35,11 +35,12 @@ export default {
       items: {
         type: 'object',
         additionalProperties: false,
-        required: ['id', 'showLegend', 'visible'],
+        required: ['id', 'showLegend', 'visible', 'opacity'],
         properties: {
           id: { type: 'string' },
           showLegend: { type: 'boolean' },
           visible: { type: 'boolean' },
+          opacity: { type: 'number' },
         },
       },
     },

@@ -11,7 +11,7 @@
       :areas="areas"
       :map-zoom="mapZoom"
       :map-center="mapCenter"
-      :wms-layers="wmsLayers"
+      :wms-layers="wmsLayersVisible"
       class="map-viewer__map"
       @create="onCreate"
       @update="onUpdate"
@@ -26,6 +26,8 @@
       :polygon="interactive && polygon"
       :point="interactive && point"
       :trash="interactive"
+      :layers="interactive && layers"
+      :wms-layers="wmsLayers"
       :current-mode="currentMode"
       class="map-viewer__controls--draw"
       @setMode="setMode"
@@ -79,6 +81,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    layers: {
+      type: Boolean,
+      default: true,
+    },
     isProject: {
       type: Boolean,
       required: true,
@@ -104,6 +110,10 @@ export default {
       default: '',
     },
     wmsLayers: {
+      type: Array,
+      default: () => [],
+    },
+    wmsLayersVisible: {
       type: Array,
       default: () => [],
     },

@@ -35,6 +35,17 @@
       </md-button>
     </li>
 
+    <li v-if="layers" class="map-controls__item map-controls__item--layers">
+      <md-button
+        class="md-icon-button md-raised"
+      >
+        <md-icon>layers</md-icon>
+      </md-button>
+      <layer-list
+        :layers="wmsLayers"
+        class="map-controls__layer-list"/>
+    </li>
+
     <li v-if="zoomIn" class="map-controls__item map-controls__item--zoom-in">
       <md-button
         class="md-icon-button md-raised"
@@ -54,7 +65,10 @@
 </template>
 
 <script>
+import LayerList from "../layer-list";
+
 export default {
+  components: { LayerList },
   props: {
     line: {
       type: Boolean,
@@ -72,6 +86,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    layers: {
+      type: Boolean,
+      default: false,
+    },
     zoomIn: {
       type: Boolean,
       default: false,
@@ -83,6 +101,10 @@ export default {
     currentMode: {
       type: String,
       default: '',
+    },
+    wmsLayers: {
+      type: Array,
+      default: () => [],
     },
   },
 }
@@ -96,5 +118,17 @@ export default {
 .map-controls__item {
   margin-top: 6px;
   margin-bottom: 6px;
+}
+
+.map-controls__item--layers {
+  position: relative;
+}
+
+.map-controls__layer-list {
+  position: absolute;
+  width: 300px;
+  background-color: red;
+  left: 50px;
+  top: 0;
 }
 </style>

@@ -25,7 +25,8 @@
           :map-center="center"
           :map-zoom="zoom"
           :current-mode="mapMode"
-          :wms-layers="wmsLayersVisible"
+          :wms-layers="wmsLayers"
+          :wms-layers-visible="wmsLayersVisible"
           class="layout-inactive-map__map"
           @move="setMapPosition"/>
       </md-content>
@@ -52,7 +53,7 @@ export default {
       title: state => state.project.settings.general.title,
       mapMode: state => state.map.mode,
     }),
-    ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'wmsLayersVisible']),
+    ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'wmsLayers', 'wmsLayersVisible']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel']),
   },
   methods: {

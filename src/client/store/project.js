@@ -194,7 +194,7 @@ export const actions = {
   },
   bootstrapWmsLayers({ state, commit }, layers) {
     layers.forEach(layer => {
-      commit('setWmsLayer', { id: layer.id, visible: true, showLegend: false })
+      commit('setWmsLayer', { id: layer.id, visible: false, showLegend: false, opacity: 1 })
     })
   },
   async updateProjectAreaSetting({ state, commit, rootGetters }, payload ) {
@@ -348,15 +348,19 @@ export const getters = {
       }
     }, {})
   },
+  wmsLayers: (state, getters, rootState) => {
+    return state.map.wmsLayers
+      .map(({ id, visible, opacity }) => ({ ...rootState.data.wmsLayers.find(layer => layer.id === id), visible, opacity }))
+  },
   wmsLayersVisible: (state, getters, rootState) => {
     return state.map.wmsLayers
       .filter(layer => layer.visible)
-      .map(({ id }) => rootState.data.wmsLayers.find(layer => layer.id === id))
+      .map(({ id, visible, opacity }) => ({ ...rootState.data.wmsLayers.find(layer => layer.id === id), visible, opacity }))
   },
   wmsLayerLegend: (state, getters, rootState) => {
     const [layer] = state.map.wmsLayers
       .filter(layer => layer.showLegend)
-      .map(({ id }) => rootState.data.wmsLayers.find(layer => layer.id === id))
+      .map(({ id, visible, opacity }) => ({ ...rootState.data.wmsLayers.find(layer => layer.id === id), visible, opacity }))
     return layer
   },
 }
