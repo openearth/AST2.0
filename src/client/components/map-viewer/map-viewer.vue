@@ -31,8 +31,8 @@
       @trash="onClickDelete"/>
 
     <map-controls
-      :zoom-in="true"
-      :zoom-out="true"
+      :zoom-in="interactive"
+      :zoom-out="interactive"
       class="map-viewer__controls--zoom"
       @zoom-in="zoomIn"
       @zoom-out="zoomOut"/>
