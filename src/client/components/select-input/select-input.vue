@@ -6,7 +6,7 @@
         :key="option.value"
         :value="option.value"
       >
-        {{ option.value }}
+        {{ option.title }}
       </md-option>
     </md-select>
   </md-field>
@@ -34,7 +34,6 @@ export default {
   },
   watch: {
     value(val) {
-      console.log(val)
       this.$emit('onSelect', val)
     },
   },
