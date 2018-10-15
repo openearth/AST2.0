@@ -138,6 +138,7 @@ export default {
 
       this.map.on('load', () => {
         this.map.resize()
+        this.wmsLayers.forEach(this.addWmsLayer)
         this.fillMap()
         this.$emit('modechange', this.draw.getMode())
       })
@@ -243,6 +244,22 @@ export default {
       // const fill = Object.assign({}, baseObj, fillDetails)
       // this.map.addLayer(fill)
       this.map.addLayer(line)
+    },
+    addWmsLayer({ layerType: type, id, url, tilesize: tileSize }) {
+      this.map.addLayer({
+        id: `wms-layer-${id}`,
+        type,
+        source: {
+            'type': type,
+            'tiles': [ url ],
+            tileSize,
+        },
+        paint: {},
+      })
+    },
+    removeWmsLayer(id) {
+      this.map.getLayer(`wms-layer-${id}`) && this.map.removeLayer(`wms-layer-${id}`)
+      this.map.getSource(`wms-layer-${id}`) && this.map.removeSource(`wms-layer-${id}`)
     },
   },
 }
