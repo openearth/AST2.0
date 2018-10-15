@@ -63,6 +63,10 @@ export default {
       type: Object,
       default: () => ({ lat: 0, lng: 0 }),
     },
+    wmsLayers: {
+      type: Array,
+      default: () => [],
+    },
   },
 
   data: () => ({
