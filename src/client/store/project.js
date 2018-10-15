@@ -169,7 +169,7 @@ export const actions = {
   },
   bootstrapSettingsProjectArea({ state, commit }, settings) {
     settings.forEach(setting => {
-      const value = !setting.multiple
+      const value = !setting.multiple || setting.isSelect
         ? null
         : setting.options.reduce((obj, option) => ({
             ...obj,
@@ -192,7 +192,7 @@ export const actions = {
       commit('toggleProjectAreaNestedSetting', { key, option, value })
     }
 
-    if (type === 'radio') {
+    if ((type === 'radio') || (type === 'select')) {
       const { key, value } = payload
       commit('setProjectAreaSetting', { key, value })
     }

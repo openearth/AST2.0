@@ -14,12 +14,12 @@
           :md-expanded="true">
           <span class="md-list-item-text">{{ setting.title }}</span>
 
-          <md-list slot="md-expand">
+          <md-list v-if="!setting.isSelect" slot="md-expand">
             <md-list-item
               v-for="option in setting.options"
               :key="option.value">
               <md-checkbox
-                v-if="setting.multiple"
+                v-if="setting.multiple && !setting.isSelect"
                 :value="!projectAreaSettings[setting.key][option.value]"
                 @change="value => updateProjectAreaSetting({
                   type: 'checkbox',
@@ -41,6 +41,20 @@
               <span class="md-list-item-text">{{ option.title }}</span>
             </md-list-item>
           </md-list>
+
+          <md-list v-else slot="md-expand">
+            <md-list-item>
+              <select-input
+                :options="setting.options"
+                :selected-value="''"
+                @onSelect="value => updateProjectAreaSetting({
+                  type: 'select',
+                  key: setting.key,
+                  value,
+                })"
+              />
+            </md-list-item>
+          </md-list>
         </md-list-item>
       </md-list>
     </form>
@@ -50,9 +64,11 @@
 <script>
 import Vue from 'vue'
 import { mapState, mapActions } from 'vuex'
+import { SelectInput } from '~/components'
 
 export default {
   middleware: ['access-level-project-area'],
+  components: { SelectInput },
   computed: {
     ...mapState({
       locale: state => state.i18n.locale,
