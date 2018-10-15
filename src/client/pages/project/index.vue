@@ -4,35 +4,38 @@
       <span class="md-title">{{ $t('your_measures') }}</span>
     </md-toolbar>
     <md-list>
-      <div
+      <md-list-item
         v-for="({measure, areas, someAreasAreShown}, index) in measureCollection"
         :key="index"
         :style="someAreasAreShown ? `border-left-color: ${measure.color.hex}` : `border-left-color: #ccc`"
+        :md-expanded="true"
+        md-expand
         class="legend__item">
         <div class="legend__item-header">
           <md-avatar class="legend__item-avatar">
             <img :src="measure.image.url" alt="" >
           </md-avatar>
-          <md-subheader>{{ measure.title }}</md-subheader>
+          <md-subheader class="legend__item-title">{{ measure.title }}</md-subheader>
           <md-switch
             :value="!someAreasAreShown"
             class="legend__item-toggle"
             @change="value => updateAreaProperties({ features: areas, properties: { hidden: !value }})"
           />
         </div>
-
-        <md-list-item
-          v-for="area in areas"
-          :key="area.id">
-          <span class="md-list-item-text">{{ area.properties.name }}</span>
-          <md-switch
-            :value="area.properties.hidden"
-            @change="value => updateAreaProperties({ features: [area], properties: { hidden: !value }})"
-          />
-        </md-list-item>
-
+        <md-list slot="md-expand">
+          <md-list-item
+            v-for="area in areas"
+            :key="area.id"
+            class="md-inset">
+            <span class="md-list-item-text">{{ area.properties.name }}</span>
+            <md-switch
+              :value="area.properties.hidden"
+              @change="value => updateAreaProperties({ features: [area], properties: { hidden: !value }})"
+            />
+          </md-list-item>
+        </md-list>
         <md-divider/>
-      </div>
+      </md-list-item>
     </md-list>
   </div>
 </template>
@@ -67,6 +70,7 @@ export default {
 </script>
 
 <style>
+
 .legend__item {
   border-left-width: 8px;
   border-left-style: solid;
@@ -75,14 +79,19 @@ export default {
 
 .legend__item-header {
   display: flex;
-  align-items: center;
-}
-
-.legend__item-avatar {
-  margin: 0 0 0 var(--spacing-default);
+  align-items: flex-start;
+  white-space: normal;
 }
 
 .legend__item-toggle {
-  margin-left: auto;
+  margin-right: 0;
+}
+
+.legend .md-icon {
+  margin-left: var(--spacing-default);
+}
+
+.legend .md-inset {
+  padding-right: 40px; /* md-list-item-content padding (16px) + md-icon width (24px) */
 }
 </style>
