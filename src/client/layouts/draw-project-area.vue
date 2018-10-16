@@ -82,7 +82,14 @@ export default {
     },
     onNewProject() {
       if (this.projectArea.id) {
-        this.clearState()
+        const result = window.confirm(this.$i18n.t('confirm_new_project'))
+
+        if (result) {
+          this.clearState()
+        } else {
+          this.hideMenu()
+          return
+        }
       }
 
       this.hideMenu()
