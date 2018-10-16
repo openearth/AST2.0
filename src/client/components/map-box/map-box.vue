@@ -292,10 +292,6 @@ export default {
         this.wmsLayerOpacity(key, this.layerOpacity[key])
       })
     },
-    removeWmsLayer(id) {
-      this.map.getLayer(`wms-layer-${id}`) && this.map.removeLayer(`wms-layer-${id}`)
-      this.map.getSource(`wms-layer-${id}`) && this.map.removeSource(`wms-layer-${id}`)
-    },
     showWmsLayer(id) {
       this.map.setLayoutProperty(`wms-layer-${id}`, 'visibility', 'visible');
     },
