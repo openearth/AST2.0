@@ -66,7 +66,7 @@
             </md-card-content>
 
             <md-card-actions>
-              <md-button :to="`/${locale}/project/`">{{ $t('done') }}</md-button>
+              <md-button @click="onDone">{{ $t('done') }}</md-button>
             </md-card-actions>
           </div>
         </md-card>
@@ -77,7 +77,7 @@
 
 <script>
 import { mapGetters, mapActions, mapMutations, mapState } from "vuex";
-import MapEventBus, { REDRAW } from "../../lib/map-event-bus";
+import MapEventBus, { REDRAW, MODE } from "../../lib/map-event-bus";
 import InputRange from '../../components/input-range'
 import TextInput from '../../components/text-input'
 
@@ -106,6 +106,10 @@ export default {
   methods: {
     ...mapActions({ updateAreaProperties: 'project/updateAreaProperties' }),
     ...mapMutations({ updateAreaProperty: 'project/updateAreaProperty' }),
+    onDone() {
+      this.$router.push(`/${this.locale}/project/`)
+      MapEventBus.$emit(MODE, 'simple_select')
+    },
   },
 }
 </script>
