@@ -211,7 +211,7 @@ export const actions = {
   },
   bootstrapWmsLayers({ state, commit }, layers) {
     layers.forEach(layer => {
-      commit('setWmsLayer', { id: layer.id, visible: false, showLegend: false, opacity: 1 })
+      commit('setWmsLayer', { id: layer.id, visible: true, showLegend: false, opacity: 1 })
     })
   },
   async updateProjectAreaSetting({ state, commit, rootGetters }, payload ) {

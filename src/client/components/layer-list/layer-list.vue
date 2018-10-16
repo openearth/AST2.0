@@ -13,7 +13,7 @@
             <img src="https://placehold.it/40" alt="">
           </md-avatar>
 
-          <span class="md-list-item-text">{{ layer.title }}</span>
+          <span class="md-list-item-text layer-list__title">{{ layer.title }}</span>
 
           <md-switch
             :value="!layer.visible"
@@ -37,6 +37,7 @@
             <md-list-item class="md-inset">
               <input-range
                 :value="String(layer.opacity * 100)"
+                class="layer-list__input-range"
                 min="0"
                 max="100"
                 label="opacity"
@@ -72,4 +73,11 @@ export default {
 </script>
 
 <style>
+.layer-list__title {
+  margin-right: var(--spacing-double);
+}
+
+.layer-list__input-range {
+  width: 100%;
+}
 </style>

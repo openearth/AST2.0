@@ -38,14 +38,18 @@
     <li v-if="layers" class="map-controls__item map-controls__item--layers">
       <md-button
         class="md-icon-button md-raised"
+        @click="showLayersPanel = !showLayersPanel"
       >
         <md-icon>layers</md-icon>
       </md-button>
-      <layer-list
-        :layers="wmsLayers"
-        class="map-controls__layer-list"
-        @opacity-change="event => $emit('layer-opacity-change', event)"
-        @visibility-change="event => $emit('layer-visibility-change', event)"/>
+      <transition name="fade">
+        <layer-list
+          v-if="showLayersPanel"
+          :layers="wmsLayers"
+          class="map-controls__layer-list"
+          @opacity-change="event => $emit('layer-opacity-change', event)"
+          @visibility-change="event => $emit('layer-visibility-change', event)"/>
+      </transition>
     </li>
 
     <li v-if="zoomIn" class="map-controls__item map-controls__item--zoom-in">
@@ -109,6 +113,9 @@ export default {
       default: () => [],
     },
   },
+  data: () => ({
+    showLayersPanel: false,
+  }),
 }
 </script>
 
@@ -128,7 +135,6 @@ export default {
 
 .map-controls__layer-list {
   position: absolute;
-  width: 300px;
   background-color: red;
   left: 50px;
   top: 0;

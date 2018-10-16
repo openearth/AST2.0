@@ -3,7 +3,6 @@ query ($locale: SiteLocale) {
     id,
     title,
     layerType,
-    url,
     tilesize
   }
 }
