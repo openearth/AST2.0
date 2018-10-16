@@ -27,7 +27,6 @@
         :map-zoom="zoom"
         :current-mode="mapMode"
         :wms-layers="wmsLayers"
-        :wms-layers-visible="wmsLayersVisible"
         class="layout-modal__map"
         @move="setMapPosition"/>
     </div>
@@ -66,7 +65,7 @@ export default {
       title: state => state.project.settings.general.title,
       mapMode: state => state.map.mode,
     }),
-    ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'wmsLayers', 'wmsLayersVisible']),
+    ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'wmsLayers']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel']),
   },
   async beforeMount() {

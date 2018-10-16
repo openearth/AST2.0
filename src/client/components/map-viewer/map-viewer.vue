@@ -11,7 +11,6 @@
       :map-zoom="mapZoom"
       :map-center="mapCenter"
       :wms-layers="wmsLayers"
-      :wms-layers-visible="wmsLayersVisible"
       class="map-viewer__map"
       @create="onCreate"
       @update="onUpdate"
@@ -99,10 +98,6 @@ export default {
       default: '',
     },
     wmsLayers: {
-      type: Array,
-      default: () => [],
-    },
-    wmsLayersVisible: {
       type: Array,
       default: () => [],
     },

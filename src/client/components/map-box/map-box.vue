@@ -63,10 +63,6 @@ export default {
       type: Array,
       default: () => [],
     },
-    wmsLayersVisible: {
-      type: Array,
-      default: () => [],
-    },
   },
 
   data: () => ({
