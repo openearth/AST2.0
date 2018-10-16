@@ -4,6 +4,7 @@
       <md-card-header-text>
         <div class="md-subheading measure-card__title">{{ measure.title }}</div>
         <div class="md-caption measure-card__tags"><em>{{ scoresString }}</em></div>
+        <md-chip v-if="measure.systemSuitability" class="md-body-2">{{ measure.systemSuitability.toFixed(1) }}</md-chip>
       </md-card-header-text>
 
       <md-card-media>

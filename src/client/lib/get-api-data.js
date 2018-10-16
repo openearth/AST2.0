@@ -1,3 +1,5 @@
+import cloneDeep from 'lodash/cloneDeep'
+
 export function getApiData(uri, body) {
   return fetch(
     `https://ast-measure-api.now.sh/v2/${uri}/measure-model`,
@@ -21,7 +23,8 @@ export function getRealApiData(uri, body) {
       },
       body: JSON.stringify(body),
     }
-  ).then(res => res.json())
+  )
+  .then(res => res.json())
 }
 
 export async function getApiDataForFeature(feature, projectArea, currentReturnTime = 1) {
@@ -45,16 +48,12 @@ export async function getApiDataForFeature(feature, projectArea, currentReturnTi
 
   if (measureId) {
     const apiData = await Promise.all([
-      getApiData('heatstress-cost', { measureArea, measureId }),
-      getApiData('heatstress-temperature', { measureArea, measureId, projectArea }),
-      getApiData('heatstress-waterquality', { measureArea, measureId }),
-      getApiData('pluvflood', { measureArea, measureId, currentReturnTime, projectArea, inflowArea, measureDepth }),
-
-      // getRealApiData('measures', { area, id }),
-      // getRealApiData('heatstress/cost', { area, id }),
-      // getRealApiData('heatstress/temperature', { area, id, projectArea }),
-      // getRealApiData('heatstress/waterquality', { area, id }),
-      // getRealApiData('pluvflood', { area, id, returnTime, inflow, depth, projectArea }),
+      getRealApiData('heatstress/cost', { area, id }),
+      getRealApiData('heatstress/temperature', { area, id, projectArea }),
+      getRealApiData('heatstress/waterquality', { area, id }),
+      getRealApiData('pluvflood', { area, id, returnTime, inflow, depth, projectArea }),
+      getRealApiData('groundwater_recharge', { projectArea, inflow, returnTime, area, depth, id }),
+      getRealApiData('evapotranspiration', { projectArea, inflow, returnTime, area, depth, id }),
 
       Promise.resolve({ data: { storageCapacity: measureArea * areaDepth } }),
     ])
@@ -63,4 +62,22 @@ export async function getApiDataForFeature(feature, projectArea, currentReturnTi
   } else {
     return Promise.resolve({})
   }
+}
+
+export async function getRankedMeasures(projectArea) {
+  const requestBody = formatRequestBody(projectArea)
+  const { result } = await getRealApiData('selection', requestBody)
+
+  return result
+}
+
+function formatRequestBody(projectArea) {
+  let body = cloneDeep(projectArea)
+
+  Object.keys(body['capacity']).forEach(key => {
+    const newKey = key.replace('Coping', 'Prevention')
+    body['capacity'][newKey] = body['capacity'][key]
+  })
+
+  return body
 }

@@ -3,9 +3,19 @@
 </template>
 
 <script>
-import MapEventBus, { UPDATE_FEATURE_PROPERTY, REDRAW, REPOSITION, RELOAD_LAYERS } from '../../lib/map-event-bus'
 import projectAreaStyles from './project-area-styles'
 import areaStyles from './area-styles'
+import MapEventBus, {
+  UPDATE_FEATURE_PROPERTY,
+  REDRAW,
+  REPOSITION,
+  RELOAD_LAYERS,
+  MODE,
+  DELETE,
+  ZOOM_IN,
+  ZOOM_OUT,
+  SELECT,
+} from '../../lib/map-event-bus'
 
 export default {
   props: {
@@ -99,17 +109,10 @@ export default {
         style: this.activeStyle,
         zoom: this.mapZoom,
         center: [lng, lat],
-        showZoom: true,
+        showZoom: false,
       })
       this.draw = new MapboxDraw({
-        controls: {
-          combine_features: false,
-          uncombine_features: false,
-          point: this.interactive && this.point,
-          line_string: this.interactive && this.line,
-          polygon: this.interactive && this.polygon,
-          trash: this.interactive,
-        },
+        displayControlsDefault: false,
         userProperties: true,
         styles: [...defaultStyles, ...projectAreaStyles, ...areaStyles],
       })
@@ -130,10 +133,12 @@ export default {
       this.map.on('draw.delete', event => this.$emit('delete', event.features))
       this.map.on('draw.selectionchange', event => this.$emit('selectionchange', event.features))
       this.map.on('move', event => this.$emit('move', { center: this.map.getCenter(), zoom: this.map.getZoom() }))
+      this.map.on('draw.modechange', event => this.$emit('modechange', event.mode))
 
       this.map.on('load', () => {
         this.map.resize()
         this.fillMap()
+        this.$emit('modechange', this.draw.getMode())
       })
 
       MapEventBus.$on(UPDATE_FEATURE_PROPERTY, ({ featureId, key, value }) => {
@@ -154,6 +159,24 @@ export default {
       MapEventBus.$on(RELOAD_LAYERS, () => {
         this.clearMap()
         this.$nextTick(this.fillMap)
+      })
+
+      MapEventBus.$on(MODE, this.draw.changeMode)
+
+      MapEventBus.$on(DELETE, () => {
+        const { features } = this.draw.getSelected()
+        const ids = features.map(({ id }) => id)
+        this.$emit('delete', features)
+        this.draw.delete(ids)
+      })
+
+      MapEventBus.$on(ZOOM_IN, () => this.map.zoomIn())
+      MapEventBus.$on(ZOOM_OUT, () => this.map.zoomOut())
+
+      MapEventBus.$on(SELECT, (id) => {
+        if (id) {
+          this.draw.changeMode('direct_select', { featureId: id })
+        }
       })
     }
   },
@@ -223,10 +246,3 @@ export default {
   },
 }
 </script>
-
-<style>
-.map {
-  width: 100%;
-  height: 100%;
-}
-</style>

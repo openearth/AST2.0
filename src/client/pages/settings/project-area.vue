@@ -5,7 +5,7 @@
       <md-button :to="`/${locale}/new-project`" class="md-primary">{{ $t('change_area') }}</md-button>
     </md-toolbar>
 
-    <form @submit.prevent="onSubmit">
+    <form>
       <md-list>
         <md-list-item
           v-for="setting in areaSettings"
@@ -21,7 +21,8 @@
               <md-checkbox
                 v-if="setting.multiple"
                 :value="!projectAreaSettings[setting.key][option.value]"
-                @change="value => setProjectAreaNestedSetting({
+                @change="value => updateProjectAreaSetting({
+                  type: 'checkbox',
                   key: setting.key,
                   option: option.value,
                   value
@@ -31,7 +32,8 @@
                 v-else
                 :value="projectAreaSettings[setting.key] !== option.value"
                 required
-                @change="value => setProjectAreaSetting({
+                @change="value => updateProjectAreaSetting({
+                  type: 'radio',
                   key: setting.key,
                   value: option.value,
                 })"
@@ -47,7 +49,7 @@
 
 <script>
 import Vue from 'vue'
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
   middleware: ['access-level-project-area'],
@@ -61,34 +63,9 @@ export default {
     area() { return this.projectArea.properties && Math.round(this.projectArea.properties.area) },
   },
   methods: {
-    ...mapMutations({
-      onUpdateAreaSettings: 'project/updateProjectAreaSettings',
-      setProjectAreaNestedSetting: 'project/toggleProjectAreaNestedSetting',
-      setProjectAreaSetting: 'project/setProjectAreaSetting',
+    ...mapActions({
+      updateProjectAreaSetting: 'project/updateProjectAreaSetting',
     }),
-    onSubmit(e) {
-      let projectAreaSettings = {}
-
-      this.areaSettings.forEach(setting => {
-        if (setting.multiple) {
-          projectAreaSettings[setting.key] = {}
-        }
-
-        setting.options.forEach(option => {
-          const [{ checked }] = this.$refs[`${setting.key}-${option.value}`]
-
-          if (setting.multiple) {
-            return projectAreaSettings[setting.key][option.value] = checked
-          }
-
-          if (checked) {
-            projectAreaSettings[setting.key] = option.value
-          }
-        })
-      })
-
-      this.onUpdateAreaSettings(projectAreaSettings)
-    },
   },
 }
 </script>

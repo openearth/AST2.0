@@ -27,6 +27,7 @@
         :interactive="false"
         :map-center="center"
         :map-zoom="zoom"
+        :current-mode="mapMode"
         class="layout-modal__map"
         @move="setMapPosition"/>
     </div>
@@ -63,6 +64,7 @@ export default {
       zoom: state => state.project.map.zoom,
       showNavigation: state => state.appMenu.show,
       title: state => state.project.settings.general.title,
+      mapMode: state => state.map.mode,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel']),
