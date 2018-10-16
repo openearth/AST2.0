@@ -249,35 +249,23 @@ export default {
     },
     addWmsLayer({ layerType: type, id, url, tilesize: tileSize }) {
       if (!this.map.getLayer(`wms-layer-${id}`)) {
+        const source = { type, tileSize }
+
         if  (url === 'mapbox://mapbox.satellite') {
-          this.map.addLayer({
-            id: `wms-layer-${id}`,
-            type: "raster",
-            source: {
-              "type": "raster",
-              "url": "mapbox://mapbox.satellite",
-              "tileSize": tileSize,
-            },
-            layout: {
-              visibility: 'none',
-            },
-            paint: {},
-          });
+          source.url = url
         } else {
-          this.map.addLayer({
-            id: `wms-layer-${id}`,
-            type,
-            source: {
-                'type': type,
-                'tiles': [ url ],
-                tileSize,
-            },
-            layout: {
-              visibility: 'none',
-            },
-            paint: {},
-          })
+          source.tiles = [ url ]
         }
+
+        this.map.addLayer({
+          id: `wms-layer-${id}`,
+          type,
+          source,
+          layout: {
+            visibility: 'none',
+          },
+          paint: {},
+        })
       }
     },
     renderWmsLayersVisibility() {
