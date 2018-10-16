@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import turf from '@turf/area'
-import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS } from '../lib/map-event-bus'
+import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT } from '../lib/map-event-bus'
 import { getApiDataForFeature, getRankedMeasures } from "../lib/get-api-data";
 import FileSaver from 'file-saver'
 import getLoadedFileContents from '../lib/get-loaded-file-contents'
@@ -127,6 +127,10 @@ export const actions = {
 
       const areaNumber = state.areas.length
       commit('updateAreaProperty', { id: feature.id, properties: { area, name: `Area-${areaNumber}`, hidden: false } })
+
+      setTimeout(() => {
+        MapEventBus.$emit(SELECT, feature.id)
+      }, 0)
     })
   },
   updateArea({ state, commit, dispatch }, features) {
