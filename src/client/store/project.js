@@ -115,7 +115,7 @@ export const actions = {
     zoom && commit('setMapZoom', zoom)
     center && commit('setMapCenter', center)
   },
-  createArea({ state, commit }, features) {
+  createArea({ state, commit, dispatch }, features) {
     features.forEach(feature => {
       const area = turfArea(feature.geometry)
 
@@ -128,6 +128,7 @@ export const actions = {
       commit('addArea', feature)
 
       const areaNumber = state.areas.length
+      dispatch('fetchAreaApiData', [feature])
       commit('updateAreaProperty', { id: feature.id, properties: { name: `Area-${areaNumber}`, hidden: false } })
 
       setTimeout(() => {
