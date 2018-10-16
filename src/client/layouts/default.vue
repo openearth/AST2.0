@@ -68,7 +68,6 @@ export default {
       onBaseLayerSwitch: 'project/setBaseLayer',
       showMenu: 'appMenu/showMenu',
       hideMenu: 'appMenu/hideMenu',
-      clearState: 'project/clearState',
     }),
     ...mapActions({
       createArea: 'project/createArea',
@@ -78,6 +77,7 @@ export default {
       importProject: 'project/importProject',
       saveProject: 'project/saveProject',
       setMapPosition: 'project/setMapPosition',
+      clearState: 'project/clearState',
     }),
     async onFileInput(event) {
       this.importProject(event)

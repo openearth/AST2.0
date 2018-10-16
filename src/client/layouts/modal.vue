@@ -80,12 +80,12 @@ export default {
       acceptLegal: 'project/acceptLegal',
       showMenu: 'appMenu/showMenu',
       hideMenu: 'appMenu/hideMenu',
-      clearState: 'project/clearState',
     }),
     ...mapActions({
       importProject: 'project/importProject',
       saveProject: 'project/saveProject',
       setMapPosition: 'project/setMapPosition',
+      clearState: 'project/clearState',
     }),
     async onFileInput(event) {
       this.importProject(event)

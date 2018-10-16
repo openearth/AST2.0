@@ -60,11 +60,11 @@ export default {
       importProject: 'project/importProject',
       saveProject: 'project/saveProject',
       setMapPosition: 'project/setMapPosition',
+      clearState: 'project/clearState',
     }),
     ...mapMutations({
       showMenu: 'appMenu/showMenu',
       hideMenu: 'appMenu/hideMenu',
-      clearState: 'project/clearState',
     }),
     async onFileInput(event) {
       this.importProject(event)

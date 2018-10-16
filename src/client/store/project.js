@@ -31,7 +31,7 @@ const initialState = () => ({
   },
 })
 
-export const state = () => { return initialState() }
+export const state = () => (initialState())
 
 export const mutations = {
   import(state, file) {
@@ -116,6 +116,15 @@ export const mutations = {
 
     state.legalAccepted = true
     MapEventBus.$emit(RELOAD_LAYERS)
+  },
+  clearProjectArea(state) {
+    state.settings.general.title = ''
+    state.settings.area = {}
+  },
+  clearAreas(state) {
+    while (state.areas.length) {
+      state.areas.pop()
+    }
   },
 }
 
@@ -253,6 +262,17 @@ export const actions = {
     const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' })
     commit('appMenu/hideMenu', null, { root: true })
     return FileSaver.saveAs(blob, `${title || 'ast_project'}.json`)
+  },
+  clearState({ commit, dispatch, rootState }) {
+    const areaSettings = rootState.data.areaSettings
+    const kpiGroups = rootState.data.kpiGroups
+
+    commit('clearProjectArea')
+    commit('clearAreas')
+    MapEventBus.$emit(RELOAD_LAYERS)
+
+    dispatch('bootstrapSettingsProjectArea', areaSettings)
+    dispatch('bootstrapSettingsTargets', kpiGroups)
   },
 }
 
