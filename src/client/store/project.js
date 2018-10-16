@@ -115,6 +115,7 @@ export const mutations = {
     })
 
     state.legalAccepted = true
+    MapEventBus.$emit(RELOAD_LAYERS)
   },
 }
 
