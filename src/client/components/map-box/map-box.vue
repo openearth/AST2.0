@@ -247,16 +247,14 @@ export default {
     },
     addWmsLayer({ layerType: type, id, url, tilesize: tileSize }) {
       this.map.addLayer({
-        'id': 'wms-test-layer',
-        'type': 'raster',
-        'source': {
-            'type': 'raster',
-            'tiles': [
-                'https://geodata.state.nj.us/imagerywms/Natural2015?bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.1.1&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&layers=Natural2015',
-            ],
-            'tileSize': 256,
+        id: `wms-layer-${id}`,
+        type,
+        source: {
+            'type': type,
+            'tiles': [ url ],
+            tileSize,
         },
-        'paint': {},
+        paint: {},
       })
     },
     removeWmsLayer(id) {
