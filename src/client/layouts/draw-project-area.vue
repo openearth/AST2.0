@@ -51,14 +51,13 @@ export default {
     ...mapState({
       map: state => state.project.map,
       projectArea: state => state.project.settings.area,
-      areas: state => state.project.areas,
       center: state => state.project.map.center,
       zoom: state => state.project.map.zoom,
       showNavigation: state => state.appMenu.show,
       title: state => state.project.settings.general.title,
       mapMode: state => state.map.mode,
     }),
-    ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups']),
+    ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel']),
   },
   methods: {
