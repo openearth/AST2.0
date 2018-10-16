@@ -348,15 +348,15 @@ export const getters = {
       }
     }, {})
   },
-  wmsLayersVisible: (state, getters, rootState) => {
+  wmsLayersVisible: (state, getters, rootState, rootGetters) => {
     return state.map.wmsLayers
       .filter(layer => layer.visible)
-      .map(({ id }) => rootState.data.wmsLayers.find(layer => layer.id === id))
+      .map(({ id }) => rootGetters['data/wmsLayers/constructed'].find(layer => layer.id === id))
   },
   wmsLayerLegend: (state, getters, rootState) => {
     const [layer] = state.map.wmsLayers
       .filter(layer => layer.showLegend)
-      .map(({ id }) => rootState.data.wmsLayers.find(layer => layer.id === id))
+      .map(({ id }) => rootGetters['data/wmsLayers/constructed'].find(layer => layer.id === id))
     return layer
   },
 }
