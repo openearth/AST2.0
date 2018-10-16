@@ -23,10 +23,6 @@ export default {
       type: Array,
       default: () => [],
     },
-    activeBaseLayer: {
-      type: String,
-      required: true,
-    },
     interactive: {
       type: Boolean,
       default: true,
@@ -77,16 +73,9 @@ export default {
     map: undefined,
     draw: undefined,
     navigationControls: undefined,
-    styles: {
-      default: 'mapbox://styles/mapbox/streets-v9',
-      satellite: 'mapbox://styles/mapbox/satellite-v9',
-    },
   }),
 
   computed: {
-    activeStyle() {
-      return this.styles[this.activeBaseLayer]
-    },
     hasProjectArea() {
       return !!this.projectArea.properties
     },
@@ -105,9 +94,6 @@ export default {
   },
 
   watch: {
-    activeStyle() {
-      this.map.setStyle(this.activeStyle)
-    },
     layerVisibility(newValue) {
       this.renderWmsLayersVisibility()
     },
@@ -132,7 +118,7 @@ export default {
     if (this.$refs.map) {
       this.map = new mapboxgl.Map({
         container: this.$refs.map,
-        style: this.activeStyle,
+        style: 'mapbox://styles/mapbox/streets-v9',
         zoom: this.mapZoom,
         center: [lng, lat],
         showZoom: false,

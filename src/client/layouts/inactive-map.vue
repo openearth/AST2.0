@@ -16,8 +16,6 @@
 
       <md-content class="layout-inactive-map__map-wrapper">
         <map-viewer
-          :active-base-layer="map.activeBaseLayer"
-          :base-layers="map.baseLayers"
           :project-area="projectArea"
           :is-project="true"
           :areas="areas"

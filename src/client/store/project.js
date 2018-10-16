@@ -18,11 +18,6 @@ export const state = () => ({
     targets: {},
   },
   map: {
-    baseLayers: [
-      { key: 'default', label: 'Default' },
-      { key: 'satellite', label: 'Satellite' },
-    ],
-    activeBaseLayer: 'default',
     zoom: 16.5,
     center: {
       lat: 52.36599335162853,
@@ -45,9 +40,6 @@ export const mutations = {
   },
   setTitle(state, value) {
     state.settings.title = value
-  },
-  setBaseLayer(state, value) {
-    state.map.activeBaseLayer = value
   },
   addProjectArea(state, value) {
     return state.settings.area = value

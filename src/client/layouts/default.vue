@@ -16,8 +16,6 @@
 
       <md-content class="layout-default__map-wrapper">
         <map-viewer
-          :active-base-layer="map.activeBaseLayer"
-          :base-layers="map.baseLayers"
           :project-area="projectArea"
           :areas="areas"
           :is-project="true"
@@ -31,7 +29,6 @@
           @update="updateArea"
           @delete="deleteArea"
           @selectionchange="selectionChange"
-          @baseLayerSwitch="onBaseLayerSwitch"
           @move="setMapPosition"/>
         <kpi-panel
           :kpis="filteredKpiGroups"
@@ -66,7 +63,6 @@ export default {
   },
   methods: {
     ...mapMutations({
-      onBaseLayerSwitch: 'project/setBaseLayer',
       showMenu: 'appMenu/showMenu',
       hideMenu: 'appMenu/hideMenu',
     }),

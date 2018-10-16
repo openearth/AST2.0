@@ -19,8 +19,6 @@
       </div>
 
       <map-viewer
-        :active-base-layer="map.activeBaseLayer"
-        :base-layers="map.baseLayers"
         :project-area="projectArea"
         :is-project="true"
         :areas="areas"

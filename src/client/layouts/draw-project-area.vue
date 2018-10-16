@@ -16,8 +16,6 @@
 
       <md-content class="layout-draw-project-area__map-wrapper">
         <map-viewer
-          :active-base-layer="map.activeBaseLayer"
-          :base-layers="map.baseLayers"
           :project-area="projectArea"
           :is-project="false"
           :areas="areas"
@@ -34,7 +32,6 @@
           @update="updateArea"
           @delete="deleteArea"
           @selectionchange="selectionChange"
-          @baseLayerSwitch="onBaseLayerSwitch"
           @move="setMapPosition"/>
       </md-content>
     </div>
@@ -65,7 +62,6 @@ export default {
   },
   methods: {
     ...mapMutations({
-      onBaseLayerSwitch: 'project/setBaseLayer',
       showMenu: 'appMenu/showMenu',
       hideMenu: 'appMenu/hideMenu',
     }),

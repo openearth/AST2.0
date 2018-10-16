@@ -1,7 +1,6 @@
 <template>
   <div class="map-viewer">
     <map-box
-      :active-base-layer="activeBaseLayer"
       :interactive="interactive"
       :point="point"
       :line="line"
@@ -43,31 +42,18 @@
       @zoom-in="zoomIn"
       @zoom-out="zoomOut"/>
 
-    <map-base-layer-switcher
-      :base-layers="baseLayers"
-      class="map-viewer__layer-switcher"
-      @switch="onBaseLayerSwitch"/>
   </div>
 </template>
 
 <script>
 import MapEventBus, { MODE, TRASH, DELETE, ZOOM_IN, ZOOM_OUT } from "../../lib/map-event-bus";
 import MapBox from "../map-box";
-import MapBaseLayerSwitcher from "../map-base-layer-switcher";
 import MapControls from "../map-controls";
 import { mapMutations, mapActions } from "vuex";
 
 export default {
-  components: { MapBox, MapBaseLayerSwitcher, MapControls },
+  components: { MapBox, MapControls },
   props: {
-    activeBaseLayer: {
-      type: String,
-      required: true,
-    },
-    baseLayers: {
-      type: Array,
-      default: () => ([]),
-    },
     interactive: {
       type: Boolean,
       default: true,
@@ -133,7 +119,6 @@ export default {
     onUpdate(event) { this.$emit('update', event) },
     onDelete(event) { this.$emit('delete', event) },
     onSelectionchange(event) { this.$emit('selectionchange', event) },
-    onBaseLayerSwitch(event) { this.$emit('baseLayerSwitch', event) },
     onMove(event) { this.$emit('move', event) },
     onClickDelete() { MapEventBus.$emit(DELETE) },
     zoomIn() { MapEventBus.$emit(ZOOM_IN) },
