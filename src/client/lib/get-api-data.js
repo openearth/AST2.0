@@ -52,6 +52,8 @@ export async function getApiDataForFeature(feature, projectArea, currentReturnTi
       getRealApiData('heatstress/temperature', { area, id, projectArea }),
       getRealApiData('heatstress/waterquality', { area, id }),
       getRealApiData('pluvflood', { area, id, returnTime, inflow, depth, projectArea }),
+      getRealApiData('groundwater_recharge', { projectArea, inflow, returnTime, area, depth, id }),
+      getRealApiData('evapotranspiration', { projectArea, inflow, returnTime, area, depth, id }),
 
       Promise.resolve({ data: { storageCapacity: measureArea * areaDepth } }),
     ])
