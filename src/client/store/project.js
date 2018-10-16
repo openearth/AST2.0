@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import turf from '@turf/area'
-import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS } from '../lib/map-event-bus'
+import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT } from '../lib/map-event-bus'
 import { getApiDataForFeature, getRankedMeasures } from "../lib/get-api-data";
 import FileSaver from 'file-saver'
 import getLoadedFileContents from '../lib/get-loaded-file-contents'
@@ -124,7 +124,7 @@ export const actions = {
     zoom && commit('setMapZoom', zoom)
     center && commit('setMapCenter', center)
   },
-  createArea({ state, commit }, features) {
+  createArea({ state, commit, dispatch }, features) {
     features.forEach(feature => {
       const area = turf(feature.geometry)
 
@@ -137,7 +137,12 @@ export const actions = {
       commit('addArea', feature)
 
       const areaNumber = state.areas.length
+      dispatch('fetchAreaApiData', [feature])
       commit('updateAreaProperty', { id: feature.id, properties: { area, name: `Area-${areaNumber}`, hidden: false } })
+
+      setTimeout(() => {
+        MapEventBus.$emit(SELECT, feature.id)
+      }, 0)
     })
   },
   updateArea({ state, commit, dispatch }, features) {
