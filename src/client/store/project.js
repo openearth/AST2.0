@@ -135,7 +135,7 @@ export const actions = {
       }, 0)
     })
   },
-  updateArea({ state, commit, dispatch }, features) {
+  updateArea({ state, commit, dispatch, getters }, features) {
     features.forEach(feature => {
       const { id } = feature
       const area = turfArea(feature.geometry)
@@ -143,17 +143,19 @@ export const actions = {
       if (state.settings.area.id === id) {
         commit('updateProjectArea', feature)
         commit('updateProjectAreaProperty', { area })
-        dispatch('fetchAreaApiData', state.areas)
+        dispatch('fetchAreaApiData', getters.areas)
         return
       }
 
       commit('updateArea', feature)
-      dispatch('fetchAreaApiData', [feature])
+      dispatch('fetchAreaApiData', getters.areas.filter(area => area.id === feature.id))
     })
   },
-  updateAreaProperties({ state, commit, dispatch }, { features, properties }) {
-    features.forEach(feature => commit('updateAreaProperty', { id: feature.id, properties }))
-    dispatch('fetchAreaApiData', features)
+  updateAreaProperties({ state, commit, dispatch, getters }, { features, properties }) {
+    features.forEach(feature => {
+      commit('updateAreaProperty', { id: feature.id, properties })
+      dispatch('fetchAreaApiData', getters.areas.filter(area => area.id === feature.id))
+    })
   },
   fetchAreaApiData({ state, commit }, features) {
     features.forEach(async (feature) => {
