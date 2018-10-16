@@ -72,7 +72,6 @@ export default {
   data: () => ({
     map: undefined,
     draw: undefined,
-    navigationControls: undefined,
   }),
 
   computed: {
@@ -128,9 +127,6 @@ export default {
         userProperties: true,
         styles: [...defaultStyles, ...projectAreaStyles, ...areaStyles],
       })
-      this.navigationControls = new mapboxgl.NavigationControl({ showCompass: false })
-
-      this.map.addControl(this.navigationControls, 'bottom-right')
 
       this.initialShapes.forEach(shape => {
         this.draw.add(shape)
