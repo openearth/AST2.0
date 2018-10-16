@@ -158,8 +158,8 @@ export default {
       this.map.on('draw.modechange', event => this.$emit('modechange', event.mode))
 
       this.map.on('load', () => {
+        [...this.wmsLayers].reverse().forEach(this.addWmsLayer)
         this.map.resize()
-        this.wmsLayers.forEach(this.addWmsLayer)
         this.map.addControl(this.draw, 'top-left')
         this.fillMap()
         this.renderWmsLayersVisibility()
@@ -271,20 +271,35 @@ export default {
     },
     addWmsLayer({ layerType: type, id, url, tilesize: tileSize }) {
       if (!this.map.getLayer(`wms-layer-${id}`)) {
-        const before = this.map.getLayer('projectArea-line') ? 'projectArea-line' : undefined
-        this.map.addLayer({
-          id: `wms-layer-${id}`,
-          type,
-          source: {
-              'type': type,
-              'tiles': [ url ],
-              tileSize,
-          },
-          layout: {
-            visibility: 'none',
-          },
-          paint: {},
-        }, before)
+        if  (url === 'mapbox://mapbox.satellite') {
+          this.map.addLayer({
+            id: `wms-layer-${id}`,
+            type: "raster",
+            source: {
+              "type": "raster",
+              "url": "mapbox://mapbox.satellite",
+              "tileSize": tileSize,
+            },
+            layout: {
+              visibility: 'none',
+            },
+            paint: {},
+          });
+        } else {
+          this.map.addLayer({
+            id: `wms-layer-${id}`,
+            type,
+            source: {
+                'type': type,
+                'tiles': [ url ],
+                tileSize,
+            },
+            layout: {
+              visibility: 'none',
+            },
+            paint: {},
+          })
+        }
       }
     },
     renderWmsLayersVisibility() {
