@@ -253,7 +253,7 @@ export const getters = {
       let area;
       switch (feature.geometry.type) {
         case 'LineString':
-          area = turfLength(feature.geometry) * parseFloat(feature.properties.areaWidth)
+          area = (turfLength(feature.geometry) * 1000) * parseFloat(feature.properties.areaWidth)
           break;
         case 'Point':
           area = Math.PI * (feature.properties.areaRadius * 2)
