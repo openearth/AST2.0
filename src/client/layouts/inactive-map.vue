@@ -9,7 +9,8 @@
       :filled-in-required-settings="filledInRequiredProjectAreaSettings"
       @onCloseNavigation="hideMenu"
       @saveProject="saveProject"
-      @importProject="onFileInput"/>
+      @importProject="onFileInput"
+      @newProject="onNewProject"/>
 
     <div class="layout-inactive-map__content">
       <nuxt />
@@ -61,10 +62,19 @@ export default {
     ...mapMutations({
       showMenu: 'appMenu/showMenu',
       hideMenu: 'appMenu/hideMenu',
+      clearState: 'project/clearState',
     }),
     async onFileInput(event) {
       this.importProject(event)
         .then(() => this.$router.push(this.currentFilledInLevel.uri))
+    },
+    onNewProject() {
+      if (this.projectArea.id) {
+        this.clearState()
+      }
+
+      this.hideMenu()
+      this.$router.push(`/${this.$i18n.locale}/new-project`)
     },
   },
 }

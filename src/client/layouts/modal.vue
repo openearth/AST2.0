@@ -9,7 +9,8 @@
       :filled-in-required-settings="filledInRequiredProjectAreaSettings"
       @onCloseNavigation="hideMenu"
       @saveProject="saveProject"
-      @importProject="onFileInput"/>
+      @importProject="onFileInput"
+      @newProject="onNewProject"/>
 
     <div class="layout-modal__content">
       <div class="layout-modal__page-wrapper">
@@ -77,6 +78,7 @@ export default {
       acceptLegal: 'project/acceptLegal',
       showMenu: 'appMenu/showMenu',
       hideMenu: 'appMenu/hideMenu',
+      clearState: 'project/clearState',
     }),
     ...mapActions({
       importProject: 'project/importProject',
@@ -86,6 +88,14 @@ export default {
     async onFileInput(event) {
       this.importProject(event)
         .then(() => this.$router.push(this.currentFilledInLevel.uri))
+    },
+    onNewProject() {
+      if (this.projectArea.id) {
+        this.clearState()
+      }
+
+      this.hideMenu()
+      this.$router.push(`/${this.$i18n.locale}/new-project`)
     },
   },
 }
