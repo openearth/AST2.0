@@ -6,7 +6,7 @@ import FileSaver from 'file-saver'
 import getLoadedFileContents from '../lib/get-loaded-file-contents'
 import validateProject from '../lib/validate-project'
 
-export const state = () => ({
+const initialState = () => ({
   legalAccepted: false,
   areas: [],
   settings: {
@@ -30,6 +30,8 @@ export const state = () => ({
     },
   },
 })
+
+export const state = () => { return initialState() }
 
 export const mutations = {
   import(state, file) {
@@ -104,6 +106,14 @@ export const mutations = {
     state.settings.projectArea[key][option] = !state.settings.projectArea[key][option]
   },
   acceptLegal(state) {
+    state.legalAccepted = true
+  },
+  clearState(state) {
+    const s = initialState()
+    Object.keys(s).forEach(key => {
+      state[key] = s[key]
+    })
+
     state.legalAccepted = true
   },
 }
