@@ -67,6 +67,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    wmsLayersVisible: {
+      type: Array,
+      default: () => [],
+    },
   },
 
   data: () => ({
@@ -86,11 +90,29 @@ export default {
     hasProjectArea() {
       return !!this.projectArea.properties
     },
+    layerVisibility() {
+      return this.wmsLayers.reduce((obj, layer) => {
+        obj[layer.id] = layer.visible
+        return obj
+      }, {})
+    },
+    layerOpacity() {
+      return this.wmsLayers.reduce((obj, layer) => {
+        obj[layer.id] = layer.opacity
+        return obj
+      }, {})
+    },
   },
 
   watch: {
     activeStyle() {
       this.map.setStyle(this.activeStyle)
+    },
+    layerVisibility(newValue) {
+      this.renderWmsLayersVisibility()
+    },
+    layerOpacity(newValue) {
+      this.renderWmsLayersOpacity()
     },
   },
 
@@ -123,7 +145,6 @@ export default {
       this.navigationControls = new mapboxgl.NavigationControl({ showCompass: false })
 
       this.map.addControl(this.navigationControls, 'bottom-right')
-      this.map.addControl(this.draw, 'top-left')
 
       this.initialShapes.forEach(shape => {
         this.draw.add(shape)
@@ -139,7 +160,10 @@ export default {
       this.map.on('load', () => {
         this.map.resize()
         this.wmsLayers.forEach(this.addWmsLayer)
+        this.map.addControl(this.draw, 'top-left')
         this.fillMap()
+        this.renderWmsLayersVisibility()
+        this.renderWmsLayersOpacity()
         this.$emit('modechange', this.draw.getMode())
       })
 
@@ -246,20 +270,47 @@ export default {
       this.map.addLayer(line)
     },
     addWmsLayer({ layerType: type, id, url, tilesize: tileSize }) {
-      this.map.addLayer({
-        id: `wms-layer-${id}`,
-        type,
-        source: {
-            'type': type,
-            'tiles': [ url ],
-            tileSize,
-        },
-        paint: {},
+      if (!this.map.getLayer(`wms-layer-${id}`)) {
+        const before = this.map.getLayer('projectArea-line') ? 'projectArea-line' : undefined
+        this.map.addLayer({
+          id: `wms-layer-${id}`,
+          type,
+          source: {
+              'type': type,
+              'tiles': [ url ],
+              tileSize,
+          },
+          layout: {
+            visibility: 'none',
+          },
+          paint: {},
+        }, before)
+      }
+    },
+    renderWmsLayersVisibility() {
+      Object.keys(this.layerVisibility).forEach(key => {
+        this.layerVisibility[key]
+          ? this.showWmsLayer(key)
+          : this.hideWmsLayer(key)
+      })
+    },
+    renderWmsLayersOpacity() {
+      Object.keys(this.layerOpacity).forEach(key => {
+        this.wmsLayerOpacity(key, this.layerOpacity[key])
       })
     },
     removeWmsLayer(id) {
       this.map.getLayer(`wms-layer-${id}`) && this.map.removeLayer(`wms-layer-${id}`)
       this.map.getSource(`wms-layer-${id}`) && this.map.removeSource(`wms-layer-${id}`)
+    },
+    showWmsLayer(id) {
+      this.map.setLayoutProperty(`wms-layer-${id}`, 'visibility', 'visible');
+    },
+    hideWmsLayer(id) {
+      this.map.setLayoutProperty(`wms-layer-${id}`, 'visibility', 'none');
+    },
+    wmsLayerOpacity(id, value) {
+      this.map.setPaintProperty(`wms-layer-${id}`, 'raster-opacity', value);
     },
   },
 }

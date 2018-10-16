@@ -10,7 +10,7 @@
       >
         <div class="md-list-item-content">
           <md-avatar>
-            <img src="https://placehold.it/40" alt="">
+            <img :src="layer.imageUrl" alt="">
           </md-avatar>
 
           <span class="md-list-item-text layer-list__title">{{ layer.title }}</span>
