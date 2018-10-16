@@ -14,8 +14,6 @@ export default {
 </script>
 
 <style>
-@import '../app-core/variables.css';
-
 .rich-text {
   width: 100%;
   max-width: var(--max-width);
@@ -30,12 +28,6 @@ export default {
   padding: var(--spacing-half);
 }
 
-.rich-text blockquote {
-  position: relative;
-  margin: var(--spacing-double) 0;
-  padding: 1.3rem 0;
-}
-
 .rich-text ul,
 .rich-text ol {
   margin-bottom: var(--spacing-default);
@@ -43,6 +35,12 @@ export default {
 
 .rich-text li {
   margin-bottom: 0.375rem;
+}
+
+.rich-text blockquote {
+  position: relative;
+  margin: var(--spacing-double) 0;
+  padding: 1.3rem 0;
 }
 
 .rich-text blockquote:before {

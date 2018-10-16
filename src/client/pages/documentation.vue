@@ -33,10 +33,6 @@ export default {
   padding: var(--spacing-double);
 }
 
-.documentation p {
-  margin-bottom: var(--spacing-default);
-}
-
 .documentation .md-link {
   margin: 0;
   padding: 0;
