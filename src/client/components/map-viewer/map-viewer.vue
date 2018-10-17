@@ -17,7 +17,26 @@
       @delete="onDelete"
       @selectionchange="onSelectionchange"
       @move="onMove"
+      @modechange="mode => setMode(mode)"
     />
+
+    <map-controls
+      :line="interactive && line"
+      :polygon="interactive && polygon"
+      :point="interactive && point"
+      :trash="interactive"
+      :current-mode="currentMode"
+      class="map-viewer__controls--draw"
+      @setMode="setMode"
+      @trash="onClickDelete"/>
+
+    <map-controls
+      :zoom-in="interactive"
+      :zoom-out="interactive"
+      class="map-viewer__controls--zoom"
+      @zoom-in="zoomIn"
+      @zoom-out="zoomOut"/>
+
     <map-base-layer-switcher
       :base-layers="baseLayers"
       class="map-viewer__layer-switcher"
@@ -26,10 +45,14 @@
 </template>
 
 <script>
-import { MapBox, MapBaseLayerSwitcher } from "..";
+import MapEventBus, { MODE, TRASH, DELETE, ZOOM_IN, ZOOM_OUT } from "../../lib/map-event-bus";
+import MapBox from "../map-box";
+import MapBaseLayerSwitcher from "../map-base-layer-switcher";
+import MapControls from "../map-controls";
+import { mapMutations, mapActions } from "vuex";
 
 export default {
-  components: { MapBox, MapBaseLayerSwitcher },
+  components: { MapBox, MapBaseLayerSwitcher, MapControls },
   props: {
     activeBaseLayer: {
       type: String,
@@ -75,14 +98,24 @@ export default {
       type: Number,
       default: 0,
     },
+    currentMode: {
+      type: String,
+      default: '',
+    },
   },
   methods: {
+    ...mapActions({
+      setMode: 'map/setMode',
+    }),
     onCreate(event) { this.$emit('create', event) },
     onUpdate(event) { this.$emit('update', event) },
     onDelete(event) { this.$emit('delete', event) },
     onSelectionchange(event) { this.$emit('selectionchange', event) },
     onBaseLayerSwitch(event) { this.$emit('baseLayerSwitch', event) },
     onMove(event) { this.$emit('move', event) },
+    onClickDelete() { MapEventBus.$emit(DELETE) },
+    zoomIn() { MapEventBus.$emit(ZOOM_IN) },
+    zoomOut() { MapEventBus.$emit(ZOOM_OUT) },
   },
 }
 </script>
@@ -91,15 +124,33 @@ export default {
 .map-viewer {
   display: flex;
   position: relative;
+  overflow: hidden;
 }
 
 .map-viewer__map {
-  flex: 1;
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .map-viewer__layer-switcher {
   position: absolute;
   bottom: 30px;
   right: 55px;
+}
+
+.map-viewer__controls--draw {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.map-viewer__controls--zoom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
 }
 </style>
