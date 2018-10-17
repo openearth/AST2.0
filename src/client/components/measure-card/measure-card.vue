@@ -3,8 +3,16 @@
     <md-card-header>
       <md-card-header-text>
         <div class="md-subheading measure-card__title">{{ measure.title }}</div>
-        <div class="md-caption measure-card__tags"><em>{{ scoresString }}</em></div>
-        <md-chip v-if="measure.systemSuitability" class="md-body-2">{{ measure.systemSuitability.toFixed(1) }}</md-chip>
+        <div class="md-caption measure-card__tags">
+          <md-chip v-if="measure.systemSuitability" class="md-body-2">{{ measure.systemSuitability.toFixed(1) }}</md-chip>
+          <md-chip
+            v-for="(score, index) in scores"
+            :key="index"
+
+            class="measure-card__tag">
+            <md-icon :md-src="`/images/${score.key}.svg`" class="measure-card__icon" />
+          </md-chip>
+        </div>
       </md-card-header-text>
 
       <md-card-media>
@@ -16,8 +24,8 @@
     </md-card-header>
 
     <md-card-actions>
-      <md-button :to="`/${$i18n.locale}/project/measures/${measure.slug}`">{{ $t('learn_more') }}</md-button>
-      <md-button class="md-primary" @click="chooseMeasure">{{ $t('choose') }}</md-button>
+      <md-button :to="`/${$i18n.locale}/project/measures/${measure.slug}`" class="md-dense">{{ $t('learn_more') }}</md-button>
+      <md-button class="md-raised md-primary md-dense" @click="chooseMeasure">{{ $t('choose') }}</md-button>
     </md-card-actions>
   </md-card>
 </template>
@@ -74,6 +82,30 @@ export default {
 }
 
 .measure-card__tags {
-  margin-top: var(--spacing-half);
+  margin-top: var(--spacing-default);
+  display: flex;
+}
+
+.measure-card__tag{
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: .2rem;
+}
+
+.measure-card__icon {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.measure-card__icon svg > path {
+  fill: #000 !important;
+}
+
+.measure-card__icon svg {
+  max-width: 20px;
 }
 </style>

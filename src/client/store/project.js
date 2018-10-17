@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import turf from '@turf/area'
-import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS } from '../lib/map-event-bus'
+import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT } from '../lib/map-event-bus'
 import { getApiDataForFeature, getRankedMeasures } from "../lib/get-api-data";
 import FileSaver from 'file-saver'
 import getLoadedFileContents from '../lib/get-loaded-file-contents'
@@ -113,7 +113,7 @@ export const actions = {
     zoom && commit('setMapZoom', zoom)
     center && commit('setMapCenter', center)
   },
-  createArea({ state, commit }, features) {
+  createArea({ state, commit, dispatch }, features) {
     features.forEach(feature => {
       const area = turf(feature.geometry)
 
@@ -126,7 +126,12 @@ export const actions = {
       commit('addArea', feature)
 
       const areaNumber = state.areas.length
+      dispatch('fetchAreaApiData', [feature])
       commit('updateAreaProperty', { id: feature.id, properties: { area, name: `Area-${areaNumber}`, hidden: false } })
+
+      setTimeout(() => {
+        MapEventBus.$emit(SELECT, feature.id)
+      }, 0)
     })
   },
   updateArea({ state, commit, dispatch }, features) {
@@ -152,7 +157,9 @@ export const actions = {
   },
   fetchAreaApiData({ state, commit }, features) {
     features.forEach(async (feature) => {
-      const apiData = await getApiDataForFeature(feature, state.settings.area.properties.area)
+      const projectArea = state.settings.area.properties.area
+      const { scenarioName } = state.settings.projectArea
+      const apiData = await getApiDataForFeature(feature, projectArea, scenarioName)
       commit('updateAreaProperty', { id: feature.id, properties: { apiData } })
     })
   },
@@ -169,12 +176,19 @@ export const actions = {
   },
   bootstrapSettingsProjectArea({ state, commit }, settings) {
     settings.forEach(setting => {
-      const value = !setting.multiple
-        ? null
-        : setting.options.reduce((obj, option) => ({
-            ...obj,
-            [option.value]: false,
-          }), {})
+      let value = null
+
+      if (setting.multiple) {
+        value = setting.options.reduce((obj, option) => ({
+                ...obj,
+                [option.value]: option.value === setting.defaultValue.value,
+              }), {})
+      }
+
+      if (setting.isSelect) {
+        value = setting.defaultValue.value
+      }
+
       commit('setProjectAreaSetting', { key: setting.key, value })
     })
   },
@@ -192,7 +206,7 @@ export const actions = {
       commit('toggleProjectAreaNestedSetting', { key, option, value })
     }
 
-    if (type === 'radio') {
+    if ((type === 'radio') || (type === 'select')) {
       const { key, value } = payload
       commit('setProjectAreaSetting', { key, value })
     }

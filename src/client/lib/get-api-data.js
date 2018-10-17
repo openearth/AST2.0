@@ -1,4 +1,4 @@
-const _ = require('lodash')
+import cloneDeep from 'lodash/cloneDeep'
 
 export function getApiData(uri, body) {
   return fetch(
@@ -27,7 +27,7 @@ export function getRealApiData(uri, body) {
   .then(res => res.json())
 }
 
-export async function getApiDataForFeature(feature, projectArea, currentReturnTime = 1) {
+export async function getApiDataForFeature(feature, projectArea, scenarioName, currentReturnTime = 1) {
   const {
     measure,
     area,
@@ -48,10 +48,12 @@ export async function getApiDataForFeature(feature, projectArea, currentReturnTi
 
   if (measureId) {
     const apiData = await Promise.all([
-      getRealApiData('heatstress/cost', { area, id }),
-      getRealApiData('heatstress/temperature', { area, id, projectArea }),
-      getRealApiData('heatstress/waterquality', { area, id }),
-      getRealApiData('pluvflood', { area, id, returnTime, inflow, depth, projectArea }),
+      getRealApiData('heatstress/cost', { scenarioName, area, id }),
+      getRealApiData('heatstress/temperature', { scenarioName, area, id, projectArea }),
+      getRealApiData('heatstress/waterquality', { scenarioName, area, id }),
+      getRealApiData('pluvflood', { scenarioName, area, id, returnTime, inflow, depth, projectArea }),
+      getRealApiData('groundwater_recharge', { scenarioName, area, id, returnTime, inflow, depth, projectArea }),
+      getRealApiData('evapotranspiration', { scenarioName, area, id, returnTime, inflow, depth, projectArea }),
 
       Promise.resolve({ data: { storageCapacity: measureArea * areaDepth } }),
     ])
@@ -70,14 +72,14 @@ export async function getRankedMeasures(projectArea) {
 }
 
 function formatRequestBody(projectArea) {
-  let body = _.cloneDeep(projectArea)
+  let body = cloneDeep(projectArea)
 
   Object.keys(body['capacity']).forEach(key => {
     const newKey = key.replace('Coping', 'Prevention')
     body['capacity'][newKey] = body['capacity'][key]
   })
 
-  body['multifunctionality'] = parseFloat(body['multifunctionality'])
+  delete body['scenarioName']
 
   return body
 }

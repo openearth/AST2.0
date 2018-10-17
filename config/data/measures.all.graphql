@@ -27,6 +27,7 @@ query ($locale: SiteLocale) {
     climateEffectTags {
       title,
       key,
+      tagColor,
     },
     externalLinkLabel,
     externalLinkUrl,

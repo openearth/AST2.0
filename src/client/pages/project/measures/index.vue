@@ -22,10 +22,6 @@ export default {
     return {
       isAlphabeticallyOrdered: false,
       searchValue: '',
-      scoresArray: [
-        'Ground water',
-        'Drought',
-      ],
     }
   },
   computed: {

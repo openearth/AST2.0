@@ -88,7 +88,7 @@ export default {
   list-style: none;
   padding: 0;
   display: grid;
-  grid-gap: var(--spacing-default);
+  grid-gap: var(--spacing-double);
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   padding: var(--spacing-default);
 }
