@@ -138,8 +138,8 @@ export default {
 
 .map-viewer__layer-switcher {
   position: absolute;
-  bottom: 30px;
-  right: 55px;
+  bottom: 10px;
+  right: 10px;
 }
 
 .map-viewer__controls--draw {
