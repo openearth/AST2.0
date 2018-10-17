@@ -100,7 +100,7 @@ export default {
 .settings-view {
   display: flex;
   flex-direction: column;
-  width: 800px;
+  /* width: 800px; */
 }
 
 .settings-view__content {

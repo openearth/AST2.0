@@ -96,25 +96,4 @@ export default {
   height: 70px;
   background-color: #E4E4E4;
 }
-
-.project-area__form {
-  padding: 1.5rem;
-  column-count: 2;
-}
-
-.project-area__input-group {
-  break-inside: avoid;
-  page-break-inside: avoid; /* for Firefox */
-  margin-bottom: var(--spacing-default);
-}
-
-.project-area__input__label {
-  margin-bottom: .75rem;
-}
-
-.project-area__form__submit-button {
-  display: block;
-  margin-left: auto;
-  margin-top: auto;
-}
 </style>

@@ -4,7 +4,7 @@
       <span class="md-title">{{ $t('project_area') }}</span>
     </md-toolbar>
 
-    <div class="new-project__content inner-container">
+    <div class="new-project__content">
       <md-list>
         <md-list-item>
           <hint-text

@@ -87,6 +87,7 @@ export default {
   display: flex;
   align-items: flex-start;
   white-space: normal;
+  flex-grow: 1;
 }
 
 .legend__item-toggle {
