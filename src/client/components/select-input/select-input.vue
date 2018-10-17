@@ -29,7 +29,7 @@ export default {
   },
   data() {
     return {
-      value: this.searchValue,
+      value: this.selectedValue,
     }
   },
   watch: {

@@ -176,12 +176,19 @@ export const actions = {
   },
   bootstrapSettingsProjectArea({ state, commit }, settings) {
     settings.forEach(setting => {
-      const value = !setting.multiple || setting.isSelect
-        ? null
-        : setting.options.reduce((obj, option) => ({
-            ...obj,
-            [option.value]: false,
-          }), {})
+      let value = null
+
+      if (setting.multiple) {
+        value = setting.options.reduce((obj, option) => ({
+                ...obj,
+                [option.value]: option.value === setting.defaultValue.value,
+              }), {})
+      }
+
+      if (setting.isSelect) {
+        value = setting.defaultValue.value
+      }
+
       commit('setProjectAreaSetting', { key: setting.key, value })
     })
   },

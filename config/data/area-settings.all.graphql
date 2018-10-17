@@ -8,5 +8,9 @@ query ($locale: SiteLocale) {
       title,
       value
     },
+    defaultValue {
+      title,
+      value,
+    },
   }
 }
