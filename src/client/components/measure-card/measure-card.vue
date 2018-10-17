@@ -8,9 +8,9 @@
           <md-chip
             v-for="(score, index) in scores"
             :key="index"
-            :style="`background-color: ${score.tagColor}`"
-            class="measure-card__icon">
-            <md-icon :md-src="`/images/${score.key}.svg`" />
+
+            class="measure-card__tag">
+            <md-icon :md-src="`/images/${score.key}.svg`" class="measure-card__icon" />
           </md-chip>
         </div>
       </md-card-header-text>
@@ -86,7 +86,7 @@ export default {
   display: flex;
 }
 
-.measure-card__icon {
+.measure-card__tag{
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -96,7 +96,16 @@ export default {
   margin-right: .2rem;
 }
 
+.measure-card__icon {
+  text-align: center;
+  vertical-align: middle;
+}
+
 .measure-card__icon svg > path {
-  fill: #fff !important;
+  fill: #000 !important;
+}
+
+.measure-card__icon svg {
+  max-width: 20px;
 }
 </style>
