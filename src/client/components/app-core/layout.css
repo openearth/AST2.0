@@ -28,6 +28,6 @@ button:hover {
   cursor: pointer;
 }
 
-.container {
+.inner-container {
   padding: var(--spacing-double) var(--spacing-default);
 }

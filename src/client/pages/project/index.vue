@@ -3,7 +3,13 @@
     <md-toolbar md-elevation="0">
       <span class="md-title">{{ $t('your_measures') }}</span>
     </md-toolbar>
-    <md-list>
+
+    <hint-text
+      v-if="!measureCollection.length"
+      :icon="'crop_square'"
+      :translation="'empty_measures'" />
+
+    <md-list v-else>
       <md-list-item
         v-for="({measure, areas, someAreasAreShown}, index) in measureCollection"
         :key="index"
@@ -42,12 +48,12 @@
 
 <script>
 import { mapState, mapGetters, mapActions } from "vuex"
-import { MeasureCard, SearchInput } from '~/components'
+import { MeasureCard, SearchInput, HintText } from '~/components'
 import MapEventBus, { REDRAW } from "../../lib/map-event-bus";
 
 export default {
   middleware: ['access-level-settings'],
-  components: { MeasureCard, SearchInput },
+  components: { MeasureCard, SearchInput, HintText },
   data() {
     return {
       isAreasListVisible: false,

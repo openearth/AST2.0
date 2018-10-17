@@ -4,13 +4,13 @@
       <span class="md-title">{{ $t('project_area') }}</span>
     </md-toolbar>
 
-    <div class="new-project__content">
+    <div class="new-project__content inner-container">
       <md-list>
         <md-list-item>
-          <div v-if="!createdProjectArea" class="new-project__empty-area">
-            <md-icon>crop_free</md-icon>
-            <p class="md-body-2">{{ $t('empty_project_area') }}</p>
-          </div>
+          <hint-text
+            v-if="!createdProjectArea"
+            :icon="'crop_square'"
+            :translation="'empty_project_area'" />
           <div v-else>
             <p class="md-body-2">{{ $t('area_size') }}:</p>
             <span v-if="settings.area.properties" class="md-subheading">{{ areaSize }}m<sup>2</sup></span>
@@ -31,10 +31,12 @@
 <script>
 import { mapState, mapGetters } from "vuex";
 import MapEventBus, { REDRAW } from "../lib/map-event-bus"
+import { HintText } from '~/components'
 
 export default {
   layout: 'draw-project-area',
   middleware: ['access-level-legal'],
+  components: { HintText },
   computed: {
     ...mapState('i18n', ['locale']),
     ...mapState('project', ['settings']),
@@ -60,15 +62,5 @@ export default {
 .new-project__action-wrapper {
   display: flex;
   justify-content: flex-end;
-}
-
-.new-project__empty-area {
-  white-space: normal;
-  display: flex;
-  justify-content: space-between;
-}
-
-.new-project__empty-area .md-icon {
-  margin-right: var(--spacing-default);
 }
 </style>
