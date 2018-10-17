@@ -7,9 +7,15 @@
     <div class="new-project__content">
       <md-list>
         <md-list-item>
-          <p>{{ $t('area_size') }}: <span v-if="settings.area.properties">{{ settings.area.properties.area }}</span></p>
+          <div v-if="!createdProjectArea" class="new-project__empty-area">
+            <md-icon>crop_free</md-icon>
+            <p class="md-body-2">{{ $t('empty_project_area') }}</p>
+          </div>
+          <div v-else>
+            <p class="md-body-2">{{ $t('area_size') }}:</p>
+            <span v-if="settings.area.properties" class="md-subheading">{{ areaSize }}m<sup>2</sup></span>
+          </div>
         </md-list-item>
-        <md-divider />
       </md-list>
     </div>
 
@@ -33,6 +39,7 @@ export default {
     ...mapState('i18n', ['locale']),
     ...mapState('project', ['settings']),
     ...mapGetters('flow', ['createdProjectArea']),
+    areaSize() { return Math.round(this.settings.area.properties.area) },
   },
   mounted() {
     MapEventBus.$emit(REDRAW)
@@ -48,11 +55,20 @@ export default {
 
 .new-project__content {
   flex: 1;
-  overflow-y: scroll;
 }
 
 .new-project__action-wrapper {
   display: flex;
   justify-content: flex-end;
+}
+
+.new-project__empty-area {
+  white-space: normal;
+  display: flex;
+  justify-content: space-between;
+}
+
+.new-project__empty-area .md-icon {
+  margin-right: var(--spacing-default);
 }
 </style>

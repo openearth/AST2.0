@@ -1,10 +1,10 @@
 <template>
   <div class="map-base-layer-switcher">
-    <button
+    <md-button
       v-for="layer in baseLayers"
       :key="layer.key"
-      class="map-base-layer-switcher__button button"
-      @click="$emit('switch', layer.key)">{{ layer.label }}</button>
+      class="map-base-layer-switcher__button md-raised"
+      @click="$emit('switch', layer.key)">{{ layer.label }}</md-button>
   </div>
 </template>
 
@@ -21,6 +21,10 @@ export default {
 
 <style>
 .map-base-layer-switcher__button {
-  margin-left: var(--spacing-default);
+  margin: 0 0;
+}
+
+.map-base-layer-switcher__button:not(:last-child) {
+  margin-right: var(--spacing-half);
 }
 </style>
