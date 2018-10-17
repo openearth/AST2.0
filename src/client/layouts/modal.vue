@@ -92,7 +92,7 @@ export default {
         .then(() => this.$router.push(this.currentFilledInLevel.uri))
     },
     onNewProject() {
-      if (this.projectArea.id) {
+      if (this.projectArea.id || this.areas.length) {
         const result = window.confirm(this.$i18n.t('confirm_new_project'))
 
         if (result) {

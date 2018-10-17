@@ -108,15 +108,6 @@ export const mutations = {
   acceptLegal(state) {
     state.legalAccepted = true
   },
-  clearState(state) {
-    const s = initialState()
-    Object.keys(s).forEach(key => {
-      state[key] = s[key]
-    })
-
-    state.legalAccepted = true
-    MapEventBus.$emit(RELOAD_LAYERS)
-  },
   clearProjectArea(state) {
     state.settings.general.title = ''
     state.settings.area = {}
