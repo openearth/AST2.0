@@ -1,13 +1,14 @@
 <template>
   <div class="legend">
     <md-toolbar md-elevation="0">
-      <span class="md-title">{{ $t('your_measures') }}</span>
+      <span class="md-title">{{ $t('applied_measures') }}</span>
     </md-toolbar>
 
     <hint-text
       v-if="!measureCollection.length"
       :icon="'crop_square'"
-      :translation="'empty_measures'" />
+      :text="$t('empty_measures')"
+      class="legend__hint-text" />
 
     <md-list v-else>
       <md-list-item
@@ -90,6 +91,10 @@ export default {
   flex-grow: 1;
 }
 
+.legend__item-title {
+  flex-grow: 1;
+}
+
 .legend__item-toggle {
   margin-right: 0;
 }
@@ -100,5 +105,17 @@ export default {
 
 .legend .md-inset {
   padding-right: 40px; /* md-list-item-content padding (16px) + md-icon width (24px) */
+}
+
+.legend__hint-text {
+  padding: var(--spacing-default);
+}
+
+.legend .hint-text__icon.md-icon {
+  margin: 0 var(--spacing-default) 0 0;
+}
+
+.legend .md-list {
+  padding-top: 0;
 }
 </style>

@@ -30,27 +30,25 @@
                 :on-change="name => updateAreaProperty({ id: feature.id, properties: { name }})"
               />
 
-              <span class="md-body-2">{{ $t('measure') }}</span>
+              <span class="md-subheading">{{ $t('measure') }}</span>
               <div class="areas__choose-wrapper">
                 <div class="areas__choose-content">
-                  <template v-if="appliedMeasure">
-                    <p>{{ appliedMeasure.title }}</p>
-                    <md-button :to="`/${locale}/project/measures`" class="md-primary">{{ $t('change_measure') }}</md-button>
-                  </template>
-
-                  <template v-else>
-                    <md-button :to="`/${locale}/project/measures`" class="md-raised md-primary">{{ $t('choose_measure') }}</md-button>
-                  </template>
+                  <p v-if="appliedMeasure">{{ appliedMeasure.title }}</p>
+                  <hint-text
+                    v-else
+                    :text="$t('empty_area_measure')"
+                    class="areas__hint-text"/>
+                  <md-button :to="`/${locale}/project/measures`" class="md-primary md-raised areas__choose-button">{{ appliedMeasure ? $t('change_measure') : $t('choose_measure') }}</md-button>
                 </div>
-                <div class="areas__choose-icon">
-                  <img v-if="appliedMeasure" :src="appliedMeasure.image.url" >
+                <div v-if="appliedMeasure" class="areas__choose-icon">
+                  <img :src="appliedMeasure.image.url" >
                 </div>
               </div>
 
               <input-range
                 v-if="appliedMeasure"
                 :value="feature.properties.areaDepth"
-                label="Measure Depth"
+                :label="$t('area_depth')"
                 min="0"
                 max="10"
                 @change="value => updateAreaProperties({ features: [feature], properties: { areaDepth: value }})"/>
@@ -58,7 +56,7 @@
               <input-range
                 v-if="appliedMeasure"
                 :value="feature.properties.areaInflow"
-                label="Inflow Area"
+                :label="$t('area_inflow')"
                 min="0"
                 max="10"
                 @change="value => updateAreaProperties({ features: [feature], properties: { areaInflow: value }})"/>
@@ -80,10 +78,11 @@ import { mapGetters, mapActions, mapMutations, mapState } from "vuex";
 import MapEventBus, { REDRAW, MODE } from "../../lib/map-event-bus";
 import InputRange from '../../components/input-range'
 import TextInput from '../../components/text-input'
+import HintText from '~/components/hint-text'
 
 export default {
   middleware: ['access-level-settings'],
-  components: { InputRange, TextInput },
+  components: { InputRange, TextInput, HintText },
   data() {
     return {
       visibleAreas: [],
@@ -145,6 +144,13 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: flex-start;
+  margin-right: var(--spacing-default);
+}
+
+.areas__choose-button {
+  margin-left: 0;
+  margin-top: var(--spacing-default);
 }
 
 .areas__choose-icon {

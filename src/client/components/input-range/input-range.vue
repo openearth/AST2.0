@@ -84,24 +84,24 @@ export default {
 }
 
 .input-range__label {
-  font-size: 12px;
+  font-size: var(--font-size-extra-small);
   color: rgba(0,0,0,0.54);
   position: absolute;
 }
 
 .input-range__value-wrapper {
   display: flex;
-  align-items: center;
+  align-items: baseline;
 }
 
 .input-range__range {
   flex: 1;
-  margin-right: 1rem;
+  margin-right: var(--spacing-default);
 }
 
 .input-range__number {
-  width: 3rem;
-  position: relative
+  width: 4rem;
+  position: relative;
 }
 
 .input-range__number .md-input {

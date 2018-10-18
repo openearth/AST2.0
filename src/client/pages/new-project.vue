@@ -5,18 +5,15 @@
     </md-toolbar>
 
     <div class="new-project__content">
-      <md-list>
-        <md-list-item>
-          <hint-text
-            v-if="!createdProjectArea"
-            :icon="'crop_square'"
-            :translation="'empty_project_area'" />
-          <div v-else>
-            <p class="md-body-2">{{ $t('area_size') }}:</p>
-            <span v-if="settings.area.properties" class="md-subheading">{{ areaSize }}m<sup>2</sup></span>
-          </div>
-        </md-list-item>
-      </md-list>
+      <hint-text
+        v-if="!createdProjectArea"
+        :icon="'crop_square'"
+        :text="$t('empty_project_area')"
+        class="new-project__hint-text"/>
+      <div v-else>
+        <p class="md-body-2">{{ $t('area_size') }}:</p>
+        <span v-if="settings.area.properties" class="md-subheading">{{ areaSize }}m<sup>2</sup></span>
+      </div>
     </div>
 
     <div class="new-project__action-wrapper">
@@ -57,6 +54,7 @@ export default {
 
 .new-project__content {
   flex: 1;
+  padding: var(--spacing-default);
 }
 
 .new-project__action-wrapper {

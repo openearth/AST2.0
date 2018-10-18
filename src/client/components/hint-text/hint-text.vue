@@ -1,7 +1,7 @@
 <template>
   <div class="hint-text">
-    <md-icon>{{ icon }}</md-icon>
-    <span class="md-body-2 hint-text__content">{{ $t(translation) }}</span>
+    <md-icon v-if="icon" class="hint-text__icon">{{ icon }}</md-icon>
+    <span class="md-caption">{{ text }}</span>
   </div>
 </template>
 
@@ -10,9 +10,10 @@ export default {
   props: {
     icon: {
       type: String,
-      required: true,
+      required: false,
+      default: '',
     },
-    translation: {
+    text: {
       type: String,
       required: true,
     },
@@ -25,10 +26,10 @@ export default {
   white-space: normal;
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: flex-start;
 }
 
-.hint-text__content {
-  padding: var(--spacing-default);
+.hint-text__icon {
+  margin-right: var(--spacing-default);
 }
 </style>
