@@ -28,6 +28,6 @@ button:hover {
   cursor: pointer;
 }
 
-.inner-container {
-  padding: var(--spacing-double) var(--spacing-default);
+.md-primary {
+  z-index: 1;
 }
