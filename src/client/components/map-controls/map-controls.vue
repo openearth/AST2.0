@@ -104,10 +104,6 @@ export default {
       type: String,
       default: '',
     },
-    searchValue: {
-      type: String,
-      default: '',
-    },
     search: {
       type: Boolean,
       default: false,
