@@ -10,7 +10,7 @@
             :key="index"
 
             class="measure-card__tag">
-            <md-icon :md-src="`/images/${score.key}.svg`" class="measure-card__icon" />
+            <md-icon :md-src="score.icon.url" class="measure-card__icon" />
           </md-chip>
         </div>
       </md-card-header-text>
