@@ -153,10 +153,7 @@ export default {
       })
 
       MapEventBus.$on(SEARCH, ({ target }) => {
-        console.log(target.value)
         this.geoCoder.setInput(target.value).query(target.value)
-        console.log(this.geoCoder.setInput(target.value).query(target.value))
-
       })
 
       MapEventBus.$on(REPOSITION, ({ center, zoom }) => {

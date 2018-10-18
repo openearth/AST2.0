@@ -30,7 +30,7 @@
       class="map-viewer__controls--draw"
       @setMode="setMode"
       @trash="onClickDelete"
-      @onSearch="onSearch"/>
+      @search="onSearch"/>
 
     <map-controls
       :zoom-in="interactive"

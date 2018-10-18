@@ -1,79 +1,55 @@
 <template>
-  <div class="search">
-    <span v-if="value === ''" class="search__icon search__icon--magnifyglass" />
-    <input
-      v-model="value"
-      :class="{ 'search__input--active' : value !== '' }"
-      class="search__input"
-      type="text"
-      placeholder="Search">
-    <button class="search__icon search__icon--trash" @click="value = ''" />
-  </div>
+  <input
+    v-if="show"
+    :class="{ 'search-input--visible' : show }"
+    type="text"
+    class="search-input"
+    @change="(e) => $emit('search', e)">
 </template>
 
 <script>
 export default {
   props: {
-    searchValue: {
-      type: String,
-      required: true,
-    },
-  },
-  data() {
-    return {
-      value: this.searchValue,
-    }
-  },
-  watch: {
-    value(val) {
-      this.$emit('onSearch', val)
+    show: {
+      type: Boolean,
+      default: false,
     },
   },
 }
 </script>
 
 <style>
-.search {
-  position: relative;
-  width: 250px;
-  height: 40px;
-  background-color: var(--background-color);
-  border: 1px solid var(--text-light-color);
-  border-radius: var(--border-radius-small);
-}
-
-.search__icon--magnifyglass {
-  left: var(--spacing-half);
-  background-image: url('/images/search.svg');
-  background-size: contain;
-}
-
-.search__icon--trash {
-  right: var(--spacing-half);
-  background-color: var(--text-color);
-  background-image: url('/images/delete.svg');
-  background-size: 50%;
+.search-input {
+  width: 0;
+  padding: .5rem;
+  border: none;
   border-radius: 50%;
+  opacity: 0;
+  box-shadow: var(--shadow-small-grey);
+  animation: show .5s ease-in-out;
+  animation-direction: reverse;
 }
 
-.search__icon {
-  position: absolute;
-  top: calc(50% - 10px);
-  width: 20px;
-  height: 20px;
-  background-position: center;
-  background-repeat: no-repeat;
+.search-input--visible {
+  animation: show .5s ease-in-out forwards;
 }
 
-.search__input {
-  padding: 0 var(--spacing-double);
-  width: 100%;
-  height: 100%;
-  background-color: transparent;
-  border-style: none;
-}
+@keyframes show {
+  0% {
+    width: 0;
+    border-radius: 50%;
+    opacity: 0;
+  }
 
-.search__input--active {
-  padding-left: var(--spacing-half);
+  50% {
+    border-radius: 5px;
+    opacity: 1;
+  }
+
+  100% {
+    width: 250px;
+    opacity: 1;
+    border-radius: 5px;
+  }
 }
 </style>
