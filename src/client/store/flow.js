@@ -28,7 +28,7 @@ export const getters = {
     return !!rootState.project.settings.area.properties
   },
   filledInRequiredProjectAreaSettings(state, getters, rootState) {
-    const { projectArea } = rootState.project.settings
+    const projectArea = rootState.project.settings.projectArea
     return !Object.keys(projectArea)
       .filter(setting => !isObject(projectArea[setting]))
       .map(key => projectArea[key])

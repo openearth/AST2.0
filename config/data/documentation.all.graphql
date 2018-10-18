@@ -1,0 +1,22 @@
+query ($locale: SiteLocale) {
+  documentation(locale: $locale) {
+    title,
+    content {
+      ... on TextSectionRecord {
+        text,
+      },
+      ... on ImageRecord {
+        image {
+          url,
+          title,
+          alt,
+          height,
+          width,
+          format,
+          size,
+          id
+        }
+      }
+    }
+  }
+}

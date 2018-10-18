@@ -91,6 +91,7 @@ export default {
 <style>
 .map-controls {
   padding: 0;
+  z-index: 1;
 }
 
 .map-controls__item {
