@@ -34,7 +34,7 @@ export default {
   },
   watch: {
     value(val) {
-      this.$emit('onSelect', val)
+      this.$emit('change', val)
     },
   },
 }

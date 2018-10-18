@@ -47,7 +47,7 @@
               <select-input
                 :options="setting.options"
                 :selected-value="setting.defaultValue.value"
-                @onSelect="value => updateProjectAreaSetting({
+                @change="value => updateProjectAreaSetting({
                   type: 'select',
                   key: setting.key,
                   value,
