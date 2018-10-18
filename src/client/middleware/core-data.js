@@ -1,6 +1,10 @@
 import getData from "../lib/get-data";
 
 export default async function ({ store }) {
+  if (store.state.appMenu.show) {
+    store.commit('appMenu/hideMenu')
+  }
+
   if (!store.state.data.measures.length) {
     store.dispatch('data/measures/getMeasures', store.state.i18n.locale)
       .then(() => {
