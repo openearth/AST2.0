@@ -8,9 +8,10 @@
         <md-icon>search</md-icon>
       </md-button>
       <search-input
+        v-if="showSearch"
         :show="showSearch"
-        @search="(e) => {
-          $emit('search', e)
+        @search="(event) => {
+          $emit('search', event)
           showSearch = false
         }"
       />

@@ -1,10 +1,9 @@
 <template>
   <input
-    v-if="show"
     :class="{ 'search-input--visible' : show }"
-    type="text"
+    type="search"
     class="search-input"
-    @change="(e) => $emit('search', e)">
+    @change="(event) => $emit('search', event)">
 </template>
 
 <script>
@@ -27,7 +26,6 @@ export default {
   opacity: 0;
   box-shadow: var(--shadow-small-grey);
   animation: show .5s ease-in-out;
-  animation-direction: reverse;
 }
 
 .search-input--visible {

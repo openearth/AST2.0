@@ -118,7 +118,7 @@ export default {
     onClickDelete() { MapEventBus.$emit(DELETE) },
     zoomIn() { MapEventBus.$emit(ZOOM_IN) },
     zoomOut() { MapEventBus.$emit(ZOOM_OUT) },
-    onSearch(e) { MapEventBus.$emit(SEARCH, e) },
+    onSearch(event) { MapEventBus.$emit(SEARCH, event) },
   },
 }
 </script>
