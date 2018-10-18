@@ -49,35 +49,35 @@
 
               <input-range
                 v-if="appliedMeasure"
-                :value="feature.properties.areaDepth"
+                :value="feature.properties.areaDepth || feature.properties.defaultDepth"
+                :min="getDefaultValueProperty('depth', 'min', appliedMeasure.defaultValues)"
+                :max="getDefaultValueProperty('depth', 'max', appliedMeasure.defaultValues)"
                 label="Measure Depth"
-                min="0"
-                max="10"
                 @change="value => updateAreaProperties({ features: [feature], properties: { areaDepth: value }})"/>
 
               <input-range
                 v-if="appliedMeasure"
-                :value="feature.properties.areaInflow"
+                :value="feature.properties.areaInflow || feature.properties.defaultInflow"
+                :min="getDefaultValueProperty('inflow', 'min', appliedMeasure.defaultValues)"
+                :max="getDefaultValueProperty('inflow', 'max', appliedMeasure.defaultValues)"
                 label="Inflow Area"
-                min="0"
-                max="10"
                 @change="value => updateAreaProperties({ features: [feature], properties: { areaInflow: value }})"/>
 
               <input-range
-                v-if="feature.geometry.type === 'LineString'"
-                :value="feature.properties.areaWidth"
+                v-if="appliedMeasure && feature.geometry.type === 'LineString'"
+                :value="feature.properties.areaWidth || feature.properties.defaultWidth"
+                :min="getDefaultValueProperty('width', 'min', appliedMeasure.defaultValues)"
+                :max="getDefaultValueProperty('width', 'max', appliedMeasure.defaultValues)"
                 label="Width"
-                min="0"
-                max="10"
                 @change="value => updateAreaProperties({ features: [feature], properties: { areaWidth: value }})"
               />
 
               <input-range
-                v-if="feature.geometry.type === 'Point'"
-                :value="feature.properties.areaRadius"
+                v-if="appliedMeasure && feature.geometry.type === 'Point'"
+                :value="feature.properties.areaRadius || feature.properties.defaultRadius"
+                :min="getDefaultValueProperty('radius', 'min', appliedMeasure.defaultValues)"
+                :max="getDefaultValueProperty('radius', 'max', appliedMeasure.defaultValues)"
                 label="Radius"
-                min="0"
-                max="10"
                 @change="value => updateAreaProperties({ features: [feature], properties: { areaRadius: value }})"
               />
 
@@ -127,6 +127,11 @@ export default {
     onDone() {
       this.$router.push(`/${this.locale}/project/`)
       MapEventBus.$emit(MODE, 'simple_select')
+    },
+    getDefaultValueProperty(key, property, defaultValues) {
+      const values = defaultValues.find(values => values.key.toLowerCase() === key)
+      const value = values[property]
+      return String(value)
     },
   },
 }

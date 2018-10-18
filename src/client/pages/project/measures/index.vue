@@ -53,17 +53,7 @@ export default {
     },
     onChooseMeasure(measureId) {
       const measure = this.orderedMeasures.find(measure => measure.measureId === measureId)
-      this.$store.dispatch('project/updateAreaProperties', {
-        features: this.selectedFeatures,
-        properties: {
-          measure: measureId,
-          color: measure.color.hex,
-          areaInflow: 1,
-          areaDepth: 1,
-          areaWidth: 1,
-          areaRadius: 1,
-        },
-      })
+      this.$store.dispatch('project/setAreaMeasure', { features: this.selectedFeatures, measure })
       this.$router.push(`/${this.$i18n.locale}/project/areas`)
     },
   },

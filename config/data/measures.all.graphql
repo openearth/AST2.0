@@ -30,5 +30,11 @@ query ($locale: SiteLocale) {
     },
     externalLinkLabel,
     externalLinkUrl,
+    defaultValues {
+      key: title,
+      value,
+      min,
+      max
+    }
   }
 }
