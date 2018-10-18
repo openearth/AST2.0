@@ -62,7 +62,7 @@ export default {
           areaDepth: 1,
         },
       })
-      this.$router.push(`/${this.$i18n.locale}/project/areas`)
+      this.$router.push(`/${this.$i18n.locale}/project`)
     },
   },
 }
