@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import turf from '@turf/area'
-import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT } from '../lib/map-event-bus'
+import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT, REPAINT } from '../lib/map-event-bus'
 import { getApiDataForFeature, getRankedMeasures } from "../lib/get-api-data";
 import FileSaver from 'file-saver'
 import getLoadedFileContents from '../lib/get-loaded-file-contents'
@@ -177,6 +177,11 @@ export const actions = {
   },
   updateAreaProperties({ state, commit, dispatch }, { features, properties }) {
     features.forEach(feature => commit('updateAreaProperty', { id: feature.id, properties }))
+
+    if (properties.measure || properties.hasOwnProperty('hidden') ) {
+      MapEventBus.$emit(REPAINT, features)
+    }
+
     dispatch('fetchAreaApiData', features)
   },
   fetchAreaApiData({ state, commit }, features) {

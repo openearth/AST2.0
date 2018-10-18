@@ -15,6 +15,7 @@ import MapEventBus, {
   ZOOM_IN,
   ZOOM_OUT,
   SELECT,
+  REPAINT,
 } from '../../lib/map-event-bus'
 
 export default {
@@ -182,6 +183,12 @@ export default {
           this.draw.changeMode('direct_select', { featureId: id })
         }
       })
+
+      MapEventBus.$on(REPAINT, payload =>
+        payload.length
+          ? this.repaintFeatures(payload)
+          : this.repaintFeature(payload)
+      )
     }
   },
   beforeDestroy() {
@@ -266,6 +273,16 @@ export default {
           },
           paint: {},
         })
+      }
+    },
+    repaintFeatures(features) {
+      features.forEach(this.repaintFeature)
+    },
+    repaintFeature(feature) {
+      if (this.draw.get(feature.id)) {
+        this.draw
+          .delete(feature.id)
+          .add(feature)
       }
     },
     renderWmsLayersVisibility() {
