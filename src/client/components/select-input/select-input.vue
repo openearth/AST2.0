@@ -1,6 +1,6 @@
 <template>
   <md-field>
-    <md-select v-model="value" md-dense>
+    <md-select v-model="selectedValue" md-dense>
       <md-option
         v-for="option in options"
         :key="option.value"
@@ -18,7 +18,7 @@
 <script>
 export default {
   props: {
-    selectedValue: {
+    value: {
       type: String,
       required: true,
     },
@@ -29,11 +29,11 @@ export default {
   },
   data() {
     return {
-      value: this.selectedValue,
+      selectedValue: this.value,
     }
   },
   watch: {
-    value(val) {
+    selectedValue(val) {
       this.$emit('change', val)
     },
   },
