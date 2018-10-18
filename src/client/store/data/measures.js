@@ -52,9 +52,7 @@ export const getters = {
     })
   },
   measuresBySystemSuitability: (state, getters) => {
-    return [...state].sort((a, b) => {
-      return b.systemSuitability - a.systemSuitability
-    })
+    return [...state].sort((a, b) => b.systemSuitability - a.systemSuitability)
   },
   measureById: state => id => {
     return state.find(measure => measure.measureId === id)
