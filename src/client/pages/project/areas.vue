@@ -63,6 +63,24 @@
                 max="10"
                 @change="value => updateAreaProperties({ features: [feature], properties: { areaInflow: value }})"/>
 
+              <input-range
+                v-if="feature.geometry.type === 'LineString'"
+                :value="feature.properties.areaWidth"
+                label="Width"
+                min="0"
+                max="10"
+                @change="value => updateAreaProperties({ features: [feature], properties: { areaWidth: value }})"
+              />
+
+              <input-range
+                v-if="feature.geometry.type === 'Point'"
+                :value="feature.properties.areaRadius"
+                label="Radius"
+                min="0"
+                max="10"
+                @change="value => updateAreaProperties({ features: [feature], properties: { areaRadius: value }})"
+              />
+
             </md-card-content>
 
             <md-card-actions>

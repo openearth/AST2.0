@@ -1,5 +1,7 @@
 import Vue from 'vue'
-import turf from '@turf/area'
+import turfArea from '@turf/area'
+import turfLength from '@turf/length'
+import merge from 'lodash/merge'
 import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT } from '../lib/map-event-bus'
 import { getApiDataForFeature, getRankedMeasures } from "../lib/get-api-data";
 import FileSaver from 'file-saver'
@@ -115,7 +117,7 @@ export const actions = {
   },
   createArea({ state, commit, dispatch }, features) {
     features.forEach(feature => {
-      const area = turf(feature.geometry)
+      const area = turfArea(feature.geometry)
 
       if (!state.settings.area.id) {
         commit('addProjectArea', feature)
@@ -127,33 +129,34 @@ export const actions = {
 
       const areaNumber = state.areas.length
       dispatch('fetchAreaApiData', [feature])
-      commit('updateAreaProperty', { id: feature.id, properties: { area, name: `Area-${areaNumber}`, hidden: false } })
+      commit('updateAreaProperty', { id: feature.id, properties: { name: `Area-${areaNumber}`, hidden: false } })
 
       setTimeout(() => {
         MapEventBus.$emit(SELECT, feature.id)
       }, 0)
     })
   },
-  updateArea({ state, commit, dispatch }, features) {
+  updateArea({ state, commit, dispatch, getters }, features) {
     features.forEach(feature => {
       const { id } = feature
-      const area = turf(feature.geometry)
+      const area = turfArea(feature.geometry)
 
       if (state.settings.area.id === id) {
         commit('updateProjectArea', feature)
         commit('updateProjectAreaProperty', { area })
-        dispatch('fetchAreaApiData', state.areas)
+        dispatch('fetchAreaApiData', getters.areas)
         return
       }
 
       commit('updateArea', feature)
-      commit('updateAreaProperty', { id, properties: { area } })
-      dispatch('fetchAreaApiData', [feature])
+      dispatch('fetchAreaApiData', getters.areas.filter(area => area.id === feature.id))
     })
   },
-  updateAreaProperties({ state, commit, dispatch }, { features, properties }) {
-    features.forEach(feature => commit('updateAreaProperty', { id: feature.id, properties }))
-    dispatch('fetchAreaApiData', features)
+  updateAreaProperties({ state, commit, dispatch, getters }, { features, properties }) {
+    features.forEach(feature => {
+      commit('updateAreaProperty', { id: feature.id, properties })
+      dispatch('fetchAreaApiData', getters.areas.filter(area => area.id === feature.id))
+    })
   },
   fetchAreaApiData({ state, commit }, features) {
     features.forEach(async (feature) => {
@@ -255,8 +258,32 @@ export const actions = {
 }
 
 export const getters = {
+  areas: (state) => {
+    return state.areas.map(feature => {
+      let area;
+      switch (feature.geometry.type) {
+        case 'LineString':
+          area = (turfLength(feature.geometry) * 1000) * parseFloat(feature.properties.areaWidth)
+          break;
+        case 'Point':
+          area = Math.PI * (feature.properties.areaRadius * 2)
+          break;
+        case 'Polygon':
+          area = turfArea(feature.geometry)
+          break;
+        default:
+          area = 0
+      }
+
+      return merge(
+        {},
+        feature,
+        { properties: { area } }
+      )
+    })
+  },
   areasByMeasure: (state, getters, rootState) => {
-    return state.areas.reduce((obj, area) => {
+    return getters.areas.reduce((obj, area) => {
       const measureId = area.properties.measure
 
       if (measureId) {

@@ -60,6 +60,8 @@ export default {
           color: measure.color.hex,
           areaInflow: 1,
           areaDepth: 1,
+          areaWidth: 1,
+          areaRadius: 1,
         },
       })
       this.$router.push(`/${this.$i18n.locale}/project/areas`)

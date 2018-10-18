@@ -158,7 +158,11 @@ export default {
         this.$nextTick(this.fillMap)
       })
 
-      MapEventBus.$on(MODE, this.draw.changeMode)
+      MapEventBus.$on(MODE, (mode) => {
+        if (mode !== 'direct_select') {
+          this.draw.changeMode(mode)
+        }
+      })
 
       MapEventBus.$on(DELETE, () => {
         const { features } = this.draw.getSelected()
@@ -172,7 +176,13 @@ export default {
 
       MapEventBus.$on(SELECT, (id) => {
         if (id) {
-          this.draw.changeMode('direct_select', { featureId: id })
+          const feature = this.draw.get(id)
+          if (feature.geometry.type === 'Point') {
+            this.draw.changeMode('simple_select', { featureIds: [id] })
+            this.$emit('selectionchange', [feature])
+          } else {
+            this.draw.changeMode('direct_select', { featureId: id })
+          }
         }
       })
     }
