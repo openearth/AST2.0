@@ -21,6 +21,7 @@
     />
 
     <map-controls
+      :search="true"
       :line="interactive && line"
       :polygon="interactive && polygon"
       :point="interactive && point"
@@ -28,7 +29,8 @@
       :current-mode="currentMode"
       class="map-viewer__controls--draw"
       @setMode="setMode"
-      @trash="onClickDelete"/>
+      @trash="onClickDelete"
+      @onSearch="onSearch"/>
 
     <map-controls
       :zoom-in="interactive"
@@ -45,7 +47,7 @@
 </template>
 
 <script>
-import MapEventBus, { MODE, TRASH, DELETE, ZOOM_IN, ZOOM_OUT } from "../../lib/map-event-bus";
+import MapEventBus, { MODE, TRASH, DELETE, ZOOM_IN, ZOOM_OUT, SEARCH } from "../../lib/map-event-bus";
 import MapBox from "../map-box";
 import MapBaseLayerSwitcher from "../map-base-layer-switcher";
 import MapControls from "../map-controls";
@@ -116,6 +118,7 @@ export default {
     onClickDelete() { MapEventBus.$emit(DELETE) },
     zoomIn() { MapEventBus.$emit(ZOOM_IN) },
     zoomOut() { MapEventBus.$emit(ZOOM_OUT) },
+    onSearch(e) { MapEventBus.$emit(SEARCH, e) },
   },
 }
 </script>
@@ -152,5 +155,9 @@ export default {
   position: absolute;
   bottom: 0;
   left: 0;
+}
+
+.mapboxgl-ctrl-top-right {
+  display: none;
 }
 </style>

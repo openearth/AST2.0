@@ -1,5 +1,11 @@
 <template>
   <ul class="map-controls">
+    <li v-if="search" class="map-controls__item map-controls__item--search">
+      <input
+        type="text"
+        class="map-controls__input"
+        @change="(e) => $emit('onSearch', e)" >
+    </li>
     <li v-if="polygon" class="map-controls__item map-controls__item--polygon">
       <md-button
         :class="{'md-primary': currentMode === 'draw_polygon'}"
@@ -54,7 +60,10 @@
 </template>
 
 <script>
+import { SearchInput } from '~/components'
+
 export default {
+  components: { SearchInput },
   props: {
     line: {
       type: Boolean,
@@ -84,6 +93,14 @@ export default {
       type: String,
       default: '',
     },
+    searchValue: {
+      type: String,
+      default: '',
+    },
+    search: {
+      type: Boolean,
+      default: false,
+    },
   },
 }
 </script>
@@ -97,5 +114,17 @@ export default {
 .map-controls__item {
   margin-top: 6px;
   margin-bottom: 6px;
+}
+
+.map-controls__item--search {
+  margin-left: 10px;
+  border-radius: 5px;
+}
+
+.map-controls__input {
+  padding: .5rem;
+  border: none;
+  border-radius: 5px;
+  box-shadow: var(--shadow-small-grey);
 }
 </style>

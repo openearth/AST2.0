@@ -15,6 +15,7 @@ import MapEventBus, {
   ZOOM_IN,
   ZOOM_OUT,
   SELECT,
+  SEARCH,
 } from '../../lib/map-event-bus'
 
 export default {
@@ -117,12 +118,11 @@ export default {
         styles: [...defaultStyles, ...projectAreaStyles, ...areaStyles],
       })
       this.navigationControls = new mapboxgl.NavigationControl({ showCompass: false })
+      this.geoCoder = new MapboxGeocoder({ accessToken: mapboxgl.accessToken })
 
       this.map.addControl(this.navigationControls, 'bottom-right')
       this.map.addControl(this.draw, 'top-left')
-      this.map.addControl(new MapboxGeocoder({
-        accessToken: mapboxgl.accessToken,
-      }))
+      this.map.addControl(this.geoCoder)
 
       this.initialShapes.forEach(shape => {
         this.draw.add(shape)
@@ -150,6 +150,13 @@ export default {
 
       MapEventBus.$on(REDRAW, () => {
         this.map.resize()
+      })
+
+      MapEventBus.$on(SEARCH, ({ target }) => {
+        console.log(target.value)
+        this.geoCoder.setInput(target.value).query(target.value)
+        console.log(this.geoCoder.setInput(target.value).query(target.value))
+
       })
 
       MapEventBus.$on(REPOSITION, ({ center, zoom }) => {
