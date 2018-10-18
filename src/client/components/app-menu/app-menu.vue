@@ -13,9 +13,9 @@
       <md-list>
         <md-list-item>
           <md-button
-            :to="`/${$i18n.locale}/new-project/`"
             :disabled="!acceptedLegal"
-            class="app-menu__button">
+            class="app-menu__button"
+            @click="$emit('newProject')">
             <md-icon>add</md-icon>
             <span class="md-body-1">
               {{ $t('new_project') }}

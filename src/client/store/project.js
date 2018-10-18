@@ -6,7 +6,7 @@ import FileSaver from 'file-saver'
 import getLoadedFileContents from '../lib/get-loaded-file-contents'
 import validateProject from '../lib/validate-project'
 
-export const state = () => ({
+const initialState = () => ({
   legalAccepted: false,
   areas: [],
   settings: {
@@ -30,6 +30,8 @@ export const state = () => ({
     },
   },
 })
+
+export const state = () => (initialState())
 
 export const mutations = {
   import(state, file) {
@@ -105,6 +107,15 @@ export const mutations = {
   },
   acceptLegal(state) {
     state.legalAccepted = true
+  },
+  clearProjectArea(state) {
+    state.settings.general.title = ''
+    state.settings.area = {}
+  },
+  clearAreas(state) {
+    while (state.areas.length) {
+      state.areas.pop()
+    }
   },
 }
 
@@ -242,6 +253,17 @@ export const actions = {
     const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' })
     commit('appMenu/hideMenu', null, { root: true })
     return FileSaver.saveAs(blob, `${title || 'ast_project'}.json`)
+  },
+  clearState({ commit, dispatch, rootState }) {
+    const areaSettings = rootState.data.areaSettings
+    const kpiGroups = rootState.data.kpiGroups
+
+    commit('clearProjectArea')
+    commit('clearAreas')
+    MapEventBus.$emit(RELOAD_LAYERS)
+
+    dispatch('bootstrapSettingsProjectArea', areaSettings)
+    dispatch('bootstrapSettingsTargets', kpiGroups)
   },
 }
 
