@@ -27,7 +27,7 @@ export function getRealApiData(uri, body) {
   .then(res => res.json())
 }
 
-export async function getApiDataForFeature(feature, projectArea, currentReturnTime = 1) {
+export async function getApiDataForFeature(feature, projectArea, scenarioName, currentReturnTime = 1) {
   const {
     measure,
     area,
@@ -48,12 +48,12 @@ export async function getApiDataForFeature(feature, projectArea, currentReturnTi
 
   if (measureId) {
     const apiData = await Promise.all([
-      getRealApiData('heatstress/cost', { area, id }),
-      getRealApiData('heatstress/temperature', { area, id, projectArea }),
-      getRealApiData('heatstress/waterquality', { area, id }),
-      getRealApiData('pluvflood', { area, id, returnTime, inflow, depth, projectArea }),
-      getRealApiData('groundwater_recharge', { projectArea, inflow, returnTime, area, depth, id }),
-      getRealApiData('evapotranspiration', { projectArea, inflow, returnTime, area, depth, id }),
+      getRealApiData('heatstress/cost', { scenarioName, area, id }),
+      getRealApiData('heatstress/temperature', { scenarioName, area, id, projectArea }),
+      getRealApiData('heatstress/waterquality', { scenarioName, area, id }),
+      getRealApiData('pluvflood', { scenarioName, area, id, returnTime, inflow, depth, projectArea }),
+      getRealApiData('groundwater_recharge', { scenarioName, area, id, returnTime, inflow, depth, projectArea }),
+      getRealApiData('evapotranspiration', { scenarioName, area, id, returnTime, inflow, depth, projectArea }),
 
       Promise.resolve({ data: { storageCapacity: measureArea * areaDepth } }),
     ])
@@ -78,6 +78,8 @@ function formatRequestBody(projectArea) {
     const newKey = key.replace('Coping', 'Prevention')
     body['capacity'][newKey] = body['capacity'][key]
   })
+
+  delete body['scenarioName']
 
   return body
 }
