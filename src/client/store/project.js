@@ -310,10 +310,12 @@ export const getters = {
       let area;
       switch (feature.geometry.type) {
         case 'LineString':
-          area = (turfLength(feature.geometry) * 1000) * parseFloat(feature.properties.areaWidth)
+          const width = feature.properties.areaWidth || feature.properties.defaultWidth
+          area = (turfLength(feature.geometry) * 1000) * parseFloat(width)
           break;
         case 'Point':
-          area = Math.PI * (feature.properties.areaRadius * 2)
+          const radius = feature.properties.areaRadius || feature.properties.defaultRadius
+          area = Math.PI * (parseFloat(radius) * 2)
           break;
         case 'Polygon':
           area = turfArea(feature.geometry)
