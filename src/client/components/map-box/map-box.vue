@@ -161,12 +161,7 @@ export default {
         this.geoCoder.setInput(value).query(value)
       })
 
-      // MapEventBus.$on(FLY_TO, (geometry) => {
-      //   this.map.flyTo({})
-      // })
-
       MapEventBus.$on(REPOSITION, ({ center, zoom }) => {
-        console.log(center, zoom)
         this.$nextTick(() => this.map.flyTo({ center, zoom }))
       })
 

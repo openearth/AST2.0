@@ -5,7 +5,8 @@
       :class="{ 'search-input--visible' : show }"
       class="search-input__input"
       type="text"
-      placeholder="Search">
+      placeholder="Search"
+      @blur="() => $emit('hide')">
 
     <transition-group
       v-if="suggestions.length"
@@ -16,7 +17,7 @@
         v-for="(suggestion, index) in suggestions"
         :key="index"
         class="search-input__suggestion">
-        <button @click="() => fly(suggestion)">{{ suggestion['place_name'] }}</button>
+        <button class="search-input__suggestion-button" @mousedown="() => fly(suggestion)">{{ suggestion['place_name'] }}</button>
       </li>
     </transition-group>
   </div>
@@ -50,7 +51,6 @@ export default {
   },
   methods: {
     fly(suggestion) {
-      console.log('clicked')
       MapEventBus.$emit(REPOSITION, {
         center: suggestion.center,
         zoom: 12,
@@ -94,10 +94,14 @@ export default {
   white-space: normal;
 }
 
-.search-input__suggestion button {
+.search-input__suggestion-button {
   text-align: left;
   font-size: 14px;
   padding: .5rem 0;
+}
+
+.search-input__suggestion-button:hover {
+  color: var(--action-color);
 }
 
 .suggestions-list {
