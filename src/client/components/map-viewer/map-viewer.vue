@@ -32,6 +32,7 @@
       @setMode="setMode"
       @trash="onClickDelete"
       @layer-opacity-change="setLayerOpacity"
+      @legend-visibility-change="setLegendVisibility"
       @layer-visibility-change="setLayerVisibility"/>
 
     <map-controls
@@ -109,6 +110,7 @@ export default {
     ...mapMutations({
       setLayerOpacity: 'project/setLayerOpacity',
       setLayerVisibility: 'project/setLayerVisibility',
+      setLegendVisibility:'project/setLegendVisibility',
     }),
     onCreate(event) { this.$emit('create', event) },
     onUpdate(event) { this.$emit('update', event) },

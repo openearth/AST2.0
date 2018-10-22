@@ -123,6 +123,9 @@ export const mutations = {
       }
     })
   },
+  setLegendVisibility(state, { id, value }) {
+     state.map.showLegend = value;
+  },
   clearProjectArea(state) {
     state.settings.general.title = ''
     state.settings.area = {}

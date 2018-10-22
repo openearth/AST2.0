@@ -43,6 +43,12 @@
                 label="opacity"
                 @change="value => $emit('opacity-change', { id: layer.id, value: parseFloat(value / 100) })"/>
             </md-list-item>
+            <md-list-item class="md-inset">
+              legend
+              <md-switch
+                :value="!layer.showLegend"
+                @change="value => $emit('legend-visibility-change', { id: layer.id, value: !!value })"/>
+            </md-list-item>
           </md-list>
         </div>
       </div>
