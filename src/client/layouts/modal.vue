@@ -20,8 +20,6 @@
       </div>
 
       <map-viewer
-        :active-base-layer="map.activeBaseLayer"
-        :base-layers="map.baseLayers"
         :project-area="projectArea"
         :is-project="true"
         :areas="areas"
@@ -29,6 +27,7 @@
         :map-center="center"
         :map-zoom="zoom"
         :current-mode="mapMode"
+        :wms-layers="wmsLayers"
         class="layout-modal__map"
         @move="setMapPosition"/>
     </div>
@@ -66,7 +65,7 @@ export default {
       title: state => state.project.settings.general.title,
       mapMode: state => state.map.mode,
     }),
-    ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas']),
+    ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel']),
   },
   async beforeMount() {

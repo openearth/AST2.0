@@ -20,16 +20,12 @@ const initialState = () => ({
     targets: {},
   },
   map: {
-    baseLayers: [
-      { key: 'default', label: 'Default' },
-      { key: 'satellite', label: 'Satellite' },
-    ],
-    activeBaseLayer: 'default',
     zoom: 16.5,
     center: {
       lat: 52.36599335162853,
       lng: 4.916535879906178,
     },
+    wmsLayers: [],
   },
 })
 
@@ -48,9 +44,6 @@ export const mutations = {
   },
   setTitle(state, value) {
     state.settings.title = value
-  },
-  setBaseLayer(state, value) {
-    state.map.activeBaseLayer = value
   },
   addProjectArea(state, value) {
     return state.settings.area = value
@@ -104,11 +97,31 @@ export const mutations = {
   setTarget(state, { group, key, value }) {
     state.settings.targets[group][key] = { ...state.settings.targets[group][key], ...value }
   },
+  setWmsLayer(state, layer) {
+    state.map.wmsLayers.push(layer)
+  },
   toggleProjectAreaNestedSetting(state, { key, option, value }) {
     state.settings.projectArea[key][option] = !state.settings.projectArea[key][option]
   },
   acceptLegal(state) {
     state.legalAccepted = true
+  },
+  setLayerOpacity(state, { id, value }) {
+    state.map.wmsLayers.forEach(layer => {
+      if (id === layer.id) {
+        layer.opacity = value
+      }
+    })
+  },
+  setLayerVisibility(state, { id, value }) {
+    state.map.wmsLayers.forEach(layer => {
+      if (id === layer.id) {
+        layer.visible = value
+        layer.showLegend = value
+      } else {
+        layer.showLegend = false
+      }
+    })
   },
   clearProjectArea(state) {
     state.settings.general.title = ''
@@ -210,6 +223,11 @@ export const actions = {
     targets.forEach(({ key, kpis }) => {
       const value = kpis.reduce((obj, kpi) => ({ ...obj, [kpi.key]: { include: true, value: "0" } }), {})
       commit('setTargets', { key, value })
+    })
+  },
+  bootstrapWmsLayers({ state, commit }, layers) {
+    layers.forEach(layer => {
+      commit('setWmsLayer', { id: layer.id, visible: false, showLegend: false, opacity: 1 })
     })
   },
   async updateProjectAreaSetting({ state, commit, rootGetters }, payload ) {
@@ -386,7 +404,7 @@ export const getters = {
           .reduce((obj, key) => ({ ...obj, [key]: parseFloat(targets[group][key].value, 10) || 0 }), {}))
       .reduce((obj, item) => ({ ...obj, ...item }), {})
   },
-  kpiPercentageValues:  (state, getters) => {
+  kpiPercentageValues: (state, getters) => {
     const kpiValues = getters.kpiValues
     const kpiTargetValues = getters.kpiTargetValues
     const keys = Object.keys(kpiValues)
@@ -397,5 +415,23 @@ export const getters = {
         [key]: isNaN(value) ? 0 : parseFloat(value * 100, 10),
       }
     }, {})
+  },
+  wmsLayers: (state, getters, rootState, rootGetters) => {
+    return state.map.wmsLayers
+    .map(({ id, visible, opacity }) => ({
+      ...rootGetters['data/wmsLayers/constructed'].find(layer => layer.id === id),
+      visible,
+      opacity,
+    }))
+  },
+  wmsLayerLegend: (state, getters, rootState, rootGetters) => {
+    const [layer] = state.map.wmsLayers
+      .filter(layer => layer.showLegend)
+      .map(({ id, visible, opacity }) => ({
+        ...rootGetters['data/wmsLayers/constructed'].find(layer => layer.id === id),
+        visible,
+        opacity,
+      }))
+    return layer
   },
 }

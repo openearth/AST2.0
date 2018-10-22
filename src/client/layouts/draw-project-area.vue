@@ -17,8 +17,6 @@
 
       <md-content class="layout-draw-project-area__map-wrapper">
         <map-viewer
-          :active-base-layer="map.activeBaseLayer"
-          :base-layers="map.baseLayers"
           :project-area="projectArea"
           :is-project="false"
           :areas="areas"
@@ -28,12 +26,12 @@
           :map-center="center"
           :map-zoom="zoom"
           :current-mode="mapMode"
+          :wms-layers="wmsLayers"
           class="layout-draw-project-area__map"
           @create="createArea"
           @update="updateArea"
           @delete="deleteArea"
           @selectionchange="selectionChange"
-          @baseLayerSwitch="onBaseLayerSwitch"
           @move="setMapPosition"/>
       </md-content>
     </div>
@@ -58,12 +56,11 @@ export default {
       title: state => state.project.settings.general.title,
       mapMode: state => state.map.mode,
     }),
-    ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas']),
+    ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel']),
   },
   methods: {
     ...mapMutations({
-      onBaseLayerSwitch: 'project/setBaseLayer',
       showMenu: 'appMenu/showMenu',
       hideMenu: 'appMenu/hideMenu',
     }),

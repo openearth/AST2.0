@@ -32,12 +32,6 @@ export default (kpiGroups) => ({
   $id: "/area-feature",
   type: "object",
   additionalProperties: false,
-  required: [
-    "id",
-    "type",
-    "properties",
-    "geometry",
-  ],
   properties: {
     id: { type: "string" },
     type: { type: "string", enum: ['Feature'] },

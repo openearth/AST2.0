@@ -35,6 +35,23 @@
       </md-button>
     </li>
 
+    <li v-if="layers" class="map-controls__item map-controls__item--layers">
+      <md-button
+        class="md-icon-button md-raised"
+        @click="showLayersPanel = !showLayersPanel"
+      >
+        <md-icon>layers</md-icon>
+      </md-button>
+      <transition name="fade">
+        <layer-list
+          v-if="showLayersPanel"
+          :layers="wmsLayers"
+          class="map-controls__layer-list"
+          @opacity-change="event => $emit('layer-opacity-change', event)"
+          @visibility-change="event => $emit('layer-visibility-change', event)"/>
+      </transition>
+    </li>
+
     <li v-if="zoomIn" class="map-controls__item map-controls__item--zoom-in">
       <md-button
         class="md-icon-button md-raised"
@@ -54,7 +71,10 @@
 </template>
 
 <script>
+import LayerList from "../layer-list";
+
 export default {
+  components: { LayerList },
   props: {
     line: {
       type: Boolean,
@@ -72,6 +92,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    layers: {
+      type: Boolean,
+      default: false,
+    },
     zoomIn: {
       type: Boolean,
       default: false,
@@ -84,7 +108,14 @@ export default {
       type: String,
       default: '',
     },
+    wmsLayers: {
+      type: Array,
+      default: () => [],
+    },
   },
+  data: () => ({
+    showLayersPanel: false,
+  }),
 }
 </script>
 
@@ -97,5 +128,16 @@ export default {
 .map-controls__item {
   margin-top: 6px;
   margin-bottom: 6px;
+}
+
+.map-controls__item--layers {
+  position: relative;
+}
+
+.map-controls__layer-list {
+  position: absolute;
+  background-color: red;
+  left: 50px;
+  top: 0;
 }
 </style>
