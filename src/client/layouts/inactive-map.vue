@@ -30,16 +30,21 @@
       </md-content>
     </div>
     <virtual-keyboard class="layout-inactive-map__virtual-keyboard"/>
+
+    <notification-area
+      :notifications="notifications"
+      @remove-notification="removeNotification"
+    />
   </div>
 </template>
 
 <script>
 import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
-import { AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu } from '../components'
+import { AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea } from '../components'
 import { mapFields } from 'vuex-map-fields';
 
 export default {
-  components: { AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu },
+  components: { AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea },
   computed: {
     ...mapState({
       map: state => state.project.map,
@@ -50,6 +55,7 @@ export default {
       showNavigation: state => state.appMenu.show,
       title: state => state.project.settings.general.title,
       mapMode: state => state.map.mode,
+      notifications: state => state.notifications.messages,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel']),
@@ -59,14 +65,17 @@ export default {
       importProject: 'project/importProject',
       saveProject: 'project/saveProject',
       setMapPosition: 'project/setMapPosition',
+      showError: 'notifications/showError',
     }),
     ...mapMutations({
       showMenu: 'appMenu/showMenu',
       hideMenu: 'appMenu/hideMenu',
+      removeNotification: 'notifications/remove',
     }),
     async onFileInput(event) {
       this.importProject(event)
         .then(() => this.$router.push(this.currentFilledInLevel.uri))
+        .catch(error => this.showError(this.$i18n.t('could_not_load_file')))
     },
   },
 }

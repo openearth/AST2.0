@@ -37,16 +37,21 @@
       </md-content>
     </div>
     <virtual-keyboard class="layout-draw-project-area__virtual-keyboard"/>
+
+    <notification-area
+      :notifications="notifications"
+      @remove-notification="removeNotification"
+    />
   </div>
 </template>
 
 <script>
 import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
-import { AppHeader, MapViewer, VirtualKeyboard, AppMenu } from '../components'
+import { AppHeader, MapViewer, VirtualKeyboard, AppMenu, NotificationArea } from '../components'
 import { mapFields } from 'vuex-map-fields';
 
 export default {
-  components: { AppHeader, MapViewer, VirtualKeyboard, AppMenu },
+  components: { AppHeader, MapViewer, VirtualKeyboard, AppMenu, NotificationArea },
   computed: {
     ...mapState({
       map: state => state.project.map,
@@ -57,6 +62,7 @@ export default {
       showNavigation: state => state.appMenu.show,
       title: state => state.project.settings.general.title,
       mapMode: state => state.map.mode,
+      notifications: state => state.notifications.messages,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel']),
@@ -66,6 +72,7 @@ export default {
       onBaseLayerSwitch: 'project/setBaseLayer',
       showMenu: 'appMenu/showMenu',
       hideMenu: 'appMenu/hideMenu',
+      removeNotification: 'notifications/remove',
     }),
     ...mapActions({
       createArea: 'project/createArea',
@@ -75,10 +82,12 @@ export default {
       importProject: 'project/importProject',
       saveProject: 'project/saveProject',
       setMapPosition: 'project/setMapPosition',
+      showError: 'notifications/showError',
     }),
     async onFileInput(event) {
       this.importProject(event)
         .then(() => this.$router.push(this.currentFilledInLevel.uri))
+        .catch(error => this.showError(this.$i18n.t('could_not_load_file')))
     },
   },
 }
