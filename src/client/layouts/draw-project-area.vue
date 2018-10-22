@@ -25,6 +25,7 @@
           :point="false"
           :line="false"
           :polygon="!projectArea.id"
+          :search="true"
           :map-center="center"
           :map-zoom="zoom"
           :current-mode="mapMode"

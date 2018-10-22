@@ -21,7 +21,7 @@
     />
 
     <map-controls
-      :search="true"
+      :search="interactive && search"
       :line="interactive && line"
       :polygon="interactive && polygon"
       :point="interactive && point"
@@ -79,6 +79,10 @@ export default {
     polygon: {
       type: Boolean,
       default: true,
+    },
+    search: {
+      type: Boolean,
+      default: false,
     },
     isProject: {
       type: Boolean,
