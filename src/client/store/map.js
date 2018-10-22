@@ -16,3 +16,6 @@ export const actions = {
     MapEventBus.$emit(MODE, mode)
   },
 }
+
+export const getters = {
+}

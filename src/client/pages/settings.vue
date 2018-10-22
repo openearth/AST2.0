@@ -51,7 +51,7 @@ import MapEventBus, { REDRAW } from "../lib/map-event-bus"
 
 export default {
   layout: 'inactive-map',
-  middleware: ['settings-root'],
+  middleware: ['settings-root', 'state-is-inactive'],
   data: () => ({
     tabs: [
       {

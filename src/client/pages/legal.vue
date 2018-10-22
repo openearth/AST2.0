@@ -14,6 +14,7 @@ import getData from '~/lib/get-data'
 
 export default {
   layout: 'inactive-map',
+  middleware: ['state-is-inactive'],
   components: { RichText },
   async asyncData({ params, store }) {
     const { locale } = store.state.i18n

@@ -1,5 +1,5 @@
 <template>
-  <div class="layout-default">
+  <div class="layout">
     <app-header :title="title" @onShowNavigation="showMenu"/>
     <app-menu
       :show-navigation="showNavigation"
@@ -12,32 +12,36 @@
       @importProject="onFileInput"
       @newProject="onNewProject"/>
 
-    <div class="layout-default__content">
+    <div class="layout__content">
       <nuxt />
 
-      <md-content class="layout-default__map-wrapper">
+      <md-content class="layout__map-wrapper">
         <map-viewer
           :project-area="projectArea"
-          :areas="areas"
           :is-project="true"
+          :areas="areas"
+          :point="true"
+          :line="true"
+          :polygon="true"
           :map-center="center"
           :map-zoom="zoom"
           :current-mode="mapMode"
           :wms-layers="wmsLayers"
-          class="layout-default__map"
+          class="layout__map"
           @create="createArea"
           @update="updateArea"
           @delete="deleteArea"
           @selectionchange="selectionChange"
           @move="setMapPosition"/>
         <kpi-panel
+          v-if="filledInSettings"
           :kpis="filteredKpiGroups"
           :kpi-values="filteredKpiValues"
           :kpi-percentage-values="filteredKpiPercentageValues"
           :selected-areas="selectedAreas && selectedAreas[0]"/>
       </md-content>
     </div>
-    <virtual-keyboard class="layout-default__virtual-keyboard"/>
+    <virtual-keyboard class="layout__virtual-keyboard"/>
   </div>
 </template>
 
@@ -59,7 +63,7 @@ export default {
       mapMode: state => state.map.mode,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers']),
-    ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel']),
+    ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings']),
     ...mapGetters({ selectedAreas:  'selectedAreas/features' }),
   },
   methods: {
@@ -103,7 +107,7 @@ export default {
 <style>
 @import '../components/app-core/index.css';
 
-.layout-default {
+.layout {
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -111,22 +115,22 @@ export default {
   position: relative;
 }
 
-.layout-default__content {
+.layout__content {
   overflow-y: scroll;
   display: flex;
   flex: 1;
 }
 
-.layout-default__map-wrapper {
+.layout__map-wrapper {
   flex: 1;
   display: flex;
 }
 
-.layout-default__map {
+.layout__map {
   flex: 1;
 }
 
-.layout-default__virtual-keyboard {
+.layout__virtual-keyboard {
   position: absolute;
   width: 100vw;
   height: 100vh;

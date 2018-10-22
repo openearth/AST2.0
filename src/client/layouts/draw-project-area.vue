@@ -1,5 +1,5 @@
 <template>
-  <div class="layout-draw-project-area">
+  <div class="layout">
     <app-header :title="title" @onShowNavigation="showMenu"/>
     <app-menu
       :show-navigation="showNavigation"
@@ -12,10 +12,10 @@
       @importProject="onFileInput"
       @newProject="onNewProject"/>
 
-    <div class="layout-draw-project-area__content">
+    <div class="layout__content">
       <nuxt />
 
-      <md-content class="layout-draw-project-area__map-wrapper">
+      <md-content class="layout__map-wrapper">
         <map-viewer
           :project-area="projectArea"
           :is-project="false"
@@ -27,25 +27,31 @@
           :map-zoom="zoom"
           :current-mode="mapMode"
           :wms-layers="wmsLayers"
-          class="layout-draw-project-area__map"
+          class="layout__map"
           @create="createArea"
           @update="updateArea"
           @delete="deleteArea"
           @selectionchange="selectionChange"
           @move="setMapPosition"/>
+        <kpi-panel
+          v-if="filledInSettings"
+          :kpis="filteredKpiGroups"
+          :kpi-values="filteredKpiValues"
+          :kpi-percentage-values="filteredKpiPercentageValues"
+          :selected-areas="selectedAreas && selectedAreas[0]"/>
       </md-content>
     </div>
-    <virtual-keyboard class="layout-draw-project-area__virtual-keyboard"/>
+    <virtual-keyboard class="layout__virtual-keyboard"/>
   </div>
 </template>
 
 <script>
 import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
-import { AppHeader, MapViewer, VirtualKeyboard, AppMenu } from '../components'
+import { AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu } from '../components'
 import { mapFields } from 'vuex-map-fields';
 
 export default {
-  components: { AppHeader, MapViewer, VirtualKeyboard, AppMenu },
+  components: { AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu },
   computed: {
     ...mapState({
       map: state => state.project.map,
@@ -57,7 +63,8 @@ export default {
       mapMode: state => state.map.mode,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers']),
-    ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel']),
+    ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings']),
+    ...mapGetters({ selectedAreas:  'selectedAreas/features' }),
   },
   methods: {
     ...mapMutations({
@@ -100,7 +107,7 @@ export default {
 <style>
 @import '../components/app-core/index.css';
 
-.layout-draw-project-area {
+.layout {
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -108,22 +115,22 @@ export default {
   position: relative;
 }
 
-.layout-draw-project-area__content {
+.layout__content {
   overflow-y: scroll;
   display: flex;
   flex: 1;
 }
 
-.layout-draw-project-area__map-wrapper {
+.layout__map-wrapper {
   flex: 1;
   display: flex;
 }
 
-.layout-draw-project-area__map {
+.layout__map {
   flex: 1;
 }
 
-.layout-draw-project-area__virtual-keyboard {
+.layout__virtual-keyboard {
   position: absolute;
   width: 100vw;
   height: 100vh;
