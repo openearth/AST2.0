@@ -100,31 +100,18 @@ export default {
   padding: .5rem 0;
 }
 
-/* .suggestions-list-enter-active, .suggestions-list-leave-active {
-  transition: all 1s;
-}
-.suggestions-list-enter, .suggestions-list-leave-to {
-  opacity: 0;
-  transform: translatey(-100%);
-} */
-
-
 .suggestions-list {
   transition: all 0.5s;
 
 }
-.suggestions-list-enter, .suggestions-list-leave-to
-/* .suggestions-list-leave-active for <2.1.8 */ {
+.suggestions-list-enter, .suggestions-list-leave-to {
   opacity: 0;
   transform: scale(0);
 }
+
 .suggestions-list-enter-to {
   opacity: 1;
   transform: scale(1);
-}
-
-.suggestions-list-leave-active {
-  /*position: absolute;*/
 }
 
 .suggestions-list-move {
