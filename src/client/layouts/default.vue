@@ -33,7 +33,8 @@
         <kpi-panel
           :kpis="filteredKpiGroups"
           :kpi-values="filteredKpiValues"
-          :kpi-percentage-values="filteredKpiPercentageValues"/>
+          :kpi-percentage-values="filteredKpiPercentageValues"
+          :selected-areas="selectedAreas && selectedAreas[0]"/>
       </md-content>
     </div>
     <virtual-keyboard class="layout-default__virtual-keyboard"/>
@@ -59,6 +60,7 @@ export default {
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel']),
+    ...mapGetters({ selectedAreas:  'selectedAreas/features' }),
   },
   methods: {
     ...mapMutations({

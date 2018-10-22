@@ -27,6 +27,7 @@
       :type="displayType"
       :kpi-values="kpiValues"
       :kpi-percentage-values="kpiPercentageValues"
+      :selected-areas="selectedAreas"
       class="kpi-panel__kpi-group" />
   </section>
 </template>
@@ -48,6 +49,11 @@ export default {
     kpiPercentageValues: {
       type: Object,
       required: true,
+    },
+    selectedAreas: {
+      type: Object,
+      required: false,
+      default: () => {},
     },
   },
   data() {
