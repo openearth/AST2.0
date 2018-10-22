@@ -77,7 +77,7 @@ export default {
 <style scoped>
 .project-target__title {
   margin-left: 1.5rem;
-  padding-top: 1rem;
+  padding-top: 2rem;
 }
 
 .project-target__title-toolbar {
@@ -92,5 +92,9 @@ export default {
 
 .md-table {
   display: block;
+}
+
+.md-table.md-theme-default .md-table-row td {
+  border-top-color: transparent !important;
 }
 </style>

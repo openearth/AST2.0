@@ -29,7 +29,7 @@ query ($locale: SiteLocale) {
       key,
       icon {
         url,
-      }
+      },
     },
     externalLinkLabel,
     externalLinkUrl,
