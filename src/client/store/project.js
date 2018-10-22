@@ -182,6 +182,53 @@ export const actions = {
       dispatch('fetchAreaApiData', getters.areas.filter(area => area.id === feature.id))
     })
   },
+  setAreaMeasure({ dispatch }, { features, measure }) {
+    const getDefaultValueProperty = property =>  key => {
+      const values = measure.defaultValues.find(values => values.key.toLowerCase() === key)
+      return values[property]
+    }
+
+    const cappedValue = key => input => {
+      const defaultMax = getDefaultMax(key)
+      const defaultMin = getDefaultMin(key)
+      const inputNumber = parseFloat(input)
+      if (input === null) {
+        return input
+      } else if (inputNumber < defaultMin) {
+        return defaultMin
+      } else if (inputNumber > defaultMax) {
+        return defaultMax
+      } else {
+        return inputNumber
+      }
+    }
+
+    const getDefaultValue = getDefaultValueProperty('value')
+    const getDefaultMin = getDefaultValueProperty('min')
+    const getDefaultMax = getDefaultValueProperty('max')
+
+    const cappedInflow = cappedValue('inflow')
+    const cappedDepth = cappedValue('depth')
+    const cappedWidth = cappedValue('width')
+    const cappedRadius = cappedValue('radius')
+
+    features.forEach(feature => {
+      const featureProps = feature.properties
+      const properties = {
+        measure: measure.measureId,
+        color: measure.color.hex,
+        defaultInflow: getDefaultValue('inflow'),
+        defaultDepth: getDefaultValue('depth'),
+        defaultWidth: getDefaultValue('width'),
+        defaultRadius: getDefaultValue('radius'),
+        areaInflow: featureProps.hasOwnProperty('areaInflow') ? cappedInflow(featureProps.areaInflow) : null,
+        areaDepth: featureProps.hasOwnProperty('areaDepth') ? cappedDepth(featureProps.areaDepth) : null,
+        areaWidth: featureProps.hasOwnProperty('areaWidth') ? cappedWidth(featureProps.areaWidth) : null,
+        areaRadius: featureProps.hasOwnProperty('areaRadius') ? cappedRadius(featureProps.areaRadius) : null,
+      }
+      dispatch('updateAreaProperties', { features: [feature], properties })
+    })
+  },
   fetchAreaApiData({ state, commit }, features) {
     features.forEach(async (feature) => {
       const projectArea = state.settings.area.properties.area
@@ -303,10 +350,12 @@ export const getters = {
       let area;
       switch (feature.geometry.type) {
         case 'LineString':
-          area = (turfLength(feature.geometry) * 1000) * parseFloat(feature.properties.areaWidth)
+          const width = feature.properties.areaWidth || feature.properties.defaultWidth
+          area = (turfLength(feature.geometry) * 1000) * parseFloat(width)
           break;
         case 'Point':
-          area = Math.PI * (feature.properties.areaRadius * feature.properties.areaRadius)
+          const radius = feature.properties.areaRadius || feature.properties.defaultRadius
+          area = Math.PI * (radius * radius)
           break;
         case 'Polygon':
           area = turfArea(feature.geometry)
