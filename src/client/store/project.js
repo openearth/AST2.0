@@ -168,7 +168,9 @@ export const actions = {
   },
   fetchAreaApiData({ state, commit }, features) {
     features.forEach(async (feature) => {
-      const apiData = await getApiDataForFeature(feature, state.settings.area.properties.area)
+      const projectArea = state.settings.area.properties.area
+      const { scenarioName } = state.settings.projectArea
+      const apiData = await getApiDataForFeature(feature, projectArea, scenarioName)
       commit('updateAreaProperty', { id: feature.id, properties: { apiData } })
     })
   },
@@ -185,12 +187,19 @@ export const actions = {
   },
   bootstrapSettingsProjectArea({ state, commit }, settings) {
     settings.forEach(setting => {
-      const value = !setting.multiple
-        ? null
-        : setting.options.reduce((obj, option) => ({
-            ...obj,
-            [option.value]: false,
-          }), {})
+      let value = null
+
+      if (setting.multiple) {
+        value = setting.options.reduce((obj, option) => ({
+                ...obj,
+                [option.value]: option.value === setting.defaultValue.value,
+              }), {})
+      }
+
+      if (setting.isSelect) {
+        value = setting.defaultValue.value
+      }
+
       commit('setProjectAreaSetting', { key: setting.key, value })
     })
   },
@@ -208,7 +217,7 @@ export const actions = {
       commit('toggleProjectAreaNestedSetting', { key, option, value })
     }
 
-    if (type === 'radio') {
+    if ((type === 'radio') || (type === 'select')) {
       const { key, value } = payload
       commit('setProjectAreaSetting', { key, value })
     }
