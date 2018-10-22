@@ -31,7 +31,6 @@ import MapEventBus, { REDRAW } from "../lib/map-event-bus"
 import { HintText } from '~/components'
 
 export default {
-  layout: 'draw-project-area',
   middleware: ['access-level-legal', 'state-is-draw-project-area'],
   components: { HintText },
   computed: {

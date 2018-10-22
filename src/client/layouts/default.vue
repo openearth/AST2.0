@@ -18,11 +18,11 @@
       <md-content class="layout__map-wrapper">
         <map-viewer
           :project-area="projectArea"
-          :is-project="true"
+          :is-project="isProject"
           :areas="areas"
-          :point="true"
-          :line="true"
-          :polygon="true"
+          :point="point"
+          :line="line"
+          :polygon="polygon"
           :map-center="center"
           :map-zoom="zoom"
           :current-mode="mapMode"
@@ -65,6 +65,7 @@ export default {
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings']),
     ...mapGetters({ selectedAreas:  'selectedAreas/features' }),
+    ...mapGetters('map', ['isProject', 'point', 'line', 'polygon']),
   },
   methods: {
     ...mapMutations({
