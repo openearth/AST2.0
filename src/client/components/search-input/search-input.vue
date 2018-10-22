@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div class="search-input">
     <input
       v-model="value"
       :class="{ 'search-input--visible' : show }"
-      class="search-input"
+      class="search-input__input"
       type="text"
       placeholder="Search">
 
@@ -63,6 +63,10 @@ export default {
 
 <style>
 .search-input {
+  position: relative;
+}
+
+.search-input__input {
   width: 0;
   padding: var(--spacing-half);
   border: none;
@@ -79,8 +83,10 @@ export default {
 .search-input__suggestions {
   background-color: white;
   padding: .5rem;
-  max-width: 350px;
+  width: 350px;
   text-align: left;
+  position: absolute;
+  top: calc(100% + 2px);
 }
 
 .search-input__suggestion {
