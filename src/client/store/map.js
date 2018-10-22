@@ -35,6 +35,8 @@ export const getters = {
     switch (mode) {
       case 'draw-project-area':
         return false
+      case 'inactive':
+        return false
       default:
         return true
     }
@@ -45,6 +47,8 @@ export const getters = {
 
     switch (mode) {
       case 'draw-project-area':
+        return false
+      case 'inactive':
         return false
       default:
         return true
@@ -57,6 +61,19 @@ export const getters = {
     switch (mode) {
       case 'draw-project-area':
         return !rootGetters['flow/createdProjectArea']
+      case 'inactive':
+        return false
+      default:
+        return true
+    }
+  },
+
+  interactive(state, getters, rootState) {
+    const mode = rootState.mode.state
+
+    switch (mode) {
+      case 'inactive':
+        return false
       default:
         return true
     }

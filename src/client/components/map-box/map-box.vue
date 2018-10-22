@@ -52,6 +52,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    mode: {
+      type: String,
+      default: '',
+    },
     mapZoom: {
       type: Number,
       default: 0,
@@ -95,6 +99,10 @@ export default {
     },
     layerOpacity(newValue) {
       this.renderWmsLayersOpacity()
+    },
+    mode(mode) {
+      this.clearMap()
+      this.$nextTick(this.fillMap)
     },
   },
 
@@ -209,6 +217,10 @@ export default {
       this.map.getLayer('projectArea-line') && this.map.removeLayer('projectArea-line')
       this.map.getSource('projectArea-line') && this.map.removeSource('projectArea-line')
       this.draw.deleteAll()
+      this.areas.forEach(area => {
+        this.map.getLayer(`${area.properties.name}-line`) && this.map.removeLayer(`${area.properties.name}-line`)
+        this.map.getSource(`${area.properties.name}-line`) && this.map.removeSource(`${area.properties.name}-line`)
+      })
     },
     fillMap() {
       if (!this.interactive) {

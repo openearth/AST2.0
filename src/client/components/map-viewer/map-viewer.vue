@@ -11,6 +11,7 @@
       :map-zoom="mapZoom"
       :map-center="mapCenter"
       :wms-layers="wmsLayers"
+      :mode="mode"
       class="map-viewer__map"
       @create="onCreate"
       @update="onUpdate"
@@ -100,6 +101,10 @@ export default {
     wmsLayers: {
       type: Array,
       default: () => [],
+    },
+    mode: {
+      type: String,
+      default: '',
     },
   },
   methods: {

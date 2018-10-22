@@ -23,10 +23,12 @@
           :point="point"
           :line="line"
           :polygon="polygon"
+          :interactive="interactive"
           :map-center="center"
           :map-zoom="zoom"
           :current-mode="mapMode"
           :wms-layers="wmsLayers"
+          :mode="mode"
           class="layout__map"
           @create="createArea"
           @update="updateArea"
@@ -61,11 +63,12 @@ export default {
       showNavigation: state => state.appMenu.show,
       title: state => state.project.settings.general.title,
       mapMode: state => state.map.mode,
+      mode: state => state.mode.state,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings']),
     ...mapGetters({ selectedAreas:  'selectedAreas/features' }),
-    ...mapGetters('map', ['isProject', 'point', 'line', 'polygon']),
+    ...mapGetters('map', ['isProject', 'point', 'line', 'polygon', 'interactive']),
   },
   methods: {
     ...mapMutations({

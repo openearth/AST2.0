@@ -17,7 +17,6 @@ import { RichText, ResponsiveImage } from '~/components'
 import getData from '~/lib/get-data'
 
 export default {
-  layout: 'inactive-map',
   middleware: ['state-is-inactive'],
   components: { RichText, ResponsiveImage },
   async asyncData({ params, store }) {
