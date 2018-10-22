@@ -2,7 +2,7 @@ import Vue from 'vue'
 import turfArea from '@turf/area'
 import turfLength from '@turf/length'
 import merge from 'lodash/merge'
-import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT } from '../lib/map-event-bus'
+import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT, REPAINT } from '../lib/map-event-bus'
 import { getApiDataForFeature, getRankedMeasures } from "../lib/get-api-data";
 import FileSaver from 'file-saver'
 import getLoadedFileContents from '../lib/get-loaded-file-contents'
@@ -179,7 +179,13 @@ export const actions = {
   updateAreaProperties({ state, commit, dispatch, getters }, { features, properties }) {
     features.forEach(feature => {
       commit('updateAreaProperty', { id: feature.id, properties })
-      dispatch('fetchAreaApiData', getters.areas.filter(area => area.id === feature.id))
+      const updatedFeature = getters.areas.filter(area => area.id === feature.id)
+
+      if (properties.measure || properties.hasOwnProperty('hidden') ) {
+        MapEventBus.$emit(REPAINT, updatedFeature)
+      }
+
+      dispatch('fetchAreaApiData', updatedFeature)
     })
   },
   setAreaMeasure({ dispatch }, { features, measure }) {
