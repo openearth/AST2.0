@@ -20,7 +20,7 @@ export default {
 <style>
 .search-input {
   width: 0;
-  padding: .5rem;
+  padding: var(--spacing-half);
   border: none;
   border-radius: 50%;
   opacity: 0;
