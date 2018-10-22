@@ -10,10 +10,10 @@
       <search-input
         v-if="showSearch"
         :show="showSearch"
-        @search="(event) => {
-          $emit('search', event)
-          showSearch = false
+        @search="(value) => {
+          $emit('search', value)
         }"
+        @hide="showSearch = false"
       />
     </li>
 

@@ -1,17 +1,61 @@
 <template>
-  <input
-    :class="{ 'search-input--visible' : show }"
-    type="search"
-    class="search-input"
-    @change="(event) => $emit('search', event)">
+  <div>
+    <input
+      v-model="value"
+      :class="{ 'search-input--visible' : show }"
+      class="search-input"
+      type="text"
+      placeholder="Search">
+
+    <transition-group
+      v-if="suggestions.length"
+      class="search-input__suggestions"
+      tag="ul"
+      name="suggestions-list">
+      <li
+        v-for="(suggestion, index) in suggestions"
+        :key="index"
+        class="search-input__suggestion">
+        <button @click="() => fly(suggestion)">{{ suggestion['place_name'] }}</button>
+      </li>
+    </transition-group>
+  </div>
 </template>
 
 <script>
+import  MapEventBus, { SEARCH_SUGGESTIONS, REPOSITION } from '../../lib/map-event-bus';
+
 export default {
   props: {
     show: {
       type: Boolean,
       default: false,
+    },
+  },
+  data() {
+    return {
+      value: '',
+      suggestions: [],
+    }
+  },
+  watch: {
+    value(val) {
+      this.$emit('search', val)
+    },
+  },
+  mounted() {
+    MapEventBus.$on(SEARCH_SUGGESTIONS, (items) => {
+      this.suggestions = items
+    })
+  },
+  methods: {
+    fly(suggestion) {
+      console.log('clicked')
+      MapEventBus.$emit(REPOSITION, {
+        center: suggestion.center,
+        zoom: 12,
+      })
+      this.$emit('hide')
     },
   },
 }
@@ -32,6 +76,56 @@ export default {
   animation: show .5s ease-in-out forwards;
 }
 
+.search-input__suggestions {
+  background-color: white;
+  padding: .5rem;
+  max-width: 350px;
+  text-align: left;
+}
+
+.search-input__suggestion {
+  list-style-type: none;
+  white-space: normal;
+}
+
+.search-input__suggestion button {
+  text-align: left;
+  font-size: 14px;
+  padding: .5rem 0;
+}
+
+/* .suggestions-list-enter-active, .suggestions-list-leave-active {
+  transition: all 1s;
+}
+.suggestions-list-enter, .suggestions-list-leave-to {
+  opacity: 0;
+  transform: translatey(-100%);
+} */
+
+
+.suggestions-list {
+  transition: all 0.5s;
+
+}
+.suggestions-list-enter, .suggestions-list-leave-to
+/* .suggestions-list-leave-active for <2.1.8 */ {
+  opacity: 0;
+  transform: scale(0);
+}
+.suggestions-list-enter-to {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.suggestions-list-leave-active {
+  /*position: absolute;*/
+}
+
+.suggestions-list-move {
+  opacity: 1;
+  transition: all 0.5s;
+}
+
 @keyframes show {
   0% {
     width: 0;
@@ -45,7 +139,7 @@ export default {
   }
 
   100% {
-    width: 250px;
+    width: 350px;
     opacity: 1;
     border-radius: 5px;
   }

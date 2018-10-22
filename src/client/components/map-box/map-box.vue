@@ -16,6 +16,8 @@ import MapEventBus, {
   ZOOM_OUT,
   SELECT,
   SEARCH,
+  SEARCH_SUGGESTIONS,
+  FLY_TO,
 } from '../../lib/map-event-bus'
 
 export default {
@@ -119,6 +121,9 @@ export default {
       })
       this.navigationControls = new mapboxgl.NavigationControl({ showCompass: false })
       this.geoCoder = new MapboxGeocoder({ accessToken: mapboxgl.accessToken })
+      this.geoCoder.on('results', ({ features }) => {
+        MapEventBus.$emit(SEARCH_SUGGESTIONS, features)
+      })
 
       this.map.addControl(this.navigationControls, 'bottom-right')
       this.map.addControl(this.draw, 'top-left')
@@ -152,11 +157,16 @@ export default {
         this.map.resize()
       })
 
-      MapEventBus.$on(SEARCH, ({ target }) => {
-        this.geoCoder.setInput(target.value).query(target.value)
+      MapEventBus.$on(SEARCH, (value) => {
+        this.geoCoder.setInput(value).query(value)
       })
 
+      // MapEventBus.$on(FLY_TO, (geometry) => {
+      //   this.map.flyTo({})
+      // })
+
       MapEventBus.$on(REPOSITION, ({ center, zoom }) => {
+        console.log(center, zoom)
         this.$nextTick(() => this.map.flyTo({ center, zoom }))
       })
 
