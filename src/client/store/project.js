@@ -257,7 +257,7 @@ export const getters = {
           area = (turfLength(feature.geometry) * 1000) * parseFloat(feature.properties.areaWidth)
           break;
         case 'Point':
-          area = Math.PI * (feature.properties.areaRadius * 2)
+          area = Math.PI * (feature.properties.areaRadius * feature.properties.areaRadius)
           break;
         case 'Polygon':
           area = turfArea(feature.geometry)
