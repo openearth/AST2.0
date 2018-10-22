@@ -120,7 +120,7 @@ export default [
       ['has', 'user_color'],
     ],
     'paint': {
-      'circle-radius': 3,
+      'circle-radius': 5,
       'circle-color': {
       	'type': 'identity',
         'property': 'user_color',

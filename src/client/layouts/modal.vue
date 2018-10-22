@@ -58,7 +58,6 @@ export default {
   computed: {
     ...mapState({
       map: state => state.project.map,
-      areas: state => state.project.areas,
       projectArea: state => state.project.settings.area,
       legalAccepted: state => state.project.legalAccepted,
       center: state => state.project.map.center,
@@ -67,7 +66,7 @@ export default {
       title: state => state.project.settings.general.title,
       mapMode: state => state.map.mode,
     }),
-    ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups']),
+    ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel']),
   },
   async beforeMount() {
