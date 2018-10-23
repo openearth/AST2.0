@@ -5,6 +5,7 @@
 <script>
 import projectAreaStyles from './project-area-styles'
 import areaStyles from './area-styles'
+import getData from '~/lib/get-data'
 import MapEventBus, {
   UPDATE_FEATURE_PROPERTY,
   REDRAW,
@@ -109,7 +110,7 @@ export default {
   async mounted() {
     const mapZoom = this.mapZoom
     const { lat, lng } = this.mapCenter
-    const [mapboxgl, MapboxDraw] = await Promise.all([import('mapbox-gl'), import('@mapbox/mapbox-gl-draw')])
+    const [mapboxgl, MapboxDraw, mapboxBaseStyle] = await Promise.all([import('mapbox-gl'), import('@mapbox/mapbox-gl-draw'), getData({ folder: 'mapbox-base-layer', slug: 'style' })])
     const defaultStyles = [...new MapboxDraw().options.styles]
       .filter(style => /\.hot$/.test(style.id))
       .map(({ source, ...style }) => ({ ...style, id: style.id.replace('.hot', '') }))
@@ -122,7 +123,7 @@ export default {
     if (this.$refs.map) {
       this.map = new mapboxgl.Map({
         container: this.$refs.map,
-        style: 'mapbox://styles/mapbox/streets-v9',
+        style: mapboxBaseStyle,
         zoom: this.mapZoom,
         center: [lng, lat],
         showZoom: false,
