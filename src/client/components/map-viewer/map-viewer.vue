@@ -43,6 +43,7 @@
       @zoom-out="zoomOut"/>
 
     <layer-legend
+      v-if="interactive && layers"
       :layers="wmsLayers"
       class="map-viewer__layer-legend"/>
 
