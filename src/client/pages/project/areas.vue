@@ -66,7 +66,7 @@
                 :value="feature.properties.areaWidth || feature.properties.defaultWidth"
                 :min="getDefaultValueProperty('width', 'min', appliedMeasure.defaultValues)"
                 :max="getDefaultValueProperty('width', 'max', appliedMeasure.defaultValues)"
-                label="Width"
+                :label="$t('area_width')"
                 @change="value => updateAreaProperties({ features: [feature], properties: { areaWidth: value }})"
               />
 
@@ -75,7 +75,7 @@
                 :value="feature.properties.areaRadius || feature.properties.defaultRadius"
                 :min="getDefaultValueProperty('radius', 'min', appliedMeasure.defaultValues)"
                 :max="getDefaultValueProperty('radius', 'max', appliedMeasure.defaultValues)"
-                label="Radius"
+                :label="$t('area_radius')"
                 @change="value => updateAreaProperties({ features: [feature], properties: { areaRadius: value }})"
               />
 
