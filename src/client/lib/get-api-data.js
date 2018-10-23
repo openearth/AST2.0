@@ -33,15 +33,14 @@ export async function getApiDataForFeature(feature, projectArea, scenarioName, c
     area,
     areaInflow,
     areaDepth,
+    defaultInflow,
+    defaultDepth,
   } = feature.properties
 
   const measureArea = area
   const measureId = parseFloat(measure, 10)
-  const inflowArea = area *  parseFloat(areaInflow, 10)
-  const inflow = area * parseFloat(areaInflow, 10)
-
-  const measureDepth = parseFloat(areaDepth, 10)
-  const depth = parseFloat(areaDepth, 10)
+  const inflow = area * parseFloat(areaInflow || defaultInflow, 10)
+  const depth = parseFloat(areaDepth || defaultDepth, 10)
 
   const id = measureId
   const returnTime = currentReturnTime
@@ -55,7 +54,7 @@ export async function getApiDataForFeature(feature, projectArea, scenarioName, c
       getRealApiData('groundwater_recharge', { scenarioName, area, id, returnTime, inflow, depth, projectArea }),
       getRealApiData('evapotranspiration', { scenarioName, area, id, returnTime, inflow, depth, projectArea }),
 
-      Promise.resolve({ data: { storageCapacity: measureArea * areaDepth } }),
+      Promise.resolve({ data: { storageCapacity: measureArea * depth } }),
     ])
 
     return apiData.reduce((obj, res) => ({ ...obj, ...res.data, ...res.result }), {})

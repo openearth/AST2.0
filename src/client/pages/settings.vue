@@ -50,8 +50,7 @@ import { mapState, mapGetters } from "vuex";
 import MapEventBus, { REDRAW } from "../lib/map-event-bus"
 
 export default {
-  layout: 'inactive-map',
-  middleware: ['settings-root'],
+  middleware: ['settings-root', 'state-is-inactive'],
   data: () => ({
     tabs: [
       {
@@ -100,7 +99,7 @@ export default {
 .settings-view {
   display: flex;
   flex-direction: column;
-  width: 800px;
+  width: 600px;
 }
 
 .settings-view__content {

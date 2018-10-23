@@ -15,6 +15,7 @@ import getViewPath from '../lib/get-view-path'
 
 export default {
   components: { MeasureCard, SearchInput },
+  middleware: ['state-is-default'],
   data() {
     return {
       isAreasListVisible: false,

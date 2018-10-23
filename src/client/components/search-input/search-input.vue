@@ -7,7 +7,7 @@
       class="search__input"
       type="text"
       placeholder="Search">
-    <button class="search__icon search__icon--trash" @click="value = ''" />
+    <md-button class="search__icon" @click="value = ''"><md-icon>close</md-icon></md-button>
   </div>
 </template>
 
@@ -46,14 +46,6 @@ export default {
   left: var(--spacing-half);
   background-image: url('/images/search.svg');
   background-size: contain;
-}
-
-.search__icon--trash {
-  right: var(--spacing-half);
-  background-color: var(--text-color);
-  background-image: url('/images/delete.svg');
-  background-size: 50%;
-  border-radius: 50%;
 }
 
 .search__icon {

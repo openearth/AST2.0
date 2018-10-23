@@ -1,6 +1,10 @@
 <template>
   <md-field>
-    <md-select v-model="selectedValue" md-dense>
+    <label :for="`select-${id}`">{{ $t('choose_scenario') }}</label>
+    <md-select
+      :id="`select-${id}`"
+      v-model="value"
+      md-dense>
       <md-option
         v-for="option in options"
         :key="option.value"
@@ -24,6 +28,10 @@ export default {
     },
     options: {
       type: Array,
+      required: true,
+    },
+    id: {
+      type: String,
       required: true,
     },
   },

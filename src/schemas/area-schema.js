@@ -3,8 +3,14 @@ const propertiesSchema = (kpiGroups) => ({
   additionalProperties: false,
   properties: {
     area: { type: 'number' },
-    areaDepth: { type: ['number', 'string'] },
-    areaInflow: { type: ['number', 'string'] },
+    areaDepth: { type: ['number', 'string', 'null'] },
+    areaInflow: { type: ['number', 'string', 'null'] },
+    areaWidth: { type: ['number', 'string', 'null'] },
+    areaRadius: { type: ['number', 'string', 'null'] },
+    defaultDepth: { type: ['number', 'string', 'null'] },
+    defaultInflow: { type: ['number', 'string', 'null'] },
+    defaultWidth: { type: ['number', 'string', 'null'] },
+    defaultRadius: { type: ['number', 'string', 'null'] },
     color: { type: 'string', pattern: '^#?([0-9a-fA-F]{3}){1,2}$' },
     hidden: { type: 'boolean' },
     measure: { type: 'string' },
@@ -12,9 +18,7 @@ const propertiesSchema = (kpiGroups) => ({
     isProjectArea: { type: 'boolean' },
     apiData: {
       type: 'object',
-      required: Object.keys(kpiGroups)
-        .map(groupKey => kpiGroups[groupKey].kpis.map(kpi => kpi.key))
-        .reduce((list, keys) => [...list, ...keys], []),
+      additionalProperties: false,
       properties: Object.keys(kpiGroups)
       .map(groupKey => kpiGroups[groupKey].kpis.map(kpi => kpi.key))
       .reduce((groupObject, keys) => ({
@@ -32,12 +36,6 @@ export default (kpiGroups) => ({
   $id: "/area-feature",
   type: "object",
   additionalProperties: false,
-  required: [
-    "id",
-    "type",
-    "properties",
-    "geometry",
-  ],
   properties: {
     id: { type: "string" },
     type: { type: "string", enum: ['Feature'] },

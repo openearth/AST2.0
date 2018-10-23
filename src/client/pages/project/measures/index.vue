@@ -22,10 +22,6 @@ export default {
     return {
       isAlphabeticallyOrdered: false,
       searchValue: '',
-      scoresArray: [
-        'Ground water',
-        'Drought',
-      ],
     }
   },
   computed: {
@@ -53,16 +49,8 @@ export default {
     },
     onChooseMeasure(measureId) {
       const measure = this.orderedMeasures.find(measure => measure.measureId === measureId)
-      this.$store.dispatch('project/updateAreaProperties', {
-        features: this.selectedFeatures,
-        properties: {
-          measure: measureId,
-          color: measure.color.hex,
-          areaInflow: 1,
-          areaDepth: 1,
-        },
-      })
-      this.$router.push(`/${this.$i18n.locale}/project/areas`)
+      this.$store.dispatch('project/setAreaMeasure', { features: this.selectedFeatures, measure })
+      this.$router.push(`/${this.$i18n.locale}/project/areas/`)
     },
   },
 }

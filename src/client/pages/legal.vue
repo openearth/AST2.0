@@ -13,12 +13,12 @@ import { RichText } from '~/components'
 import getData from '~/lib/get-data'
 
 export default {
-  layout: 'inactive-map',
+  middleware: ['state-is-inactive'],
   components: { RichText },
   async asyncData({ params, store }) {
     const { locale } = store.state.i18n
-    const data = await getData({ locale, slug: 'legal' })
-    return { legal: { ...data.legal } }
+    const { legal } = await getData({ locale, slug: 'legal' })
+    return { legal }
   },
 }
 </script>
@@ -27,10 +27,6 @@ export default {
 .legal {
   width: var(--width-large);
   padding: var(--spacing-double);
-}
-
-.legal p {
-  margin-bottom: var(--spacing-default);
 }
 
 .legal .md-link {

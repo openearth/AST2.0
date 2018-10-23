@@ -1,5 +1,5 @@
 <template>
-  <div class="layout-default">
+  <div ref="base" class="layout">
     <app-header :title="title" @onShowNavigation="showMenu"/>
     <app-menu
       :show-navigation="showNavigation"
@@ -9,35 +9,54 @@
       :filled-in-required-settings="filledInRequiredProjectAreaSettings"
       @onCloseNavigation="hideMenu"
       @saveProject="saveProject"
-      @importProject="onFileInput"/>
+      @importProject="onFileInput"
+      @newProject="onNewProject"/>
 
-    <div class="layout-default__content">
-      <nuxt />
-
-      <md-content class="layout-default__map-wrapper">
+    <div class="layout__content">
+      <div v-if="mode === 'modal'" class="layout__page-wrapper">
+        <md-content class="md-elevation-6">
+          <nuxt class="layout__page"/>
+        </md-content>
+      </div>
+      <nuxt v-else />
+      <md-content class="layout__map-wrapper">
         <map-viewer
-          :active-base-layer="map.activeBaseLayer"
-          :base-layers="map.baseLayers"
           :project-area="projectArea"
+          :is-project="isProject"
           :areas="areas"
-          :is-project="true"
+          :point="point"
+          :line="line"
+          :polygon="polygon"
+          :interactive="interactive"
           :map-center="center"
           :map-zoom="zoom"
           :current-mode="mapMode"
-          class="layout-default__map"
+          :wms-layers="wmsLayers"
+          :mode="mode"
+          class="layout__map"
           @create="createArea"
           @update="updateArea"
           @delete="deleteArea"
           @selectionchange="selectionChange"
-          @baseLayerSwitch="onBaseLayerSwitch"
           @move="setMapPosition"/>
         <kpi-panel
+          v-if="filledInSettings"
           :kpis="filteredKpiGroups"
           :kpi-values="filteredKpiValues"
-          :kpi-percentage-values="filteredKpiPercentageValues"/>
+          :kpi-percentage-values="filteredKpiPercentageValues"
+          :selected-areas="selectedAreas && selectedAreas[0]"/>
       </md-content>
     </div>
-    <virtual-keyboard class="layout-default__virtual-keyboard"/>
+
+    <virtual-keyboard class="layout__virtual-keyboard"/>
+
+    <transition name="slide-up">
+      <app-disclaimer
+        v-if="!legalAccepted"
+        :disclaimer="disclaimer"
+        class="layout__disclaimer"
+        @accepted="acceptLegal"/>
+    </transition>
 
     <notification-area
       :notifications="notifications"
@@ -47,30 +66,54 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
-import { AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea } from '../components'
+import { mapState, mapMutations, mapGetters, mapActions } from "vuex";
+import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea } from '../components'
 import { mapFields } from 'vuex-map-fields';
+import getData from '~/lib/get-data'
+import EventBus, { CLICK } from "~/lib/event-bus";
 
 export default {
-  components: { AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea },
+  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea },
+  data() {
+    return {
+      disclaimer: {},
+    }
+  },
   computed: {
     ...mapState({
       map: state => state.project.map,
-      areas: state => state.project.areas,
       projectArea: state => state.project.settings.area,
+      legalAccepted: state => state.project.legalAccepted,
       center: state => state.project.map.center,
       zoom: state => state.project.map.zoom,
       showNavigation: state => state.appMenu.show,
       title: state => state.project.settings.general.title,
       mapMode: state => state.map.mode,
       notifications: state => state.notifications.messages,
+      mode: state => state.mode.state,
     }),
-    ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups']),
-    ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel']),
+    ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers']),
+    ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings']),
+    ...mapGetters({ selectedAreas:  'selectedAreas/features' }),
+    ...mapGetters('map', ['isProject', 'point', 'line', 'polygon', 'interactive']),
   },
+  async beforeMount() {
+    const locale = this.$i18n.locale
+    const data =  await getData({ locale, slug: 'legal' })
+    this.disclaimer = { ...data.legal.disclaimer }
+  },
+
+  mounted() {
+    this.$refs.base.addEventListener('click', this.dispatchClickEvent)
+  },
+
+  beforeDestroy() {
+    this.$refs.base.removeEventListener('click', this.dispatchClickEvent)
+  },
+
   methods: {
     ...mapMutations({
-      onBaseLayerSwitch: 'project/setBaseLayer',
+      acceptLegal: 'project/acceptLegal',
       showMenu: 'appMenu/showMenu',
       hideMenu: 'appMenu/hideMenu',
       removeNotification: 'notifications/remove',
@@ -84,11 +127,30 @@ export default {
       saveProject: 'project/saveProject',
       setMapPosition: 'project/setMapPosition',
       showError: 'notifications/showError',
+      clearState: 'project/clearState',
     }),
     async onFileInput(event) {
       this.importProject(event)
         .then(() => this.$router.push(this.currentFilledInLevel.uri))
         .catch(error => this.showError(this.$i18n.t('could_not_load_file')))
+    },
+    onNewProject() {
+      if (this.projectArea.id || this.areas.length) {
+        const result = window.confirm(this.$i18n.t('confirm_new_project'))
+
+        if (result) {
+          this.clearState()
+        } else {
+          this.hideMenu()
+          return
+        }
+      }
+
+      this.hideMenu()
+      this.$router.push(`/${this.$i18n.locale}/new-project`)
+    },
+    dispatchClickEvent(event) {
+      EventBus.$emit(CLICK, event)
     },
   },
 }
@@ -97,7 +159,7 @@ export default {
 <style>
 @import '../components/app-core/index.css';
 
-.layout-default {
+.layout {
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -105,25 +167,49 @@ export default {
   position: relative;
 }
 
-.layout-default__content {
+.layout__content {
   overflow-y: scroll;
   display: flex;
   flex: 1;
+  z-index: 0;
 }
 
-.layout-default__map-wrapper {
+.layout__map-wrapper {
   flex: 1;
   display: flex;
+  z-index: 0;
 }
 
-.layout-default__map {
+.layout__map {
   flex: 1;
 }
 
-.layout-default__virtual-keyboard {
+.layout__page-wrapper {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.layout__page {
+  padding: var(--spacing-default);
+}
+
+.layout__virtual-keyboard {
   position: absolute;
   width: 100vw;
   height: 100vh;
   z-index: 5;
+}
+
+.layout__disclaimer {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
 }
 </style>
