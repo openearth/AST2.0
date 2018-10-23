@@ -306,10 +306,6 @@ export const actions = {
     }
   },
 
-  testImportProject() {
-    throw new Error('test error')
-  },
-
   async importProject({ state, commit, rootGetters, rootState }, event) {
     const { name } = event.target.files[0]
     const loadedProject = await getLoadedFileContents(event)
