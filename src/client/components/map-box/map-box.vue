@@ -15,6 +15,7 @@ import MapEventBus, {
   ZOOM_IN,
   ZOOM_OUT,
   SELECT,
+  REPAINT,
 } from '../../lib/map-event-bus'
 
 export default {
@@ -22,10 +23,6 @@ export default {
     initialShapes: {
       type: Array,
       default: () => [],
-    },
-    activeBaseLayer: {
-      type: String,
-      required: true,
     },
     interactive: {
       type: Boolean,
@@ -55,6 +52,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    mode: {
+      type: String,
+      default: '',
+    },
     mapZoom: {
       type: Number,
       default: 0,
@@ -63,30 +64,45 @@ export default {
       type: Object,
       default: () => ({ lat: 0, lng: 0 }),
     },
+    wmsLayers: {
+      type: Array,
+      default: () => [],
+    },
   },
 
   data: () => ({
     map: undefined,
     draw: undefined,
-    navigationControls: undefined,
-    styles: {
-      default: 'mapbox://styles/mapbox/streets-v9',
-      satellite: 'mapbox://styles/mapbox/satellite-v9',
-    },
   }),
 
   computed: {
-    activeStyle() {
-      return this.styles[this.activeBaseLayer]
-    },
     hasProjectArea() {
       return !!this.projectArea.properties
+    },
+    layerVisibility() {
+      return this.wmsLayers.reduce((obj, layer) => {
+        obj[layer.id] = layer.visible
+        return obj
+      }, {})
+    },
+    layerOpacity() {
+      return this.wmsLayers.reduce((obj, layer) => {
+        obj[layer.id] = layer.opacity
+        return obj
+      }, {})
     },
   },
 
   watch: {
-    activeStyle() {
-      this.map.setStyle(this.activeStyle)
+    layerVisibility(newValue) {
+      this.renderWmsLayersVisibility()
+    },
+    layerOpacity(newValue) {
+      this.renderWmsLayersOpacity()
+    },
+    mode(mode) {
+      this.clearMap()
+      this.$nextTick(this.fillMap)
     },
   },
 
@@ -106,7 +122,7 @@ export default {
     if (this.$refs.map) {
       this.map = new mapboxgl.Map({
         container: this.$refs.map,
-        style: this.activeStyle,
+        style: 'mapbox://styles/mapbox/streets-v9',
         zoom: this.mapZoom,
         center: [lng, lat],
         showZoom: false,
@@ -116,10 +132,6 @@ export default {
         userProperties: true,
         styles: [...defaultStyles, ...projectAreaStyles, ...areaStyles],
       })
-      this.navigationControls = new mapboxgl.NavigationControl({ showCompass: false })
-
-      this.map.addControl(this.navigationControls, 'bottom-right')
-      this.map.addControl(this.draw, 'top-left')
 
       this.initialShapes.forEach(shape => {
         this.draw.add(shape)
@@ -133,8 +145,12 @@ export default {
       this.map.on('draw.modechange', event => this.$emit('modechange', event.mode))
 
       this.map.on('load', () => {
+        [...this.wmsLayers].reverse().forEach(this.addWmsLayer)
         this.map.resize()
+        this.map.addControl(this.draw, 'top-left')
         this.fillMap()
+        this.renderWmsLayersVisibility()
+        this.renderWmsLayersOpacity()
         this.$emit('modechange', this.draw.getMode())
       })
 
@@ -158,7 +174,11 @@ export default {
         this.$nextTick(this.fillMap)
       })
 
-      MapEventBus.$on(MODE, this.draw.changeMode)
+      MapEventBus.$on(MODE, (mode) => {
+        if (mode !== 'direct_select') {
+          this.draw.changeMode(mode)
+        }
+      })
 
       MapEventBus.$on(DELETE, () => {
         const { features } = this.draw.getSelected()
@@ -171,20 +191,39 @@ export default {
       MapEventBus.$on(ZOOM_OUT, () => this.map.zoomOut())
 
       MapEventBus.$on(SELECT, (id) => {
-        if (id) {
-          this.draw.changeMode('direct_select', { featureId: id })
-        }
+        this.selectFeature(id)
       })
+
+      MapEventBus.$on(REPAINT, payload =>
+        payload.length
+          ? this.repaintFeatures(payload)
+          : this.repaintFeature(payload)
+      )
     }
   },
   beforeDestroy() {
     MapEventBus.$off()
   },
   methods: {
+    selectFeature(id) {
+      if (id) {
+          const feature = this.draw.get(id)
+          if (feature.geometry.type === 'Point') {
+            this.draw.changeMode('simple_select', { featureIds: [id] })
+            this.$emit('selectionchange', [feature])
+          } else {
+            this.draw.changeMode('direct_select', { featureId: id })
+          }
+        }
+    },
     clearMap() {
       this.map.getLayer('projectArea-line') && this.map.removeLayer('projectArea-line')
       this.map.getSource('projectArea-line') && this.map.removeSource('projectArea-line')
       this.draw.deleteAll()
+      this.areas.forEach(area => {
+        this.map.getLayer(`${area.properties.name}-line`) && this.map.removeLayer(`${area.properties.name}-line`)
+        this.map.getSource(`${area.properties.name}-line`) && this.map.removeSource(`${area.properties.name}-line`)
+      })
     },
     fillMap() {
       if (!this.interactive) {
@@ -239,6 +278,64 @@ export default {
       // const fill = Object.assign({}, baseObj, fillDetails)
       // this.map.addLayer(fill)
       this.map.addLayer(line)
+    },
+    addWmsLayer({ layerType: type, id, url, tilesize: tileSize }) {
+      if (!this.map.getLayer(`wms-layer-${id}`)) {
+        const source = { type, tileSize }
+
+        if  (url === 'mapbox://mapbox.satellite') {
+          source.url = url
+        } else {
+          source.tiles = [ url ]
+        }
+
+        this.map.addLayer({
+          id: `wms-layer-${id}`,
+          type,
+          source,
+          layout: {
+            visibility: 'none',
+          },
+          paint: {},
+        })
+      }
+    },
+    repaintFeatures(features) {
+      features.forEach(this.repaintFeature)
+    },
+    repaintFeature(feature) {
+      if (this.draw.get(feature.id)) {
+        const selectedIds = this.draw.getSelectedIds()
+
+        this.draw
+          .delete(feature.id)
+          .add(feature)
+
+        if (selectedIds.indexOf(feature.id) !== -1) {
+          this.selectFeature(feature.id)
+        }
+      }
+    },
+    renderWmsLayersVisibility() {
+      Object.keys(this.layerVisibility).forEach(key => {
+        this.layerVisibility[key]
+          ? this.showWmsLayer(key)
+          : this.hideWmsLayer(key)
+      })
+    },
+    renderWmsLayersOpacity() {
+      Object.keys(this.layerOpacity).forEach(key => {
+        this.wmsLayerOpacity(key, this.layerOpacity[key])
+      })
+    },
+    showWmsLayer(id) {
+      this.map.setLayoutProperty(`wms-layer-${id}`, 'visibility', 'visible');
+    },
+    hideWmsLayer(id) {
+      this.map.setLayoutProperty(`wms-layer-${id}`, 'visibility', 'none');
+    },
+    wmsLayerOpacity(id, value) {
+      this.map.setPaintProperty(`wms-layer-${id}`, 'raster-opacity', value);
     },
   },
 }

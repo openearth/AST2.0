@@ -1,6 +1,8 @@
 import Vue from 'vue'
-import turf from '@turf/area'
-import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT } from '../lib/map-event-bus'
+import turfArea from '@turf/area'
+import turfLength from '@turf/length'
+import merge from 'lodash/merge'
+import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT, REPAINT } from '../lib/map-event-bus'
 import { getApiDataForFeature, getRankedMeasures } from "../lib/get-api-data";
 import FileSaver from 'file-saver'
 import getLoadedFileContents from '../lib/get-loaded-file-contents'
@@ -18,16 +20,12 @@ const initialState = () => ({
     targets: {},
   },
   map: {
-    baseLayers: [
-      { key: 'default', label: 'Default' },
-      { key: 'satellite', label: 'Satellite' },
-    ],
-    activeBaseLayer: 'default',
     zoom: 16.5,
     center: {
       lat: 52.36599335162853,
       lng: 4.916535879906178,
     },
+    wmsLayers: [],
   },
 })
 
@@ -46,9 +44,6 @@ export const mutations = {
   },
   setTitle(state, value) {
     state.settings.title = value
-  },
-  setBaseLayer(state, value) {
-    state.map.activeBaseLayer = value
   },
   addProjectArea(state, value) {
     return state.settings.area = value
@@ -102,11 +97,31 @@ export const mutations = {
   setTarget(state, { group, key, value }) {
     state.settings.targets[group][key] = { ...state.settings.targets[group][key], ...value }
   },
+  setWmsLayer(state, layer) {
+    state.map.wmsLayers.push(layer)
+  },
   toggleProjectAreaNestedSetting(state, { key, option, value }) {
     state.settings.projectArea[key][option] = !state.settings.projectArea[key][option]
   },
   acceptLegal(state) {
     state.legalAccepted = true
+  },
+  setLayerOpacity(state, { id, value }) {
+    state.map.wmsLayers.forEach(layer => {
+      if (id === layer.id) {
+        layer.opacity = value
+      }
+    })
+  },
+  setLayerVisibility(state, { id, value }) {
+    state.map.wmsLayers.forEach(layer => {
+      if (id === layer.id) {
+        layer.visible = value
+        layer.showLegend = value
+      } else {
+        layer.showLegend = false
+      }
+    })
   },
   clearProjectArea(state) {
     state.settings.general.title = ''
@@ -126,7 +141,7 @@ export const actions = {
   },
   createArea({ state, commit, dispatch }, features) {
     features.forEach(feature => {
-      const area = turf(feature.geometry)
+      const area = turfArea(feature.geometry)
 
       if (!state.settings.area.id) {
         commit('addProjectArea', feature)
@@ -138,37 +153,93 @@ export const actions = {
 
       const areaNumber = state.areas.length
       dispatch('fetchAreaApiData', [feature])
-      commit('updateAreaProperty', { id: feature.id, properties: { area, name: `Area-${areaNumber}`, hidden: false } })
+      commit('updateAreaProperty', { id: feature.id, properties: { name: `Area-${areaNumber}`, hidden: false } })
 
       setTimeout(() => {
         MapEventBus.$emit(SELECT, feature.id)
       }, 0)
     })
   },
-  updateArea({ state, commit, dispatch }, features) {
+  updateArea({ state, commit, dispatch, getters }, features) {
     features.forEach(feature => {
       const { id } = feature
-      const area = turf(feature.geometry)
+      const area = turfArea(feature.geometry)
 
       if (state.settings.area.id === id) {
         commit('updateProjectArea', feature)
         commit('updateProjectAreaProperty', { area })
-        dispatch('fetchAreaApiData', state.areas)
+        dispatch('fetchAreaApiData', getters.areas)
         return
       }
 
       commit('updateArea', feature)
-      commit('updateAreaProperty', { id, properties: { area } })
-      dispatch('fetchAreaApiData', [feature])
+      dispatch('fetchAreaApiData', getters.areas.filter(area => area.id === feature.id))
     })
   },
-  updateAreaProperties({ state, commit, dispatch }, { features, properties }) {
-    features.forEach(feature => commit('updateAreaProperty', { id: feature.id, properties }))
-    dispatch('fetchAreaApiData', features)
+  updateAreaProperties({ state, commit, dispatch, getters }, { features, properties }) {
+    features.forEach(feature => {
+      commit('updateAreaProperty', { id: feature.id, properties })
+      const updatedFeature = getters.areas.filter(area => area.id === feature.id)
+
+      if (properties.measure || properties.hasOwnProperty('hidden') ) {
+        MapEventBus.$emit(REPAINT, updatedFeature)
+      }
+
+      dispatch('fetchAreaApiData', updatedFeature)
+    })
+  },
+  setAreaMeasure({ dispatch }, { features, measure }) {
+    const getDefaultValueProperty = property =>  key => {
+      const values = measure.defaultValues.find(values => values.key.toLowerCase() === key)
+      return values[property]
+    }
+
+    const cappedValue = key => input => {
+      const defaultMax = getDefaultMax(key)
+      const defaultMin = getDefaultMin(key)
+      const inputNumber = parseFloat(input)
+      if (input === null) {
+        return input
+      } else if (inputNumber < defaultMin) {
+        return defaultMin
+      } else if (inputNumber > defaultMax) {
+        return defaultMax
+      } else {
+        return inputNumber
+      }
+    }
+
+    const getDefaultValue = getDefaultValueProperty('value')
+    const getDefaultMin = getDefaultValueProperty('min')
+    const getDefaultMax = getDefaultValueProperty('max')
+
+    const cappedInflow = cappedValue('inflow')
+    const cappedDepth = cappedValue('depth')
+    const cappedWidth = cappedValue('width')
+    const cappedRadius = cappedValue('radius')
+
+    features.forEach(feature => {
+      const featureProps = feature.properties
+      const properties = {
+        measure: measure.measureId,
+        color: measure.color.hex,
+        defaultInflow: getDefaultValue('inflow'),
+        defaultDepth: getDefaultValue('depth'),
+        defaultWidth: getDefaultValue('width'),
+        defaultRadius: getDefaultValue('radius'),
+        areaInflow: featureProps.hasOwnProperty('areaInflow') ? cappedInflow(featureProps.areaInflow) : null,
+        areaDepth: featureProps.hasOwnProperty('areaDepth') ? cappedDepth(featureProps.areaDepth) : null,
+        areaWidth: featureProps.hasOwnProperty('areaWidth') ? cappedWidth(featureProps.areaWidth) : null,
+        areaRadius: featureProps.hasOwnProperty('areaRadius') ? cappedRadius(featureProps.areaRadius) : null,
+      }
+      dispatch('updateAreaProperties', { features: [feature], properties })
+    })
   },
   fetchAreaApiData({ state, commit }, features) {
     features.forEach(async (feature) => {
-      const apiData = await getApiDataForFeature(feature, state.settings.area.properties.area)
+      const projectArea = state.settings.area.properties.area
+      const { scenarioName } = state.settings.projectArea
+      const apiData = await getApiDataForFeature(feature, projectArea, scenarioName)
       commit('updateAreaProperty', { id: feature.id, properties: { apiData } })
     })
   },
@@ -185,12 +256,19 @@ export const actions = {
   },
   bootstrapSettingsProjectArea({ state, commit }, settings) {
     settings.forEach(setting => {
-      const value = !setting.multiple
-        ? null
-        : setting.options.reduce((obj, option) => ({
-            ...obj,
-            [option.value]: false,
-          }), {})
+      let value = null
+
+      if (setting.multiple) {
+        value = setting.options.reduce((obj, option) => ({
+                ...obj,
+                [option.value]: option.value === setting.defaultValue.value,
+              }), {})
+      }
+
+      if (setting.isSelect) {
+        value = setting.defaultValue.value
+      }
+
       commit('setProjectAreaSetting', { key: setting.key, value })
     })
   },
@@ -198,6 +276,11 @@ export const actions = {
     targets.forEach(({ key, kpis }) => {
       const value = kpis.reduce((obj, kpi) => ({ ...obj, [kpi.key]: { include: true, value: "0" } }), {})
       commit('setTargets', { key, value })
+    })
+  },
+  bootstrapWmsLayers({ state, commit }, layers) {
+    layers.forEach(layer => {
+      commit('setWmsLayer', { id: layer.id, visible: false, showLegend: false, opacity: 1 })
     })
   },
   async updateProjectAreaSetting({ state, commit, rootGetters }, payload ) {
@@ -208,7 +291,7 @@ export const actions = {
       commit('toggleProjectAreaNestedSetting', { key, option, value })
     }
 
-    if (type === 'radio') {
+    if ((type === 'radio') || (type === 'select')) {
       const { key, value } = payload
       commit('setProjectAreaSetting', { key, value })
     }
@@ -268,8 +351,34 @@ export const actions = {
 }
 
 export const getters = {
+  areas: (state) => {
+    return state.areas.map(feature => {
+      let area;
+      switch (feature.geometry.type) {
+        case 'LineString':
+          const width = feature.properties.areaWidth || feature.properties.defaultWidth
+          area = (turfLength(feature.geometry) * 1000) * parseFloat(width)
+          break;
+        case 'Point':
+          const radius = feature.properties.areaRadius || feature.properties.defaultRadius
+          area = Math.PI * (radius * radius)
+          break;
+        case 'Polygon':
+          area = turfArea(feature.geometry)
+          break;
+        default:
+          area = 0
+      }
+
+      return merge(
+        {},
+        feature,
+        { properties: { area } }
+      )
+    })
+  },
   areasByMeasure: (state, getters, rootState) => {
-    return state.areas.reduce((obj, area) => {
+    return getters.areas.reduce((obj, area) => {
       const measureId = area.properties.measure
 
       if (measureId) {
@@ -350,7 +459,7 @@ export const getters = {
           .reduce((obj, key) => ({ ...obj, [key]: parseFloat(targets[group][key].value, 10) || 0 }), {}))
       .reduce((obj, item) => ({ ...obj, ...item }), {})
   },
-  kpiPercentageValues:  (state, getters) => {
+  kpiPercentageValues: (state, getters) => {
     const kpiValues = getters.kpiValues
     const kpiTargetValues = getters.kpiTargetValues
     const keys = Object.keys(kpiValues)
@@ -361,5 +470,23 @@ export const getters = {
         [key]: isNaN(value) ? 0 : parseFloat(value * 100, 10),
       }
     }, {})
+  },
+  wmsLayers: (state, getters, rootState, rootGetters) => {
+    return state.map.wmsLayers
+    .map(({ id, visible, opacity }) => ({
+      ...rootGetters['data/wmsLayers/constructed'].find(layer => layer.id === id),
+      visible,
+      opacity,
+    }))
+  },
+  wmsLayerLegend: (state, getters, rootState, rootGetters) => {
+    const [layer] = state.map.wmsLayers
+      .filter(layer => layer.showLegend)
+      .map(({ id, visible, opacity }) => ({
+        ...rootGetters['data/wmsLayers/constructed'].find(layer => layer.id === id),
+        visible,
+        opacity,
+      }))
+    return layer
   },
 }

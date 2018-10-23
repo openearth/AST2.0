@@ -4,8 +4,9 @@
     <div class="input-range__value-wrapper">
       <input
         :value="value"
-        :min="min"
+        :min="floatMin"
         :max="max"
+        :step="steps"
         class="input-range__range"
         type="range"
         v-on="inputListeners">
@@ -67,6 +68,12 @@ export default {
     stringValue () {
       return String(this.value === null ? '' : this.value)
     },
+    floatMin() {
+      return /\./.test(String(this.min)) ? this.min : `${this.min}.0`
+    },
+    steps() {
+      return parseFloat(this.max) > 10 ? '1' : '0.1'
+    },
   },
 }
 </script>
@@ -84,24 +91,24 @@ export default {
 }
 
 .input-range__label {
-  font-size: 12px;
+  font-size: var(--font-size-extra-small);
   color: rgba(0,0,0,0.54);
   position: absolute;
 }
 
 .input-range__value-wrapper {
   display: flex;
-  align-items: center;
+  align-items: baseline;
 }
 
 .input-range__range {
   flex: 1;
-  margin-right: 1rem;
+  margin-right: var(--spacing-default);
 }
 
 .input-range__number {
-  width: 3rem;
-  position: relative
+  width: 4rem;
+  position: relative;
 }
 
 .input-range__number .md-input {

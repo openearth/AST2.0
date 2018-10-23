@@ -11,3 +11,17 @@
 .slide-up-leave-to {
   transform: translatey(100%);
 }
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity .3s ease-out;
+}
+
+.fade-leave-active {
+  transition: opacity .3s ease-out;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
