@@ -34,8 +34,8 @@ export const getters = {
 
     switch (mode) {
       case 'draw-project-area':
-        return false
       case 'inactive':
+      case 'modal':
         return false
       default:
         return true
@@ -47,8 +47,8 @@ export const getters = {
 
     switch (mode) {
       case 'draw-project-area':
-        return false
       case 'inactive':
+      case 'modal':
         return false
       default:
         return true
@@ -62,6 +62,7 @@ export const getters = {
       case 'draw-project-area':
         return !rootGetters['flow/createdProjectArea']
       case 'inactive':
+      case 'modal':
         return false
       default:
         return true
@@ -73,6 +74,7 @@ export const getters = {
 
     switch (mode) {
       case 'inactive':
+      case 'modal':
         return false
       default:
         return true

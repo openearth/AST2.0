@@ -13,8 +13,12 @@
       @newProject="onNewProject"/>
 
     <div class="layout__content">
-      <nuxt />
-
+      <div v-if="mode === 'modal'" class="layout__page-wrapper">
+        <md-content class="md-elevation-6">
+          <nuxt class="layout__page"/>
+        </md-content>
+      </div>
+      <nuxt v-else />
       <md-content class="layout__map-wrapper">
         <map-viewer
           :project-area="projectArea"
@@ -43,21 +47,37 @@
           :selected-areas="selectedAreas && selectedAreas[0]"/>
       </md-content>
     </div>
+
     <virtual-keyboard class="layout__virtual-keyboard"/>
+
+    <transition name="slide-up">
+      <app-disclaimer
+        v-if="!legalAccepted"
+        :disclaimer="disclaimer"
+        class="layout__disclaimer"
+        @accepted="acceptLegal"/>
+    </transition>
   </div>
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
-import { AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu } from '../components'
+import { mapState, mapMutations, mapGetters, mapActions } from "vuex";
+import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu } from '../components'
 import { mapFields } from 'vuex-map-fields';
+import getData from '~/lib/get-data'
 
 export default {
-  components: { AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu },
+  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu },
+  data() {
+    return {
+      disclaimer: {},
+    }
+  },
   computed: {
     ...mapState({
       map: state => state.project.map,
       projectArea: state => state.project.settings.area,
+      legalAccepted: state => state.project.legalAccepted,
       center: state => state.project.map.center,
       zoom: state => state.project.map.zoom,
       showNavigation: state => state.appMenu.show,
@@ -70,8 +90,14 @@ export default {
     ...mapGetters({ selectedAreas:  'selectedAreas/features' }),
     ...mapGetters('map', ['isProject', 'point', 'line', 'polygon', 'interactive']),
   },
+  async beforeMount() {
+    const locale = this.$i18n.locale
+    const data =  await getData({ locale, slug: 'legal' })
+    this.disclaimer = { ...data.legal.disclaimer }
+  },
   methods: {
     ...mapMutations({
+      acceptLegal: 'project/acceptLegal',
       showMenu: 'appMenu/showMenu',
       hideMenu: 'appMenu/hideMenu',
     }),
@@ -123,15 +149,33 @@ export default {
   overflow-y: scroll;
   display: flex;
   flex: 1;
+  z-index: 0;
 }
 
 .layout__map-wrapper {
   flex: 1;
   display: flex;
+  z-index: 0;
 }
 
 .layout__map {
   flex: 1;
+}
+
+.layout__page-wrapper {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.layout__page {
+  padding: var(--spacing-default);
 }
 
 .layout__virtual-keyboard {
@@ -139,5 +183,11 @@ export default {
   width: 100vw;
   height: 100vh;
   z-index: 5;
+}
+
+.layout__disclaimer {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
 }
 </style>
