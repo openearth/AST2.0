@@ -1,5 +1,5 @@
 <template>
-  <div class="layout">
+  <div ref="base" class="layout">
     <app-header :title="title" @onShowNavigation="showMenu"/>
     <app-menu
       :show-navigation="showNavigation"
@@ -65,6 +65,7 @@ import { mapState, mapMutations, mapGetters, mapActions } from "vuex";
 import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu } from '../components'
 import { mapFields } from 'vuex-map-fields';
 import getData from '~/lib/get-data'
+import EventBus, { CLICK } from "~/lib/event-bus";
 
 export default {
   components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu },
@@ -95,6 +96,15 @@ export default {
     const data =  await getData({ locale, slug: 'legal' })
     this.disclaimer = { ...data.legal.disclaimer }
   },
+
+  mounted() {
+    this.$refs.base.addEventListener('click', this.dispatchClickEvent)
+  },
+
+  beforeDestroy() {
+    this.$refs.base.removeEventListener('click', this.dispatchClickEvent)
+  },
+
   methods: {
     ...mapMutations({
       acceptLegal: 'project/acceptLegal',
@@ -129,6 +139,9 @@ export default {
 
       this.hideMenu()
       this.$router.push(`/${this.$i18n.locale}/new-project`)
+    },
+    dispatchClickEvent(event) {
+      EventBus.$emit(CLICK, event)
     },
   },
 }

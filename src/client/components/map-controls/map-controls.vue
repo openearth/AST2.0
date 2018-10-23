@@ -45,6 +45,7 @@
       <transition name="fade">
         <layer-list
           v-if="showLayersPanel"
+          ref="layerlist"
           :layers="wmsLayers"
           class="map-controls__layer-list"
           @opacity-change="event => $emit('layer-opacity-change', event)"
@@ -72,6 +73,7 @@
 
 <script>
 import LayerList from "../layer-list";
+import EventBus, { CLICK } from "~/lib/event-bus";
 
 export default {
   components: { LayerList },
@@ -116,6 +118,24 @@ export default {
   data: () => ({
     showLayersPanel: false,
   }),
+  watch: {
+    showLayersPanel(shown) {
+      if (shown) {
+        EventBus.$on(CLICK, this.handleOutideClick)
+      } else {
+        EventBus.$off(CLICK, this.handleOutideClick)
+      }
+    },
+  },
+  methods: {
+    handleOutideClick(event) {
+      const path = event.path
+      const layerlist = this.$refs.layerlist.$el
+      if (path.indexOf(layerlist) === -1) {
+        this.showLayersPanel = false
+      }
+    },
+  },
 }
 </script>
 
