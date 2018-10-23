@@ -39,6 +39,7 @@ export default {
     background-color: #FFFFFF;
     max-height: calc( 100% - 12px );
     overflow-y:auto;
+    box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
    }
 
   .layer-legend__title
@@ -48,8 +49,14 @@ export default {
     height:32px;
   }
 
+  .layer-legend__list
+  {
+    padding: 0;
+  }
+
   .layer-legend__list .md-list-item-content
   {
     display:block;
+    font-size:smaller;
   }
 </style>
