@@ -371,8 +371,8 @@ export const getters = {
       switch (feature.geometry.type) {
         case 'LineString':
           const width = feature.properties.areaWidth || feature.properties.defaultWidth
-          area = (turfLength(feature.geometry) * 1000) * parseFloat(width)
           length = turfLength(feature.geometry) * 1000
+          area = length * parseFloat(width)
           break;
         case 'Point':
           const radius = feature.properties.areaRadius || feature.properties.defaultRadius
