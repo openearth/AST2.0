@@ -4,8 +4,9 @@
     <div class="input-range__value-wrapper">
       <input
         :value="value"
-        :min="min"
+        :min="floatMin"
         :max="max"
+        :step="steps"
         class="input-range__range"
         type="range"
         v-on="inputListeners">
@@ -66,6 +67,12 @@ export default {
     },
     stringValue () {
       return String(this.value === null ? '' : this.value)
+    },
+    floatMin() {
+      return /\./.test(String(this.min)) ? this.min : `${this.min}.0`
+    },
+    steps() {
+      return parseFloat(this.max) > 10 ? '1' : '0.1'
     },
   },
 }
