@@ -191,15 +191,7 @@ export default {
       MapEventBus.$on(ZOOM_OUT, () => this.map.zoomOut())
 
       MapEventBus.$on(SELECT, (id) => {
-        if (id) {
-          const feature = this.draw.get(id)
-          if (feature.geometry.type === 'Point') {
-            this.draw.changeMode('simple_select', { featureIds: [id] })
-            this.$emit('selectionchange', [feature])
-          } else {
-            this.draw.changeMode('direct_select', { featureId: id })
-          }
-        }
+        this.selectFeature(id)
       })
 
       MapEventBus.$on(REPAINT, payload =>
@@ -213,6 +205,17 @@ export default {
     MapEventBus.$off()
   },
   methods: {
+    selectFeature(id) {
+      if (id) {
+          const feature = this.draw.get(id)
+          if (feature.geometry.type === 'Point') {
+            this.draw.changeMode('simple_select', { featureIds: [id] })
+            this.$emit('selectionchange', [feature])
+          } else {
+            this.draw.changeMode('direct_select', { featureId: id })
+          }
+        }
+    },
     clearMap() {
       this.map.getLayer('projectArea-line') && this.map.removeLayer('projectArea-line')
       this.map.getSource('projectArea-line') && this.map.removeSource('projectArea-line')
@@ -302,9 +305,15 @@ export default {
     },
     repaintFeature(feature) {
       if (this.draw.get(feature.id)) {
+        const selectedIds = this.draw.getSelectedIds()
+
         this.draw
           .delete(feature.id)
           .add(feature)
+
+        if (selectedIds.indexOf(feature.id) !== -1) {
+          this.selectFeature(feature.id)
+        }
       }
     },
     renderWmsLayersVisibility() {
