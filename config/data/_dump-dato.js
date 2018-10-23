@@ -28,7 +28,7 @@ const queryFilePaths = readDir(__dirname)
   .filter(isQueryFile)
   .map(resolveTo(__dirname))
   .reduce((obj, file) => {
-    const [,fileName, localesStr] = /\/([\w-]+)(?:\.)([\w\.]+)*(?:\.)*graphql$/.exec(file)
+    const [,fileName, localesStr] = /([\w-]+)(?:\.)([\w\.]+)*(?:\.)*graphql$/.exec(file)
     const locales = !localesStr
       ? ['none']
       : flatten(

@@ -52,6 +52,24 @@
       </md-button>
     </li>
 
+    <li v-if="layers" class="map-controls__item map-controls__item--layers">
+      <md-button
+        class="md-icon-button md-raised"
+        @click="showLayersPanel = !showLayersPanel"
+      >
+        <md-icon>layers</md-icon>
+      </md-button>
+      <transition name="fade">
+        <layer-list
+          v-if="showLayersPanel"
+          ref="layerlist"
+          :layers="wmsLayers"
+          class="map-controls__layer-list"
+          @opacity-change="event => $emit('layer-opacity-change', event)"
+          @visibility-change="event => $emit('layer-visibility-change', event)"/>
+      </transition>
+    </li>
+
     <li v-if="zoomIn" class="map-controls__item map-controls__item--zoom-in">
       <md-button
         class="md-icon-button md-raised"
@@ -72,9 +90,11 @@
 
 <script>
 import SearchInput from '../search-input'
+import LayerList from "../layer-list";
+import EventBus, { CLICK } from "~/lib/event-bus";
 
 export default {
-  components: { SearchInput },
+  components: { SearchInput, LayerList },
   props: {
     line: {
       type: Boolean,
@@ -89,6 +109,10 @@ export default {
       default: false,
     },
     trash: {
+      type: Boolean,
+      default: false,
+    },
+    layers: {
       type: Boolean,
       default: false,
     },
@@ -108,11 +132,32 @@ export default {
       type: Boolean,
       default: false,
     },
+    wmsLayers: {
+      type: Array,
+      default: () => [],
+    },
   },
-  data() {
-    return {
-      showSearch: false,
-    }
+  data: () => ({
+    showLayersPanel: false,
+    showSearch: false,
+  }),
+  watch: {
+    showLayersPanel(shown) {
+      if (shown) {
+        EventBus.$on(CLICK, this.handleOutideClick)
+      } else {
+        EventBus.$off(CLICK, this.handleOutideClick)
+      }
+    },
+  },
+  methods: {
+    handleOutideClick(event) {
+      const path = event.path
+      const layerlist = this.$refs.layerlist.$el
+      if (path.indexOf(layerlist) === -1) {
+        this.showLayersPanel = false
+      }
+    },
   },
 }
 </script>
@@ -131,5 +176,15 @@ export default {
 .map-controls__item--search {
   display: flex;
   align-items: center;
+}
+.map-controls__item--layers {
+  position: relative;
+}
+
+.map-controls__layer-list {
+  position: absolute;
+  background-color: red;
+  left: 50px;
+  top: 0;
 }
 </style>

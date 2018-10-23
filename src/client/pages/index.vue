@@ -32,7 +32,7 @@ import { mapState, mapGetters, mapActions } from "vuex";
 import MapEventBus, { REDRAW } from "../lib/map-event-bus"
 
 export default {
-  layout: 'modal',
+  middleware: ['state-is-modal'],
   computed: {
     ...mapState('i18n', ['locale']),
     ...mapGetters('flow', ['acceptedLegal', 'currentFilledInLevel']),

@@ -1,7 +1,6 @@
 <template>
   <div class="map-viewer">
     <map-box
-      :active-base-layer="activeBaseLayer"
       :interactive="interactive"
       :point="point"
       :line="line"
@@ -11,6 +10,8 @@
       :areas="areas"
       :map-zoom="mapZoom"
       :map-center="mapCenter"
+      :wms-layers="wmsLayers"
+      :mode="mode"
       class="map-viewer__map"
       @create="onCreate"
       @update="onUpdate"
@@ -26,11 +27,15 @@
       :polygon="interactive && polygon"
       :point="interactive && point"
       :trash="interactive"
+      :layers="interactive && layers"
+      :wms-layers="wmsLayers"
       :current-mode="currentMode"
       class="map-viewer__controls--draw"
       @setMode="setMode"
       @trash="onClickDelete"
-      @search="onSearch"/>
+      @search="onSearch"
+      @layer-opacity-change="setLayerOpacity"
+      @layer-visibility-change="setLayerVisibility"/>
 
     <map-controls
       :zoom-in="interactive"
@@ -39,31 +44,18 @@
       @zoom-in="zoomIn"
       @zoom-out="zoomOut"/>
 
-    <map-base-layer-switcher
-      :base-layers="baseLayers"
-      class="map-viewer__layer-switcher"
-      @switch="onBaseLayerSwitch"/>
   </div>
 </template>
 
 <script>
 import MapEventBus, { MODE, TRASH, DELETE, ZOOM_IN, ZOOM_OUT, SEARCH } from "../../lib/map-event-bus";
 import MapBox from "../map-box";
-import MapBaseLayerSwitcher from "../map-base-layer-switcher";
 import MapControls from "../map-controls";
 import { mapMutations, mapActions } from "vuex";
 
 export default {
-  components: { MapBox, MapBaseLayerSwitcher, MapControls },
+  components: { MapBox, MapControls },
   props: {
-    activeBaseLayer: {
-      type: String,
-      required: true,
-    },
-    baseLayers: {
-      type: Array,
-      default: () => ([]),
-    },
     interactive: {
       type: Boolean,
       default: true,
@@ -83,6 +75,10 @@ export default {
     search: {
       type: Boolean,
       default: false,
+    },
+    layers: {
+      type: Boolean,
+      default: true,
     },
     isProject: {
       type: Boolean,
@@ -108,16 +104,27 @@ export default {
       type: String,
       default: '',
     },
+    wmsLayers: {
+      type: Array,
+      default: () => [],
+    },
+    mode: {
+      type: String,
+      default: '',
+    },
   },
   methods: {
     ...mapActions({
       setMode: 'map/setMode',
     }),
+    ...mapMutations({
+      setLayerOpacity: 'project/setLayerOpacity',
+      setLayerVisibility: 'project/setLayerVisibility',
+    }),
     onCreate(event) { this.$emit('create', event) },
     onUpdate(event) { this.$emit('update', event) },
     onDelete(event) { this.$emit('delete', event) },
     onSelectionchange(event) { this.$emit('selectionchange', event) },
-    onBaseLayerSwitch(event) { this.$emit('baseLayerSwitch', event) },
     onMove(event) { this.$emit('move', event) },
     onClickDelete() { MapEventBus.$emit(DELETE) },
     zoomIn() { MapEventBus.$emit(ZOOM_IN) },
@@ -145,8 +152,8 @@ export default {
 
 .map-viewer__layer-switcher {
   position: absolute;
-  bottom: 30px;
-  right: 55px;
+  bottom: 10px;
+  right: 10px;
 }
 
 .map-viewer__controls--draw {

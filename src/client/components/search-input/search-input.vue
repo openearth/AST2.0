@@ -7,7 +7,7 @@
       type="text"
       placeholder="Search"
       @blur="() => $emit('hide')">
-
+    <md-button class="search__icon" @click="value = ''"><md-icon>close</md-icon></md-button>
     <transition-group
       v-if="suggestions.length"
       class="search-input__suggestions"
@@ -85,6 +85,8 @@ export default {
   padding: .5rem;
   width: 350px;
   text-align: left;
+}
+.search__icon {
   position: absolute;
   top: calc(100% + 2px);
 }

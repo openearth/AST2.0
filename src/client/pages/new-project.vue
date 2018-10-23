@@ -5,12 +5,15 @@
     </md-toolbar>
 
     <div class="new-project__content">
-      <md-list>
-        <md-list-item>
-          <p>{{ $t('area_size') }}: <span v-if="settings.area.properties">{{ settings.area.properties.area }}</span></p>
-        </md-list-item>
-        <md-divider />
-      </md-list>
+      <hint-text
+        v-if="!createdProjectArea"
+        :icon="'crop_square'"
+        :text="$t('empty_project_area')"
+        class="new-project__hint-text"/>
+      <div v-else>
+        <p class="md-body-2">{{ $t('area_size') }}:</p>
+        <span v-if="settings.area.properties" class="md-subheading">{{ areaSize }}m<sup>2</sup></span>
+      </div>
     </div>
 
     <div class="new-project__action-wrapper">
@@ -25,14 +28,16 @@
 <script>
 import { mapState, mapGetters } from "vuex";
 import MapEventBus, { REDRAW } from "../lib/map-event-bus"
+import { HintText } from '~/components'
 
 export default {
-  layout: 'draw-project-area',
-  middleware: ['access-level-legal'],
+  middleware: ['access-level-legal', 'state-is-draw-project-area'],
+  components: { HintText },
   computed: {
     ...mapState('i18n', ['locale']),
     ...mapState('project', ['settings']),
     ...mapGetters('flow', ['createdProjectArea']),
+    areaSize() { return Math.round(this.settings.area.properties.area) },
   },
   mounted() {
     MapEventBus.$emit(REDRAW)
@@ -48,7 +53,7 @@ export default {
 
 .new-project__content {
   flex: 1;
-  overflow-y: scroll;
+  padding: var(--spacing-default);
 }
 
 .new-project__action-wrapper {

@@ -7,6 +7,7 @@
       :key="kpi.key"
       class="kpi-group__kpi">
       <span class="md-body-1 kpi-group__kpi-title">{{ kpi.title }}:</span>
+      <p v-if="type === 'numbers'" class="kpi-group__kpi-value">{{ roundValue(kpiByKey(kpi.key)) }} {{ unit(kpi.unit) }}</p>
 
       <md-progress-bar
         v-if="type === 'bars'"
@@ -14,7 +15,10 @@
         class="kpi-group__kpi-meter"
       />
 
-      <span v-else class="kpi-group__kpi-value">{{ roundValue(kpiByKey(kpi.key)) }} {{ unit(kpi.unit) }}</span>
+      <div v-if="(type === 'numbers') && selectedAreas" class="kpi-group__measure-kpi">
+        <span><em>{{ $t('measure') }}</em></span>
+        <span><em>{{ roundValue(selectedAreas.properties.apiData[kpi.key]) }} {{ unit(kpi.unit) }}</em></span>
+      </div>
     </md-list-item>
   </md-list>
 </template>
@@ -38,6 +42,11 @@ export default {
       type: String,
       required: true,
       default: 'bars',
+    },
+    selectedAreas: {
+      type: Object,
+      required: false,
+      default: () => {},
     },
   },
   methods: {
@@ -90,5 +99,16 @@ export default {
   bottom: 0;
   flex-basis: 100%;
   width: 100%;
+}
+
+.kpi-group__measure-kpi {
+  position: relative;
+  flex-basis: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-extra-small);
+  color: var(--neutral-color--dark);
+  margin-bottom: var(--spacing-half);
 }
 </style>

@@ -5,7 +5,7 @@
       <md-button
         :disabled="!selectedFeatures.length"
         class="md-raised md-primary"
-        @click="() => onChoose(measure.measureId, measure.color.hex)">{{ $t('choose') }}</md-button>
+        @click="() => onChoose(measure)">{{ $t('choose') }}</md-button>
     </div>
 
     <header class="measure__header">
@@ -50,18 +50,10 @@ export default {
     measure() { return this.measureDetails(this.slug)},
   },
   methods: {
-    ...mapActions({ updateAreaProperties: 'project/updateAreaProperties' }),
-    onChoose(id, color) {
-      this.updateAreaProperties({
-        features: this.selectedFeatures,
-        properties: {
-          measure: id,
-          color,
-          areaInflow: 1,
-          areaDepth: 1,
-        },
-      })
-      this.$router.push(`/${this.$i18n.locale}/project/areas`)
+    ...mapActions({ setAreaMeasure: 'project/setAreaMeasure' }),
+    onChoose(measure) {
+      this.setAreaMeasure({ features: this.selectedFeatures, measure })
+      this.$router.push(`/${this.$i18n.locale}/project/areas/`)
     },
   },
 }

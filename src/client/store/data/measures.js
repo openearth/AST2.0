@@ -7,14 +7,6 @@ export const mutations = {
     state.push(measure)
   },
 
-  addMeasureProperty(state, { property, entry, idKey = 'ID' }) {
-    state.forEach(measure => {
-      if (measure.measureId === String(entry[idKey])) {
-        measure[property] = entry
-      }
-    })
-  },
-
   addMeasuresRanking(state, rankedMeasures) {
     const measures = state.filter(measure => measure.measureId !== '0')
 
@@ -31,16 +23,6 @@ export const actions = {
     const data = await getData({ locale, slug: 'measures' })
     data.measures.forEach(measure => commit('addMeasure', measure))
   },
-
-  async getMeasureProperty({ commit }, property) {
-    const data = await getData({ folder: 'tables', slug: `ast_measures_${property}` })
-    data.forEach(entry => commit('addMeasureProperty', { property, entry }))
-  },
-
-  async getMeasureScores({ commit }) {
-    const data = await getData({ folder: 'tables', slug: 'ast_selection_scores' })
-    data.forEach(entry => commit('addMeasureProperty', { property: 'scores', idKey: 'AST_ID', entry }))
-  },
 }
 
 export const getters = {
@@ -52,11 +34,7 @@ export const getters = {
     })
   },
   measuresBySystemSuitability: (state, getters) => {
-    return [...state].sort((a, b) => {
-      if (a.systemSuitability > b.systemSuitability) return -1
-      if (a.systemSuitability < b.systemSuitability) return 1
-      return 0
-    })
+    return [...state].sort((a, b) => b.systemSuitability - a.systemSuitability)
   },
   measureById: state => id => {
     return state.find(measure => measure.measureId === id)
