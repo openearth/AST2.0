@@ -136,7 +136,7 @@ export default {
         styles: [...defaultStyles, ...projectAreaStyles, ...areaStyles],
       })
 
-      this.geoCoder = new MapboxGeocoder({ accessToken: mapboxgl.accessToken })
+      this.geoCoder = new MapboxGeocoder({ accessToken: mapboxgl.accessToken, flyTo: false })
       this.geoCoder.on('results', ({ features }) => {
         MapEventBus.$emit(SEARCH_SUGGESTIONS, features)
       })

@@ -1,13 +1,22 @@
 <template>
   <div class="search-input">
-    <input
-      v-model="value"
+    <div
       :class="{ 'search-input--visible' : show }"
-      class="search-input__input"
-      type="text"
-      placeholder="Search"
-      @blur="() => $emit('hide')">
-    <md-button class="search__icon" @click="value = ''"><md-icon>close</md-icon></md-button>
+      class="search-input__input">
+      <text-input
+        v-model="value"
+        type="text"
+        placeholder="Search"
+        @input="$emit('search', value)"
+        @keyup.enter="() => suggestions.length && fly(suggestions[0])"
+        @blur="() => $emit('hide')">
+        <md-button
+          class="md-icon-button md-dense"
+          @click="() => suggestions.length && fly(suggestions[0])">
+          <md-icon>search</md-icon>
+        </md-button>
+      </text-input>
+    </div>
     <transition-group
       v-if="suggestions.length"
       class="search-input__suggestions"
@@ -25,8 +34,10 @@
 
 <script>
 import  MapEventBus, { SEARCH_SUGGESTIONS, REPOSITION } from '../../lib/map-event-bus';
+import TextInput from "~/components/text-input";
 
 export default {
+  components: { TextInput },
   props: {
     show: {
       type: Boolean,
@@ -39,11 +50,6 @@ export default {
       suggestions: [],
     }
   },
-  watch: {
-    value(val) {
-      this.$emit('search', val)
-    },
-  },
   mounted() {
     MapEventBus.$on(SEARCH_SUGGESTIONS, (items) => {
       this.suggestions = items
@@ -53,7 +59,7 @@ export default {
     fly(suggestion) {
       MapEventBus.$emit(REPOSITION, {
         center: suggestion.center,
-        zoom: 12,
+        zoom: 16,
       })
       this.$emit('hide')
     },
@@ -74,6 +80,13 @@ export default {
   opacity: 0;
   box-shadow: var(--shadow-small-grey);
   animation: show .5s ease-in-out;
+  background-color: white;
+}
+
+.search-input__input .md-field {
+  min-height: 0;
+  margin: 0;
+  padding: 0;
 }
 
 .search-input--visible {
@@ -85,6 +98,7 @@ export default {
   padding: .5rem;
   width: 350px;
   text-align: left;
+  position: absolute;
 }
 .search__icon {
   position: absolute;
