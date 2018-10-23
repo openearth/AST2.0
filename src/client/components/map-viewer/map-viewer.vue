@@ -42,17 +42,23 @@
       @zoom-in="zoomIn"
       @zoom-out="zoomOut"/>
 
+    <layer-legend
+      :layers="wmsLayers"
+      class="map-viewer__layer-legend"/>
+
+
   </div>
 </template>
 
 <script>
 import MapEventBus, { MODE, TRASH, DELETE, ZOOM_IN, ZOOM_OUT } from "../../lib/map-event-bus";
 import MapBox from "../map-box";
+import LayerLegend from "../layer-legend";
 import MapControls from "../map-controls";
 import { mapMutations, mapActions } from "vuex";
 
 export default {
-  components: { MapBox, MapControls },
+  components: { MapBox, MapControls, LayerLegend },
   props: {
     interactive: {
       type: Boolean,
@@ -156,5 +162,11 @@ export default {
   position: absolute;
   bottom: 0;
   left: 0;
+}
+
+.map-viewer__layer-legend {
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 </style>

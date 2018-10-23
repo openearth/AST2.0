@@ -48,7 +48,8 @@
           :layers="wmsLayers"
           class="map-controls__layer-list"
           @opacity-change="event => $emit('layer-opacity-change', event)"
-          @visibility-change="event => $emit('layer-visibility-change', event)"/>
+          @visibility-change="event => $emit('layer-visibility-change', event)"
+          @legend-visibility-change="event => $emit('legend-visibility-change', event)"/>
       </transition>
     </li>
 
@@ -68,24 +69,14 @@
       </md-button>
     </li>
 
-    <li v-if="layers" class="map-controls__item map-controls__item--legend">
-      <transition name="fade">
-        <layer-legend
-          v-if="showLayerLegend"
-          :layers="wmsLayers"
-          class="map-controls__layer-legend"/>
-      </transition>
-    </li>
-
   </ul>
 </template>
 
 <script>
 import LayerList from "../layer-list";
-import LayerLegend from "../layer-legend";
 
 export default {
-  components: { LayerList, LayerLegend },
+  components: { LayerList },
   props: {
     line: {
       type: Boolean,
@@ -126,7 +117,6 @@ export default {
   },
   data: () => ({
     showLayersPanel: false,
-    showLayerLegend: true,
   }),
 }
 </script>
