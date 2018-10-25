@@ -68,9 +68,9 @@
 
         <md-list-item>
           <md-button
-            :to="`/${$i18n.locale}/`"
-            :disabled="!filledInRequiredSettings"
-            class="app-menu__button">
+            :disabled="!hasAreas"
+            class="app-menu__button"
+            @click="$emit('exportProject')">
             <md-icon>publish</md-icon>
             <span class="md-body-1">
               {{ $t('export_project') }}
@@ -131,6 +131,10 @@
       filledInRequiredSettings: {
         type: Boolean,
         required: true,
+        default: false,
+      },
+      hasAreas: {
+        type: Boolean,
         default: false,
       },
     },

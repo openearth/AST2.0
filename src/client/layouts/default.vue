@@ -7,10 +7,12 @@
       :accepted-legal="acceptedLegal"
       :created-project-area="createdProjectArea"
       :filled-in-required-settings="filledInRequiredProjectAreaSettings"
+      :has-areas="!!areas.length"
       @onCloseNavigation="hideMenu"
       @saveProject="saveProject"
       @importProject="onFileInput"
-      @newProject="onNewProject"/>
+      @newProject="onNewProject"
+      @exportProject="() => {showExport(); hideMenu();}"/>
 
     <div class="layout__content">
       <div v-if="mode === 'modal'" class="layout__page-wrapper">
@@ -50,6 +52,25 @@
     </div>
 
     <virtual-keyboard class="layout__virtual-keyboard"/>
+
+    <md-dialog :md-active="exportShown">
+      <md-dialog-title>{{ $t('export_project') }}</md-dialog-title>
+
+      <md-dialog-content>
+        <p class="md-body">{{ $t('export_description') }}</p>
+        <md-field>
+          <label for="movie">{{ $t('format') }}</label>
+          <md-select @input="value => { hideExport(); exportProject(value) }">
+            <md-option value="csv">{{ $t('csv') }}</md-option>
+            <md-option value="geojson">{{ $t('geojson') }}</md-option>
+          </md-select>
+        </md-field>
+      </md-dialog-content>
+
+      <md-dialog-actions>
+        <md-button class="md-primary" @click="hideExport">Close</md-button>
+      </md-dialog-actions>
+    </md-dialog>
 
     <transition name="slide-up">
       <app-disclaimer
@@ -92,6 +113,7 @@ export default {
       mapMode: state => state.map.mode,
       notifications: state => state.notifications.messages,
       mode: state => state.mode.state,
+      exportShown: state => state.flow.export,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings']),
@@ -117,6 +139,8 @@ export default {
       acceptLegal: 'project/acceptLegal',
       showMenu: 'appMenu/showMenu',
       hideMenu: 'appMenu/hideMenu',
+      showExport: 'flow/showExport',
+      hideExport: 'flow/hideExport',
       removeNotification: 'notifications/remove',
     }),
     ...mapActions({
@@ -129,6 +153,7 @@ export default {
       setMapPosition: 'project/setMapPosition',
       showError: 'notifications/showError',
       clearState: 'project/clearState',
+      exportProject: 'project/exportProject',
     }),
     async onFileInput(event) {
       this.importProject(event)
