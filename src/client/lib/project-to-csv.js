@@ -5,10 +5,10 @@ function value(input) {
 }
 
 export default function projectToCsv(areas, kpiKeys, measureById) {
-  const header = ['id', 'measure', 'type', 'length', 'width', 'depth', 'area', 'inflow'].concat(kpiKeys)
+  const header = ['id', 'measure', 'type', 'length', 'width', 'depth', 'radius', 'area', 'inflow'].concat(kpiKeys)
   const results = areas
     .map(({ id, properties, geometry }) => {
-      const { measure, area, length, areaDepth, defaultDepth, areaWidth, defaultWidth, areaInflow, defaultInflow, apiData } = properties
+      const { measure, area, length, radius, areaDepth, defaultDepth, areaWidth, defaultWidth, areaInflow, defaultInflow, apiData } = properties
       const { type } = geometry
       const measureObj = measureById(measure) || {}
       return [
@@ -18,11 +18,13 @@ export default function projectToCsv(areas, kpiKeys, measureById) {
         value(length),
         value(areaWidth || defaultWidth),
         value(areaDepth || defaultDepth),
+        value(radius),
         value(area),
         value(areaInflow || defaultInflow),
         ...kpiKeys.map(key => value(apiData && apiData[key])),
       ]
     })
-    .map(record => record.join(','))
-  return [header, ...results].join('\n')
+  return [header, ...results]
+    .map(record => record.join(';'))
+    .join('\n')
 }

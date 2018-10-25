@@ -368,6 +368,7 @@ export const getters = {
     return state.areas.map(feature => {
       let area;
       let length;
+      let radius;
       switch (feature.geometry.type) {
         case 'LineString':
           const width = feature.properties.areaWidth || feature.properties.defaultWidth
@@ -375,7 +376,7 @@ export const getters = {
           area = length * parseFloat(width)
           break;
         case 'Point':
-          const radius = feature.properties.areaRadius || feature.properties.defaultRadius
+          radius = feature.properties.areaRadius || feature.properties.defaultRadius
           area = Math.PI * (radius * radius)
           break;
         case 'Polygon':
@@ -388,7 +389,7 @@ export const getters = {
       return merge(
         {},
         feature,
-        { properties: { area, length } }
+        { properties: { area, length, radius } }
       )
     })
   },
