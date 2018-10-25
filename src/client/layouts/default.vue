@@ -70,6 +70,13 @@ import EventBus, { CLICK } from "~/lib/event-bus";
 
 export default {
   components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu },
+  head() {
+    return {
+      meta: [
+        { hid: 'description', name: 'description', content: this.$i18n.t('app_description') },
+      ],
+    }
+  },
   data() {
     return {
       disclaimer: {},
