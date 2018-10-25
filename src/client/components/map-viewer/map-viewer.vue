@@ -22,6 +22,7 @@
     />
 
     <map-controls
+      :search="interactive && search"
       :line="interactive && line"
       :polygon="interactive && polygon"
       :point="interactive && point"
@@ -32,6 +33,7 @@
       class="map-viewer__controls--draw"
       @setMode="setMode"
       @trash="onClickDelete"
+      @search="onSearch"
       @layer-opacity-change="setLayerOpacity"
       @layer-visibility-change="setLayerVisibility"/>
 
@@ -46,7 +48,7 @@
 </template>
 
 <script>
-import MapEventBus, { MODE, TRASH, DELETE, ZOOM_IN, ZOOM_OUT } from "../../lib/map-event-bus";
+import MapEventBus, { MODE, TRASH, DELETE, ZOOM_IN, ZOOM_OUT, SEARCH } from "../../lib/map-event-bus";
 import MapBox from "../map-box";
 import MapControls from "../map-controls";
 import { mapMutations, mapActions } from "vuex";
@@ -69,6 +71,10 @@ export default {
     polygon: {
       type: Boolean,
       default: true,
+    },
+    search: {
+      type: Boolean,
+      default: false,
     },
     layers: {
       type: Boolean,
@@ -123,6 +129,7 @@ export default {
     onClickDelete() { MapEventBus.$emit(DELETE) },
     zoomIn() { MapEventBus.$emit(ZOOM_IN) },
     zoomOut() { MapEventBus.$emit(ZOOM_OUT) },
+    onSearch(event) { MapEventBus.$emit(SEARCH, event) },
   },
 }
 </script>
@@ -159,5 +166,9 @@ export default {
   position: absolute;
   bottom: 0;
   left: 0;
+}
+
+.mapboxgl-ctrl-top-right {
+  display: none;
 }
 </style>

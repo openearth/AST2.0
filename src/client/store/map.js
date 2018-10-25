@@ -80,4 +80,15 @@ export const getters = {
         return true
     }
   },
+
+  search(state, getters, rootState) {
+    const mode = rootState.mode.state
+
+    switch (mode) {
+      case 'draw-project-area':
+        return true
+      default:
+        return false
+    }
+  },
 }
