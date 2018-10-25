@@ -4,8 +4,9 @@
     <md-input
       ref="inputElement"
       :value="value"
-      @change="event => onChange(event.target.value)"
-      @input="value => onChange(value)"
+      @change="event => { $emit('change', event); onChange(event.target.value) }"
+      @input="value => { $emit('input', value); onChange(value)}"
+      @keyup="event => $emit('keyup', event)"
     />
 
     <slot />

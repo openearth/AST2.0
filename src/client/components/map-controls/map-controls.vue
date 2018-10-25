@@ -1,5 +1,22 @@
 <template>
   <ul class="map-controls">
+    <li v-if="search" class="map-controls__item map-controls__item--search">
+      <md-button
+        :class="{'md-primary': showSearch}"
+        class="md-icon-button md-raised"
+        @click="showSearch = !showSearch">
+        <md-icon>search</md-icon>
+      </md-button>
+      <search-input
+        v-if="showSearch"
+        :show="showSearch"
+        @search="(value) => {
+          $emit('search', value)
+        }"
+        @hide="showSearch = false"
+      />
+    </li>
+
     <li v-if="polygon" class="map-controls__item map-controls__item--polygon">
       <md-button
         :class="{'md-primary': currentMode === 'draw_polygon'}"
@@ -49,7 +66,8 @@
           :layers="wmsLayers"
           class="map-controls__layer-list"
           @opacity-change="event => $emit('layer-opacity-change', event)"
-          @visibility-change="event => $emit('layer-visibility-change', event)"/>
+          @visibility-change="event => $emit('layer-visibility-change', event)"
+          @legend-visibility-change="event => $emit('legend-visibility-change', event)"/>
       </transition>
     </li>
 
@@ -68,15 +86,17 @@
         <md-icon>remove</md-icon>
       </md-button>
     </li>
+
   </ul>
 </template>
 
 <script>
+import SearchInput from '../search-input'
 import LayerList from "../layer-list";
 import EventBus, { CLICK } from "~/lib/event-bus";
 
 export default {
-  components: { LayerList },
+  components: { SearchInput, LayerList },
   props: {
     line: {
       type: Boolean,
@@ -110,6 +130,10 @@ export default {
       type: String,
       default: '',
     },
+    search: {
+      type: Boolean,
+      default: false,
+    },
     wmsLayers: {
       type: Array,
       default: () => [],
@@ -117,6 +141,7 @@ export default {
   },
   data: () => ({
     showLayersPanel: false,
+    showSearch: false,
   }),
   watch: {
     showLayersPanel(shown) {
@@ -150,6 +175,10 @@ export default {
   margin-bottom: 6px;
 }
 
+.map-controls__item--search {
+  display: flex;
+  align-items: center;
+}
 .map-controls__item--layers {
   position: relative;
 }

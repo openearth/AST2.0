@@ -29,6 +29,7 @@
           :point="point"
           :line="line"
           :polygon="polygon"
+          :search="search"
           :interactive="interactive"
           :map-center="center"
           :map-zoom="zoom"
@@ -78,18 +79,23 @@
         class="layout__disclaimer"
         @accepted="acceptLegal"/>
     </transition>
+
+    <notification-area
+      :notifications="notifications"
+      @remove-notification="removeNotification"
+    />
   </div>
 </template>
 
 <script>
 import { mapState, mapMutations, mapGetters, mapActions } from "vuex";
-import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu } from '../components'
+import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea } from '../components'
 import { mapFields } from 'vuex-map-fields';
 import getData from '~/lib/get-data'
 import EventBus, { CLICK } from "~/lib/event-bus";
 
 export default {
-  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu },
+  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea },
   data() {
     return {
       disclaimer: {},
@@ -105,13 +111,14 @@ export default {
       showNavigation: state => state.appMenu.show,
       title: state => state.project.settings.general.title,
       mapMode: state => state.map.mode,
+      notifications: state => state.notifications.messages,
       mode: state => state.mode.state,
       exportShown: state => state.flow.export,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings']),
     ...mapGetters({ selectedAreas:  'selectedAreas/features' }),
-    ...mapGetters('map', ['isProject', 'point', 'line', 'polygon', 'interactive']),
+    ...mapGetters('map', ['isProject', 'point', 'line', 'polygon', 'interactive', 'search']),
   },
   async beforeMount() {
     const locale = this.$i18n.locale
@@ -134,6 +141,7 @@ export default {
       hideMenu: 'appMenu/hideMenu',
       showExport: 'flow/showExport',
       hideExport: 'flow/hideExport',
+      removeNotification: 'notifications/remove',
     }),
     ...mapActions({
       createArea: 'project/createArea',
@@ -143,12 +151,14 @@ export default {
       importProject: 'project/importProject',
       saveProject: 'project/saveProject',
       setMapPosition: 'project/setMapPosition',
+      showError: 'notifications/showError',
       clearState: 'project/clearState',
       exportProject: 'project/exportProject',
     }),
     async onFileInput(event) {
       this.importProject(event)
         .then(() => this.$router.push(this.currentFilledInLevel.uri))
+        .catch(error => this.showError(this.$i18n.t('could_not_load_file')))
     },
     onNewProject() {
       if (this.projectArea.id || this.areas.length) {
