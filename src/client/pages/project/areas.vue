@@ -34,10 +34,6 @@
               <div class="areas__choose-wrapper">
                 <div class="areas__choose-content">
                   <p v-if="appliedMeasure">{{ appliedMeasure.title }}</p>
-                  <hint-text
-                    v-else
-                    :text="$t('empty_area_measure')"
-                    class="areas__hint-text"/>
                   <md-button :to="`/${locale}/project/measures`" class="md-primary md-raised areas__choose-button">{{ appliedMeasure ? $t('change_measure') : $t('choose_measure') }}</md-button>
                 </div>
                 <div v-if="appliedMeasure" class="areas__choose-icon">
@@ -66,7 +62,7 @@
                 :value="feature.properties.areaWidth || feature.properties.defaultWidth"
                 :min="getDefaultValueProperty('width', 'min', appliedMeasure.defaultValues)"
                 :max="getDefaultValueProperty('width', 'max', appliedMeasure.defaultValues)"
-                label="Width"
+                :label="$t('area_width')"
                 @change="value => updateAreaProperties({ features: [feature], properties: { areaWidth: value }})"
               />
 
@@ -75,7 +71,7 @@
                 :value="feature.properties.areaRadius || feature.properties.defaultRadius"
                 :min="getDefaultValueProperty('radius', 'min', appliedMeasure.defaultValues)"
                 :max="getDefaultValueProperty('radius', 'max', appliedMeasure.defaultValues)"
-                label="Radius"
+                :label="$t('area_radius')"
                 @change="value => updateAreaProperties({ features: [feature], properties: { areaRadius: value }})"
               />
 

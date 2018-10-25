@@ -1,5 +1,5 @@
 <template>
-  <div class="layout-default">
+  <div ref="base" class="layout">
     <app-header :title="title" @onShowNavigation="showMenu"/>
     <app-menu
       :show-navigation="showNavigation"
@@ -12,58 +12,103 @@
       @importProject="onFileInput"
       @newProject="onNewProject"/>
 
-    <div class="layout-default__content">
-      <nuxt />
-
-      <md-content class="layout-default__map-wrapper">
+    <div class="layout__content">
+      <div v-if="mode === 'modal'" class="layout__page-wrapper">
+        <md-content class="md-elevation-6">
+          <nuxt class="layout__page"/>
+        </md-content>
+      </div>
+      <nuxt v-else />
+      <md-content class="layout__map-wrapper">
         <map-viewer
           :project-area="projectArea"
+          :is-project="isProject"
           :areas="areas"
-          :is-project="true"
+          :point="point"
+          :line="line"
+          :polygon="polygon"
+          :search="search"
+          :interactive="interactive"
           :map-center="center"
           :map-zoom="zoom"
           :current-mode="mapMode"
           :wms-layers="wmsLayers"
-          class="layout-default__map"
+          :mode="mode"
+          class="layout__map"
           @create="createArea"
           @update="updateArea"
           @delete="deleteArea"
           @selectionchange="selectionChange"
           @move="setMapPosition"/>
         <kpi-panel
+          v-if="filledInSettings"
           :kpis="filteredKpiGroups"
           :kpi-values="filteredKpiValues"
           :kpi-percentage-values="filteredKpiPercentageValues"
           :selected-areas="selectedAreas && selectedAreas[0]"/>
       </md-content>
     </div>
-    <virtual-keyboard class="layout-default__virtual-keyboard"/>
+
+    <virtual-keyboard class="layout__virtual-keyboard"/>
+
+    <transition name="slide-up">
+      <app-disclaimer
+        v-if="!legalAccepted"
+        :disclaimer="disclaimer"
+        class="layout__disclaimer"
+        @accepted="acceptLegal"/>
+    </transition>
   </div>
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
-import { AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu } from '../components'
+import { mapState, mapMutations, mapGetters, mapActions } from "vuex";
+import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu } from '../components'
 import { mapFields } from 'vuex-map-fields';
+import getData from '~/lib/get-data'
+import EventBus, { CLICK } from "~/lib/event-bus";
 
 export default {
-  components: { AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu },
+  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu },
+  data() {
+    return {
+      disclaimer: {},
+    }
+  },
   computed: {
     ...mapState({
       map: state => state.project.map,
       projectArea: state => state.project.settings.area,
+      legalAccepted: state => state.project.legalAccepted,
       center: state => state.project.map.center,
       zoom: state => state.project.map.zoom,
       showNavigation: state => state.appMenu.show,
       title: state => state.project.settings.general.title,
       mapMode: state => state.map.mode,
+      mode: state => state.mode.state,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers']),
-    ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel']),
+    ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings']),
     ...mapGetters({ selectedAreas:  'selectedAreas/features' }),
+    ...mapGetters('map', ['isProject', 'point', 'line', 'polygon', 'interactive', 'search']),
   },
+  async beforeMount() {
+    const locale = this.$i18n.locale
+    const data =  await getData({ locale, slug: 'legal' })
+    this.disclaimer = { ...data.legal.disclaimer }
+  },
+
+  mounted() {
+    this.$refs.base.addEventListener('click', this.dispatchClickEvent)
+  },
+
+  beforeDestroy() {
+    this.$refs.base.removeEventListener('click', this.dispatchClickEvent)
+  },
+
   methods: {
     ...mapMutations({
+      acceptLegal: 'project/acceptLegal',
       showMenu: 'appMenu/showMenu',
       hideMenu: 'appMenu/hideMenu',
     }),
@@ -96,6 +141,9 @@ export default {
       this.hideMenu()
       this.$router.push(`/${this.$i18n.locale}/new-project`)
     },
+    dispatchClickEvent(event) {
+      EventBus.$emit(CLICK, event)
+    },
   },
 }
 </script>
@@ -103,7 +151,7 @@ export default {
 <style>
 @import '../components/app-core/index.css';
 
-.layout-default {
+.layout {
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -111,25 +159,49 @@ export default {
   position: relative;
 }
 
-.layout-default__content {
+.layout__content {
   overflow-y: scroll;
   display: flex;
   flex: 1;
+  z-index: 0;
 }
 
-.layout-default__map-wrapper {
+.layout__map-wrapper {
   flex: 1;
   display: flex;
+  z-index: 0;
 }
 
-.layout-default__map {
+.layout__map {
   flex: 1;
 }
 
-.layout-default__virtual-keyboard {
+.layout__page-wrapper {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.layout__page {
+  padding: var(--spacing-default);
+}
+
+.layout__virtual-keyboard {
   position: absolute;
   width: 100vw;
   height: 100vh;
   z-index: 5;
+}
+
+.layout__disclaimer {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
 }
 </style>

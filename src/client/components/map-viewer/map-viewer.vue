@@ -11,6 +11,7 @@
       :map-zoom="mapZoom"
       :map-center="mapCenter"
       :wms-layers="wmsLayers"
+      :mode="mode"
       class="map-viewer__map"
       @create="onCreate"
       @update="onUpdate"
@@ -21,6 +22,7 @@
     />
 
     <map-controls
+      :search="interactive && search"
       :line="interactive && line"
       :polygon="interactive && polygon"
       :point="interactive && point"
@@ -31,6 +33,7 @@
       class="map-viewer__controls--draw"
       @setMode="setMode"
       @trash="onClickDelete"
+      @search="onSearch"
       @layer-opacity-change="setLayerOpacity"
       @legend-visibility-change="setLegendVisibility"
       @layer-visibility-change="setLayerVisibility"/>
@@ -52,7 +55,7 @@
 </template>
 
 <script>
-import MapEventBus, { MODE, TRASH, DELETE, ZOOM_IN, ZOOM_OUT } from "../../lib/map-event-bus";
+import MapEventBus, { MODE, TRASH, DELETE, ZOOM_IN, ZOOM_OUT, SEARCH } from "../../lib/map-event-bus";
 import MapBox from "../map-box";
 import LayerLegend from "../layer-legend";
 import MapControls from "../map-controls";
@@ -76,6 +79,10 @@ export default {
     polygon: {
       type: Boolean,
       default: true,
+    },
+    search: {
+      type: Boolean,
+      default: false,
     },
     layers: {
       type: Boolean,
@@ -109,6 +116,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    mode: {
+      type: String,
+      default: '',
+    },
   },
   methods: {
     ...mapActions({
@@ -127,6 +138,7 @@ export default {
     onClickDelete() { MapEventBus.$emit(DELETE) },
     zoomIn() { MapEventBus.$emit(ZOOM_IN) },
     zoomOut() { MapEventBus.$emit(ZOOM_OUT) },
+    onSearch(event) { MapEventBus.$emit(SEARCH, event) },
   },
 }
 </script>
@@ -169,5 +181,10 @@ export default {
   position: absolute;
   top: 0;
   right: 0;
+}
+
+.mapboxgl-ctrl-top-right {
+  display: none;
+
 }
 </style>
