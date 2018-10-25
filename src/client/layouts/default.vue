@@ -101,6 +101,14 @@ export default {
       disclaimer: {},
     }
   },
+  head() {
+    return {
+      meta: [
+        { hid: 'description', name: 'description', content: this.$i18n.t('app_description') },
+      ],
+    }
+  },
+
   computed: {
     ...mapState({
       map: state => state.project.map,

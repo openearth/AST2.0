@@ -1,8 +1,9 @@
 const propertiesSchema = (kpiGroups) => ({
   type: 'object',
-  additionalProperties: false,
   properties: {
     area: { type: 'number' },
+    length: { type: 'number' },
+    radius: { type: 'number' },
     areaDepth: { type: ['number', 'string', 'null'] },
     areaInflow: { type: ['number', 'string', 'null'] },
     areaWidth: { type: ['number', 'string', 'null'] },
