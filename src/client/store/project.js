@@ -310,6 +310,7 @@ export const actions = {
       commit('data/measures/addMeasuresRanking', rankedMeasures, { root: true })
     }
   },
+
   async importProject({ state, commit, rootGetters, rootState }, event) {
     const { name } = event.target.files[0]
     const loadedProject = await getLoadedFileContents(event)
@@ -335,6 +336,10 @@ export const actions = {
     }
 
     commit('appMenu/hideMenu', null, { root: true })
+
+    if (!validProject.valid) {
+      throw new Error('New error')
+    }
   },
   saveProject({ state, commit }) {
     const { title } = state.settings.general

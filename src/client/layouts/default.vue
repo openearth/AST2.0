@@ -58,18 +58,23 @@
         class="layout__disclaimer"
         @accepted="acceptLegal"/>
     </transition>
+
+    <notification-area
+      :notifications="notifications"
+      @remove-notification="removeNotification"
+    />
   </div>
 </template>
 
 <script>
 import { mapState, mapMutations, mapGetters, mapActions } from "vuex";
-import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu } from '../components'
+import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea } from '../components'
 import { mapFields } from 'vuex-map-fields';
 import getData from '~/lib/get-data'
 import EventBus, { CLICK } from "~/lib/event-bus";
 
 export default {
-  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu },
+  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea },
   data() {
     return {
       disclaimer: {},
@@ -85,6 +90,7 @@ export default {
       showNavigation: state => state.appMenu.show,
       title: state => state.project.settings.general.title,
       mapMode: state => state.map.mode,
+      notifications: state => state.notifications.messages,
       mode: state => state.mode.state,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers']),
@@ -111,6 +117,7 @@ export default {
       acceptLegal: 'project/acceptLegal',
       showMenu: 'appMenu/showMenu',
       hideMenu: 'appMenu/hideMenu',
+      removeNotification: 'notifications/remove',
     }),
     ...mapActions({
       createArea: 'project/createArea',
@@ -120,11 +127,13 @@ export default {
       importProject: 'project/importProject',
       saveProject: 'project/saveProject',
       setMapPosition: 'project/setMapPosition',
+      showError: 'notifications/showError',
       clearState: 'project/clearState',
     }),
     async onFileInput(event) {
       this.importProject(event)
         .then(() => this.$router.push(this.currentFilledInLevel.uri))
+        .catch(error => this.showError(this.$i18n.t('could_not_load_file')))
     },
     onNewProject() {
       if (this.projectArea.id || this.areas.length) {
