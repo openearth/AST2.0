@@ -7,6 +7,8 @@ import { getApiDataForFeature, getRankedMeasures } from "../lib/get-api-data";
 import FileSaver from 'file-saver'
 import getLoadedFileContents from '../lib/get-loaded-file-contents'
 import validateProject from '../lib/validate-project'
+import projectToGeoJson from '../lib/project-to-geojson'
+import projectToCsv from '../lib/project-to-csv'
 
 const initialState = () => ({
   legalAccepted: false,
@@ -310,6 +312,7 @@ export const actions = {
       commit('data/measures/addMeasuresRanking', rankedMeasures, { root: true })
     }
   },
+
   async importProject({ state, commit, rootGetters, rootState }, event) {
     const { name } = event.target.files[0]
     const loadedProject = await getLoadedFileContents(event)
@@ -335,6 +338,10 @@ export const actions = {
     }
 
     commit('appMenu/hideMenu', null, { root: true })
+
+    if (!validProject.valid) {
+      throw new Error('New error')
+    }
   },
   saveProject({ state, commit }) {
     const { title } = state.settings.general
@@ -342,6 +349,17 @@ export const actions = {
     commit('appMenu/hideMenu', null, { root: true })
     return FileSaver.saveAs(blob, `${title || 'ast_project'}.json`)
   },
+
+  exportProject({ state, getters, rootState, rootGetters }, format) {
+    const { title } = state.settings.general
+    const data = format === 'csv'
+      ? projectToCsv(getters.areas, Object.keys(getters.kpiValues), rootGetters['data/measures/measureById'])
+      : projectToGeoJson(getters.areas)
+    const type = format === 'csv' ? 'text/csv' : 'application/json';
+    const blob = new Blob([data], { type })
+    return FileSaver.saveAs(blob, `${title || 'ast_project'}.${format}`)
+  },
+
   clearState({ commit, dispatch, rootState }) {
     const areaSettings = rootState.data.areaSettings
     const kpiGroups = rootState.data.kpiGroups
@@ -359,13 +377,16 @@ export const getters = {
   areas: (state) => {
     return state.areas.map(feature => {
       let area;
+      let length;
+      let radius;
       switch (feature.geometry.type) {
         case 'LineString':
           const width = feature.properties.areaWidth || feature.properties.defaultWidth
-          area = (turfLength(feature.geometry) * 1000) * parseFloat(width)
+          length = turfLength(feature.geometry) * 1000
+          area = length * parseFloat(width)
           break;
         case 'Point':
-          const radius = feature.properties.areaRadius || feature.properties.defaultRadius
+          radius = feature.properties.areaRadius || feature.properties.defaultRadius
           area = Math.PI * (radius * radius)
           break;
         case 'Polygon':
@@ -378,7 +399,7 @@ export const getters = {
       return merge(
         {},
         feature,
-        { properties: { area } }
+        { properties: { area, length, radius } }
       )
     })
   },

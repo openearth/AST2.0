@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions } from "vuex";
+import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
 import MapEventBus, { REDRAW } from "../lib/map-event-bus"
 
 export default {
@@ -43,10 +43,12 @@ export default {
   methods: {
     ...mapActions({
       importProject: 'project/importProject',
+      showError: 'notifications/showError',
     }),
     async onFileInput(event) {
       this.importProject(event)
         .then(() => this.$router.push(this.currentFilledInLevel.uri))
+        .catch(error => this.showError(this.$i18n.t('could_not_load_file')))
     },
   },
 }

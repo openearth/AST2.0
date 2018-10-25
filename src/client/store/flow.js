@@ -12,11 +12,20 @@ import {
 
 export const state = () => ({
   fullPath: {},
+  export: false,
 })
 
 export const mutations = {
   setRoute(state, { fullPath }) {
     state.fullPath = fullPath
+  },
+
+  showExport(state) {
+    state.export = true
+  },
+
+  hideExport(state) {
+    state.export = false
   },
 }
 

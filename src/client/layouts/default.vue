@@ -7,10 +7,12 @@
       :accepted-legal="acceptedLegal"
       :created-project-area="createdProjectArea"
       :filled-in-required-settings="filledInRequiredProjectAreaSettings"
+      :has-areas="!!areas.length"
       @onCloseNavigation="hideMenu"
       @saveProject="saveProject"
       @importProject="onFileInput"
-      @newProject="onNewProject"/>
+      @newProject="onNewProject"
+      @exportProject="() => {showExport(); hideMenu();}"/>
 
     <div class="layout__content">
       <div v-if="mode === 'modal'" class="layout__page-wrapper">
@@ -51,6 +53,25 @@
 
     <virtual-keyboard class="layout__virtual-keyboard"/>
 
+    <md-dialog :md-active="exportShown">
+      <md-dialog-title>{{ $t('export_project') }}</md-dialog-title>
+
+      <md-dialog-content>
+        <p class="md-body">{{ $t('export_description') }}</p>
+        <md-field>
+          <label for="movie">{{ $t('format') }}</label>
+          <md-select @input="value => { hideExport(); exportProject(value) }">
+            <md-option value="csv">{{ $t('csv') }}</md-option>
+            <md-option value="geojson">{{ $t('geojson') }}</md-option>
+          </md-select>
+        </md-field>
+      </md-dialog-content>
+
+      <md-dialog-actions>
+        <md-button class="md-primary" @click="hideExport">Close</md-button>
+      </md-dialog-actions>
+    </md-dialog>
+
     <transition name="slide-up">
       <app-disclaimer
         v-if="!legalAccepted"
@@ -58,18 +79,28 @@
         class="layout__disclaimer"
         @accepted="acceptLegal"/>
     </transition>
+
+    <notification-area
+      :notifications="notifications"
+      @remove-notification="removeNotification"
+    />
   </div>
 </template>
 
 <script>
 import { mapState, mapMutations, mapGetters, mapActions } from "vuex";
-import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu } from '../components'
+import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea } from '../components'
 import { mapFields } from 'vuex-map-fields';
 import getData from '~/lib/get-data'
 import EventBus, { CLICK } from "~/lib/event-bus";
 
 export default {
-  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu },
+  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea },
+  data() {
+    return {
+      disclaimer: {},
+    }
+  },
   head() {
     return {
       meta: [
@@ -77,11 +108,7 @@ export default {
       ],
     }
   },
-  data() {
-    return {
-      disclaimer: {},
-    }
-  },
+
   computed: {
     ...mapState({
       map: state => state.project.map,
@@ -92,7 +119,9 @@ export default {
       showNavigation: state => state.appMenu.show,
       title: state => state.project.settings.general.title,
       mapMode: state => state.map.mode,
+      notifications: state => state.notifications.messages,
       mode: state => state.mode.state,
+      exportShown: state => state.flow.export,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings']),
@@ -118,6 +147,9 @@ export default {
       acceptLegal: 'project/acceptLegal',
       showMenu: 'appMenu/showMenu',
       hideMenu: 'appMenu/hideMenu',
+      showExport: 'flow/showExport',
+      hideExport: 'flow/hideExport',
+      removeNotification: 'notifications/remove',
     }),
     ...mapActions({
       createArea: 'project/createArea',
@@ -127,11 +159,14 @@ export default {
       importProject: 'project/importProject',
       saveProject: 'project/saveProject',
       setMapPosition: 'project/setMapPosition',
+      showError: 'notifications/showError',
       clearState: 'project/clearState',
+      exportProject: 'project/exportProject',
     }),
     async onFileInput(event) {
       this.importProject(event)
         .then(() => this.$router.push(this.currentFilledInLevel.uri))
+        .catch(error => this.showError(this.$i18n.t('could_not_load_file')))
     },
     onNewProject() {
       if (this.projectArea.id || this.areas.length) {
