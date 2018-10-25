@@ -66,7 +66,8 @@
           :layers="wmsLayers"
           class="map-controls__layer-list"
           @opacity-change="event => $emit('layer-opacity-change', event)"
-          @visibility-change="event => $emit('layer-visibility-change', event)"/>
+          @visibility-change="event => $emit('layer-visibility-change', event)"
+          @legend-visibility-change="event => $emit('legend-visibility-change', event)"/>
       </transition>
     </li>
 
@@ -85,6 +86,7 @@
         <md-icon>remove</md-icon>
       </md-button>
     </li>
+
   </ul>
 </template>
 

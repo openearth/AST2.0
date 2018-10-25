@@ -118,8 +118,13 @@ export const mutations = {
       if (id === layer.id) {
         layer.visible = value
         layer.showLegend = value
-      } else {
-        layer.showLegend = false
+      }
+    })
+  },
+  setLegendVisibility(state, { id, value }) {
+    state.map.wmsLayers.forEach(layer => {
+      if (id === layer.id) {
+        layer.showLegend = value
       }
     })
   },
@@ -473,20 +478,11 @@ export const getters = {
   },
   wmsLayers: (state, getters, rootState, rootGetters) => {
     return state.map.wmsLayers
-    .map(({ id, visible, opacity }) => ({
+    .map(({ id, visible, opacity, showLegend }) => ({
       ...rootGetters['data/wmsLayers/constructed'].find(layer => layer.id === id),
       visible,
+      showLegend,
       opacity,
     }))
-  },
-  wmsLayerLegend: (state, getters, rootState, rootGetters) => {
-    const [layer] = state.map.wmsLayers
-      .filter(layer => layer.showLegend)
-      .map(({ id, visible, opacity }) => ({
-        ...rootGetters['data/wmsLayers/constructed'].find(layer => layer.id === id),
-        visible,
-        opacity,
-      }))
-    return layer
   },
 }

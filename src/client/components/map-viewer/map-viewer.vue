@@ -35,6 +35,7 @@
       @trash="onClickDelete"
       @search="onSearch"
       @layer-opacity-change="setLayerOpacity"
+      @legend-visibility-change="setLegendVisibility"
       @layer-visibility-change="setLayerVisibility"/>
 
     <map-controls
@@ -44,17 +45,24 @@
       @zoom-in="zoomIn"
       @zoom-out="zoomOut"/>
 
+    <layer-legend
+      v-if="interactive && layers"
+      :layers="wmsLayers"
+      class="map-viewer__layer-legend"/>
+
+
   </div>
 </template>
 
 <script>
 import MapEventBus, { MODE, TRASH, DELETE, ZOOM_IN, ZOOM_OUT, SEARCH } from "../../lib/map-event-bus";
 import MapBox from "../map-box";
+import LayerLegend from "../layer-legend";
 import MapControls from "../map-controls";
 import { mapMutations, mapActions } from "vuex";
 
 export default {
-  components: { MapBox, MapControls },
+  components: { MapBox, MapControls, LayerLegend },
   props: {
     interactive: {
       type: Boolean,
@@ -120,6 +128,7 @@ export default {
     ...mapMutations({
       setLayerOpacity: 'project/setLayerOpacity',
       setLayerVisibility: 'project/setLayerVisibility',
+      setLegendVisibility:'project/setLegendVisibility',
     }),
     onCreate(event) { this.$emit('create', event) },
     onUpdate(event) { this.$emit('update', event) },
@@ -168,7 +177,14 @@ export default {
   left: 0;
 }
 
+.map-viewer__layer-legend {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
 .mapboxgl-ctrl-top-right {
   display: none;
+
 }
 </style>
