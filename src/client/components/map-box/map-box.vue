@@ -5,6 +5,7 @@
 <script>
 import projectAreaStyles from './project-area-styles'
 import areaStyles from './area-styles'
+import getData from '~/lib/get-data'
 import MapEventBus, {
   UPDATE_FEATURE_PROPERTY,
   REDRAW,
@@ -15,6 +16,9 @@ import MapEventBus, {
   ZOOM_IN,
   ZOOM_OUT,
   SELECT,
+  SEARCH,
+  SEARCH_SUGGESTIONS,
+  FLY_TO,
   REPAINT,
 } from '../../lib/map-event-bus'
 
@@ -109,7 +113,7 @@ export default {
   async mounted() {
     const mapZoom = this.mapZoom
     const { lat, lng } = this.mapCenter
-    const [mapboxgl, MapboxDraw] = await Promise.all([import('mapbox-gl'), import('@mapbox/mapbox-gl-draw')])
+    const [mapboxgl, MapboxDraw, MapboxGeocoder, mapboxBaseStyle] = await Promise.all([import('mapbox-gl'), import('@mapbox/mapbox-gl-draw'), import('@mapbox/mapbox-gl-geocoder'), getData({ folder: 'mapbox-base-layer', slug: 'style' })])
     const defaultStyles = [...new MapboxDraw().options.styles]
       .filter(style => /\.hot$/.test(style.id))
       .map(({ source, ...style }) => ({ ...style, id: style.id.replace('.hot', '') }))
@@ -122,7 +126,7 @@ export default {
     if (this.$refs.map) {
       this.map = new mapboxgl.Map({
         container: this.$refs.map,
-        style: 'mapbox://styles/mapbox/streets-v9',
+        style: mapboxBaseStyle,
         zoom: this.mapZoom,
         center: [lng, lat],
         showZoom: false,
@@ -131,6 +135,11 @@ export default {
         displayControlsDefault: false,
         userProperties: true,
         styles: [...defaultStyles, ...projectAreaStyles, ...areaStyles],
+      })
+
+      this.geoCoder = new MapboxGeocoder({ accessToken: mapboxgl.accessToken, flyTo: false })
+      this.geoCoder.on('results', ({ features }) => {
+        MapEventBus.$emit(SEARCH_SUGGESTIONS, features)
       })
 
       this.initialShapes.forEach(shape => {
@@ -148,6 +157,7 @@ export default {
         [...this.wmsLayers].reverse().forEach(this.addWmsLayer)
         this.map.resize()
         this.map.addControl(this.draw, 'top-left')
+        this.map.addControl(this.geoCoder)
         this.fillMap()
         this.renderWmsLayersVisibility()
         this.renderWmsLayersOpacity()
@@ -163,6 +173,10 @@ export default {
 
       MapEventBus.$on(REDRAW, () => {
         this.map.resize()
+      })
+
+      MapEventBus.$on(SEARCH, (value) => {
+        this.geoCoder.setInput(value).query(value)
       })
 
       MapEventBus.$on(REPOSITION, ({ center, zoom }) => {

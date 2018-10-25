@@ -22,6 +22,7 @@
     />
 
     <map-controls
+      :search="interactive && search"
       :line="interactive && line"
       :polygon="interactive && polygon"
       :point="interactive && point"
@@ -32,7 +33,9 @@
       class="map-viewer__controls--draw"
       @setMode="setMode"
       @trash="onClickDelete"
+      @search="onSearch"
       @layer-opacity-change="setLayerOpacity"
+      @legend-visibility-change="setLegendVisibility"
       @layer-visibility-change="setLayerVisibility"/>
 
     <map-controls
@@ -42,17 +45,24 @@
       @zoom-in="zoomIn"
       @zoom-out="zoomOut"/>
 
+    <layer-legend
+      v-if="interactive && layers"
+      :layers="wmsLayers"
+      class="map-viewer__layer-legend"/>
+
+
   </div>
 </template>
 
 <script>
-import MapEventBus, { MODE, TRASH, DELETE, ZOOM_IN, ZOOM_OUT } from "../../lib/map-event-bus";
+import MapEventBus, { MODE, TRASH, DELETE, ZOOM_IN, ZOOM_OUT, SEARCH } from "../../lib/map-event-bus";
 import MapBox from "../map-box";
+import LayerLegend from "../layer-legend";
 import MapControls from "../map-controls";
 import { mapMutations, mapActions } from "vuex";
 
 export default {
-  components: { MapBox, MapControls },
+  components: { MapBox, MapControls, LayerLegend },
   props: {
     interactive: {
       type: Boolean,
@@ -69,6 +79,10 @@ export default {
     polygon: {
       type: Boolean,
       default: true,
+    },
+    search: {
+      type: Boolean,
+      default: false,
     },
     layers: {
       type: Boolean,
@@ -114,6 +128,7 @@ export default {
     ...mapMutations({
       setLayerOpacity: 'project/setLayerOpacity',
       setLayerVisibility: 'project/setLayerVisibility',
+      setLegendVisibility:'project/setLegendVisibility',
     }),
     onCreate(event) { this.$emit('create', event) },
     onUpdate(event) { this.$emit('update', event) },
@@ -123,6 +138,7 @@ export default {
     onClickDelete() { MapEventBus.$emit(DELETE) },
     zoomIn() { MapEventBus.$emit(ZOOM_IN) },
     zoomOut() { MapEventBus.$emit(ZOOM_OUT) },
+    onSearch(event) { MapEventBus.$emit(SEARCH, event) },
   },
 }
 </script>
@@ -159,5 +175,16 @@ export default {
   position: absolute;
   bottom: 0;
   left: 0;
+}
+
+.map-viewer__layer-legend {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.mapboxgl-ctrl-top-right {
+  display: none;
+
 }
 </style>
