@@ -268,7 +268,7 @@ export const actions = {
       if (setting.multiple) {
         value = setting.options.reduce((obj, option) => ({
                 ...obj,
-                [option.value]: option.value === setting.defaultValue.value,
+                [option.value]: option.value === setting.defaultValue && setting.defaultValue.value,
               }), {})
       }
 
