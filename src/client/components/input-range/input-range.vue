@@ -23,6 +23,8 @@
 </template>
 
 <script>
+import padEnd from 'lodash/padEnd'
+import padStart from 'lodash/padStart'
 import NumericInput from "../numeric-input";
 
 export default {
@@ -72,7 +74,14 @@ export default {
       return /\./.test(String(this.min)) ? this.min : `${this.min}.0`
     },
     steps() {
-      return parseFloat(this.max) > 10 ? '1' : '0.1'
+      const max = parseFloat(this.max)
+      if (max <= 1) {
+        return '0.01'
+      } else if (max <= 10) {
+        return '0.1'
+      } else {
+        return '1'
+      }
     },
   },
 }
