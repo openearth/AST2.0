@@ -499,6 +499,7 @@ export const getters = {
   },
   wmsLayers: (state, getters, rootState, rootGetters) => {
     return state.map.wmsLayers
+    .filter(layer => rootState.data.wmsLayers.some(rootLayer => rootLayer.id === layer.id))
     .map(({ id, visible, opacity, showLegend }) => ({
       ...rootGetters['data/wmsLayers/constructed'].find(layer => layer.id === id),
       visible,

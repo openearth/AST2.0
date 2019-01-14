@@ -343,13 +343,19 @@ export default {
       })
     },
     showWmsLayer(id) {
-      this.map.setLayoutProperty(`wms-layer-${id}`, 'visibility', 'visible');
+      if (this.map.getLayer(`wms-layer-${id}`)) {
+        this.map.setLayoutProperty(`wms-layer-${id}`, 'visibility', 'visible');
+      }
     },
     hideWmsLayer(id) {
-      this.map.setLayoutProperty(`wms-layer-${id}`, 'visibility', 'none');
+      if (this.map.getLayer(`wms-layer-${id}`)) {
+        this.map.setLayoutProperty(`wms-layer-${id}`, 'visibility', 'none');
+      }
     },
     wmsLayerOpacity(id, value) {
-      this.map.setPaintProperty(`wms-layer-${id}`, 'raster-opacity', value);
+      if (this.map.getLayer(`wms-layer-${id}`)) {
+        this.map.setPaintProperty(`wms-layer-${id}`, 'raster-opacity', value);
+      }
     },
   },
 }
