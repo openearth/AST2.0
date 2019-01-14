@@ -1,5 +1,5 @@
 query ($locale: SiteLocale) {
-  measures: allMeasures(locale: $locale) {
+  measures: allMeasures(locale: $locale, first: 1000000) {
     title,
     slug,
     measureId,
