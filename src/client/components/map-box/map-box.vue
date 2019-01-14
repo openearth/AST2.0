@@ -150,7 +150,7 @@ export default {
       this.map.on('draw.update', event => this.$emit('update', event.features))
       this.map.on('draw.delete', event => this.$emit('delete', event.features))
       this.map.on('draw.selectionchange', event => this.$emit('selectionchange', event.features))
-      this.map.on('move', event => this.$emit('move', { center: this.map.getCenter(), zoom: this.map.getZoom() }))
+      this.map.on('drag', event => this.$emit('move', { center: this.map.getCenter(), zoom: this.map.getZoom() }))
       this.map.on('draw.modechange', event => this.$emit('modechange', event.mode))
 
       this.map.on('load', () => {
