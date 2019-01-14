@@ -1,7 +1,7 @@
 @import "~vue-material/dist/theme/engine"; // Import the theme engine
 
 @include md-register-theme("default", (
-  primary: #0A99DB, // The primary color of your application
+  primary: #008fc5, // The primary color of your application
 ));
 
 @import "~vue-material/dist/theme/all"; // Apply the theme
