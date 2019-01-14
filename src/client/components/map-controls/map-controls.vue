@@ -48,7 +48,7 @@
       <md-button
         class="md-icon-button md-raised"
         @click="$emit('trash')">
-        <md-icon>delete_outline</md-icon>
+        <md-icon>delete</md-icon>
       </md-button>
     </li>
 

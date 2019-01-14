@@ -8,14 +8,14 @@
           :class="{'md-primary': displayType === 'numbers'}"
           class="md-icon-button"
           @click="displayType = 'numbers'">
-          <md-icon>format_list_numbered_rtl</md-icon>
+          <md-icon>format_list_numbered</md-icon>
         </md-button>
 
         <md-button
           :class="{'md-primary': displayType === 'bars'}"
           class="md-icon-button"
           @click="displayType = 'bars'">
-          <md-icon>insert_chart_outlined</md-icon>
+          <md-icon>insert_chart</md-icon>
         </md-button>
       </div>
     </div>
