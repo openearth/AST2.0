@@ -327,12 +327,7 @@ export const actions = {
       const levelAfter = rootGetters['flow/currentFilledInLevel'].level
 
       MapEventBus.$emit(RELOAD_LAYERS)
-
-      // This check exist because we have different map instances. If the level
-      // is not the same, we switch of layout and thus do not need to fly
-      if (levelBefore === levelAfter) {
-        MapEventBus.$emit(REPOSITION, { zoom: map.zoom, center: map.center })
-      }
+      MapEventBus.$emit(REPOSITION, { zoom: map.zoom, center: map.center })
     } else {
       console.error(validProject.errors)
     }
