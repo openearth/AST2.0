@@ -3,4 +3,5 @@
  */
 module.exports = [
   'normalize.css',
+  '~/assets/theme.scss',
 ]
