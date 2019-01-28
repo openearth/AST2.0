@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import projectAreaStyles from './project-area-styles'
 import areaStyles from './area-styles'
 import getData from '~/lib/get-data'
@@ -219,6 +220,9 @@ export default {
     MapEventBus.$off()
   },
   methods: {
+    ...mapActions({
+      showError: 'notifications/showError',
+    }),
     selectFeature(id) {
       if (id) {
           const feature = this.draw.get(id)
@@ -293,7 +297,7 @@ export default {
       // this.map.addLayer(fill)
       this.map.addLayer(line)
     },
-    addWmsLayer({ layerType: type, id, url, tilesize: tileSize }) {
+    addWmsLayer({ layerType: type, id, url, tilesize: tileSize, title }) {
       if (!this.map.getLayer(`wms-layer-${id}`)) {
         const source = { type, tileSize }
 
@@ -302,16 +306,19 @@ export default {
         } else {
           source.tiles = [ url ]
         }
-
-        this.map.addLayer({
-          id: `wms-layer-${id}`,
-          type,
-          source,
-          layout: {
-            visibility: 'none',
-          },
-          paint: {},
-        })
+        try {
+          this.map.addLayer({
+            id: `wms-layer-${id}`,
+            type,
+            source,
+            layout: {
+              visibility: 'none',
+            },
+            paint: {},
+          })
+        } catch (err) {
+          this.showError({ message: `Could not load WMS Layer: ${title}`, duration: 0 })
+        }
       }
     },
     repaintFeatures(features) {

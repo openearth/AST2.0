@@ -290,7 +290,7 @@ export const actions = {
       commit('setWmsLayer', { id: layer.id, visible: false, showLegend: false, opacity: 1 })
     })
   },
-  async updateProjectAreaSetting({ state, commit, rootGetters }, payload ) {
+  async updateProjectAreaSetting({ state, commit, rootGetters, getters, dispatch }, payload ) {
     const { type } = payload
 
     if (type === 'checkbox') {
@@ -310,6 +310,10 @@ export const actions = {
       const rankedMeasures = await getRankedMeasures(projectArea)
 
       commit('data/measures/addMeasuresRanking', rankedMeasures, { root: true })
+    }
+
+    if (payload.key === 'scenarioName') {
+      dispatch('fetchAreaApiData', getters.areas)
     }
   },
 
