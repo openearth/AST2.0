@@ -15,9 +15,10 @@
         v-for="({measure, areas, someAreasAreShown}, index) in measureCollection"
         :key="index"
         :style="someAreasAreShown ? `border-left-color: ${measure.color.hex}` : `border-left-color: #ccc`"
-        :md-expanded="true"
+        :md-expanded="expandedMeasures.indexOf(measure.measureId) !== -1"
         md-expand
-        class="legend__item">
+        class="legend__item"
+        @update:mdExpanded="value => toggleMeasure(measure.measureId, value)">
         <div class="legend__item-header">
           <md-avatar class="legend__item-avatar">
             <img :src="measure.image.url" alt="" >
@@ -48,7 +49,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions } from "vuex"
+import { mapState, mapGetters, mapActions, mapMutations } from "vuex"
 import { MeasureCard, SearchInput, HintText } from '~/components'
 import MapEventBus, { REDRAW } from "../../lib/map-event-bus";
 
@@ -66,12 +67,26 @@ export default {
     ...mapState('project', ['areas']),
     ...mapGetters('selectedAreas', { selectedFeatures: 'features' }),
     ...mapGetters('project', ['areasByMeasure', 'measureCollection']),
+    ...mapState({
+      expandedMeasures: state => state['expanded-measures'],
+    }),
   },
   mounted() {
     MapEventBus.$emit(REDRAW)
   },
   methods: {
-    ...mapActions({ updateAreaProperties: 'project/updateAreaProperties' }),
+    ...mapMutations({
+      expandMeasure: 'expanded-measures/expand',
+      collapseMeasure: 'expanded-measures/collapse',
+    }),
+    ...mapActions({
+      updateAreaProperties: 'project/updateAreaProperties',
+    }),
+    toggleMeasure(measureId, expanded) {
+      expanded
+        ? this.expandMeasure(measureId)
+        : this.collapseMeasure(measureId)
+    },
   },
 }
 </script>
