@@ -48,7 +48,7 @@ export default {
     async onFileInput(event) {
       this.importProject(event)
         .then(() => this.$router.push(this.currentFilledInLevel.uri))
-        .catch(error => this.showError(this.$i18n.t('could_not_load_file')))
+        .catch(error => this.showError({ message: this.$i18n.t('could_not_load_file') }))
     },
   },
 }
