@@ -48,7 +48,7 @@
             <md-list-item>
               <select-input
                 :options="setting.options"
-                :value="setting.defaultValue.value"
+                :value="projectAreaSettings[setting.key]"
                 :id="setting.key"
                 @change="value => updateProjectAreaSetting({
                   type: 'select',
