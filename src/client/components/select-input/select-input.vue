@@ -3,7 +3,7 @@
     <label :for="`select-${id}`">{{ $t('choose_scenario') }}</label>
     <md-select
       :id="`select-${id}`"
-      v-model="value"
+      v-model="selectedValue"
       md-dense>
       <md-option
         v-for="option in options"
