@@ -29,6 +29,7 @@
         class="md-primary md-icon-button">
         <md-icon>settings</md-icon>
       </md-button>
+      <fullscreen-button />
     </div>
   </md-toolbar>
 </template>
@@ -37,8 +38,12 @@
 import startCase from 'lodash/startCase'
 import { mapGetters } from "vuex";
 import { LEVEL_PROJECT_AREA } from "../../lib/flow-levels";
+import FullscreenButton from '../fullscreen-button'
 
 export default {
+  components: {
+    FullscreenButton,
+  },
   props: {
     title: {
       type: String,
