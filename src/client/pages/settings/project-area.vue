@@ -16,7 +16,20 @@
           :md-expanded="true">
           <span class="md-list-item-text">{{ setting.title }}</span>
 
-          <md-list v-if="!setting.isSelect" slot="md-expand">
+          <md-list
+            v-if="!setting.isSelect"
+            slot="md-expand"
+            class="project-area__options">
+            <md-button
+              v-if="setting.infoText"
+              class="md-icon-button info-button"
+              @click="setActiveTooltip(setting.key)">
+              <md-icon>info</md-icon>
+              <md-tooltip :md-active="activeTooltipKey === setting.key" :md-direction="top">
+                {{ setting.infoText }}
+              </md-tooltip>
+            </md-button>
+
             <md-list-item
               v-for="option in setting.options"
               :key="option.value">
@@ -72,6 +85,11 @@ import { SelectInput } from '~/components'
 export default {
   middleware: ['access-level-project-area'],
   components: { SelectInput },
+  data() {
+    return {
+      activeTooltipKey: '',
+    }
+  },
   computed: {
     ...mapState({
       locale: state => state.i18n.locale,
@@ -85,6 +103,13 @@ export default {
     ...mapActions({
       updateProjectAreaSetting: 'project/updateProjectAreaSetting',
     }),
+    setActiveTooltip(key) {
+      if (this.activeTooltipKey === key) {
+        return this.activeTooltipKey = ''
+      }
+
+      this.activeTooltipKey = key
+    },
   },
 }
 </script>
@@ -99,5 +124,15 @@ export default {
 
 .project-area .md-list-item-expand {
   border: none;
+}
+
+.project-area__options {
+  position: relative;
+}
+
+.info-button {
+  position: absolute;
+  top: 5px;
+  right: 2px;
 }
 </style>
