@@ -136,10 +136,13 @@ export default {
 
   mounted() {
     this.$refs.base.addEventListener('click', this.dispatchClickEvent)
+
+    window.addEventListener('beforeunload', this.beforeUnload)
   },
 
   beforeDestroy() {
     this.$refs.base.removeEventListener('click', this.dispatchClickEvent)
+    window.removeEventListener('beforeunload', this.beforeUnload)
   },
 
   methods: {
@@ -185,6 +188,11 @@ export default {
     },
     dispatchClickEvent(event) {
       EventBus.$emit(CLICK, event)
+    },
+    beforeUnload(e) {
+      const message = "You may have unsaved changes"
+      e.returnValue = message
+      return message
     },
   },
 }

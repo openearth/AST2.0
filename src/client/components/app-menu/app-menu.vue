@@ -81,6 +81,17 @@
 
         <md-list-item>
           <md-button
+            :to="`/${$i18n.locale}/about/`"
+            class="app-menu__button">
+            <md-icon>info</md-icon>
+            <span class="md-body-1">
+              {{ $t('about') }}
+            </span>
+          </md-button>
+        </md-list-item>
+
+        <md-list-item>
+          <md-button
             :to="`/${$i18n.locale}/documentation/`"
             class="app-menu__button">
             <md-icon>help</md-icon>

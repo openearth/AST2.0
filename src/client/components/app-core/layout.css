@@ -31,3 +31,17 @@ button:hover {
 .md-primary {
   z-index: 1;
 }
+
+.page {
+  width: var(--width-large);
+  padding: var(--spacing-double);
+}
+
+.page .md-link {
+  margin: 0;
+  padding: 0;
+  color: var(--action-color);
+  display: block;
+  margin-left: auto;
+  margin-bottom: var(--spacing-double);
+}

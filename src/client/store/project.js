@@ -303,6 +303,13 @@ export const actions = {
       commit('setProjectAreaSetting', { key, value })
     }
 
+    if (payload.key === 'scenarioName') {
+      dispatch('fetchAreaApiData', getters.areas)
+    }
+
+    dispatch('updateMeasuresRanking')
+  },
+  async updateMeasuresRanking({ state, commit, rootGetters }) {
     const filledInRequiredProjectAreaSettings = rootGetters['flow/filledInRequiredProjectAreaSettings']
 
     if (filledInRequiredProjectAreaSettings) {
@@ -311,24 +318,18 @@ export const actions = {
 
       commit('data/measures/addMeasuresRanking', rankedMeasures, { root: true })
     }
-
-    if (payload.key === 'scenarioName') {
-      dispatch('fetchAreaApiData', getters.areas)
-    }
   },
-
-  async importProject({ state, commit, rootGetters, rootState }, event) {
+  async importProject({ state, commit, dispatch, rootGetters, rootState }, event) {
     const { name } = event.target.files[0]
     const loadedProject = await getLoadedFileContents(event)
     const validProject = validateProject(loadedProject, rootState.data)
-    const levelBefore = rootGetters['flow/currentFilledInLevel'].level
     const { map } = loadedProject
 
     loadedProject.settings.general.title = name.replace('.json', '')
 
     if (validProject.valid) {
       commit('import', loadedProject)
-      const levelAfter = rootGetters['flow/currentFilledInLevel'].level
+      dispatch('updateMeasuresRanking')
 
       MapEventBus.$emit(RELOAD_LAYERS)
       MapEventBus.$emit(REPOSITION, { zoom: map.zoom, center: map.center })
@@ -348,7 +349,6 @@ export const actions = {
     commit('appMenu/hideMenu', null, { root: true })
     return FileSaver.saveAs(blob, `${title || 'ast_project'}.json`)
   },
-
   exportProject({ state, getters, rootState, rootGetters }, format) {
     const { title } = state.settings.general
     const data = format === 'csv'
@@ -358,7 +358,6 @@ export const actions = {
     const blob = new Blob([data], { type })
     return FileSaver.saveAs(blob, `${title || 'ast_project'}.${format}`)
   },
-
   clearState({ commit, dispatch, rootState }) {
     const areaSettings = rootState.data.areaSettings
     const kpiGroups = rootState.data.kpiGroups
