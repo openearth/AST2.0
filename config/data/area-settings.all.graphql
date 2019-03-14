@@ -1,6 +1,7 @@
 query ($locale: SiteLocale) {
   areaSettings: allAreaSettings(locale: $locale) {
     title,
+    infoText,
     key
     multiple,
     isSelect,

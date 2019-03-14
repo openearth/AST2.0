@@ -20,16 +20,6 @@
             v-if="!setting.isSelect"
             slot="md-expand"
             class="project-area__options">
-            <md-button
-              v-if="setting.infoText"
-              class="md-icon-button info-button"
-              @click="setActiveTooltip(setting.key)">
-              <md-icon>info</md-icon>
-              <md-tooltip :md-active="activeTooltipKey === setting.key" :md-direction="top">
-                {{ setting.infoText }}
-              </md-tooltip>
-            </md-button>
-
             <md-list-item
               v-for="option in setting.options"
               :key="option.value">
@@ -55,21 +45,44 @@
               />
               <span class="md-list-item-text">{{ option.title }}</span>
             </md-list-item>
+            <md-button
+              v-if="setting.infoText"
+              class="md-icon-button info-button"
+              @click="setActiveTooltip(setting.key)">
+              <md-icon>info</md-icon>
+              <md-tooltip :md-active="activeTooltipKey === setting.key" md-direction="top">
+                {{ setting.infoText }}
+              </md-tooltip>
+            </md-button>
           </md-list>
 
-          <md-list v-else slot="md-expand">
-            <md-list-item>
-              <select-input
-                :options="setting.options"
-                :value="projectAreaSettings[setting.key]"
-                :id="setting.key"
-                @change="value => updateProjectAreaSetting({
-                  type: 'select',
-                  key: setting.key,
-                  value,
-                })"
-              />
-            </md-list-item>
+          <md-list
+            v-else
+            slot="md-expand"
+            class="project-area__select">
+            <div style="max-width: 90%; flex-grow: 1;">
+              <md-list-item>
+                <select-input
+                  :options="setting.options"
+                  :value="projectAreaSettings[setting.key]"
+                  :id="setting.key"
+                  @change="value => updateProjectAreaSetting({
+                    type: 'select',
+                    key: setting.key,
+                    value,
+                  })"
+                />
+              </md-list-item>
+            </div>
+            <md-button
+              v-if="setting.infoText"
+              class="md-icon-button"
+              @click="setActiveTooltip(setting.key)">
+              <md-icon>info</md-icon>
+              <md-tooltip :md-active="activeTooltipKey === setting.key" md-direction="top">
+                {{ setting.infoText }}
+              </md-tooltip>
+            </md-button>
           </md-list>
         </md-list-item>
       </md-list>
@@ -124,6 +137,14 @@ export default {
 
 .project-area .md-list-item-expand {
   border: none;
+}
+
+.project-area__select {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 2px;
 }
 
 .project-area__options {
