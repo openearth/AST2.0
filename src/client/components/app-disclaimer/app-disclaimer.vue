@@ -48,6 +48,8 @@ export default {
 
 .app-disclaimer__body {
   margin-bottom: var(--spacing-double);
+  max-height: 19vh;
+  overflow-y: auto;
 }
 
 .app-disclaimer__text {
