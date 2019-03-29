@@ -43,7 +43,7 @@
 
               <input-range
                 v-if="appliedMeasure"
-                :value="feature.properties.areaDepth || feature.properties.defaultDepth"
+                :value="inputValue(feature.properties.areaDepth, feature.properties.defaultDepth)"
                 :min="getDefaultValueProperty('depth', 'min', appliedMeasure.defaultValues)"
                 :max="getDefaultValueProperty('depth', 'max', appliedMeasure.defaultValues)"
                 :label="$t('area_depth')"
@@ -51,7 +51,7 @@
 
               <input-range
                 v-if="appliedMeasure"
-                :value="feature.properties.areaInflow || feature.properties.defaultInflow"
+                :value="inputValue(feature.properties.areaInflow, feature.properties.defaultInflow)"
                 :min="getDefaultValueProperty('inflow', 'min', appliedMeasure.defaultValues)"
                 :max="getDefaultValueProperty('inflow', 'max', appliedMeasure.defaultValues)"
                 :label="$t('area_inflow')"
@@ -59,7 +59,7 @@
 
               <input-range
                 v-if="appliedMeasure && feature.geometry.type === 'LineString'"
-                :value="feature.properties.areaWidth || feature.properties.defaultWidth"
+                :value="inputValue(feature.properties.areaWidth, feature.properties.defaultWidth)"
                 :min="getDefaultValueProperty('width', 'min', appliedMeasure.defaultValues)"
                 :max="getDefaultValueProperty('width', 'max', appliedMeasure.defaultValues)"
                 :label="$t('area_width')"
@@ -68,7 +68,7 @@
 
               <input-range
                 v-if="appliedMeasure && feature.geometry.type === 'Point'"
-                :value="feature.properties.areaRadius || feature.properties.defaultRadius"
+                :value="inputValue(feature.properties.areaRadius, feature.properties.defaultRadius)"
                 :min="getDefaultValueProperty('radius', 'min', appliedMeasure.defaultValues)"
                 :max="getDefaultValueProperty('radius', 'max', appliedMeasure.defaultValues)"
                 :label="$t('area_radius')"
@@ -127,6 +127,11 @@ export default {
       const values = defaultValues.find(values => values.key.toLowerCase() === key)
       const value = values[property]
       return String(value)
+    },
+    inputValue(value, defaultValue) {
+      let returnValue = value || defaultValue
+      returnValue = value === '' ? value : returnValue
+      return returnValue
     },
   },
 }
