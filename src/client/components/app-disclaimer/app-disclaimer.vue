@@ -11,7 +11,7 @@
         <md-button
           class="md-raised md-primary"
           @click="$emit('accepted')">
-          {{ $t('ok') }}
+          {{ $t('agree') }}
         </md-button>
       </footer>
     </div>
@@ -48,6 +48,8 @@ export default {
 
 .app-disclaimer__body {
   margin-bottom: var(--spacing-double);
+  max-height: 19vh;
+  overflow-y: auto;
 }
 
 .app-disclaimer__text {
