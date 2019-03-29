@@ -11,7 +11,7 @@
         <md-button
           class="md-raised md-primary"
           @click="$emit('accepted')">
-          {{ $t('ok') }}
+          {{ $t('agree') }}
         </md-button>
       </footer>
     </div>
