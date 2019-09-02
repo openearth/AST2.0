@@ -1,5 +1,5 @@
-query ($locale: SiteLocale) {
-  wmsLayers: allWmsLayers(locale: $locale){
+query ($locale: SiteLocale, $first: IntType, $skip: IntType = 0) {
+  wmsLayers: allWmsLayers(locale: $locale, first: $first, skip: $skip){
     id,
     title,
     layerType,
@@ -14,5 +14,8 @@ query ($locale: SiteLocale) {
     srs,
     transparent,
     styles
+  },
+  _allWmsLayersMeta {
+    count
   }
 }

@@ -1,5 +1,5 @@
-query ($locale: SiteLocale) {
-  measures: allMeasures(locale: $locale, first: 1000000) {
+query ($locale: SiteLocale, $first: IntType, $skip: IntType = 0) {
+  measures: allMeasures(locale: $locale, first: $first, skip: $skip) {
     title,
     slug,
     measureId,
@@ -39,5 +39,8 @@ query ($locale: SiteLocale) {
       min,
       max
     }
+  }
+  _allMeasuresMeta {
+    count
   }
 }

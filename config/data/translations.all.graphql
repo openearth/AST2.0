@@ -1,6 +1,9 @@
-query ($locale: SiteLocale) {
-  translations: allTranslations(locale: $locale, first: 1000000) {
+query ($locale: SiteLocale, $first: IntType, $skip: IntType = 0) {
+  translations: allTranslations(first: $first, skip: $skip) {
     key,
-    value
+    value(locale: $locale)
+  }
+  _allTranslationsMeta {
+    count
   }
 }

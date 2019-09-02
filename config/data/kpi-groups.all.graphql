@@ -1,5 +1,5 @@
-query ($locale: SiteLocale) {
-  kpiGroups: allKpiGroups(locale: $locale) {
+query ($locale: SiteLocale, $first: IntType, $skip: IntType = 0) {
+  kpiGroups: allKpiGroups(locale: $locale, first: $first, skip: $skip) {
     title,
     key,
     kpis {
@@ -9,5 +9,8 @@ query ($locale: SiteLocale) {
         key
       }
     }
+  }
+  _allKpiGroupsMeta {
+    count
   }
 }

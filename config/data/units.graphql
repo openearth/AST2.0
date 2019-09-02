@@ -1,8 +1,11 @@
-{
-  units: allUnits {
+query ($first: IntType, $skip: IntType = 0) {
+  units: allUnits(first: $first, skip: $skip) {
     title,
     key,
     metric,
     imperial
+  }
+  _allUnitsMeta {
+    count
   }
 }

@@ -1,5 +1,5 @@
-query ($locale: SiteLocale) {
-  areaSettings: allAreaSettings(locale: $locale) {
+query ($locale: SiteLocale, $first: IntType, $skip: IntType = 0) {
+  areaSettings: allAreaSettings(locale: $locale, first: $first, skip: $skip) {
     title,
     key
     multiple,
@@ -12,5 +12,8 @@ query ($locale: SiteLocale) {
       title,
       value,
     },
+  },
+  _allAreaSettingsMeta {
+    count
   }
 }
