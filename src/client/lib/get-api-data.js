@@ -15,7 +15,7 @@ export function getApiData(uri, body) {
 
 export function getRealApiData(uri, body) {
   return fetch(
-    `https://tl-ng045.xtr.deltares.nl/api/${uri}`,
+    `${process.env.API_BASE}/api/${uri}`,
     {
       method: 'POST',
       headers: {
