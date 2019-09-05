@@ -28,19 +28,29 @@ export const actions = {
 }
 
 export const getters = {
-  workspaceMeasures: (state, getters, rootState, rootGetters) => {
-    const overrideData = get(
-      'measures',
-      rootGetters['data/workspaces/activeWorkspace'],
-    )
-    if (overrideData) {
-      const measureIds = Object.keys(overrideData)
-      return state
-        .filter(({ measureId }) => measureIds.includes(measureId))
-        .map(measure => ({ ...measure, ...overrideData[measure.measureId] }))
-    } else {
-      return state
-    }
+  workspaceMeasures: (storedMeasures, getters, rootState, rootGetters) => {
+    const activeWorkspace = rootGetters['data/workspaces/activeWorkspace']
+    const workspaceMeasures = get('measures', activeWorkspace)
+    const excludeAllMeasures = get('excludeAllMeasures', activeWorkspace)
+
+    if (Boolean(workspaceMeasures) === false) return storedMeasures
+
+    const resetToExcludeAllMeasuresSetting = measure => ({
+      ...measure,
+      workspaceInclude: excludeAllMeasures ? false : measure.workspaceInclude,
+    })
+
+    const applyOverrideMeasureData = measure => ({
+      ...measure,
+      ...workspaceMeasures[measure.measureId],
+    })
+
+    const measureMarkedForInclusion = ({ workspaceInclude }) => workspaceInclude === true
+
+    return storedMeasures
+      .map(resetToExcludeAllMeasuresSetting)
+      .map(applyOverrideMeasureData)
+      .filter(measureMarkedForInclusion)
   },
   orderedMeasures: (state, { workspaceMeasures }) => {
     return [...workspaceMeasures].sort((a, b) => {
