@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import getData from '../../lib/get-data'
 import kebabCase from 'lodash/kebabCase'
+import unset from 'lodash/unset'
 
 export const state = () => ({
   _active: undefined,
@@ -34,6 +35,15 @@ export const actions = {
         name: kebabCase(_workspace.name),
         measures: _workspace.measuresOverride.reduce((obj, override) => {
           const { measure, ...rest } = override
+
+          Object.keys(rest).forEach(key => {
+            if (rest[key] !== true && rest[key] !== false) {
+              if (Boolean(rest[key]) === false) {
+                unset(rest, key)
+              }
+            }
+          })
+
           return { ...obj, [override.measure.measureId]: rest }
         }, {}),
       }
