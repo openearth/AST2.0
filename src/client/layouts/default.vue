@@ -1,6 +1,9 @@
 <template>
   <div ref="base" class="layout">
-    <app-header :title="title" @onShowNavigation="showMenu"/>
+    <app-header
+      :title="title"
+      :legal-accepted="legalAccepted"
+      @onShowNavigation="showMenu"/>
     <app-menu
       :show-navigation="showNavigation"
       :title="$t('ast')"
@@ -74,7 +77,7 @@
 
     <transition name="slide-up">
       <app-disclaimer
-        v-if="!legalAccepted"
+        v-if="!legalAccepted && !isLoggedIn"
         :disclaimer="disclaimer"
         class="layout__disclaimer"
         @accepted="acceptLegal"/>
@@ -123,11 +126,19 @@ export default {
       notifications: state => state.notifications.messages,
       mode: state => state.mode.state,
       exportShown: state => state.flow.export,
+      userIsRefreshing: state => state.user.isRefreshing,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings']),
     ...mapGetters({ selectedAreas:  'selectedAreas/features' }),
     ...mapGetters('map', ['isProject', 'point', 'line', 'polygon', 'interactive', 'search']),
+    ...mapGetters('user', ['isLoggedIn']),
+  },
+
+  watch: {
+    userIsRefreshing() {
+      window.removeEventListener('beforeunload', this.beforeUnload)
+    },
   },
   async beforeMount() {
     const locale = this.$i18n.locale
