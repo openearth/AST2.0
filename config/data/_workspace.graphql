@@ -1,0 +1,11 @@
+query ($id: ItemId){
+  workspace(filter: {id: {eq: $id}}) {
+    name,
+    measuresOverride {
+      measure {
+        measureId
+      },
+      title,
+    }
+  }
+}
