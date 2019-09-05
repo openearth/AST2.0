@@ -27,7 +27,7 @@ export const getters = {
   isLoggedIn(state) {
     return Boolean(state.data)
   },
-  project(state) {
+  workspace(state) {
     return pipe([
       get('data.app_metadata.roles'),
       map(kebabCase),
