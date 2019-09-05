@@ -26,8 +26,20 @@ export const actions = {
 }
 
 export const getters = {
-  orderedMeasures: state => {
-    return [...state].sort((a, b) => {
+  workspaceMeasures: (state, getters, rootState, rootGetters) => {
+    const overrideData = get(
+      'measures',
+      rootGetters['data/workspaces/activeWorkspace'],
+    )
+    if (overrideData) {
+      const measureIds = Object.keys(overrideData)
+      return state
+        .filter(({ measureId }) => measureIds.includes(measureId))
+        .map(measure => ({ ...measure, ...overrideData[measure.measureId] }))
+    } else {
+      return state
+    }
+  },
       if (a.title < b.title) return -1
       if (a.title > b.title) return 1
       return 0
