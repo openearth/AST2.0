@@ -31,4 +31,8 @@ export default async function ({ store }) {
   if (!store.state.data.wmsLayers.length) {
     store.dispatch('data/wmsLayers/getWmsLayers', store.state.i18n.locale)
   }
+
+  if (Object.keys(store.state.data.workspaces).length === 1) {
+    store.dispatch('data/workspaces/getWorkspaces')
+  }
 }
