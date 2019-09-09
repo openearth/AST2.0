@@ -1,9 +1,11 @@
 import netlifyIdentity from 'netlify-identity-widget'
 import delay from '../lib/delay'
+import kebabCase from 'lodash/kebabCase'
 
 export default ({ store }) => {
   const storeUser = user => {
     store.commit('user/setUser', user || null)
+    store.commit('data/workspaces/setDomain', kebabCase(window.location.hostname))
     if (user) {
       store.commit('project/acceptLegal')
     }
@@ -21,5 +23,5 @@ export default ({ store }) => {
 }
 
 setTimeout(() => {
-  netlifyIdentity.init()
+  netlifyIdentity.init({ APIUrl: 'https://kbstoolbox.nl/.netlify/identity' })
 }, 10)

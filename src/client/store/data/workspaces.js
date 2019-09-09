@@ -3,8 +3,11 @@ import getData from '../../lib/get-data'
 import kebabCase from 'lodash/kebabCase'
 import unset from 'lodash/unset'
 
+const defaultDomain = 'kbstoolbox-nl'
+
 export const state = () => ({
-  _active: undefined,
+  _domain: undefined,
+  _user: undefined,
 })
 
 export const mutations = {
@@ -14,8 +17,16 @@ export const mutations = {
   fillWorkspace(state, workspaceData) {
     Vue.set(state, workspaceData.name, workspaceData)
   },
-  setActive(state, activeWorkspace) {
-    state._active = activeWorkspace
+  setUserWorkspace(state, workspaceName) {
+    state._user = workspaceName
+  },
+  setDomain(state, _domain) {
+    const [domain] = /\w+-\w+$/.exec(_domain)
+    const availableWorkspaces = Object.keys(state)
+
+    state._domain = availableWorkspaces.indexOf(domain) === -1
+      ? defaultDomain
+      : domain
   },
 }
 
@@ -49,13 +60,13 @@ export const actions = {
       }
 
       commit('fillWorkspace', workspace)
-      commit('setActive', workspace.name)
     }
   },
 }
 
 export const getters = {
   activeWorkspace(state) {
-    return state[state._active]
+    const activeName = state._user || state._domain
+    return state[activeName]
   },
 }
