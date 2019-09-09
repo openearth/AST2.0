@@ -13,7 +13,7 @@ const queryApi = require('../../src/client/lib/query-api')
 const dotenv = require('dotenv-safe')
 dotenv.config()
 
-const availableLocales = ['en', 'nl']
+const availableLocales = ['en', 'nl', 'zh_CN']
 const dataFolder = path.resolve(__dirname, '../../src/client/static/data')
 
 const tap = input => { console.log(input); return input; }
