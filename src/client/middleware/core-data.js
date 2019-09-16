@@ -24,4 +24,7 @@ export default async function ({ store }) {
   if (!store.state.data.wmsLayers.length) {
     store.dispatch('data/wmsLayers/getWmsLayers', store.state.i18n.locale)
   }
+  if (!store.state.data.appConfig.title) {
+    store.dispatch('data/appConfig/getAppConfig')
+  }
 }

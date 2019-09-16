@@ -9,11 +9,9 @@ import getLoadedFileContents from '../lib/get-loaded-file-contents'
 import validateProject from '../lib/validate-project'
 import projectToGeoJson from '../lib/project-to-geojson'
 import projectToCsv from '../lib/project-to-csv'
-const appConfig = require('../../../src/client/static/data/app.json')
 
 const initialState = () => ({
   legalAccepted: false,
-  title: appConfig.app.title,
   areas: [],
   settings: {
     area: {},
