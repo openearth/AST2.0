@@ -10,7 +10,7 @@
           'md-subheading': hasTitle,
           'md-title': !hasTitle
         }"
-      >{{ $t('ast') }}</h2>
+      >{{ title }}</h2>
     </div>
 
     <small
@@ -49,17 +49,20 @@ export default {
       type: String,
       default: '',
     },
+    projectTitle: {
+      type: String,
+      default: '',
+    },
   },
   data: () => ({ LEVEL_PROJECT_AREA }),
   computed: {
     ...mapGetters('flow', ['currentFilledInLevel']),
     hasTitle() {
-      return !!this.title
+      return !!this.projectTitle
     },
     formattedTitle() {
-      return startCase(this.title)
+      return startCase(this.projectTitle)
     },
   },
 }
 </script>
-

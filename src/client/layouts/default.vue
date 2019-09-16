@@ -1,9 +1,12 @@
 <template>
   <div ref="base" class="layout">
-    <app-header :title="title" @onShowNavigation="showMenu"/>
+    <app-header
+      :title="title"
+      :project-title="projectTitle"
+      @onShowNavigation="showMenu"/>
     <app-menu
       :show-navigation="showNavigation"
-      :title="$t('ast')"
+      :title="title"
       :accepted-legal="acceptedLegal"
       :created-project-area="createdProjectArea"
       :filled-in-required-settings="filledInRequiredProjectAreaSettings"
@@ -117,7 +120,8 @@ export default {
       center: state => state.project.map.center,
       zoom: state => state.project.map.zoom,
       showNavigation: state => state.appMenu.show,
-      title: state => state.project.settings.general.title,
+      title: state => state.project.title,
+      projectTitle: state => state.project.settings.general.title,
       mapMode: state => state.map.mode,
       notifications: state => state.notifications.messages,
       mode: state => state.mode.state,
@@ -136,7 +140,6 @@ export default {
 
   mounted() {
     this.$refs.base.addEventListener('click', this.dispatchClickEvent)
-
     window.addEventListener('beforeunload', this.beforeUnload)
   },
 
