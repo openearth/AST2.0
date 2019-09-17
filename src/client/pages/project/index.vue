@@ -49,7 +49,7 @@
       <md-button
         :to="`/${$i18n.locale}/project/measures`"
         class="md-raised md-primary">
-        Measures
+        {{ $t('measures') }}
       </md-button>
     </div>
   </div>
