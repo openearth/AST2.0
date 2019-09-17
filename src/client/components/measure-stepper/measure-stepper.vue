@@ -1,5 +1,8 @@
 <template>
-  <md-steppers md-sync-route md-dynamic-height>
+  <md-steppers 
+    :md-active-step="stepId(current)"
+    md-sync-route
+    md-dynamic-height>
     <md-step 
       v-for="(step, index) in steps" 
       :to="step.to" 
@@ -43,7 +46,7 @@ export default {
       return index < this.current
     },
     stepId(index) {
-      return `set-measure--${index}`
+      return `measure--${index}`
     },
   },
 }
