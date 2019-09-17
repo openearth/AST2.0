@@ -1,17 +1,19 @@
 <template>
-  <md-steppers 
+  <md-steppers
+    ref="stepper"
     :md-active-step="stepId(current)"
+    md-linear
     md-sync-route
     md-dynamic-height>
-    <md-step 
-      v-for="(step, index) in steps" 
-      :to="step.to" 
-      :id="stepId(index)" 
+    <md-step
+      v-for="(step, index) in steps"
+      :to="step.to"
+      :id="stepId(index)"
       :key="index"
       :md-done="isDone(index)"
       exact>
-      <slot/>
       <p>{{ step.label }}</p>
+      <slot/>
     </md-step>
   </md-steppers>
 </template>
@@ -49,6 +51,12 @@ export default {
     },
     stepId(index) {
       return `measure--${index}`
+    },
+    nextStep() {
+      const buttons = this.$el.querySelectorAll('.md-stepper-header.md-button');
+      if(this.current + 1 <= buttons.length) {
+        buttons.item(this.current + 1).click()
+      }
     },
   },
 }
