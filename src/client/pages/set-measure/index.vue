@@ -1,5 +1,5 @@
 <template>
-  <measure-aside>
+  <measure-aside wide>
     <measure-stepper :current="0">
       <measure-list :measures="orderedMeasures"/>
     </measure-stepper>
