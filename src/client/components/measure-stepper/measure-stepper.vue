@@ -8,7 +8,9 @@
       :to="step.to" 
       :id="stepId(index)" 
       :key="index"
-      :md-done="isDone(index)">
+      :md-done="isDone(index)"
+      exact>
+      <slot/>
       <p>{{ step.label }}</p>
     </md-step>
   </md-steppers>
@@ -20,7 +22,7 @@ export default {
     current: {
       type: Number,
       required: true,
-      default: 1,
+      default: 0,
     },
   },
   data() {
