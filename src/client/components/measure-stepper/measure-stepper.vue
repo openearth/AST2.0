@@ -4,7 +4,8 @@
     :md-active-step="stepId(current)"
     md-linear
     md-sync-route
-    md-dynamic-height>
+    md-dynamic-height
+    class="measure-stepper">
     <md-step
       v-for="(step, index) in steps"
       :to="step.to"
@@ -73,9 +74,28 @@ export default {
   padding-top: 2px;
 }
 
+/* extending default styles for .md-stepper */
+.md-stepper {
+  padding: 0;
+}
+
+.md-steppers-navigation {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--background-color);
+}
+
+/* overwriting default styles for .md-toolbar */
+.measure-stepper .md-toolbar {
+  background-color: transparent;
+}
+
 .stepper-title {
-  margin-top: 10px;
+  margin-top: 20px;
   margin-bottom: 20px;
+  padding-right: var(--spacing-default);
+  padding-left: var(--spacing-default);
   color: var(--md-theme-default-primary);
 }
 </style>
