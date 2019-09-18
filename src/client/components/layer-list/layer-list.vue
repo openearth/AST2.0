@@ -53,6 +53,17 @@
         </div>
       </div>
     </li>
+    <div class="md-list-item-content">
+      <md-avatar>
+        <md-button class="md-icon-button md-raised">
+          <md-icon>
+            add
+          </md-icon>
+        </md-button>
+      </md-avatar>
+
+      <span class="md-list-item-text layer-list__title">Add layers</span>
+    </div>
   </md-list>
 </template>
 
