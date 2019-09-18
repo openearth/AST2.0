@@ -23,6 +23,7 @@ export default {
 <style>
 .measure-aside {
   width: var(--width-medium);
+  background-color: var(--background-color);
 }
 
 .measure-aside__wide {

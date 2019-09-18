@@ -12,7 +12,7 @@
       :key="index"
       :md-done="isDone(index)"
       exact>
-      <p>{{ step.label }}</p>
+      <h3 class="stepper-title md-headline">{{ step.title }}</h3>
       <slot/>
     </md-step>
   </md-steppers>
@@ -31,15 +31,15 @@ export default {
     return {
       steps: [
           {
-              label: 'Select a measure',
+              title: 'Select a measure',
               to: '/en/set-measure',
           },
           {
-              label: 'draw an area',
+              title: 'Draw an area on the map to connect with the selected measure',
               to: '/en/set-measure/draw-an-area',
           },
           {
-              label: 'Adjust measure settings',
+              title: 'Adjust measure settings',
               to: '/en/set-measure/adjust-measure-settings',
           },
           ],
@@ -63,4 +63,19 @@ export default {
 </script>
 
 <style>
+/* overwriting default styles for .md-steppers-navigation */
+.md-steppers-navigation {
+  box-shadow: var(--shadow-small-grey);
+}
+
+/* extending default styles for .md-stepper-header */
+.md-stepper-header {
+  padding-top: 2px;
+}
+
+.stepper-title {
+  margin-top: 10px;
+  margin-bottom: 20px;
+  color: var(--md-theme-default-primary);
+}
 </style>

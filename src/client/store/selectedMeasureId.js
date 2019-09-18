@@ -1,14 +1,16 @@
-export const state = () => ({})
+export const state = () => ({
+  id: null,
+})
 
 export const mutations = {
   setSelectedMeasureId (state, id) {
-    state.selectedMeasureId = id
+    state.id = id
   },
 }
 
 export const getters = {
-  getSelectedMeasureId: state => {
-    console.log('state.selectedMeasureId', state.selectedMeasureId);
-    return state.selectedMeasureId
+  getSelectedMeasureId(state) {
+    console.log('state.selectedMeasureId', state.id);
+    return state.id
   },
 }
