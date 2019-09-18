@@ -55,23 +55,24 @@
     </li>
     <div class="md-list-item-content">
       <md-avatar>
-        <md-button class="md-icon-button md-raised">
+        <md-button class="md-icon-button md-raised" @click="showLayerDialog = true">
           <md-icon>
             add
           </md-icon>
         </md-button>
       </md-avatar>
-
       <span class="md-list-item-text layer-list__title">Add layers</span>
+      <layer-dialog :show-layer-dialog="showLayerDialog" @show-layer-dialog="showLayerDialog=$event"/>
     </div>
   </md-list>
 </template>
 
 <script>
 import InputRange from "../input-range";
+import LayerDialog from "../layer-dialog";
 
 export default {
-  components: { InputRange },
+  components: { InputRange, LayerDialog },
   props: {
     layers: {
       type: Array,
@@ -80,6 +81,7 @@ export default {
   },
   data: () => ({
     expanded: '',
+    showLayerDialog: false,
   }),
   methods: {
     setExpanded(id) {
