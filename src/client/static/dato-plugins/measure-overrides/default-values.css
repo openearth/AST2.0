@@ -1,0 +1,17 @@
+.default-values {
+  padding-left: var(--spacing);
+}
+
+.default-value:not(:last-child) {
+  margin-bottom: calc(var(--spacing) * 2);
+}
+
+.default-values > summary {
+  transform: translateX(calc(var(--spacing) * -1));
+}
+
+.default-value__content {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: var(--spacing);
+}
