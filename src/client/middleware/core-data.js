@@ -1,6 +1,13 @@
 import getData from "../lib/get-data";
 
 export default async function ({ store }) {
+  if (
+      store.state.devMode === true &&
+      store.state.project.legalAccepted === false
+  ) {
+    store.commit('project/acceptLegal')
+  }
+
   if (store.state.appMenu.show) {
     store.commit('appMenu/hideMenu')
   }
