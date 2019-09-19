@@ -65,15 +65,7 @@ export default {
 }
 
 .md-steppers-navigation {
-  position: sticky;
-  top: 0;
-  z-index: 10;
   background-color: var(--background-color);
-}
-
-/* overwriting default styles for .md-toolbar */
-.measure-stepper .md-toolbar {
-  background-color: transparent;
 }
 
 .stepper-title {

@@ -22,16 +22,23 @@ export default {
 
 <style>
 .app-panel {
+  position: relative;
+  z-index: 2;
+
   width: var(--width-medium);
   height: 100%;
+
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+
   background-color: var(--background-color);
 }
 
 .app-panel__content {
+  position: relative;
   flex-grow: 2;
+  z-index: 1;
 }
 
 .app-panel__wide {
@@ -40,11 +47,17 @@ export default {
   max-width: calc(100vw - var(--width-large));
 }
 
+/* overwriting default styles for .md-toolbar */
+.app-panel__content .md-toolbar {
+  background-color: transparent;
+}
+
 .app-panel__footer {
   position: sticky;
   bottom: 0;
   width: 100%;
   padding: var(--spacing-default);
+  z-index: 10;
 
   text-align: right;
   background-color: var(--background-color);
