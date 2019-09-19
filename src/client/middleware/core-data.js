@@ -37,4 +37,8 @@ export default async function ({ store }) {
   if (!Object.keys(store.state.data.workspaces).filter(ItemsWithoutUnderscore).length) {
     store.dispatch('data/workspaces/getWorkspaces')
   }
+
+  if (!store.state.data.appConfig.title) {
+    store.dispatch('data/appConfig/getAppConfig')
+  }
 }
