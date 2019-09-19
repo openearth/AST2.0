@@ -2,6 +2,7 @@ query ($id: ItemId){
   workspace(filter: {id: {eq: $id}}) {
     name,
     excludeAllMeasures,
+    applicationTitle,
     measureOverrides,
   }
 }
