@@ -3,12 +3,9 @@ import delay from '../lib/delay'
 import kebabCase from 'lodash/kebabCase'
 
 export default ({ store }) => {
-  const storeUser = user => {
+  const storeUser = async user => {
     store.commit('user/setUser', user || null)
     store.commit('data/workspaces/setDomain', kebabCase(window.location.hostname))
-    if (user) {
-      store.commit('project/acceptLegal')
-    }
   }
 
   const logoutUser = async () => {
@@ -20,8 +17,10 @@ export default ({ store }) => {
   netlifyIdentity.on('init', storeUser)
   netlifyIdentity.on('login', storeUser)
   netlifyIdentity.on('logout', logoutUser)
-}
 
-setTimeout(() => {
-  netlifyIdentity.init({ APIUrl: 'https://kbstoolbox.nl/.netlify/identity' })
-}, 10)
+  window.netlifyIdentity = netlifyIdentity
+
+  setTimeout(() => {
+    netlifyIdentity.init({ APIUrl: 'https://kbstoolbox.nl/.netlify/identity' })
+  }, 10)
+}

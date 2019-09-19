@@ -21,7 +21,7 @@ export const mutations = {
     state._user = workspaceName
   },
   setDomain(state, _domain) {
-    const [domain] = /\w+-\w+$/.exec(_domain)
+    const [domain] = /\w+-\w+$/.exec(_domain) || []
     const availableWorkspaces = Object.keys(state)
 
     state._domain = availableWorkspaces.indexOf(domain) === -1
@@ -44,18 +44,17 @@ export const actions = {
       const workspace = {
         ..._workspace,
         name: kebabCase(_workspace.name),
-        measures: _workspace.measuresOverride.reduce((obj, override) => {
-          const { measure, ...rest } = override
+        measures: (_workspace.measureOverrides || []).reduce((obj, override) => {
 
-          Object.keys(rest).forEach(key => {
-            if (rest[key] !== true && rest[key] !== false) {
-              if (Boolean(rest[key]) === false) {
-                unset(rest, key)
+          Object.keys(override).forEach(key => {
+            if (override[key] !== true && override[key] !== false) {
+              if (Boolean(override[key]) === false) {
+                unset(override, key)
               }
             }
           })
 
-          return { ...obj, [override.measure.measureId]: rest }
+          return { ...obj, [override.measureId]: override }
         }, {}),
       }
 

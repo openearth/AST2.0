@@ -13,7 +13,10 @@ export const state = () => ({
 
 export const mutations = {
   setUser(state, user) {
-    Vue.set(state, 'data', JSON.parse(JSON.stringify(user)))
+    const userObj = user
+      ? JSON.parse(JSON.stringify(user))
+      : null
+    Vue.set(state, 'data', userObj)
   },
   isRefreshing(state) {
     state.isRefreshing = true

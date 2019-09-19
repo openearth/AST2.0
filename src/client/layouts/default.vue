@@ -77,7 +77,7 @@
 
     <transition name="slide-up">
       <app-disclaimer
-        v-if="!legalAccepted && !isLoggedIn"
+        v-if="!legalAccepted"
         :disclaimer="disclaimer"
         class="layout__disclaimer"
         @accepted="acceptLegal"/>
