@@ -1,5 +1,5 @@
 <template>
-  <measure-aside>
+  <app-panel>
     <measure-stepper :current="1"/>
     <div class="measure-list__list">
       <measure-card
@@ -8,15 +8,21 @@
         class="measure-list__card"
         @choose="choose"/>
     </div>
-  </measure-aside>
+    <md-button
+      slot="footer"
+      class="md-raised"
+      @click="cancel">
+      Cancel
+    </md-button>
+  </app-panel>
 </template>
 
 <script>
 import { mapGetters } from "vuex"
-import { MeasureAside, MeasureStepper, MeasureCard } from '~/components'
+import { AppPanel, MeasureStepper, MeasureCard } from '~/components'
 
 export default {
-    components: { MeasureAside, MeasureStepper, MeasureCard },
+    components: { AppPanel, MeasureStepper, MeasureCard },
 
     computed: {
       ...mapGetters('data/measures', ['measureById']),
@@ -29,14 +35,12 @@ export default {
       },
     },
 
-    // mounted() {
-    //   console.log('measureById', this.measureById)
-    //   console.log('getSelectedMeasureId', this.getSelectedMeasureId);
-    // },
-
     methods: {
       choose() {
         console.log('choose')
+      },
+      cancel() {
+        console.log('clicked cancel')
       },
     },
 }

@@ -7,19 +7,19 @@ import VueI18n from 'vue-i18n'
 
 import '../app-core/index.css'
 
-import MeasureAside from './measure-aside.vue'
+import AppPanel from './app-panel.vue'
 import README from './README.md'
 
-const stories = storiesOf('Measure Aside', module)
+const stories = storiesOf('App Panel', module)
   .addDecorator(withKnobs)
   .addDecorator(withReadme(README))
 
-Vue.component('measure-aside', MeasureAside)
+Vue.component('app-panel', AppPanel)
 
 stories.add(
-  'Measure Aside',
+  'App Panel',
   () => ({
     i18n: new VueI18n({ locale: 'en' }),
-    template: '<measure-aside/>',
+    template: '<app-panel/>',
   }),
 )

@@ -1,13 +1,25 @@
 <template>
-  <measure-aside>
+  <app-panel>
     <measure-stepper :current="2"/>
-  </measure-aside>
+    <md-button
+      slot="footer"
+      class="md-raised"
+      @click="cancel">
+      Cancel
+    </md-button>
+  </app-panel>
 </template>
 
 <script>
-import { MeasureAside, MeasureStepper } from '~/components'
+import { AppPanel, MeasureStepper } from '~/components'
 
 export default {
-    components: { MeasureAside, MeasureStepper },
+    components: { AppPanel, MeasureStepper },
+
+    methods: {
+      cancel() {
+        console.log('cancel', cancel);
+      },
+    },
 }
 </script>
