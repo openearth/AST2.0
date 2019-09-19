@@ -1,13 +1,5 @@
 <template>
-  <app-panel>
-    <measure-stepper :current="2"/>
-    <md-button
-      slot="footer"
-      class="md-raised"
-      @click="cancel">
-      Cancel
-    </md-button>
-  </app-panel>
+  <h1>Adjust measure settings</h1>
 </template>
 
 <script>

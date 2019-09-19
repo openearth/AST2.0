@@ -1,5 +1,5 @@
 <template>
-  <aside :class="{ 'app-panel__wide': isWide }" class="app-panel">
+  <aside :class="{ 'app-panel__wide': wide }" class="app-panel">
     <section class="app-panel__content">
       <slot/>
     </section>
@@ -15,11 +15,6 @@ export default {
     wide: {
       type: Boolean,
       default: false,
-    },
-  },
-  computed: {
-    isWide() {
-      return this.wide
     },
   },
 }

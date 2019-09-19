@@ -1,14 +1,13 @@
 <template>
   <md-steppers
     ref="stepper"
-    :md-active-step="stepId(current)"
     md-linear
     md-sync-route
     md-dynamic-height
     class="measure-stepper">
     <md-step
       v-for="(step, index) in steps"
-      :to="step.to"
+      :to="step.slug"
       :id="stepId(index)"
       :key="index"
       :md-done="isDone(index)"
@@ -27,24 +26,10 @@ export default {
       required: true,
       default: 0,
     },
-  },
-  data() {
-    return {
-      steps: [
-          {
-              title: 'Select a measure',
-              to: '/en/set-measure',
-          },
-          {
-              title: 'Draw an area on the map to connect with the selected measure',
-              to: '/en/set-measure/draw-an-area',
-          },
-          {
-              title: 'Adjust measure settings',
-              to: '/en/set-measure/adjust-measure-settings',
-          },
-          ],
-    }
+    steps: {
+      type: Array,
+      default: () => [],
+    },
   },
   methods: {
     isDone(index) {
