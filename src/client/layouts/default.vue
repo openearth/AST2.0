@@ -111,6 +111,7 @@ export default {
 
   computed: {
     ...mapState({
+      devMode: state => state.devMode,
       map: state => state.project.map,
       projectArea: state => state.project.settings.area,
       legalAccepted: state => state.project.legalAccepted,
@@ -137,7 +138,9 @@ export default {
   mounted() {
     this.$refs.base.addEventListener('click', this.dispatchClickEvent)
 
-    window.addEventListener('beforeunload', this.beforeUnload)
+    if (this.devMode === false) {
+      window.addEventListener('beforeunload', this.beforeUnload)
+    }
   },
 
   beforeDestroy() {
