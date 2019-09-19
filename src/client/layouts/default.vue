@@ -110,6 +110,7 @@ export default {
       meta: [
         { hid: 'description', name: 'description', content: this.$i18n.t('app_description') },
       ],
+      title: this.title,
     }
   },
 
@@ -122,7 +123,6 @@ export default {
       center: state => state.project.map.center,
       zoom: state => state.project.map.zoom,
       showNavigation: state => state.appMenu.show,
-      title: state => state.data.appConfig.title,
       projectTitle: state => state.project.settings.general.title,
       mapMode: state => state.map.mode,
       notifications: state => state.notifications.messages,
@@ -135,6 +135,7 @@ export default {
     ...mapGetters({ selectedAreas:  'selectedAreas/features' }),
     ...mapGetters('map', ['isProject', 'point', 'line', 'polygon', 'interactive', 'search']),
     ...mapGetters('user', ['isLoggedIn']),
+    ...mapGetters('data/appConfig', ['title']),
   },
 
   watch: {
