@@ -68,7 +68,7 @@ Vue.component('auto-complete', {
 		},
 		selectItem() {
 			if (this.selectedIndex !== undefined) {
-				this.$emit('select-item', this.items[this.selectedItem])
+				this.$emit('select-item', this.items[this.selectedIndex])
 			}
 		},
 		selectDown() {
