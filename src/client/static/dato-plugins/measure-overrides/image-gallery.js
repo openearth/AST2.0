@@ -2,7 +2,7 @@ const html = str => str.raw[0]; // For editor code highlight
 
 const template = html`
 <details class="image-gallery" :open="images.length">
-  <summary><span>Images</span></summary>
+  <summary><span>Gallery Images</span></summary>
   <ul class="image-gallery__original-list">
     <li
       class="image-gallery__original-item"
