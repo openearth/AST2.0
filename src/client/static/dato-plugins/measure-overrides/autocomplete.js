@@ -19,7 +19,7 @@ const template = html`
 	<ul class="autocomplete-results" ref="resultlist">
 		<li
 			class="autocomplete-result"
-			v-for="(item, index) in searchResult"
+      v-for="(item, index) in searchResult"
 			:key="item.id"
 			:class="{'autocomplete-result--active': selectedIndex === index}"
       :data-index="index"
@@ -44,6 +44,7 @@ Vue.component('auto-complete', {
     },
   },
   data: () => ({
+    selectedItems: [],
 		inputFocused: false,
 		searchQuery: '',
 		selectedIndex: undefined,
@@ -56,6 +57,7 @@ Vue.component('auto-complete', {
       return this.items
         .filter(measure => search.test(measure.title.en))
         .filter(measure => !this.filterItems.includes(measure.measureId))
+        .filter(measure => !this.selectedItems.includes(measure.measureId))
 		},
 	},
 	watch: {
@@ -66,34 +68,35 @@ Vue.component('auto-complete', {
 	methods: {
 		onFocus(index = undefined) {
 			this.inputFocused = true
-			this.selectedIndex = index
+			this.selectedIndex = undefined
 		},
 		onBlur() {
+      this.$refs.resultlist.style.opacity = 0
       setTimeout(() => {
         this.inputFocused = false
-        this.selectedIndex = undefined
-      }, 500)
+        this.$refs.resultlist.style.opacity = 1
+    }, 1000)
 		},
 		selectItem() {
 			if (this.selectedIndex !== undefined) {
-        this.emit(this.items[this.selectedIndex])
+        this.emit(this.searchResult[this.selectedIndex])
         this.selectedIndex = undefined
 			}
     },
     emit(item) {
       this.$emit('select-item', item)
+      this.selectedItems.push(item)
     },
     selectIndex(index) {
       this.selectedIndex = Number(index)
     },
 		selectDown() {
-      console.log('select down')
 			const list = this.$refs.resultlist.querySelectorAll('li')
 			const first = _.first(list)
 			const last = _.last(list)
 			const lastIndex = Number(last.dataset.index)
 
-			if (this.selectedIndex === undefined ) {
+      if (this.selectedIndex === undefined ) {
 				this.selectedIndex = Number(first.dataset.index)
 			} else if (lastIndex > this.selectedIndex) {
 				this.selectedIndex += 1;

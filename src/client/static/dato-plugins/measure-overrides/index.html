@@ -83,7 +83,7 @@
 
           <default-values
             class="override-item"
-            :value="item.default_values"
+            :value="item.defaultValues"
             :original="item.original.defaultValues"
             @change="value => updateValue(item.measureId, 'defaultValues', value)">
           </default-values>
@@ -117,18 +117,18 @@
 
           <text-input
             class="override-item"
-            :value="item.external_link_label"
-            :original="item.original.external_link_label"
+            :value="item.externalLinkLabel"
+            :original="item.original.externalLinkLabel"
             summary="Exteral link label"
-            @change="event => updateValue(item.measureId, 'external_link_label', event.target.value)"
+            @change="event => updateValue(item.measureId, 'externalLinkLabel', event.target.value)"
           ></text-input>
 
           <text-input
             class="override-item"
-            :value="item.external_link_url"
-            :original="item.original.external_link_url"
+            :value="item.externalLinkUrl"
+            :original="item.original.externalLinkUrl"
             summary="Exteral link url"
-            @change="event => updateValue(item.measureId, 'external_link_url', event.target.value)"
+            @change="event => updateValue(item.measureId, 'externalLinkUrl', event.target.value)"
           ></text-input>
 
           <button class="override-item__remove-button DatoCMS-button--alert" @click="onRemove(item)">Remove</button>

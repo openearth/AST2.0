@@ -9,15 +9,15 @@ const template = html`
     <div class="default-value__content">
       <label>
         <span>Min ({{originals.Depth && originals.Depth.min}})</span>
-        <input type="number" step="any" :value="depth.min" @change="emit" ref="depthMin"/>
+        <input type="number" step="any" :value="depth.min !== _.get(originals, 'Depth.min') ? depth.min : undefined" @change="emit" ref="depthMin"/>
       </label>
       <label>
         <span>Max ({{originals.Depth && originals.Depth.max}})</span>
-        <input type="number" step="any" :value="depth.max" @change="emit" ref="depthMax"/>
+        <input type="number" step="any" :value="depth.max !== _.get(originals, 'Depth.max') ? depth.max : undefined" @change="emit" ref="depthMax"/>
       </label>
       <label>
         <span>Value ({{originals.Depth && originals.Depth.value}})</span>
-        <input type="number" step="any" :value="depth.value" @change="emit" ref="depthValue"/>
+        <input type="number" step="any" :value="depth.value !== _.get(originals, 'Depth.value') ? depth.value : undefined" @change="emit" ref="depthValue"/>
       </label>
   </div>
   </details>
@@ -27,15 +27,15 @@ const template = html`
     <div class="default-value__content">
       <label>
         <span>Min ({{originals.Inflow && originals.Inflow.min}})</span>
-        <input type="number" step="any" :value="inflow.min" @change="emit" ref="inflowMin"/>
+        <input type="number" step="any" :value="inflow.min !== _.get(originals, 'Inflow.min') ? inflow.min : undefined" @change="emit" ref="inflowMin"/>
       </label>
       <label>
         <span>Max ({{originals.Inflow && originals.Inflow.max}})</span>
-        <input type="number" step="any" :value="inflow.max" @change="emit" ref="inflowMax"/>
+        <input type="number" step="any" :value="inflow.max !== _.get(originals, 'Inflow.max') ? inflow.max : undefined" @change="emit" ref="inflowMax"/>
       </label>
       <label>
         <span>Value ({{originals.Inflow && originals.Inflow.value}})</span>
-        <input type="number" step="any" :value="inflow.value" @change="emit" ref="inflowValue"/>
+        <input type="number" step="any" :value="inflow.value !== _.get(originals, 'Inflow.value') ? inflow.value : undefined" @change="emit" ref="inflowValue"/>
       </label>
     </div>
   </details>
@@ -45,15 +45,15 @@ const template = html`
     <div class="default-value__content">
       <label>
         <span>Min ({{originals.Width && originals.Width.min}})</span>
-        <input type="number" step="any" :value="width.min" @change="emit" ref="widthMin"/>
+        <input type="number" step="any" :value="width.min !== _.get(originals, 'Width.min') ? width.min : undefined" @change="emit" ref="widthMin"/>
       </label>
       <label>
         <span>Max ({{originals.Width && originals.Width.max}})</span>
-        <input type="number" step="any" :value="width.max" @change="emit" ref="widthMax"/>
+        <input type="number" step="any" :value="width.max !== _.get(originals, 'Width.max') ? width.max : undefined" @change="emit" ref="widthMax"/>
       </label>
       <label>
         <span>Value ({{originals.Width && originals.Width.value}})</span>
-        <input type="number" step="any" :value="width.value" @change="emit" ref="widthValue"/>
+        <input type="number" step="any" :value="width.value !== _.get(originals, 'Width.value') ? width.value : undefined" @change="emit" ref="widthValue"/>
       </label>
     </div>
   </details>
@@ -63,15 +63,15 @@ const template = html`
     <div class="default-value__content">
       <label>
         <span>Min ({{originals.Radius && originals.Radius.min}})</span>
-        <input type="number" step="any" :value="radius.min" @change="emit" ref="radiusMin"/>
+        <input type="number" step="any" :value="radius.min !== _.get(originals, 'Radius.min') ? radius.min : undefined" @change="emit" ref="radiusMin"/>
       </label>
       <label>
         <span>Max ({{originals.Radius && originals.Radius.max}})</span>
-        <input type="number" step="any" :value="radius.max" @change="emit" ref="radiusMax"/>
+        <input type="number" step="any" :value="radius.max !== _.get(originals, 'Radius.max') ? radius.max : undefined" @change="emit" ref="radiusMax"/>
       </label>
       <label>
         <span>Value ({{originals.Radius && originals.Radius.value}})</span>
-        <input type="number" step="any" :value="radius.value" @change="emit" ref="radiusValue"/>
+        <input type="number" step="any" :value="radius.value !== _.get(originals, 'Radius.value') ? radius.value : undefined" @change="emit" ref="radiusValue"/>
       </label>
     </div>
   </details>

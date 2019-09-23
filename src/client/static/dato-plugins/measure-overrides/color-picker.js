@@ -3,7 +3,7 @@ const html = str => str.raw[0]; // For editor code highlight
 const template = html`
 <details class="color-picker" :open="value">
   <summary><span>Color</span></summary>
-  <input class="color-picker__trigger" type="color" @change="emit" :value="value || orgHex"/>
+  <input ref="input" class="color-picker__trigger" type="color" @change="emit" :value="value || orgHex"/>
   <button class="color-picker__reset" @click="reset">Reset</button>
 </details>
 `
@@ -43,7 +43,8 @@ Vue.component('color-picker', {
       this.$emit('change', { hex: event.target.value })
     },
     reset() {
-      this.$emit('change', null)
+      this.$emit('change', '')
+      this.$refs.input.value = this.orgHex
     },
   },
   template,

@@ -7,7 +7,7 @@ const template = html`
     <li
       class="image-gallery__original-item"
       v-for="item in originalImages"
-      :key="item"
+      :key="item.url"
       :class="{'image-gallery__original-item--ignored': isIgnored(item)}" >
       <button @click="toggleOriginalIgnore(item)">
         <img :src="item" />
