@@ -144,17 +144,19 @@ export default {
     showSearch: false,
   }),
   watch: {
-    showLayersPanel(shown) {
-      if (shown) {
-        EventBus.$on(CLICK, this.handleOutideClick)
-      } else {
-        EventBus.$off(CLICK, this.handleOutideClick)
-      }
+    async showLayersPanel(shown) {
+      setTimeout(() => {
+        if (shown) {
+          EventBus.$on(CLICK, this.handleOutideClick)
+        } else {
+          EventBus.$off(CLICK, this.handleOutideClick)
+        }
+      }, 10)
     },
   },
   methods: {
     handleOutideClick(event) {
-      const path = event.path
+      const path = event.path || event.composedPath()
       const layerlist = this.$refs.layerlist.$el
       if (path && path.indexOf(layerlist) === -1) {
         this.showLayersPanel = false
