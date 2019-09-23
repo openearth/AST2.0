@@ -3,18 +3,20 @@
     :class="{[`view-project__${drawerWidth}`]: true}"
     class="view-project"
     md-permanent="clipped">
+    <button>Hi my name is button</button>
+    <app-popup />
     <nuxt-child />
   </md-drawer>
 </template>
 
 <script>
 import { mapState, mapGetters, mapActions } from "vuex"
-import { MeasureCard, SearchInput } from '~/components'
+import { MeasureCard, SearchInput, AppPopup } from '~/components'
 import MapEventBus, { REDRAW } from "../lib/map-event-bus"
 import getViewPath from '../lib/get-view-path'
 
 export default {
-  components: { MeasureCard, SearchInput },
+  components: { MeasureCard, SearchInput, AppPopup },
   middleware: ['state-is-default'],
   data() {
     return {
