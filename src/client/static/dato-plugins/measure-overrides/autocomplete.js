@@ -68,12 +68,12 @@ Vue.component('auto-complete', {
       setTimeout(() => {
         this.inputFocused = false
         this.selectedIndex = undefined
-      }, 10)
+      }, 40)
 		},
 		selectItem() {
 			if (this.selectedIndex !== undefined) {
-        this.selectedIndex = undefined
         this.emit(this.items[this.selectedIndex])
+        this.selectedIndex = undefined
 			}
     },
     emit(item) {
