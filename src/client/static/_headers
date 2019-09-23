@@ -10,4 +10,4 @@
   X-XSS-Protection: 1; mode=block
 
 /dato-plugins/*
-  X-Frame-Options: allow-from adaptation-support-tool-2-0.admin.datocms.com
+  X-Frame-Options: allow-from datocms.com

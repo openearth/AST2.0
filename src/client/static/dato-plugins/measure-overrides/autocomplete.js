@@ -74,7 +74,7 @@ Vue.component('auto-complete', {
         console.log('execute on blur')
         this.inputFocused = false
         this.selectedIndex = undefined
-      }, 40)
+      }, 1000)
 		},
 		selectItem() {
 			if (this.selectedIndex !== undefined) {
