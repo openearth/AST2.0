@@ -144,12 +144,14 @@ export default {
     showSearch: false,
   }),
   watch: {
-    showLayersPanel(shown) {
-      if (shown) {
-        EventBus.$on(CLICK, this.handleOutideClick)
-      } else {
-        EventBus.$off(CLICK, this.handleOutideClick)
-      }
+    async showLayersPanel(shown) {
+      setTimeout(() => {
+        if (shown) {
+          EventBus.$on(CLICK, this.handleOutideClick)
+        } else {
+          EventBus.$off(CLICK, this.handleOutideClick)
+        }
+      }, 10)
     },
   },
   methods: {
