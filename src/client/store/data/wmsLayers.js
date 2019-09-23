@@ -1,8 +1,10 @@
 import getData from '../../lib/get-data'
+import { getRealApiData } from "../../lib/get-api-data";
 export const state = () => []
 
 export const mutations = {
   addLayer(state, layer) {
+    console.log('layer', layer)
     state.push(layer)
   },
 }
@@ -14,6 +16,27 @@ export const actions = {
       commit('addLayer', layer)
     })
     dispatch('project/bootstrapWmsLayers', data.wmsLayers, { root: true })
+  },
+
+  async getCustomMapLayers({ commit, dispatch }, parameters) {
+    const body = {
+      url: parameters.serverUrl,
+      type: parameters.serverType,
+    }
+    const data = await getRealApiData('maplayers', body)
+    return data
+  },
+
+  addTilesToLayers({ commit }, source) {
+    const mapLayer = {
+      id: source.name,
+      type: 'raster',
+      source: {
+        type: 'raster',
+        tiles: source.tiles,
+      },
+    }
+    commit('addLayer', mapLayer)
   },
 }
 
