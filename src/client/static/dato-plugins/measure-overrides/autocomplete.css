@@ -9,13 +9,15 @@
 
 .autocomplete-result {
   display: inline-block;
-  width: 100%;
+  width: calc(100% - 2rem - 2px);
   text-align: left;
   border: 3px solid transparent;
   padding: 1em;
   cursor: pointer;
   background-color: transparent;
 }
+
+.autocomplete-result:hover,
 .autocomplete-result--active {
   background-color: var(--semi-transparent-accent-color);
   color: var(--primary-color);
