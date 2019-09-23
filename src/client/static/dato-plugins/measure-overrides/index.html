@@ -139,6 +139,7 @@
 
   <auto-complete
     :items="availableMeasures"
+    :filter-items="selectedMeasureIds"
     @select-item="item => onAdd(item)"
   ></auto-complete>
 </div>

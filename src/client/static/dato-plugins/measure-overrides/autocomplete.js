@@ -38,6 +38,10 @@ Vue.component('auto-complete', {
       type: Array,
       default: () => [],
     },
+    filterItems: {
+      type: Array,
+      default: () => [],
+    },
   },
   data: () => ({
 		inputFocused: false,
@@ -51,7 +55,7 @@ Vue.component('auto-complete', {
       const search = new RegExp(this.searchQuery, 'i')
       return this.items
         .filter(measure => search.test(measure.title.en))
-        .filter(measure => !this.items.includes(measure.measureId))
+        .filter(measure => !this.filterItems.includes(measure.measureId))
 		},
 	},
 	watch: {
@@ -60,12 +64,14 @@ Vue.component('auto-complete', {
 		},
 	},
 	methods: {
-		onFocus() {
+		onFocus(index = undefined) {
 			this.inputFocused = true
-			this.selectedIndex = undefined
+			this.selectedIndex = index
 		},
 		onBlur() {
+      console.log('on blur')
       setTimeout(() => {
+        console.log('execute on blur')
         this.inputFocused = false
         this.selectedIndex = undefined
       }, 40)
@@ -77,6 +83,7 @@ Vue.component('auto-complete', {
 			}
     },
     emit(item) {
+      console.log('emit')
       this.$emit('select-item', item)
     },
     selectIndex(index) {
