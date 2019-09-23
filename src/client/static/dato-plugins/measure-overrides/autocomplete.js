@@ -69,12 +69,10 @@ Vue.component('auto-complete', {
 			this.selectedIndex = index
 		},
 		onBlur() {
-      console.log('on blur')
       setTimeout(() => {
-        console.log('execute on blur')
         this.inputFocused = false
         this.selectedIndex = undefined
-      }, 1000)
+      }, 500)
 		},
 		selectItem() {
 			if (this.selectedIndex !== undefined) {
@@ -83,13 +81,13 @@ Vue.component('auto-complete', {
 			}
     },
     emit(item) {
-      console.log('emit')
       this.$emit('select-item', item)
     },
     selectIndex(index) {
       this.selectedIndex = Number(index)
     },
 		selectDown() {
+      console.log('select down')
 			const list = this.$refs.resultlist.querySelectorAll('li')
 			const first = _.first(list)
 			const last = _.last(list)
