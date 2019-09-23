@@ -32,13 +32,15 @@
     </div>
 
     <footer v-if="hasFooter" class="kpi-panel__footer">
-      <md-button class="md-raised" @click="togglePopup(true)">Results as table</md-button>
-      <app-popup v-if="openState" @closePopup="togglePopup(false)">
-        <template v-slot:header>
-          Content for the header
-        </template>
-        content for the main body
+      <md-button class="md-raised" @click="togglePopup(true)">View as table</md-button>
+      <app-popup
+        v-if="openState"
+        title="Content for the header"
+        @closePopup="togglePopup(false)"
+      >
+        <kpi-table />
       </app-popup>
+
     </footer>
   </section>
 </template>
@@ -46,9 +48,10 @@
 <script>
 import { mapGetters, mapMutations } from "vuex"
 import { KpiGroup, AppPopup } from '~/components'
+import KpiTable from '~/components/kpi-table'
 
 export default {
-  components: { KpiGroup, AppPopup },
+  components: { KpiGroup, AppPopup, KpiTable },
   props: {
     kpis: {
       type: Array,
@@ -78,6 +81,9 @@ export default {
     hasFooter() {
       return true
     },
+  },
+  mounted() {
+    console.log('kpis', this.kpis);
   },
   methods: {
     ...mapMutations({

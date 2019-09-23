@@ -4,15 +4,12 @@
       <span class="app-popup__hitarea" @click="closeHandler"/>
       <div class="app-popup__inner">
         <header class="app-popup__header">
-          <slot name="header" />
+          <h3 class="md-headline app-popup__title">{{ title }}</h3>
           <md-button class="md-icon-button app-popup__close-button" @click="closeHandler">
             <md-icon>close</md-icon>
           </md-button>
         </header>
-
-        <section>
-          <slot />
-        </section>
+        <slot />
       </div>
     </article>
   </portal>
@@ -21,6 +18,12 @@
 
 <script>
 export default {
+  props: {
+      title: {
+          type: String,
+          default: "Results",
+      },
+  },
   methods: {
     closeHandler() {
       this.$emit('closePopup');
@@ -48,7 +51,7 @@ export default {
   width: 100%;
   height: 100%;
   background-color: black;
-  opacity: 0.1;
+  opacity: 0.2;
   z-index: 1;
 }
 
@@ -67,14 +70,26 @@ export default {
 
 /*======================= header */
 .app-popup__header {
-  position: relative;
-  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  padding-top: var(--spacing-half);
+  padding-bottom: var(--spacing-half);
+  padding-left: var(--spacing-default);
+  background-color: var(--action-color);
+}
+
+.app-popup__title {
+  flex-grow: 2;
+  color: var(--background-color);
 }
 
 .app-popup__close-button {
-  position: absolute;
-  top: 0;
-  right: 0;
+  min-width: 40px;
+  min-height: 40px;
+}
+
+.app-popup__close-button i {
+  color: white !important;
 }
 
 /*======================= content */
