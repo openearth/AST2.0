@@ -15,6 +15,7 @@
 <script type="module" src="climate-effect-tag.js"></script>
 <script type="module" src="color-picker.js"></script>
 <script type="module" src="image-gallery.js"></script>
+<script type="module" src="autocomplete.js"></script>
 <link href="https://unpkg.com/datocms-plugins-sdk/dist/sdk.css" media="all" rel="stylesheet" />
 <link rel="stylesheet" href="style.css" />
 
@@ -30,11 +31,11 @@
         </summary>
         <div class="measure__content">
           <label class="override-item">
-            <input 
+            <input
               type="checkbox"
               :checked="item.workspaceInclude"
               @change="event => updateValue(item.measureId, 'workspaceInclude', event.target.checked)">
-            Include in workspace - 
+            Include in workspace -
             <small>Original <input
               type="checkbox"
               :checked="item.original.workspaceInclude"
@@ -58,7 +59,7 @@
           </details>
 
           <image-gallery
-            class="override-item" 
+            class="override-item"
             :value="item.images"
             :original="item.original.images"
             :original-ignores="item.ignoredOriginalImages"
@@ -80,7 +81,7 @@
             @change="value => updateValue(item.measureId, 'color', value)"
           ></color-picker>
 
-          <default-values 
+          <default-values
             class="override-item"
             :value="item.default_values"
             :original="item.original.defaultValues"
@@ -135,18 +136,11 @@
       </details>
     </li>
   </ul>
-  
-  <div class="searchbox">
-    <label>
-      <span>Find measures:</span>
-      <input ref="input" class="searchfield" type="text" v-model="searchQuery">
-    </label>
-    <ul class="search-results">
-      <li class="search-result" v-for="item in searchResult" :key="item.id">
-        <button @click="onAdd(item)" @keydown.esc="focusInput">{{item.title.en}}</button>
-      </li>
-    </ul>
-  </div>
+
+  <auto-complete
+    :items="availableMeasures"
+    @select-item="onAdd"
+  ></auto-complete>
 
 </div>
 
@@ -184,7 +178,7 @@ DatoCmsPlugin.init(async function (_plugin) {
 })
 
 app = new Vue({
-  el: '#app', 
+  el: '#app',
   data: {
     availableMeasures: allMeasures,
     availableImages: allImages,
@@ -205,7 +199,7 @@ app = new Vue({
         value || value === false
           ? item[key] = value
           : delete item[key]
-        
+
         setTimeout(() => {
           this.storeSelectedMeasures()
         }, 0)
@@ -225,7 +219,7 @@ app = new Vue({
     },
     searchResult() {
       if (this.searchQuery === '') return []
-      
+
       const search = new RegExp(this.searchQuery)
       return this.availableMeasures
         .filter(measure => search.test(measure.title.en))

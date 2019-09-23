@@ -65,7 +65,9 @@ export const actions = {
 
 export const getters = {
   activeWorkspace(state) {
-    const activeName = state._user || state._domain
+    const activeDomain = state._domain;
+    const activeUser = state._user;
+    const activeName = activeUser || activeDomain;
     return state[activeName]
   },
 }
