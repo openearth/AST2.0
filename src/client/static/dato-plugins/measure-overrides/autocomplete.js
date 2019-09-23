@@ -16,12 +16,12 @@ const template = html`
 			@keydown.enter="selectItem"
 		>
 	</label>
-	<ul class="search-results" ref="resultlist">
+	<ul class="autocomplete-results" ref="resultlist">
 		<li
-			class="search-result"
+			class="autocomplete-result"
 			v-for="(item, index) in searchResult"
 			:key="item.id"
-			:class="{'search-result--active': selectedIndex === index}"
+			:class="{'autocomplete-result--active': selectedIndex === index}"
 			:data-index="index"
 		>
 			{{item.title.en}}{{selectedIndex === index ? '(selected)': ''}}

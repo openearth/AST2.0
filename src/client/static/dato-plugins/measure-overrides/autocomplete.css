@@ -1,0 +1,22 @@
+.autocomplete-results {
+  border-left: 1px solid var(--primary-color);
+  border-right: 1px solid var(--primary-color);
+}
+
+.autocomplete-result:last-child {
+  border-bottom: 1px solid var(--primary-color);
+}
+
+.autocomplete-result button {
+  display: inline-block;
+  width: 100%;
+  text-align: left;
+  border: 3px solid transparent;
+  padding: 1em;
+  cursor: pointer;
+  background-color: transparent;
+}
+.autocomplete-result--active {
+  background-color: var(--semi-transparent-accent-color);
+  color: var(--primary-color);
+}

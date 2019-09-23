@@ -3,6 +3,7 @@
 @import 'color-picker.css';
 @import 'upload-image.css';
 @import 'image-gallery.css';
+@import 'autocomplete.css';
 
 :root {
   --spacing: 1rem;
@@ -72,36 +73,4 @@ img {
   display: flex;
   flex-direction: column;
   padding: var(--spacing-half) var(--spacing);
-}
-
-
-.searchbox:focus-within .searchfield {
-  border-color: var(--primary-color);
-}
-
-.search-results {
-  border-left: 1px solid var(--primary-color);
-  border-right: 1px solid var(--primary-color);
-}
-
-.search-result:last-child {
-  border-bottom: 1px solid var(--primary-color);
-}
-
-.search-result button {
-  display: inline-block;
-  width: 100%;
-  text-align: left;
-  border: 3px solid transparent;
-  padding: 1em;
-  cursor: pointer;
-  background-color: transparent;
-}
-.search-result button:focus,
-.search-result button:hover {
-  background-color: var(--semi-transparent-accent-color);
-}
-
-.search-result button:focus {
-  color: var(--primary-color);
 }
