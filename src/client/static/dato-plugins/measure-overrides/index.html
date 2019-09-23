@@ -137,11 +137,11 @@
     </li>
   </ul>
 
-  <div
-    is="auto-complete"
+  <auto-complete
+    v-if="ready"
     :items="availableMeasures"
     @select-item="onAdd"
-  ></div>
+  ></auto-complete>
 
 </div>
 
@@ -181,11 +181,15 @@ DatoCmsPlugin.init(async function (_plugin) {
 app = new Vue({
   el: '#app',
   data: {
+    ready: false,
     availableMeasures: allMeasures,
     availableImages: allImages,
     searchQuery: '',
     selectedMeasures: [],
     selectedMeasuresPrefilled: false,
+  },
+  mounted() {
+    this.ready = true
   },
   methods: {
     onAdd(item) {

@@ -22,9 +22,10 @@ const template = html`
 			v-for="(item, index) in searchResult"
 			:key="item.id"
 			:class="{'autocomplete-result--active': selectedIndex === index}"
-			:data-index="index"
+      :data-index="index"
+      @click="emit(item)"
 		>
-			{{item.title.en}}{{selectedIndex === index ? '(selected)': ''}}
+			{{item.title.en}}
 		</li>
 	</ul>
 </div>
@@ -68,10 +69,13 @@ Vue.component('auto-complete', {
 		},
 		selectItem() {
 			if (this.selectedIndex !== undefined) {
-        this.$emit('select-item', this.items[this.selectedIndex])
         this.selectedIndex = undefined
+        this.emit(this.items[this.selectedIndex])
 			}
-		},
+    },
+    emit(item) {
+      this.$emit('select-item', item)
+    },
 		selectDown() {
 			const list = this.$refs.resultlist.querySelectorAll('li')
 			const first = _.first(list)
