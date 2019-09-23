@@ -154,7 +154,7 @@ export default {
   },
   methods: {
     handleOutideClick(event) {
-      const path = event.path
+      const path = event.path || event.composedPath()
       const layerlist = this.$refs.layerlist.$el
       if (path && path.indexOf(layerlist) === -1) {
         this.showLayersPanel = false
