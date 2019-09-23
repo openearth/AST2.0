@@ -23,7 +23,6 @@
 export default {
   methods: {
     closeHandler() {
-      // console.log('close');
       this.$emit('closePopup');
     },
   },
