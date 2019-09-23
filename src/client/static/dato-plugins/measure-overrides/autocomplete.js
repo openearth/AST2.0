@@ -68,7 +68,8 @@ Vue.component('auto-complete', {
 		},
 		selectItem() {
 			if (this.selectedIndex !== undefined) {
-				this.$emit('select-item', this.items[this.selectedIndex])
+        this.$emit('select-item', this.items[this.selectedIndex])
+        this.selectedIndex = undefined
 			}
 		},
 		selectDown() {
@@ -82,7 +83,7 @@ Vue.component('auto-complete', {
 			} else if (lastIndex > this.selectedIndex) {
 				this.selectedIndex += 1;
 			} else if (lastIndex === this.selectedIndex) {
-				this.selectedIndex = 0;
+				this.selectedIndex = undefined;
 			}
 		},
 		selectUp() {
@@ -96,7 +97,7 @@ Vue.component('auto-complete', {
 			} else if (this.selectedIndex > 0) {
 				this.selectedIndex -= 1;
 			} else if (this.selectedIndex === 0) {
-				this.selectedIndex = lastIndex;
+				this.selectedIndex = undefined;
 			}
 		},
 	},
