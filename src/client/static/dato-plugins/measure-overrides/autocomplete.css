@@ -22,3 +22,6 @@
   background-color: var(--semi-transparent-accent-color);
   color: var(--primary-color);
 }
+.autocomplete-result--active:not(:hover) {
+  font-weight: bold;
+}

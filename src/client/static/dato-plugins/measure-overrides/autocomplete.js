@@ -24,6 +24,7 @@ const template = html`
 			:class="{'autocomplete-result--active': selectedIndex === index}"
       :data-index="index"
       @click="emit(item)"
+      @mouseenter="selectIndex(index)"
 		>
 			{{item.title.en}}
 		</li>
@@ -64,8 +65,10 @@ Vue.component('auto-complete', {
 			this.selectedIndex = undefined
 		},
 		onBlur() {
-			this.inputFocused = false
-			this.selectedIndex = undefined
+      setTimeout(() => {
+        this.inputFocused = false
+        this.selectedIndex = undefined
+      }, 10)
 		},
 		selectItem() {
 			if (this.selectedIndex !== undefined) {
@@ -75,6 +78,9 @@ Vue.component('auto-complete', {
     },
     emit(item) {
       this.$emit('select-item', item)
+    },
+    selectIndex(index) {
+      this.selectIndex = Number(index)
     },
 		selectDown() {
 			const list = this.$refs.resultlist.querySelectorAll('li')
