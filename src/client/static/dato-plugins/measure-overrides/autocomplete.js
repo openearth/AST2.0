@@ -80,7 +80,7 @@ Vue.component('auto-complete', {
       this.$emit('select-item', item)
     },
     selectIndex(index) {
-      this.selectIndex = Number(index)
+      this.selectedIndex = Number(index)
     },
 		selectDown() {
 			const list = this.$refs.resultlist.querySelectorAll('li')

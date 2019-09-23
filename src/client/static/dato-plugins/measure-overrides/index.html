@@ -15,7 +15,7 @@
 <script type="module" src="climate-effect-tag.js"></script>
 <script type="module" src="color-picker.js"></script>
 <script type="module" src="image-gallery.js"></script>
-<script type="module" src="autocomplete.js"></script>
+<script src="autocomplete.js"></script>
 <link href="https://unpkg.com/datocms-plugins-sdk/dist/sdk.css" media="all" rel="stylesheet" />
 <link rel="stylesheet" href="style.css" />
 
@@ -138,11 +138,9 @@
   </ul>
 
   <auto-complete
-    v-if="ready"
     :items="availableMeasures"
     @select-item="onAdd"
   ></auto-complete>
-
 </div>
 
 <script type="text/javascript">
