@@ -1,13 +1,17 @@
 <template>
   <portal to="popup-portal">
     <article class="app-popup">
-      <span class="app-popup__hitarea"/>
+      <span class="app-popup__hitarea" @click="closeHandler"/>
       <div class="app-popup__inner">
-        <header>
-          I'm the popup header
+        <header class="app-popup__header">
+          <slot name="header" />
+          <md-button class="md-icon-button app-popup__close-button" @click="closeHandler">
+            <md-icon>close</md-icon>
+          </md-button>
         </header>
+
         <section>
-          I'm the popup content
+          <slot />
         </section>
       </div>
     </article>
@@ -17,7 +21,12 @@
 
 <script>
 export default {
-
+  methods: {
+    closeHandler() {
+      // console.log('close');
+      this.$emit('closePopup');
+    },
+  },
 }
 </script>
 
@@ -32,6 +41,7 @@ export default {
   z-index: var(--layer--popup);
 }
 
+/*======================= overlay */
 .app-popup__hitarea {
   position: absolute;
   top: 0;
@@ -43,6 +53,7 @@ export default {
   z-index: 1;
 }
 
+/*======================= centered */
 .app-popup__inner {
   position: relative;
   z-index: 2;
@@ -55,12 +66,22 @@ export default {
   background-color: var(--background-color);
 }
 
+/*======================= header */
 .app-popup__header {
+  position: relative;
   padding: 10px 20px;
 }
 
+.app-popup__close-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+/*======================= content */
 .app-popup__content {
   padding: 10px 20px;
 }
+
 
 </style>

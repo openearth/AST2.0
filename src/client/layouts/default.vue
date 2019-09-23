@@ -85,12 +85,8 @@
       @remove-notification="removeNotification"
     />
 
-    <portal-target name="popup-portal">
-      <!--
-      This component can be located anwhere in your App.
-      The slot content of the above portal component will be rendered here.
-      -->
-    </portal-target>
+    <!-- portal for general popup -->
+    <portal-target name="popup-portal" />
   </div>
 </template>
 
