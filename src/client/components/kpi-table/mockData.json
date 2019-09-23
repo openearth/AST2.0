@@ -1,0 +1,45 @@
+[
+  {
+    "title": "Klimaat en kosten",
+    "header": [
+      "Maatregel",
+      "Oppervlak",
+      "Bergingscapaciteit (m3)",
+      "Herhalingstijd factor (-)",
+      "Grondwater aanvulling (mm/j)",
+      "Evapotranspiratie (mm/j)",
+      "Hitte reductie (Co)",
+      "Koele gebieden",
+      "Kosten aanleg (keuro)",
+      "Kosten onderhoud (euro)"
+    ],
+    "rows": [
+      ["Bergingsvijvers", "24826", "7448", "3,8", "58", "21", "0,00", "0", "0", "0"],
+      ["Extra wateroppervlak maken (m2)", "1460", "438", "0,0", "0", "0", "0,00", "0", "146", "1460"],
+      ["Groene daken met afvoervertraging", "120540", "8013", "21,0", "0", "25", "0,01", "0", "9041", "542431"],
+      ["Bergingsvijvers", "24826", "7448", "3,8", "58", "21", "0,00", "0", "0", "0"],
+      ["Extra wateroppervlak maken (m2)", "1460", "438", "0,0", "0", "0", "0,00", "0", "146", "1460"],
+      ["Groene daken met afvoervertraging", "120540", "8013", "21,0", "0", "25", "0,01", "0", "9041", "542431"],
+      ["Bergingsvijvers", "24826", "7448", "3,8", "58", "21", "0,00", "0", "0", "0"],
+      ["Extra wateroppervlak maken (m2)", "1460", "438", "0,0", "0", "0", "0,00", "0", "146", "1460"],
+      ["Groene daken met afvoervertraging", "120540", "8013", "21,0", "0", "25", "0,01", "0", "9041", "542431"],
+      ["Bergingsvijvers", "24826", "7448", "3,8", "58", "21", "0,00", "0", "0", "0"],
+      ["Extra wateroppervlak maken (m2)", "1460", "438", "0,0", "0", "0", "0,00", "0", "146", "1460"],
+      ["Groene daken met afvoervertraging", "120540", "8013", "21,0", "0", "25", "0,01", "0", "9041", "542431"]
+    ]
+  },
+  {
+    "title": "Co-benefits",
+    "header": [
+      "Maatregel",
+      "Pathogenen reductie (%)",
+      "Nutrient reductie (%)",
+      "Adsorptie stoffen (%)"
+    ],
+    "rows": [
+      ["Bergingsvijvers", "05", "0,2", "0,6"],
+      ["Extra wateroppervlak maken (m2)", "0,0", "0,0", "0,0"],
+      ["Groene daken met afvoervertraging", "4,0", "4,2", "4,4"]
+    ]
+  }
+]

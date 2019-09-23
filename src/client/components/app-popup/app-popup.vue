@@ -70,6 +70,9 @@ export default {
 
 /*======================= header */
 .app-popup__header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   display: flex;
   align-items: center;
   padding-top: var(--spacing-half);
