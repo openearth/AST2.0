@@ -59,7 +59,7 @@ export const actions = {
     commit('updateCurrentStep', 0)
     commit('setInFlow', false)
     commit('mode/isDefault', null, { root:true })
-    if (options.relocate) {
+    if (relocate) {
       this.$router.push(`/${rootState.i18n.locale}/project/`)
     }
   },
