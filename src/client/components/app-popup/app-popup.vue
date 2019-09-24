@@ -4,8 +4,13 @@
       <span class="app-popup__hitarea" @click="closeHandler"/>
       <div class="app-popup__inner">
         <header class="app-popup__header">
-          <h3 class="md-headline app-popup__title">{{ title }}</h3>
-          <md-button class="md-icon-button app-popup__close-button" @click="closeHandler">
+          <h3 class="md-headline app-popup__title">
+            {{ title }}
+          </h3>
+          <md-button
+            class="md-icon-button app-popup__close-button"
+            @click="closeHandler"
+          >
             <md-icon>close</md-icon>
           </md-button>
         </header>
@@ -62,8 +67,8 @@ export default {
   width: calc(100% - (var(--spacing-double) * 2) );
   max-width: 1400px;
   max-height: calc(100% - (var(--spacing-double) * 2));
-  overflow: auto;
   margin: auto;
+  overflow: auto;
 
   background-color: var(--background-color);
 }
@@ -78,7 +83,8 @@ export default {
   padding-top: var(--spacing-half);
   padding-bottom: var(--spacing-half);
   padding-left: var(--spacing-default);
-  background-color: var(--action-color);
+
+  background-color: var(--md-theme-default-primary);
 }
 
 .app-popup__title {
