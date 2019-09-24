@@ -1,4 +1,5 @@
 <template>
+  <!-- <h1>iets</h1> -->
   <md-tabs md-dynamic-height>
     <md-tab
       v-for="table in tables"
@@ -43,6 +44,9 @@ export default {
     tables() {
       return [this.tableClimateAndCosts, this.tableCoBenefits]
     },
+  },
+  mounted() {
+    console.log('tables', this.tables);
   },
 }
 </script>

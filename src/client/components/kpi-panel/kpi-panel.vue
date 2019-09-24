@@ -82,9 +82,6 @@ export default {
       return true
     },
   },
-  mounted() {
-    console.log('kpis', this.kpis);
-  },
   methods: {
     ...mapMutations({
       openPopup: 'popup/openPopup',

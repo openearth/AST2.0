@@ -378,6 +378,7 @@ export const getters = {
       const measureIds = state.areas.map(area => get(area, 'properties.measure'))
 
       const kpiKeys = rootGetters['data/kpiGroups/kpiKeys']
+      const kpiTitles = rootGetters['data/kpiGroups/kpiTitles']
 
       const rows = state.areas.map(area => {
         const values = kpiKeys.map(key => get(area, `properties.apiData[${key}]`))
@@ -393,7 +394,8 @@ export const getters = {
         "header": [
           "Maatregel",
           "Oppervlak",
-          ...kpiKeys,
+          // ...kpiKeys,
+          ...kpiTitles,
         ],
         rows,
       }

@@ -32,4 +32,15 @@ export const getters = {
 
     return keys
   },
+  kpiTitles: state => {
+    let titles = []
+
+    state.forEach(group => {
+      group.kpis.forEach(kpi => {
+        titles.push(kpi.title)
+      })
+    })
+
+    return titles
+  },
 }
