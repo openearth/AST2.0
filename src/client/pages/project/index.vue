@@ -49,7 +49,8 @@
       <md-button
         :to="`/${$i18n.locale}/set-measure`"
         class="md-raised md-primary">
-        {{ $t('measures') }}
+        <md-icon>add</md-icon>
+        {{ $t('measure') }}
       </md-button>
     </div>
   </div>
@@ -151,5 +152,13 @@ export default {
 .legend__action-wrapper {
   display: flex;
   justify-content: flex-end;
+}
+
+.legend__action-wrapper .md-button-content {
+  padding-right: var(--spacing-half);
+}
+
+.legend__action-wrapper .md-icon {
+  margin: 0;
 }
 </style>
