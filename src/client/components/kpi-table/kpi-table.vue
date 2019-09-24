@@ -35,12 +35,13 @@
 </template>
 
 <script>
-import mockData from './mockData';
+import { mapGetters } from "vuex";
 
 export default {
   computed: {
+    ...mapGetters('project', ['tableClimateAndCosts', 'tableCoBenefits']),
     tables() {
-      return mockData
+      return [this.tableClimateAndCosts, this.tableCoBenefits]
     },
   },
 }

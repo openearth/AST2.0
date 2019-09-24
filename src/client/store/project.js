@@ -2,6 +2,7 @@ import Vue from 'vue'
 import turfArea from '@turf/area'
 import turfLength from '@turf/length'
 import merge from 'lodash/merge'
+import get from 'lodash/get'
 import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT, REPAINT } from '../lib/map-event-bus'
 import { getApiDataForFeature, getRankedMeasures } from "../lib/get-api-data";
 import FileSaver from 'file-saver'
@@ -372,6 +373,60 @@ export const actions = {
 }
 
 export const getters = {
+  tableClimateAndCosts: (state, getters, rootState, rootGetters) => {
+    if (state.areas.length) {
+      const measureIds = state.areas.map(area => get(area, 'properties.measure'))
+
+      const kpiKeys = rootGetters['data/kpiGroups/kpiKeys']
+
+      const rows = state.areas.map(area => {
+        const values = kpiKeys.map(key => get(area, `properties.apiData[${key}]`))
+        return [
+          'Measure name',
+          'Measure area',
+          ...values,
+        ]
+      })
+
+      return {
+        "title": "Klimaat en kosten",
+        "header": [
+          "Maatregel",
+          "Oppervlak",
+          ...kpiKeys,
+        ],
+        rows,
+      }
+    }
+  },
+
+  tableCoBenefits: (state, getters, rootState, rootGetters) => {
+    if (state.areas.length) {
+      const measureIds = state.areas.map(area => get(area, 'properties.measure'))
+
+      const kpiKeys = rootGetters['data/kpiGroups/kpiKeys']
+
+      const rows = state.areas.map(area => {
+        const values = kpiKeys.map(key => get(area, `properties.apiData[${key}]`))
+        return [
+          'Measure name',
+          'Measure area',
+          ...values,
+        ]
+      })
+
+      return {
+        "title": "CO Benefits",
+        "header": [
+          "Maatregel",
+          "Oppervlak",
+          ...kpiKeys,
+        ],
+        rows,
+      }
+    }
+  },
+
   areas: (state) => {
     return state.areas.map(feature => {
       let area;
