@@ -106,5 +106,10 @@ export default {
   padding: 10px 20px;
 }
 
+/*======================= firefox bug */
+.app-popup .md-tabs-container > div {
+  overflow: auto;
+}
+
 
 </style>
