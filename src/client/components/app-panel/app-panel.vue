@@ -3,6 +3,7 @@
     <section class="app-panel__content">
       <slot/>
     </section>
+    <span class="spacer"/>
     <footer class="app-panel__footer">
       <slot name="footer"/>
     </footer>
@@ -37,7 +38,6 @@ export default {
 
 .app-panel__content {
   position: relative;
-  flex-grow: 2;
   z-index: 1;
 }
 
@@ -50,6 +50,12 @@ export default {
 /* overwriting default styles for .md-toolbar */
 .app-panel__content .md-toolbar {
   background-color: transparent;
+}
+
+/** assuming the footer has a height of ~80px */
+.spacer {
+  flex-grow: 2;
+  min-height: 80px;
 }
 
 .app-panel__footer {
