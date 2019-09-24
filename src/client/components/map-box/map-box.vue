@@ -109,6 +109,9 @@ export default {
       this.clearMap()
       this.$nextTick(this.fillMap)
     },
+    wmsLayers() {
+      [...this.wmsLayers].reverse().forEach(this.addWmsLayer)
+    },
   },
 
   async mounted() {

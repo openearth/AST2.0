@@ -62,7 +62,7 @@
         </md-button>
       </md-avatar>
       <span class="md-list-item-text layer-list__title">Add layers</span>
-      <layer-dialog :show-layer-dialog="showLayerDialog" @show-layer-dialog="showLayerDialog=$event"/>
+      <layer-dialog :show-layer-dialog.sync="showLayerDialog"/>
     </div>
   </md-list>
 </template>

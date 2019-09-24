@@ -27,16 +27,25 @@ export const actions = {
     return data
   },
 
-  addTilesToLayers({ commit }, source) {
-    const mapLayer = {
-      id: source.name,
-      type: 'raster',
-      source: {
-        type: 'raster',
-        tiles: source.tiles,
-      },
-    }
-    commit('addLayer', mapLayer)
+  addCustomTilesToLayers({ state, commit, dispatch }, customLayers) {
+    const newLayers = customLayers.map(source => {
+      // TODO: id should be in the response from the backend!
+      // TODO: source.tiles should be returned from the backend as url (String)
+      const id = source.name.split(" ")[0]
+      const mapLayer = {
+        id: id,
+        title: source.name,
+        layerType: 'raster',
+        url: source.tiles[0],
+        tilesize: 256,
+        showLegend: false,
+        opacity: 1,
+        visible: true,
+      }
+      commit('addLayer', mapLayer)
+      return mapLayer
+    })
+    dispatch('project/bootstrapWmsLayers', newLayers, { root: true })
   },
 }
 
@@ -48,6 +57,13 @@ export const getters = {
         return {
           ...rest,
           url: baseurl,
+          tilesize,
+        }
+      } else if (layer.url) {
+        // If url already defined, return directly
+        return {
+          ...rest,
+          imageUrl: layer.url,
           tilesize,
         }
       } else {

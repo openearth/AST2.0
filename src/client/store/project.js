@@ -100,6 +100,7 @@ export const mutations = {
     state.settings.targets[group][key] = { ...state.settings.targets[group][key], ...value }
   },
   setWmsLayer(state, layer) {
+    // TODO: Only add if layer not already in layers (check id)
     state.map.wmsLayers.push(layer)
   },
   toggleProjectAreaNestedSetting(state, { key, option, value }) {
