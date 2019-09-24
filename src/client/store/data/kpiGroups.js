@@ -1,3 +1,4 @@
+import get from 'lodash/get'
 import getData from '../../lib/get-data'
 
 export const state = () => []
@@ -32,15 +33,27 @@ export const getters = {
 
     return keys
   },
-  kpiTitles: state => {
-    let titles = []
+  kpiKeysTitleMap: state => {
+    let map = {}
 
     state.forEach(group => {
       group.kpis.forEach(kpi => {
-        titles.push(kpi.title)
+        map[kpi.key] = kpi.title
       })
     })
 
-    return titles
+    return map
+  },
+  kpiKeysUnitMap: (state, getters, rootState) => {
+    let map = {}
+
+    state.forEach(group => {
+      group.kpis.forEach(kpi => {
+        const unit = rootState.data.units.find(unit => unit.key === kpi.unit)
+        map[kpi.key] = get(unit, 'metric')
+      })
+    })
+
+    return map
   },
 }

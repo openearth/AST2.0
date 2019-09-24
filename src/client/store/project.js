@@ -3,6 +3,7 @@ import turfArea from '@turf/area'
 import turfLength from '@turf/length'
 import merge from 'lodash/merge'
 import get from 'lodash/get'
+import round from 'lodash/round'
 import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT, REPAINT } from '../lib/map-event-bus'
 import { getApiDataForFeature, getRankedMeasures } from "../lib/get-api-data";
 import FileSaver from 'file-saver'
@@ -376,28 +377,38 @@ export const getters = {
   tableClimateAndCosts: (state, getters, rootState, rootGetters) => {
     if (state.areas.length) {
       const measureIds = state.areas.map(area => get(area, 'properties.measure'))
+      const measureById = rootGetters['data/measures/measureById']
+      const kpiKeys = ['storageCapacity', 'returnTime', 'groundwater_recharge', 'evapotranspiration', 'tempReduction', 'coolSpot', 'constructionCost', 'maintenanceCost']
+      const kpiKeysTitleMap = rootGetters['data/kpiGroups/kpiKeysTitleMap']
+      const kpiKeysUnitMap = rootGetters['data/kpiGroups/kpiKeysUnitMap']
+      const toTwoDecimals = value => round(value, 2)
+      const measueTitleForId = id => get(measureById(id), 'title')
+      const kpiTitleByKey = key => `${kpiKeysTitleMap[key]}${kpiKeysUnitMap[key] ? ` (${kpiKeysUnitMap[key]})` : ''}`
 
-      const kpiKeys = rootGetters['data/kpiGroups/kpiKeys']
-      const kpiTitles = rootGetters['data/kpiGroups/kpiTitles']
-
-      const rows = state.areas.map(area => {
-        const values = kpiKeys.map(key => get(area, `properties.apiData[${key}]`))
-        return [
-          'Measure name',
-          'Measure area',
-          ...values,
-        ]
-      })
+      const measureValueMap = state.areas
+        .map(area => {
+          const values = kpiKeys.map(key => get(area, `properties.apiData[${key}]`))
+          return [area.properties.measure, 0, ...values]
+        })
+        .reduce((obj, row) => {
+          const [measureId, ...values] = row
+          if (obj[measureId] === undefined) {
+            obj[measureId] = values
+          } else {
+            values.forEach((value, index) => obj[measureId][index] += value)
+          }
+          return obj
+        }, {})
 
       return {
-        "title": "Klimaat en kosten",
+        "title": rootState.i18n.messages.climate_and_costs,
         "header": [
-          "Maatregel",
-          "Oppervlak",
-          // ...kpiKeys,
-          ...kpiTitles,
+          rootState.i18n.messages.measure,
+          rootState.i18n.messages.surface,
+          ...kpiKeys.map(kpiTitleByKey),
         ],
-        rows,
+        rows: Object.entries(measureValueMap)
+          .map(([id, values]) => [measueTitleForId(id), ...values.map(toTwoDecimals)]),
       }
     }
   },
@@ -405,26 +416,38 @@ export const getters = {
   tableCoBenefits: (state, getters, rootState, rootGetters) => {
     if (state.areas.length) {
       const measureIds = state.areas.map(area => get(area, 'properties.measure'))
+      const measureById = rootGetters['data/measures/measureById']
+      const kpiKeys = ['filteringUnit', 'captureUnit', 'settlingUnit']
+      const kpiKeysTitleMap = rootGetters['data/kpiGroups/kpiKeysTitleMap']
+      const kpiKeysUnitMap = rootGetters['data/kpiGroups/kpiKeysUnitMap']
+      const toTwoDecimals = value => round(value, 2)
+      const measueTitleForId = id => get(measureById(id), 'title')
+      const kpiTitleByKey = key => `${kpiKeysTitleMap[key]}${kpiKeysUnitMap[key] ? ` (${kpiKeysUnitMap[key]})` : ''}`
 
-      const kpiKeys = rootGetters['data/kpiGroups/kpiKeys']
-
-      const rows = state.areas.map(area => {
-        const values = kpiKeys.map(key => get(area, `properties.apiData[${key}]`))
-        return [
-          'Measure name',
-          'Measure area',
-          ...values,
-        ]
-      })
+      const measureValueMap = state.areas
+        .map(area => {
+          const values = kpiKeys.map(key => get(area, `properties.apiData[${key}]`))
+          return [area.properties.measure, 0, ...values]
+        })
+        .reduce((obj, row) => {
+          const [measureId, ...values] = row
+          if (obj[measureId] === undefined) {
+            obj[measureId] = values
+          } else {
+            values.forEach((value, index) => obj[measureId][index] += value)
+          }
+          return obj
+        }, {})
 
       return {
-        "title": "CO Benefits",
+        "title": rootState.i18n.messages.co_benefits,
         "header": [
-          "Maatregel",
-          "Oppervlak",
-          ...kpiKeys,
+          rootState.i18n.messages.measure,
+          rootState.i18n.messages.surface,
+          ...kpiKeys.map(kpiTitleByKey),
         ],
-        rows,
+        rows: Object.entries(measureValueMap)
+          .map(([id, values]) => [measueTitleForId(id), ...values.map(toTwoDecimals)]),
       }
     }
   },
