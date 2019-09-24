@@ -3,6 +3,7 @@
     <measure-card
       :measure="measure"
       :scores="[]"
+      :interactive="false"
       class="measure-list__card"
       @choose="choose"/>
   </div>

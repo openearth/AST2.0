@@ -37,7 +37,7 @@
           :wms-layers="wmsLayers"
           :mode="mode"
           class="layout__map"
-          @create="createArea"
+          @create="onCreateArea"
           @update="updateArea"
           @delete="deleteArea"
           @selectionchange="selectionChange"
@@ -123,6 +123,7 @@ export default {
       notifications: state => state.notifications.messages,
       mode: state => state.mode.state,
       exportShown: state => state.flow.export,
+      inSetMeasureFlow: state => state.setMeasureFlow.inFlow,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings']),
@@ -168,6 +169,7 @@ export default {
       showError: 'notifications/showError',
       clearState: 'project/clearState',
       exportProject: 'project/exportProject',
+      connectMeasureToArea: 'setMeasureFlow/connectMeasureToArea',
     }),
     async onFileInput(event) {
       this.importProject(event)
@@ -188,6 +190,14 @@ export default {
 
       this.hideMenu()
       this.$router.push(`/${this.$i18n.locale}/new-project`)
+    },
+    onCreateArea(features) {
+      this.createArea(features)
+        .then(() => {
+          if (this.inSetMeasureFlow) {
+            this.connectMeasureToArea(features)
+          }
+        })
     },
     dispatchClickEvent(event) {
       EventBus.$emit(CLICK, event)

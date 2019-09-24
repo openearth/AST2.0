@@ -1,31 +1,34 @@
 export const state = () => ({
-  id: null,
+  id: undefined,
+  inFlow: false,
   steps: [
     {
       id: 0,
-      title: 'Select a measure',
+      label: 'Select a measure',
       slug: '/en/set-measure',
       isWide: true,
     },
     {
       id: 1,
-      title: 'Draw an area on the map to connect with the selected measure',
+      label: 'Draw an area',
       slug: '/en/set-measure/draw-an-area',
-    },
-    {
-      id: 2,
-      title: 'Adjust measure settings',
-      slug: '/en/set-measure/adjust-measure-settings',
     },
   ],
   currentStep: 0,
+  drawnAreas: undefined,
 })
 
 export const mutations = {
+  setInFlow(state, isInFlow) {
+    state.inFlow = isInFlow
+  },
   setMeasureId (state, id) {
     state.id = id
   },
-  updateCurrentStep(newStepId) {
+  setDrawnAreas(state, areas) {
+    state.drawnAreas = areas
+  },
+  updateCurrentStep(state, newStepId) {
     state.currentStep = newStepId
   },
   clearMeasureId (state) {
@@ -34,11 +37,31 @@ export const mutations = {
 }
 
 export const actions = {
+  startFlow({ commit }) {
+    commit('setInFlow', true)
+    commit('mode/isInactive', null, { root: true })
+  },
   chooseMeasure({ commit, getters }, id) {
     const { slug: nextSlug } = getters.nextStep
     commit('setMeasureId', id)
     commit('updateCurrentStep', 1)
+    commit('mode/isDefault', null, { root:true })
     this.$router.push({ path: `${nextSlug}` })
+  },
+  async connectMeasureToArea({ commit, state, rootGetters, dispatch }, features) {
+    const measure = rootGetters['data/measures/orderedMeasures'].find(({ measureId }) => measureId === state.id)
+    await dispatch('project/setAreaMeasure', { features, measure }, { root: true })
+    commit('setDrawnAreas', features)
+  },
+  resetFlow({ commit, rootState }, { relocate = true }) {
+    commit('setDrawnAreas', undefined)
+    commit('setMeasureId', undefined)
+    commit('updateCurrentStep', 0)
+    commit('setInFlow', false)
+    commit('mode/isDefault', null, { root:true })
+    if (options.relocate) {
+      this.$router.push(`/${rootState.i18n.locale}/project/`)
+    }
   },
 }
 

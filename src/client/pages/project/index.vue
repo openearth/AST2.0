@@ -47,7 +47,7 @@
     </md-list>
     <div class="legend__action-wrapper">
       <md-button
-        :to="`/${$i18n.locale}/project/measures`"
+        :to="`/${$i18n.locale}/set-measure`"
         class="md-raised md-primary">
         {{ $t('measures') }}
       </md-button>

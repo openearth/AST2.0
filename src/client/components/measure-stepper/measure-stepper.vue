@@ -4,6 +4,7 @@
     md-linear
     md-sync-route
     md-dynamic-height
+    md-alternative
     class="measure-stepper">
     <md-step
       v-for="(step, index) in steps"
@@ -11,8 +12,8 @@
       :id="stepId(index)"
       :key="index"
       :md-done="isDone(index)"
+      :md-label="step.label"
       exact>
-      <h3 class="stepper-title md-headline">{{ step.title }}</h3>
       <slot/>
     </md-step>
   </md-steppers>

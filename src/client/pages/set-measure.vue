@@ -1,5 +1,5 @@
 <template>
-  <app-panel>
+  <app-panel :wide="currentStep === 0">
     <measure-stepper
       :steps="steps"
       :current="activeStep.id"
@@ -7,23 +7,38 @@
     <nuxt-child />
     <md-button
       slot="footer"
-      class="md-raised">
+      class="md-raised"
+      @click="resetFlow">
       Cancel
     </md-button>
   </app-panel>
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex'
+import { mapGetters, mapState, mapMutations, mapActions } from 'vuex'
 import { AppPanel, MeasureStepper } from '~/components'
 
 export default {
   components: { AppPanel, MeasureStepper },
+  middleware: ['access-level-settings'],
   computed: {
     ...mapState({
       steps: store => store.setMeasureFlow.steps,
+      currentStep: store => store.setMeasureFlow.currentStep,
     }),
     ...mapGetters('setMeasureFlow', ['activeStep']),
+  },
+  mounted() {
+    this.startFlow()
+  },
+  destroyed() {
+    this.resetFlow({ relocate: false })
+  },
+  methods: {
+    ...mapActions({
+      startFlow: 'setMeasureFlow/startFlow',
+      resetFlow: 'setMeasureFlow/resetFlow',
+    }),
   },
 }
 </script>
