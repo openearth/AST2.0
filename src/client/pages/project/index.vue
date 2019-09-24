@@ -45,6 +45,13 @@
         <md-divider/>
       </md-list-item>
     </md-list>
+    <div class="legend__action-wrapper">
+      <md-button
+        :to="`/${$i18n.locale}/project/measures`"
+        class="md-raised md-primary">
+        {{ $t('measures') }}
+      </md-button>
+    </div>
   </div>
 </template>
 
@@ -92,6 +99,11 @@ export default {
 </script>
 
 <style>
+.legend {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
 
 .legend__item {
   border-left-width: 8px;
@@ -124,6 +136,7 @@ export default {
 
 .legend__hint-text {
   padding: var(--spacing-default);
+  flex: 1;
 }
 
 .legend .hint-text__icon.md-icon {
@@ -132,5 +145,11 @@ export default {
 
 .legend .md-list {
   padding-top: 0;
+  flex: 1;
+}
+
+.legend__action-wrapper {
+  display: flex;
+  justify-content: flex-end;
 }
 </style>
