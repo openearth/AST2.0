@@ -60,7 +60,7 @@
     <div class="md-list-item-content layer-list__footer">
       <md-button class="layer-list__add-btn" @click="showLayerDialog = true">
         <md-icon>add</md-icon>
-        <span class="md-list-item-text layer-list__title">Add layers</span>
+        <span class="md-list-item-text layer-list__title">{{ $t('add_layers') }}</span>
       </md-button>
       <layer-dialog :show-layer-dialog.sync="showLayerDialog"/>
     </div>
