@@ -53,15 +53,11 @@
         </div>
       </div>
     </li>
-    <div class="md-list-item-content">
-      <md-avatar>
-        <md-button class="md-icon-button md-raised" @click="showLayerDialog = true">
-          <md-icon>
-            add
-          </md-icon>
-        </md-button>
-      </md-avatar>
-      <span class="md-list-item-text layer-list__title">Add layers</span>
+    <div class="md-list-item-content layer-list__footer">
+      <md-button class="layer-list__add-btn" @click="showLayerDialog = true">
+        <md-icon>add</md-icon>
+        <span class="md-list-item-text layer-list__title">Add layers</span>
+      </md-button>
       <layer-dialog :show-layer-dialog.sync="showLayerDialog"/>
     </div>
   </md-list>
@@ -96,6 +92,7 @@ export default {
        * calculating possible max-height
        * magic numbers: 300 as distance to top, 80 as spacing at bottom
        */
+      // TODO/Extra: Add resize handler to recalculate maxHeight
       const top = this.$refs.list ? this.$refs.list.$el.getBoundingClientRect().top : 300;
       this.maxHeight = (window.innerHeight - top - 80)
     },
@@ -111,4 +108,33 @@ export default {
 .layer-list__input-range {
   width: 100%;
 }
+
+.layer-list__footer {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  background-color: var(--background-color);
+  box-shadow: var(--shadow-small-grey);
+}
+
+.layer-list__add-btn {
+  width: 100%;
+  margin: 0;
+}
+
+.layer-list__add-btn .md-ripple {
+  padding: 0;
+}
+
+.layer-list__add-btn .md-button-content {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.layer-list__add-btn .layer-list__title {
+  margin-left: 15px;
+}
+
 </style>

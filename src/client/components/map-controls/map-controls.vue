@@ -185,9 +185,10 @@ export default {
 
 .map-controls__layer-list {
   position: absolute;
-  background-color: red;
   left: 50px;
   top: 0;
+  display: block;
   overflow-y: auto;
+  padding-bottom: 0;
 }
 </style>
