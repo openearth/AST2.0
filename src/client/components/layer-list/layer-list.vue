@@ -9,8 +9,12 @@
         class="md-list-item-expand md-list-item-container"
       >
         <div class="md-list-item-content">
-          <md-avatar>
-            <img :src="layer.imageUrl" alt="">
+          <md-avatar class="layer-list__avatar">
+            <img
+              :src="layer.imageUrl"
+              class="layer-list__avatar-img"
+              alt=""
+            >
           </md-avatar>
 
           <span class="md-list-item-text layer-list__title">{{ layer.title }}</span>
@@ -107,6 +111,14 @@ export default {
 
 .layer-list__input-range {
   width: 100%;
+}
+
+.layer-list__avatar {
+  background-color: var(--neutral-color--light);
+}
+
+.layer-list__avatar-img:not([src]) {
+  display: none;
 }
 
 .layer-list__footer {
