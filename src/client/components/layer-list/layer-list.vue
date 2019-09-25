@@ -1,8 +1,8 @@
 <template>
   <md-list ref="list" :style="{maxHeight: maxHeight + 'px'}">
     <li
-      v-for="layer in layers"
-      :key="layer.id"
+      v-for="(layer, index) in layers"
+      :key="layer.id + index"
       class="md-list-item">
       <div
         :class="{ 'md-active': expanded === layer.id }"
@@ -57,10 +57,10 @@
         </div>
       </div>
     </li>
-    <div class="md-list-item-content layer-list__footer">
+    <div class="layer-list__footer">
       <md-button class="layer-list__add-btn" @click="showLayerDialog = true">
         <md-icon>add</md-icon>
-        <span class="md-list-item-text layer-list__title">{{ $t('add_layers') }}</span>
+        <span class="md-list-item-text">{{ $t('add_layers') }}</span>
       </md-button>
       <layer-dialog :show-layer-dialog.sync="showLayerDialog"/>
     </div>
@@ -132,11 +132,13 @@ export default {
 
 .layer-list__add-btn {
   width: 100%;
+  height: auto;
   margin: 0;
+  padding: 0;
 }
 
 .layer-list__add-btn .md-ripple {
-  padding: 0;
+  padding: 12px 16px 12px 24px;
 }
 
 .layer-list__add-btn .md-button-content {
@@ -145,8 +147,8 @@ export default {
   align-items: center;
 }
 
-.layer-list__add-btn .layer-list__title {
-  margin-left: 15px;
+.layer-list__add-btn .md-list-item-text {
+  margin-left: 23px;
 }
 
 </style>

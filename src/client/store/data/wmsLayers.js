@@ -4,7 +4,7 @@ export const state = () => []
 
 export const mutations = {
   addLayer(state, layer) {
-    console.log('layer', layer)
+    // console.log('layer', layer)
     state.push(layer)
   },
 }
@@ -29,14 +29,12 @@ export const actions = {
 
   addCustomTilesToLayers({ state, commit, dispatch }, customLayers) {
     const newLayers = customLayers.map(source => {
-      // TODO: id should be in the response from the backend!
-      // TODO: source.tiles should be returned from the backend as url (String)
-      const id = source.name.split(" ")[0]
+      const id = source.id ? source.id : source.name.split(" ")[0]
       const mapLayer = {
         id: id,
         title: source.name,
         layerType: 'raster',
-        url: source.tiles[0],
+        url: source.tiles[0], // TODO: source.tiles should be returned from the backend as url (String)
         tilesize: 256,
         showLegend: false,
         opacity: 1,
