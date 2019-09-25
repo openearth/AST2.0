@@ -188,5 +188,6 @@ export default {
   background-color: red;
   left: 50px;
   top: 0;
+  overflow-y: auto;
 }
 </style>

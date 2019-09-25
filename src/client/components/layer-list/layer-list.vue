@@ -1,5 +1,5 @@
 <template>
-  <md-list>
+  <md-list ref="list" :style="{maxHeight: maxHeight + 'px'}">
     <li
       v-for="layer in layers"
       :key="layer.id"
@@ -82,10 +82,22 @@ export default {
   data: () => ({
     expanded: '',
     showLayerDialog: false,
+    maxHeight: 500,
   }),
+  mounted() {
+    this.calculateMaxHeight();
+  },
   methods: {
     setExpanded(id) {
       this.expanded = this.expanded !== id ? id : ''
+    },
+    calculateMaxHeight() {
+      /**
+       * calculating possible max-height
+       * magic numbers: 300 as distance to top, 80 as spacing at bottom
+       */
+      const top = this.$refs.list ? this.$refs.list.$el.getBoundingClientRect().top : 300;
+      this.maxHeight = (window.innerHeight - top - 80)
     },
   },
 }
