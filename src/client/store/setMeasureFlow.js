@@ -4,13 +4,13 @@ export const state = () => ({
   steps: [
     {
       id: 0,
-      label: 'Select a measure',
+      label: 'select_a_measure',
       slug: 'set-measure',
       isWide: true,
     },
     {
       id: 1,
-      label: 'Draw an area',
+      label: 'draw_an_area',
       slug: 'set-measure/draw-an-area',
     },
   ],

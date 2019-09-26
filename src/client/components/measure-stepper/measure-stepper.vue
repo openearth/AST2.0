@@ -11,7 +11,7 @@
       :id="stepId(index)"
       :key="index"
       :md-done="isDone(index)"
-      :md-label="step.label"
+      :md-label="$t(step.label)"
       exact
       @click="$emit('to-step', step)">
       <slot/>
