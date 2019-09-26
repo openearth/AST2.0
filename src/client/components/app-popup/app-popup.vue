@@ -84,7 +84,7 @@ export default {
   padding-bottom: var(--spacing-half);
   padding-left: var(--spacing-default);
 
-  background-color: var(--md-theme-default-primary);
+  background-color: var(--md-theme-default-primary, #008fc5);
 }
 
 .app-popup__title {

@@ -1,6 +1,5 @@
 <template>
-  <!-- <h1>iets</h1> -->
-  <md-tabs md-dynamic-height>
+  <md-tabs md-dynamic-height class="kpi-table">
     <md-tab
       v-for="table in tables"
       :id="table.title"
@@ -12,6 +11,7 @@
           <md-table-head
             v-for="head in table.header"
             :key="head"
+            class="kpi-table__head"
           >
             {{ head }}
           </md-table-head>
@@ -52,4 +52,19 @@ export default {
 </script>
 
 <style>
+.kpi-table__head {
+  vertical-align: top;
+}
+
+.kpi-table__head .md-table-head-container {
+  height: auto;
+}
+
+.kpi-table__head .md-table-head-label {
+  max-width: 150px;
+  height: auto;
+  line-height: 1.5em;
+  white-space: normal;
+}
+
 </style>
