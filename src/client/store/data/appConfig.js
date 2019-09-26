@@ -18,3 +18,10 @@ export const actions = {
     commit('setConfig', data.app)
   },
 }
+
+export const getters = {
+  title(state, getters, rootState, rootGetters) {
+    const activeWorkspace = rootGetters['data/workspaces/activeWorkspace'] || {}
+    return activeWorkspace.applicationTitle || state.title
+  },
+}

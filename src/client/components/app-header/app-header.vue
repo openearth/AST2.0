@@ -30,6 +30,7 @@
         <md-icon>settings</md-icon>
       </md-button>
       <fullscreen-button />
+      <LogIn v-if="legalAccepted" />
     </div>
   </md-toolbar>
 </template>
@@ -39,15 +40,21 @@ import startCase from 'lodash/startCase'
 import { mapGetters } from "vuex";
 import { LEVEL_PROJECT_AREA } from "../../lib/flow-levels";
 import FullscreenButton from '../fullscreen-button'
+import LogIn from '../log-in'
 
 export default {
   components: {
     FullscreenButton,
+    LogIn,
   },
   props: {
     title: {
       type: String,
       default: '',
+    },
+    legalAccepted: {
+      type: Boolean,
+      required: true,
     },
     projectTitle: {
       type: String,

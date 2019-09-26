@@ -398,14 +398,14 @@ export const getters = {
       )
     })
   },
-  areasByMeasure: (state, getters, rootState) => {
+  areasByMeasure: (state, getters, rootState, rootGetters) => {
     return getters.areas.reduce((obj, area) => {
       const measureId = area.properties.measure
 
       if (measureId) {
         if (!obj[measureId]) {
           obj[measureId] = {
-            measure: rootState.data.measures.find(measure => measure.measureId === measureId),
+            measure: rootGetters['data/measures/workspaceMeasures'].find(measure => measure.measureId === measureId),
             areas: [],
           }
         }

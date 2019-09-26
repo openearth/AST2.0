@@ -1,5 +1,7 @@
 import getData from "../lib/get-data";
 
+const ItemsWithoutUnderscore = x => !/_/.test(x)
+
 export default async function ({ store }) {
   if (
       store.state.devMode === true &&
@@ -31,6 +33,11 @@ export default async function ({ store }) {
   if (!store.state.data.wmsLayers.length) {
     store.dispatch('data/wmsLayers/getWmsLayers', store.state.i18n.locale)
   }
+
+  if (!Object.keys(store.state.data.workspaces).filter(ItemsWithoutUnderscore).length) {
+    store.dispatch('data/workspaces/getWorkspaces')
+  }
+
   if (!store.state.data.appConfig.title) {
     store.dispatch('data/appConfig/getAppConfig')
   }
