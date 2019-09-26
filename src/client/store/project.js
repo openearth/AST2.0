@@ -376,7 +376,7 @@ export const actions = {
 export const getters = {
   tableClimateAndCosts: (state, getters, rootState, rootGetters) => {
     if (state.areas.length) {
-      const measureIds = state.areas.map(area => get(area, 'properties.measure'))
+      const measureIds = getters.areas.map(area => get(area, 'properties.measure'))
       const measureById = rootGetters['data/measures/measureById']
       const kpiKeys = ['storageCapacity', 'returnTime', 'groundwater_recharge', 'evapotranspiration', 'tempReduction', 'coolSpot', 'constructionCost', 'maintenanceCost']
       const kpiKeysTitleMap = rootGetters['data/kpiGroups/kpiKeysTitleMap']
@@ -385,10 +385,10 @@ export const getters = {
       const measueTitleForId = id => get(measureById(id), 'title')
       const kpiTitleByKey = key => `${kpiKeysTitleMap[key]}${kpiKeysUnitMap[key] ? ` (${kpiKeysUnitMap[key]})` : ''}`
 
-      const measureValueMap = state.areas
+      const measureValueMap = getters.areas
         .map(area => {
           const values = kpiKeys.map(key => get(area, `properties.apiData[${key}]`))
-          return [area.properties.measure, 0, ...values]
+          return [area.properties.measure, area.properties.area, ...values]
         })
         .reduce((obj, row) => {
           const [measureId, ...values] = row
@@ -415,7 +415,7 @@ export const getters = {
 
   tableCoBenefits: (state, getters, rootState, rootGetters) => {
     if (state.areas.length) {
-      const measureIds = state.areas.map(area => get(area, 'properties.measure'))
+      const measureIds = getters.areas.map(area => get(area, 'properties.measure'))
       const measureById = rootGetters['data/measures/measureById']
       const kpiKeys = ['filteringUnit', 'captureUnit', 'settlingUnit']
       const kpiKeysTitleMap = rootGetters['data/kpiGroups/kpiKeysTitleMap']
@@ -424,7 +424,7 @@ export const getters = {
       const measueTitleForId = id => get(measureById(id), 'title')
       const kpiTitleByKey = key => `${kpiKeysTitleMap[key]}${kpiKeysUnitMap[key] ? ` (${kpiKeysUnitMap[key]})` : ''}`
 
-      const measureValueMap = state.areas
+      const measureValueMap = getters.areas
         .map(area => {
           const values = kpiKeys.map(key => get(area, `properties.apiData[${key}]`))
           return [area.properties.measure, 0, ...values]
