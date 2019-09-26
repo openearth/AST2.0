@@ -47,7 +47,7 @@ export const actions = {
     const path = `/${locale}/${nextSlug}/`
     commit('setMeasureId', id)
     commit('updateCurrentStep', 1)
-    commit('mode/isDefault', null, { root:true })
+    commit('mode/isAddOnly', null, { root: true })
     this.$router.push({ path })
   },
   async connectMeasureToArea({ commit, state, rootGetters, dispatch }, features) {

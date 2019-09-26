@@ -34,6 +34,7 @@
           :line="line"
           :polygon="polygon"
           :search="search"
+          :add-only="addOnly"
           :interactive="interactive"
           :map-center="center"
           :map-zoom="zoom"
@@ -134,7 +135,7 @@ export default {
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings']),
     ...mapGetters({ selectedAreas:  'selectedAreas/features' }),
-    ...mapGetters('map', ['isProject', 'point', 'line', 'polygon', 'interactive', 'search']),
+    ...mapGetters('map', ['isProject', 'point', 'line', 'polygon', 'addOnly', 'interactive', 'search']),
     ...mapGetters('user', ['isLoggedIn']),
     ...mapGetters('data/appConfig', ['title']),
   },

@@ -1,6 +1,7 @@
 <template>
   <div class="map-viewer">
     <map-box
+      :add-only="addOnly"
       :interactive="interactive"
       :point="point"
       :line="line"
@@ -67,6 +68,10 @@ export default {
     interactive: {
       type: Boolean,
       default: true,
+    },
+    addOnly: {
+      type: Boolean,
+      default: false,
     },
     point: {
       type: Boolean,
