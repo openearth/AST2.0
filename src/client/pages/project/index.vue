@@ -6,7 +6,7 @@
 
     <hint-text
       v-if="!measureCollection.length"
-      :icon="'crop_square'"
+      :icon="'announcement'"
       :text="$t('empty_measures')"
       class="legend__hint-text" />
 
@@ -124,10 +124,6 @@ export default {
 
 .legend__hint-text {
   padding: var(--spacing-default);
-}
-
-.legend .hint-text__icon.md-icon {
-  margin: 0 var(--spacing-default) 0 0;
 }
 
 .legend .md-list {

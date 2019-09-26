@@ -22,7 +22,8 @@
         :class="{'md-primary': currentMode === 'draw_polygon'}"
         class="md-icon-button md-raised"
         @click="$emit('setMode', 'draw_polygon')">
-        <md-icon>crop_square</md-icon>
+        <!-- <md-icon>crop_square</md-icon> -->
+        <custom-icon />
       </md-button>
     </li>
 
@@ -93,10 +94,12 @@
 <script>
 import SearchInput from '../search-input'
 import LayerList from "../layer-list";
+import CustomIcon from '../custom-icon/custom-icon';
 import EventBus, { CLICK } from "~/lib/event-bus";
 
+
 export default {
-  components: { SearchInput, LayerList },
+  components: { SearchInput, LayerList, CustomIcon },
   props: {
     line: {
       type: Boolean,

@@ -4,10 +4,11 @@
       <span class="md-title">{{ $t('project_area') }}</span>
     </md-toolbar>
 
+    <!-- :icon="'crop_square'" -->
     <div class="new-project__content">
       <hint-text
         v-if="!createdProjectArea"
-        :icon="'crop_square'"
+        :icon="'announcement'"
         :text="$t('empty_project_area')"
         class="new-project__hint-text"/>
       <div v-else>
