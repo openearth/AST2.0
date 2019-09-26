@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Measure Override</title>
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/datocms-plugins-sdk"></script>
+<script src="https://unpkg.com/datocms-client"></script>
+<script src="utils.js"></script>
+<script type="module" src="upload-image.js"></script>
+<script type="module" src="text-input.js"></script>
+<script type="module" src="default-values.js"></script>
+<script type="module" src="climate-effect-tag.js"></script>
+<script type="module" src="color-picker.js"></script>
+<script type="module" src="image-gallery.js"></script>
+<script src="autocomplete.js"></script>
+<link href="https://unpkg.com/datocms-plugins-sdk/dist/sdk.css" media="all" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+
+<div class="app" id="app">
+  <ul class="measures">
+    <li class="measure" v-for="item in overrides">
+      <details
+        class="measure__details"
+        :class="{'measure__details--exclude': !item.workspaceInclude}">
+        <summary class="measure__summary">
+          {{item.original.title.en}}
+          <small v-if="item.title">- {{item.title}}</small>
+        </summary>
+        <div class="measure__content">
+          <label class="override-item">
+            <input
+              type="checkbox"
+              :checked="item.workspaceInclude"
+              @change="event => updateValue(item.measureId, 'workspaceInclude', event.target.checked)">
+            Include in workspace -
+            <small>Original <input
+              type="checkbox"
+              :checked="item.original.workspaceInclude"
+              disabled /></small>
+          </label>
+
+          <text-input
+            class="override-item"
+            :value="item.title"
+            :original="item.original.title"
+            summary="Title"
+            @change="event => updateValue(item.measureId, 'title', event.target.value)"
+          ></text-input>
+
+          <details class="override-item" :open="item.image">
+            <summary><span>Icon</span></summary>
+            <upload-image
+              :value="item.image"
+              @change="value => updateValue(item.measureId, 'image', value)"
+            ></upload-image>
+          </details>
+
+          <image-gallery
+            class="override-item"
+            :value="item.images"
+            :original="item.original.images"
+            :original-ignores="item.ignoredOriginalImages"
+            @change="value => updateValue(item.measureId, 'images', value)"
+            @ignores="value => updateValue(item.measureId, 'ignoredOriginalImages', value)"
+          ></image-gallery>
+
+          <climate-effect-tag
+            class="override-item"
+            :value="item.climateEffectTags"
+            :original="item.original.climateEffectTags"
+            @change="value => updateValue(item.measureId, 'climateEffectTags', value)"
+          ></climate-effect-tag>
+
+          <color-picker
+            class="override-item"
+            :value="item.color && item.color.hex"
+            :original="item.original"
+            @change="value => updateValue(item.measureId, 'color', value)"
+          ></color-picker>
+
+          <default-values
+            class="override-item"
+            :value="item.defaultValues"
+            :original="item.original.defaultValues"
+            @change="value => updateValue(item.measureId, 'defaultValues', value)">
+          </default-values>
+
+          <text-input
+            class="override-item"
+            :value="item.body"
+            :original="item.original.body"
+            summary="Body"
+            input-type="textarea"
+            @change="event => updateValue(item.measureId, 'body', event.target.value)"
+          ></text-input>
+
+          <text-input
+            class="override-item"
+            :value="item.summary"
+            :original="item.original.summary"
+            summary="Summary"
+            input-type="textarea"
+            @change="event => updateValue(item.measureId, 'summary', event.target.value)"
+          ></text-input>
+
+          <text-input
+            class="override-item"
+            :value="item.content"
+            :original="item.original.content || {en: ''}"
+            summary="Content"
+            input-type="textarea"
+            @change="event => updateValue(item.measureId, 'content', event.target.value)"
+          ></text-input>
+
+          <text-input
+            class="override-item"
+            :value="item.externalLinkLabel"
+            :original="item.original.externalLinkLabel"
+            summary="Exteral link label"
+            @change="event => updateValue(item.measureId, 'externalLinkLabel', event.target.value)"
+          ></text-input>
+
+          <text-input
+            class="override-item"
+            :value="item.externalLinkUrl"
+            :original="item.original.externalLinkUrl"
+            summary="Exteral link url"
+            @change="event => updateValue(item.measureId, 'externalLinkUrl', event.target.value)"
+          ></text-input>
+
+          <button class="override-item__remove-button DatoCMS-button--alert" @click="onRemove(item)">Remove</button>
+        </div>
+      </details>
+    </li>
+  </ul>
+
+  <auto-complete
+    :items="availableMeasures"
+    :filter-items="selectedMeasureIds"
+    @select-item="item => onAdd(item)"
+  ></auto-complete>
+</div>
+
+<script type="text/javascript">
+let app = undefined
+let plugin = undefined
+let measureType = undefined
+let imageType = undefined
+let dato = undefined
+let allMeasures = []
+let allImages = []
+
+DatoCmsPlugin.init(async function (_plugin) {
+  plugin = _plugin
+  dato = new Dato.SiteClient(plugin.parameters.global.datoCmsApiToken)
+  plugin.startAutoResizer()
+
+  // Find Measure type
+  measureType = Object.entries(plugin.itemTypes)
+    .find(([key, value]) => value.attributes.name === 'Measure')[1]
+
+  imageType = Object.entries(plugin.itemTypes)
+    .find(([key, value]) => value.attributes.name === 'Image')[1]
+
+  const allMeasureItems = await dato.items.all({ 'filter[type]': measureType.id }, {'allPages': true})
+  allMeasureItems.forEach(item => allMeasures.push(item))
+
+  const currentFieldValue = JSON.parse(plugin.getFieldValue(plugin.fieldPath))
+  currentFieldValue
+    ? app.selectedMeasures = currentFieldValue
+    : app.selectedMeasures = []
+  setTimeout(() => {
+    app.selectedMeasuresPrefilled = true
+  }, 0)
+})
+
+app = new Vue({
+  el: '#app',
+  data: {
+    ready: false,
+    availableMeasures: allMeasures,
+    availableImages: allImages,
+    searchQuery: '',
+    selectedMeasures: [],
+    selectedMeasuresPrefilled: false,
+  },
+  mounted() {
+    this.ready = true
+  },
+  methods: {
+    onAdd(item) {
+      this.selectedMeasures = [...this.selectedMeasures, { measureId: item.measureId, workspaceInclude: true }]
+    },
+    onRemove(item) {
+      this.selectedMeasures = this.selectedMeasures.filter(measure => item.original.measureId !== measure.measureId)
+    },
+    updateValue(measureId, key, value) {
+      const item = this.selectedMeasures.find(measure => measure.measureId === measureId)
+      if (item) {
+        value || value === false
+          ? item[key] = value
+          : delete item[key]
+
+        setTimeout(() => {
+          this.storeSelectedMeasures()
+        }, 0)
+      }
+    },
+    storeSelectedMeasures() {
+      plugin.setFieldValue(plugin.fieldPath, JSON.stringify(this.selectedMeasures))
+    },
+    focusInput() {
+      this.$refs.input.focus()
+      this.$refs.input.select()
+    }
+  },
+  computed: {
+    selectedMeasureIds() {
+      return this.selectedMeasures.map(measure => measure.measureId)
+    },
+    searchResult() {
+      if (this.searchQuery === '') return []
+
+      const search = new RegExp(this.searchQuery)
+      return this.availableMeasures
+        .filter(measure => search.test(measure.title.en))
+        .filter(measure => !this.selectedMeasureIds.includes(measure.measureId))
+    },
+    overrides() {
+      return this.selectedMeasures.map(measure => {
+        const original = this.availableMeasures.find(org => org.measureId === measure.measureId)
+        return {...measure, original }
+      })
+    }
+  },
+  watch: {
+    selectedMeasures: {
+      handler() {
+        if (this.selectedMeasuresPrefilled) {
+          this.storeSelectedMeasures()
+        }
+      },
+      deep: true
+    }
+  }
+})
+</script>

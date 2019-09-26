@@ -1,9 +1,13 @@
 <template>
   <div ref="base" class="layout">
-    <app-header :title="title" @onShowNavigation="showMenu"/>
+    <app-header
+      :title="title"
+      :legal-accepted="legalAccepted"
+      :project-title="projectTitle"
+      @onShowNavigation="showMenu"/>
     <app-menu
       :show-navigation="showNavigation"
-      :title="$t('ast')"
+      :title="title"
       :accepted-legal="acceptedLegal"
       :created-project-area="createdProjectArea"
       :filled-in-required-settings="filledInRequiredProjectAreaSettings"
@@ -106,6 +110,7 @@ export default {
       meta: [
         { hid: 'description', name: 'description', content: this.$i18n.t('app_description') },
       ],
+      title: this.title,
     }
   },
 
@@ -118,17 +123,26 @@ export default {
       center: state => state.project.map.center,
       zoom: state => state.project.map.zoom,
       showNavigation: state => state.appMenu.show,
-      title: state => state.project.settings.general.title,
+      projectTitle: state => state.project.settings.general.title,
       mapMode: state => state.map.mode,
       notifications: state => state.notifications.messages,
       mode: state => state.mode.state,
       exportShown: state => state.flow.export,
       inSetMeasureFlow: state => state.setMeasureFlow.inFlow,
+      userIsRefreshing: state => state.user.isRefreshing,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings']),
     ...mapGetters({ selectedAreas:  'selectedAreas/features' }),
     ...mapGetters('map', ['isProject', 'point', 'line', 'polygon', 'interactive', 'search']),
+    ...mapGetters('user', ['isLoggedIn']),
+    ...mapGetters('data/appConfig', ['title']),
+  },
+
+  watch: {
+    userIsRefreshing() {
+      window.removeEventListener('beforeunload', this.beforeUnload)
+    },
   },
   async beforeMount() {
     const locale = this.$i18n.locale
