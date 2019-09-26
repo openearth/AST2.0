@@ -35,7 +35,7 @@
       <md-button class="md-raised" @click="togglePopup(true)">View as table</md-button>
       <app-popup
         v-if="openState"
-        title="Content for the header"
+        :title="$t('results')"
         @closePopup="togglePopup(false)"
       >
         <kpi-table />
