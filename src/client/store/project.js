@@ -427,7 +427,7 @@ export const getters = {
       const measureValueMap = getters.areas
         .map(area => {
           const values = kpiKeys.map(key => get(area, `properties.apiData[${key}]`))
-          return [area.properties.measure, 0, ...values]
+          return [area.properties.measure, area.properties.area, ...values]
         })
         .reduce((obj, row) => {
           const [measureId, ...values] = row
