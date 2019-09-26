@@ -89,6 +89,9 @@
       :notifications="notifications"
       @remove-notification="removeNotification"
     />
+
+    <!-- portal for general popup -->
+    <portal-target name="popup-portal" />
   </div>
 </template>
 

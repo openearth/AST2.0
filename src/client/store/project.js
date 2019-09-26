@@ -2,6 +2,8 @@ import Vue from 'vue'
 import turfArea from '@turf/area'
 import turfLength from '@turf/length'
 import merge from 'lodash/merge'
+import get from 'lodash/get'
+import round from 'lodash/round'
 import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT, REPAINT } from '../lib/map-event-bus'
 import { getApiDataForFeature, getRankedMeasures } from "../lib/get-api-data";
 import FileSaver from 'file-saver'
@@ -374,6 +376,84 @@ export const actions = {
 }
 
 export const getters = {
+  tableClimateAndCosts: (state, getters, rootState, rootGetters) => {
+    if (state.areas.length) {
+      const measureIds = getters.areas.map(area => get(area, 'properties.measure'))
+      const measureById = rootGetters['data/measures/measureById']
+      const kpiKeys = ['storageCapacity', 'returnTime', 'groundwater_recharge', 'evapotranspiration', 'tempReduction', 'coolSpot', 'constructionCost', 'maintenanceCost']
+      const kpiKeysTitleMap = rootGetters['data/kpiGroups/kpiKeysTitleMap']
+      const kpiKeysUnitMap = rootGetters['data/kpiGroups/kpiKeysUnitMap']
+      const toTwoDecimals = value => round(value, 2)
+      const measueTitleForId = id => get(measureById(id), 'title')
+      const kpiTitleByKey = key => `${kpiKeysTitleMap[key]}${kpiKeysUnitMap[key] ? ` (${kpiKeysUnitMap[key]})` : ''}`
+
+      const measureValueMap = getters.areas
+        .map(area => {
+          const values = kpiKeys.map(key => get(area, `properties.apiData[${key}]`))
+          return [area.properties.measure, area.properties.area, ...values]
+        })
+        .reduce((obj, row) => {
+          const [measureId, ...values] = row
+          if (obj[measureId] === undefined) {
+            obj[measureId] = values
+          } else {
+            values.forEach((value, index) => obj[measureId][index] += value)
+          }
+          return obj
+        }, {})
+
+      return {
+        "title": rootState.i18n.messages.climate_and_costs,
+        "header": [
+          rootState.i18n.messages.measure,
+          rootState.i18n.messages.surface,
+          ...kpiKeys.map(kpiTitleByKey),
+        ],
+        rows: Object.entries(measureValueMap)
+          .map(([id, values]) => [measueTitleForId(id), ...values.map(toTwoDecimals)]),
+      }
+    }
+  },
+
+  tableCoBenefits: (state, getters, rootState, rootGetters) => {
+    if (state.areas.length) {
+      const measureIds = getters.areas.map(area => get(area, 'properties.measure'))
+      const measureById = rootGetters['data/measures/measureById']
+      const kpiKeys = ['filteringUnit', 'captureUnit', 'settlingUnit']
+      const kpiKeysTitleMap = rootGetters['data/kpiGroups/kpiKeysTitleMap']
+      const kpiKeysUnitMap = rootGetters['data/kpiGroups/kpiKeysUnitMap']
+      const toTwoDecimals = value => round(value, 2)
+      const measueTitleForId = id => get(measureById(id), 'title')
+      const kpiTitleByKey = key => `${kpiKeysTitleMap[key]}${kpiKeysUnitMap[key] ? ` (${kpiKeysUnitMap[key]})` : ''}`
+
+      const measureValueMap = getters.areas
+        .map(area => {
+          const values = kpiKeys.map(key => get(area, `properties.apiData[${key}]`))
+          return [area.properties.measure, area.properties.area, ...values]
+        })
+        .reduce((obj, row) => {
+          const [measureId, ...values] = row
+          if (obj[measureId] === undefined) {
+            obj[measureId] = values
+          } else {
+            values.forEach((value, index) => obj[measureId][index] += value)
+          }
+          return obj
+        }, {})
+
+      return {
+        "title": rootState.i18n.messages.co_benefits,
+        "header": [
+          rootState.i18n.messages.measure,
+          rootState.i18n.messages.surface,
+          ...kpiKeys.map(kpiTitleByKey),
+        ],
+        rows: Object.entries(measureValueMap)
+          .map(([id, values]) => [measueTitleForId(id), ...values.map(toTwoDecimals)]),
+      }
+    }
+  },
+
   areas: (state) => {
     return state.areas.map(feature => {
       let area;
