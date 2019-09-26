@@ -144,25 +144,30 @@ export const actions = {
     center && commit('setMapCenter', center)
   },
   createArea({ state, commit, dispatch }, features) {
-    features.forEach(feature => {
-      const area = turfArea(feature.geometry)
+    const promises = features.map(feature => {
+      return new Promise((resolve, reject) => {
+        const area = turfArea(feature.geometry)
 
-      if (!state.settings.area.id) {
-        commit('addProjectArea', feature)
-        commit('updateProjectAreaProperty', { area, isProjectArea: true })
-        return
-      }
+        if (!state.settings.area.id) {
+          commit('addProjectArea', feature)
+          commit('updateProjectAreaProperty', { area, isProjectArea: true })
+          resolve()
+          return
+        }
 
-      commit('addArea', feature)
+        commit('addArea', feature)
 
-      const areaNumber = state.areas.length
-      dispatch('fetchAreaApiData', [feature])
-      commit('updateAreaProperty', { id: feature.id, properties: { name: `Area-${areaNumber}`, hidden: false } })
+        const areaNumber = state.areas.length
+        dispatch('fetchAreaApiData', [feature])
+        commit('updateAreaProperty', { id: feature.id, properties: { name: `Area-${areaNumber}`, hidden: false } })
 
-      setTimeout(() => {
-        MapEventBus.$emit(SELECT, feature.id)
-      }, 0)
+        setTimeout(() => {
+          MapEventBus.$emit(SELECT, feature.id)
+        }, 0)
+        resolve()
+      })
     })
+    return Promise.all(promises)
   },
   updateArea({ state, commit, dispatch, getters }, features) {
     features.forEach(feature => {

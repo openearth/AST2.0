@@ -51,6 +51,11 @@ export default {
 </script>
 
 <style>
+.view-project {
+  display: flex;
+  flex-direction: column;
+}
+
 .view-project__medium {
   width: var(--width-medium);
 }
