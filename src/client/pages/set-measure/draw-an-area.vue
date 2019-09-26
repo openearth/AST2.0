@@ -4,8 +4,7 @@
       :measure="measure"
       :scores="[]"
       :interactive="false"
-      class="measure-list__card"
-      @choose="choose"/>
+      class="measure-list__card"/>
   </div>
 </template>
 
@@ -17,21 +16,10 @@ export default {
     components: { AppPanel, MeasureStepper, MeasureCard },
 
     computed: {
-      ...mapState({
-        measureId: state => state.setMeasureFlow.id,
-      }),
       ...mapGetters('data/measures', ['measureById']),
+      ...mapState({ measureId: state => state.setMeasureFlow.id }),
       measure() {
         return this.measureById(this.measureId)
-      },
-    },
-
-    methods: {
-      choose() {
-        console.log('choose')
-      },
-      cancel() {
-        console.log('clicked cancel')
       },
     },
 }

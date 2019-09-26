@@ -5,13 +5,13 @@ export const state = () => ({
     {
       id: 0,
       label: 'Select a measure',
-      slug: '/en/set-measure',
+      slug: 'set-measure',
       isWide: true,
     },
     {
       id: 1,
       label: 'Draw an area',
-      slug: '/en/set-measure/draw-an-area',
+      slug: 'set-measure/draw-an-area',
     },
   ],
   currentStep: 0,
@@ -41,12 +41,14 @@ export const actions = {
     commit('setInFlow', true)
     commit('mode/isInactive', null, { root: true })
   },
-  chooseMeasure({ commit, getters }, id) {
+  chooseMeasure({ commit, getters, rootState }, id) {
     const { slug: nextSlug } = getters.nextStep
+    const locale = rootState.i18n.locale
+    const path = `/${locale}/${nextSlug}/`
     commit('setMeasureId', id)
     commit('updateCurrentStep', 1)
     commit('mode/isDefault', null, { root:true })
-    this.$router.push({ path: `${nextSlug}` })
+    this.$router.push({ path })
   },
   async connectMeasureToArea({ commit, state, rootGetters, dispatch }, features) {
     const measure = rootGetters['data/measures/orderedMeasures'].find(({ measureId }) => measureId === state.id)
