@@ -65,6 +65,12 @@ export const actions = {
       this.$router.push(`/${rootState.i18n.locale}/project/`)
     }
   },
+  toStep({ commit, rootState }, step) {
+    commit('updateCurrentStep', step.id)
+    const locale = rootState.i18n.locale
+    const path = `/${locale}/${step.slug}/`
+    this.$router.push({ path })
+  },
 }
 
 export const getters = {

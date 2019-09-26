@@ -8,12 +8,12 @@
     class="measure-stepper">
     <md-step
       v-for="(step, index) in steps"
-      :to="step.slug"
       :id="stepId(index)"
       :key="index"
       :md-done="isDone(index)"
       :md-label="step.label"
-      exact>
+      exact
+      @click="$emit('to-step', step)">
       <slot/>
     </md-step>
   </md-steppers>
@@ -38,12 +38,6 @@ export default {
     },
     stepId(index) {
       return `measure--${index}`
-    },
-    nextStep() {
-      const buttons = this.$el.querySelectorAll('.md-stepper-header.md-button');
-      if(this.current + 1 <= buttons.length) {
-        buttons.item(this.current + 1).click()
-      }
     },
   },
 }

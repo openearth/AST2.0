@@ -3,7 +3,8 @@
     <measure-stepper
       :steps="steps"
       :current="activeStep.id"
-      :wide="activeStep.isWide"/>
+      :wide="activeStep.isWide"
+      @to-step="toStep"/>
     <nuxt-child />
     <md-button
       slot="footer"
@@ -38,6 +39,7 @@ export default {
     ...mapActions({
       startFlow: 'setMeasureFlow/startFlow',
       resetFlow: 'setMeasureFlow/resetFlow',
+      toStep: 'setMeasureFlow/toStep',
     }),
   },
 }
