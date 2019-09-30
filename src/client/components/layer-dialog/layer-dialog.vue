@@ -22,13 +22,13 @@
       </p>
       <md-list v-if="state === 'layers'">
         <md-list-item v-for="layer in layers" :key="layer.name">
-          <md-checkbox v-model="layer.checked" />
+          <md-checkbox v-model="layer.checked" :disabled="wmsLayerIds.includes(layer.id)"/>
           <span class="md-list-item-text">{{ layer.name }}</span>
         </md-list-item>
       </md-list>
     </md-dialog-content>
     <md-dialog-actions>
-      <md-button class="md-primary" @click="$emit('update:showLayerDialog', false)">
+      <md-button class="md-primary" @click="$emit('update:showLayerDialog', false); resetState">
         Cancel
       </md-button>
       <md-button
@@ -62,6 +62,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    wmsLayers: {
+      type: Array,
+      default: () => [],
+    },
   },
   data() {
     return {
@@ -77,13 +81,18 @@ export default {
         name: 'WMTS',
         value: 'WMTS',
       }, {
-        name: 'ArcGIS',
+        name: 'ArcREST',
         value: 'ESRI',
       }, {
         name: 'Not sure',
         value: '?',
       }],
     }
+  },
+  computed: {
+    wmsLayerIds() {
+      return this.wmsLayers.map(layer => layer.id)
+    },
   },
   mounted() {
     this.serverType = this.options[0].name
@@ -101,8 +110,14 @@ export default {
       this.message =  ''
       this.getCustomMapLayers({ serverUrl: this.serverUrl, serverType: this.serverType })
         .then(data => {
-          this.layers = data.layers
-          this.message = data.messages
+          // if errors on top level is not empty, something went wrong with
+          // requesting the server or the corresponding type
+          if (data.errors !== '') {
+            this.state = 'error'
+            this.message = data.errors
+          } else {
+            this.layers = data.layers
+          }
         })
         .catch(error => {
           this.message = error
@@ -111,8 +126,16 @@ export default {
     },
     addLayers() {
       // Add the selected layers to the background layers of the application
+      // and reset the state of the dialog
       const newLayers = this.layers.filter(layer => layer.checked)
       this.addCustomTilesToLayers(newLayers)
+      this.resetState()
+    },
+
+    resetState() {
+      this.layers = []
+      this.state = 'settings'
+      this.message = ''
     },
   },
 

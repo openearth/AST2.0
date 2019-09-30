@@ -56,7 +56,7 @@
                 label="opacity"
                 @change="value => $emit('opacity-change', { id: layer.id, value: parseFloat(value / 100) })"/>
             </md-list-item>
-            <md-list-item class="md-inset">
+            <md-list-item v-if="layer.legendUrl" class="md-inset">
               legend
               <md-switch
                 :value="!layer.showLegend"
@@ -71,7 +71,10 @@
         <md-icon>add</md-icon>
         <span class="md-list-item-text">{{ $t('add_layers') }}</span>
       </md-button>
-      <layer-dialog :show-layer-dialog.sync="showLayerDialog"/>
+      <layer-dialog
+        :wms-layers="layers"
+        :show-layer-dialog.sync="showLayerDialog"
+      />
     </div>
   </md-list>
 </template>
