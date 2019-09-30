@@ -12,9 +12,17 @@
 
         <div class="md-toolbar-section-end">
           <md-button
+            :class="{'md-primary': featureSorted}"
+            class="md-icon-button"
+            @click="sortHandler('featureSorted')">
+            <md-icon v-if="featureSorted">star</md-icon>
+            <md-icon v-else>star_border</md-icon>
+          </md-button>
+
+          <md-button
             :class="{'md-primary': alphaSorted}"
             class="md-icon-button"
-            @click="alphaSorted = !alphaSorted">
+            @click="sortHandler('alphaSorted')">
             <md-icon>sort_by_alpha</md-icon>
           </md-button>
         </div>
@@ -51,6 +59,7 @@ export default {
   data: () => ({
     searchValue: '',
     alphaSorted: false,
+    featureSorted: true,
   }),
   computed: {
     alphaSortedMeasures() {
@@ -78,6 +87,12 @@ export default {
   methods: {
     choose(value) {
       this.$emit('choose', value)
+    },
+    sortHandler(selected) {
+      const types = ['alphaSorted', 'featureSorted'];
+      types.forEach( type => {
+        this[type] = selected === type ? !this[type] : false
+      })
     },
   },
 }
