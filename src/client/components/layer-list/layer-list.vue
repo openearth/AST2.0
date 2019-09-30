@@ -62,7 +62,10 @@
         <md-icon>add</md-icon>
         <span class="md-list-item-text">{{ $t('add_layers') }}</span>
       </md-button>
-      <layer-dialog :show-layer-dialog.sync="showLayerDialog"/>
+      <layer-dialog
+        :wms-layers="layers"
+        :show-layer-dialog.sync="showLayerDialog"
+      />
     </div>
   </md-list>
 </template>
