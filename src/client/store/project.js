@@ -126,7 +126,7 @@ export const mutations = {
   },
   setLegendVisibility(state, { id, value }) {
     state.map.wmsLayers.forEach(layer => {
-      if (id === layer.id) {
+      if (id === layer.id && layer.legendUrl) {
         layer.showLegend = value
       }
     })
