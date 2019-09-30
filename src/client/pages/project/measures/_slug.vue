@@ -1,7 +1,7 @@
 <template>
   <div class="measure">
     <div class="measure__actions">
-      <nuxt-link :to="`/${$i18n.locale}/project/measures/`" class="md-link measure__link">&#x2190; {{ $t('back') }}</nuxt-link>
+      <md-button class="md-link measure__link" @click="back">&#x2190; {{ $t('back') }}</md-button>
       <md-button
         :disabled="!selectedFeatures.length"
         class="md-raised md-primary"
@@ -54,6 +54,9 @@ export default {
     onChoose(measure) {
       this.setAreaMeasure({ features: this.selectedFeatures, measure })
       this.$router.push(`/${this.$i18n.locale}/project/areas/`)
+    },
+    back() {
+      this.$router.back()
     },
   },
 }

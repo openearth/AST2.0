@@ -12,21 +12,22 @@ export const state = () => ({
 
 export const mutations = {
   addWorkspace(state, workspace) {
-    state[workspace.name] = workspace
+    Vue.set(state, workspace.name, workspace)
   },
   fillWorkspace(state, workspaceData) {
     Vue.set(state, workspaceData.name, workspaceData)
   },
   setUserWorkspace(state, workspaceName) {
-    state._user = workspaceName
+    Vue.set(state, '_user', workspaceName)
   },
   setDomain(state, _domain) {
     const [domain] = /\w+-\w+$/.exec(_domain) || []
     const availableWorkspaces = Object.keys(state)
-
-    state._domain = availableWorkspaces.indexOf(domain) === -1
+    const domainName = availableWorkspaces.indexOf(domain) === -1
       ? defaultDomain
       : domain
+
+    Vue.set(state, '_domain', domainName)
   },
 }
 

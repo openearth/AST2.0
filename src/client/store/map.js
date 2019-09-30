@@ -81,6 +81,17 @@ export const getters = {
     }
   },
 
+  addOnly(state, getters, rootState) {
+    const mode = rootState.mode.state
+
+    switch (mode) {
+      case 'add-only':
+        return true
+      default:
+        return false
+    }
+  },
+
   search(state, getters, rootState) {
     const mode = rootState.mode.state
 

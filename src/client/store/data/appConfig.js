@@ -22,6 +22,8 @@ export const actions = {
 export const getters = {
   title(state, getters, rootState, rootGetters) {
     const activeWorkspace = rootGetters['data/workspaces/activeWorkspace'] || {}
-    return activeWorkspace.applicationTitle || state.title
+    const workspaceTitle = activeWorkspace.applicationTitle
+    const stateTitle = state.title
+    return workspaceTitle || stateTitle
   },
 }

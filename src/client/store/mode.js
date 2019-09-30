@@ -18,4 +18,8 @@ export const mutations = {
   isDefault(state) {
     state.state = 'default'
   },
+
+  isAddOnly(state) {
+    state.state = 'add-only'
+  },
 }
