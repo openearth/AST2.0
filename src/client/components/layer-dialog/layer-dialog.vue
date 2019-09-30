@@ -77,7 +77,7 @@ export default {
         name: 'WMTS',
         value: 'WMTS',
       }, {
-        name: 'ArcGIS',
+        name: 'ArcREST',
         value: 'ESRI',
       }, {
         name: 'Not sure',
@@ -111,8 +111,12 @@ export default {
     },
     addLayers() {
       // Add the selected layers to the background layers of the application
+      // and reset the state of the dialog
       const newLayers = this.layers.filter(layer => layer.checked)
       this.addCustomTilesToLayers(newLayers)
+      this.layers = []
+      this.state = 'settings'
+      this.message = ''
     },
   },
 
