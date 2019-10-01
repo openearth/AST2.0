@@ -1,0 +1,46 @@
+{
+  "instance": [
+    {
+      "id": "keyLabel",
+      "label": "Label of the key",
+      "type": "string",
+      "required": true,
+      "default": "Key"
+    },
+    {
+      "id": "keyProperty",
+      "label": "Property of the key",
+      "type": "string",
+      "required": true,
+      "default": "key"
+    },
+    {
+      "id": "valueLabel",
+      "label": "Label of the value",
+      "type": "string",
+      "required": true,
+      "default": "Value"
+    },
+    {
+      "id": "valueProperty",
+      "label": "Property of the value",
+      "type": "string",
+      "required": true,
+      "default": "value"
+    },
+    {
+      "id": "translateKey",
+      "label": "Translate the key label?",
+      "type": "boolean",
+      "required": false,
+      "default": false
+    },
+    {
+      "id": "translateValue",
+      "label": "Translate the value label?",
+      "type": "boolean",
+      "required": false,
+      "default": false
+    }
+  ]
+}

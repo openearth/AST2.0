@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Key/Value pairs</title>
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/datocms-plugins-sdk"></script>
+<script src="https://unpkg.com/datocms-client"></script>
+<link href="https://unpkg.com/datocms-plugins-sdk/dist/sdk.css" media="all" rel="stylesheet" />
+
+<div class="app" id="app">
+  <span class="locale-warning" v-if="localesWithMissingValues.length">
+    Locales missing a <em>{{keyLabel}}</em> or <em>{{valueLabel}}</em>: <strong>{{localesWithMissingValues.join(', ')}}</strong>
+  </span>
+  <ul class="list">
+    <li class="item" v-for="(item, index) in list" :key="index">
+      <label class="item__key">
+        <span class="item__label">{{keyLabel}}:</span>
+        <input class="item__input" type="text" :value="item[keyProperty]" @change="updateKey($event, index)"/>
+      </label>
+      <label class="item-value">
+        <span class="item__label">{{valueLabel}}:</span>
+        <input class="item__input" type="text" :value="item[valueProperty]" @change="updateValue($event, index)"/>
+      </label>
+      <button class="item__remove DatoCMS-button--alert" @click="remove(index)">Remove</button>
+    </li>
+  </ul>
+  <button class="DatoCMS-button" @click="add" :disabled="bootstrapped === false">Add value</button>
+</div>
+
+<script type="text/javascript">
+let app = undefined
+let plugin = undefined
+let dato = undefined
+
+DatoCmsPlugin.init(async function (_plugin) {
+  plugin = _plugin
+  dato = new Dato.SiteClient(plugin.parameters.global.datoCmsApiToken)
+  plugin.startAutoResizer()
+
+  app.keyLabel = plugin.parameters.instance.keyLabel
+  app.keyProperty = plugin.parameters.instance.keyProperty
+  app.valueLabel = plugin.parameters.instance.valueLabel
+  app.valueProperty = plugin.parameters.instance.valueProperty
+  app.translateKey = plugin.parameters.instance.translateKey
+  app.translateValue = plugin.parameters.instance.translateValue
+  app.locale = plugin.locale
+  app.locales = plugin.site.attributes.locales
+  app.bootstrapped = true
+
+  app.value = app.locales.reduce((obj, locale) => {
+    const fieldPath = plugin.fieldPath.replace(new RegExp(`\.${plugin.locale}$`), `.${locale}`)
+    const value = plugin.getFieldValue(fieldPath)
+    obj[locale] = JSON.parse(value)
+    return obj
+  }, {})
+})
+
+app = new Vue({
+  el: '#app',
+  data: () => ({
+    keyLabel: undefined,
+    keyProperty: undefined,
+    valueLabel: undefined,
+    valueProperty: undefined,
+    locale: undefined,
+    locales: undefined,
+    translateKey: undefined,
+    translateValue: undefined,
+    value: {},
+    bootstrapped: false,
+  }),
+  methods: {
+    async add() {
+      this.locales.forEach(locale => {
+        const item = { }
+        item[this.keyProperty] = ''
+        item[this.valueProperty] = ''
+
+        if (this.value[locale] === undefined) {
+          Vue.set(this.value, locale, [])
+        }
+
+        this.value[locale].push(item)
+      })
+      await this.$nextTick()
+      this.store()
+    },
+    async remove(indexToRemove) {
+      this.locales.forEach(locale => {
+        this.value[locale] = this.value[locale].filter((_, index) => index !== indexToRemove)
+      })
+      await this.$nextTick()
+      this.store()
+    },
+    async updateKey(event, index) {
+      if (this.translateKey) {
+        Vue.set(this.value[this.locale][index], this.keyProperty, event.target.value)
+      } else {
+        this.locales.forEach(locale => {
+          Vue.set(this.value[locale][index], this.keyProperty, event.target.value)
+        })
+      }
+      await this.$nextTick()
+      this.store()
+    },
+    async updateValue(event, index) {
+      if (this.translateValue) {
+        Vue.set(this.value[this.locale][index], this.valueProperty, event.target.value)
+      } else {
+        this.locales.forEach(locale => {
+          Vue.set(this.value[locale][index], this.valueProperty, event.target.value)
+        })
+      }
+      await this.$nextTick()
+      this.store()
+    },
+    store() {
+      this.locales.forEach(locale => {
+        const fieldPath = plugin.fieldPath.replace(new RegExp(`\.${plugin.locale}$`), `.${locale}`);
+        plugin.setFieldValue(fieldPath, JSON.stringify(this.value[locale]))
+      })
+    }
+  },
+  computed: {
+    output() {
+      return JSON.stringify(this.value, null, 2)
+    },
+    list() {
+      return this.locale
+        ? this.value[this.locale]
+        : []
+    },
+    localesWithMissingValues() {
+      return (this.locales || []).reduce((result, locale) => {
+        const localeValue = (this.value && this.value[locale]) || []
+        const foundLocale = localeValue.find(item =>
+          item[this.keyProperty] === '' ||
+          item[this.valueProperty] === ''
+        )
+        if (foundLocale) {
+          result.push(locale)
+        }
+
+        return result
+      }, [])
+    },
+  }
+})
+</script>
+
+<style>
+.locale-warning {
+  color: red;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  padding-top: 2rem;
+}
+.item > * {
+  flex: 1;
+  margin-right: 1rem;
+  position: relative;
+}
+
+.item > :last-child {
+  margin-right: 0;
+}
+
+.item__label {
+  position: absolute;
+  transform: translateY(-100%);
+}
+
+.item__remove {
+  flex-grow: 0;
+}
+</style>
