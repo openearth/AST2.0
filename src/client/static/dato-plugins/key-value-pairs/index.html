@@ -24,9 +24,9 @@
         <span class="item__label">{{valueLabel}}:</span>
         <input class="item__input" type="text" :data-previous-value="item[valueProperty]" :value="item[valueProperty]" @change="updateValue($event, index)"/>
       </label>
-      <label class="item-value">
-        <span class="item__label">Default value</span>
-        <input class="item__input" type="checkbox" :checked="isChecked(item[keyProperty], item[valueProperty])" @click="updateDefaultValue(index)"/>
+      <label class="item-default">
+        <span class="item__label">Default:</span>
+        <input class="item__checkbox" type="checkbox" :checked="isChecked(item[keyProperty], item[valueProperty])" @click="updateDefaultValue(index)"/>
       </label>
       <button class="item__remove DatoCMS-button--alert" @click="remove(index)">Remove</button>
     </li>
@@ -237,7 +237,13 @@ app = new Vue({
   transform: translateY(-100%);
 }
 
-.item__remove {
+.item__remove,
+.item-default {
   flex-grow: 0;
+}
+
+.item__checkbox {
+  margin-top: 15px;
+  margin-bottom: 15px;
 }
 </style>
