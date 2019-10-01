@@ -125,7 +125,9 @@ export default {
        * magic numbers: 300 as distance to top, 80 as spacing at bottom
        */
       // TODO/Extra: Add resize handler to recalculate maxHeight
-      const top = this.$refs.list ? this.$refs.list.$el.getBoundingClientRect().top : 300;
+      const top = this.$refs.list
+        ? this.$refs.list.$el.getBoundingClientRect().top
+        : 300;
       this.maxHeight = (window.innerHeight - top - 80)
     },
   },

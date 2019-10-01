@@ -4,10 +4,6 @@
     <md-dialog-content>
       <form v-if="state === 'settings'">
         <md-field>
-          <label> server url </label>
-          <md-input v-model="serverUrl"/>
-        </md-field>
-        <md-field>
           <md-select v-model="serverType" md-dense>
             <label> server url </label>
             <md-option
@@ -16,11 +12,16 @@
               :value="option.value">{{ option.name }}</md-option>
           </md-select>
         </md-field>
+        <md-field>
+          <label> server url </label>
+          <md-input v-model="serverUrl" :placeholder="placeholder"/>
+        </md-field>
       </form>
       <p v-if="state === 'layers' || 'error'">
         {{ message }}
       </p>
       <md-list v-if="state === 'layers'">
+        <md-progress-spinner v-if="layers.length === 0" md-mode="indeterminate"/>
         <md-list-item v-for="layer in layers" :key="layer.name">
           <md-checkbox v-model="layer.checked" :disabled="wmsLayerIds.includes(layer.id)"/>
           <span class="md-list-item-text">{{ layer.name }}</span>
@@ -69,27 +70,33 @@ export default {
   },
   data() {
     return {
-      serverUrl: 'test',
-      serverType: 'MOCK',
-      state: 'settings', //TODO: Look if working with this state is the best way to go
+      serverUrl: '',
+      serverType: '',
+      state: 'settings',
       layers: [],
       message: '',
       options: [{
         name: 'WMS',
         value: 'WMS',
+        placeholder: '', //TODO:  Ask for placeholder for WMS layer
       }, {
         name: 'WMTS',
         value: 'WMTS',
+        placeholder: 'https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/WMTS',
       }, {
         name: 'ArcREST',
         value: 'ESRI',
-      }, {
-        name: 'Not sure',
-        value: '?',
-      }],
+        placeholder: 'https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/',
+      },
+    ],
     }
   },
   computed: {
+    placeholder() {
+      const option = this.options.find(option => option.name === this.serverType)
+      console.log(option, this.serverType, option.placeholder)
+      return option.placeholder
+    },
     wmsLayerIds() {
       return this.wmsLayers.map(layer => layer.id)
     },
