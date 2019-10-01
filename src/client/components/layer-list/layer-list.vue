@@ -18,7 +18,7 @@
           </md-avatar>
           <div
             v-else
-            :style="{'background-color': generateColor()}"
+            :style="{'background-color': layer.backgroundColor}"
             :aria-label="layer.title"
             role="img"
             class="layer-list__avatar-fake"
@@ -87,7 +87,6 @@
 </template>
 
 <script>
-import randomColor from '../../lib/randomColor';
 import InputRange from "../input-range";
 import LayerDialog from "../layer-dialog";
 import { mapMutations } from "vuex";
@@ -113,9 +112,6 @@ export default {
     ...mapMutations({
       deleteWmsLayer: 'project/deleteWmsLayer',
     }),
-    generateColor() {
-      return randomColor()
-    },
     setExpanded(id) {
       this.expanded = this.expanded !== id ? id : ''
     },

@@ -56,6 +56,7 @@
 
 <script>
 import { mapActions } from 'vuex';
+import get from 'lodash/get';
 
 export default {
   props: {
@@ -94,8 +95,7 @@ export default {
   computed: {
     placeholder() {
       const option = this.options.find(option => option.name === this.serverType)
-      console.log(option, this.serverType, option.placeholder)
-      return option.placeholder
+      return get('placeholder', option) || ""
     },
     wmsLayerIds() {
       return this.wmsLayers.map(layer => layer.id)

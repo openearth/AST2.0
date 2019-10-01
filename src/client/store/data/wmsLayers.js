@@ -1,4 +1,5 @@
 import getData from '../../lib/get-data'
+import randomColor from '../../lib/random-color';
 import { getRealApiData } from "../../lib/get-api-data";
 export const state = () => []
 
@@ -33,12 +34,13 @@ export const actions = {
         id: id,
         title: source.name,
         layerType: 'raster',
-        url: source.tiles[0], // TODO: source.tiles should be returned from the backend as url (String)
-        tilesize: 256,
+        url: source.tiles,
         showLegend: false,
+        tilesize: 256,
         opacity: 1,
         visible: true,
         deleteLayer: true,
+        backgroundColor: randomColor(),
       }
       commit('addLayer', mapLayer)
       return mapLayer
@@ -63,6 +65,7 @@ export const getters = {
           ...rest,
           tilesize,
           deleteLayer: layer.deleteLayer,
+          backgroundColor: layer.backgroundColor,
         }
       } else {
         return {
