@@ -63,7 +63,8 @@
         <layer-list
           v-if="showLayersPanel"
           ref="layerlist"
-          :layers="wmsLayers"
+          :wms-layers="wmsLayers"
+          :custom-layers="customLayers"
           class="map-controls__layer-list"
           @opacity-change="event => $emit('layer-opacity-change', event)"
           @visibility-change="event => $emit('layer-visibility-change', event)"
@@ -135,6 +136,10 @@ export default {
       default: false,
     },
     wmsLayers: {
+      type: Array,
+      default: () => [],
+    },
+    customLayers: {
       type: Array,
       default: () => [],
     },

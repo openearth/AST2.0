@@ -28,6 +28,7 @@ const initialState = () => ({
       lng: 4.916535879906178,
     },
     wmsLayers: [],
+    customLayers: [],
   },
 })
 
@@ -102,8 +103,11 @@ export const mutations = {
   setWmsLayer(state, layer) {
     state.map.wmsLayers.push(layer)
   },
-  deleteWmsLayer(state, id) {
-    state.map.wmsLayers = state.map.wmsLayers.filter(layer => layer.id !== id)
+  setCustomLayer(state, layer) {
+    state.map.customLayers.push(layer)
+  },
+  deleteCustomLayer(state, id) {
+    state.map.customLayers = state.map.customLayers.filter(layer => layer.id !== id)
   },
   toggleProjectAreaNestedSetting(state, { key, option, value }) {
     state.settings.projectArea[key][option] = !state.settings.projectArea[key][option]
@@ -111,23 +115,23 @@ export const mutations = {
   acceptLegal(state) {
     state.legalAccepted = true
   },
-  setLayerOpacity(state, { id, value }) {
-    state.map.wmsLayers.forEach(layer => {
+  setLayerOpacity({ getters }, { id, value }) {
+    getters.allMapLayers.forEach(layer => {
       if (id === layer.id) {
         layer.opacity = value
       }
     })
   },
-  setLayerVisibility(state, { id, value }) {
-    state.map.wmsLayers.forEach(layer => {
+  setLayerVisibility( { getters }, { id, value }) {
+    getters.allMapLayers.forEach(layer => {
       if (id === layer.id) {
         layer.visible = value
         layer.showLegend = value
       }
     })
   },
-  setLegendVisibility(state, { id, value }) {
-    state.map.wmsLayers.forEach(layer => {
+  setLegendVisibility({ getters }, { id, value }) {
+    getters.allMapLayers.forEach(layer => {
       if (id === layer.id && layer.legendUrl) {
         layer.showLegend = value
       }
@@ -293,6 +297,11 @@ export const actions = {
       commit('setWmsLayer', { id: layer.id, visible: false, showLegend: false, opacity: 1 })
     })
   },
+  bootstrapCustomLayers({ state, commit }, layers) {
+    layers.forEach(layer => {
+      commit('setCustomLayer', { id: layer.id, visible: false, showLegend: false, opacity: 1 })
+    })
+  },
   async updateProjectAreaSetting({ state, commit, rootGetters, getters, dispatch }, payload ) {
     const { type } = payload
 
@@ -375,6 +384,11 @@ export const actions = {
 }
 
 export const getters = {
+  allMapLayers: (state) => {
+    const layers = merge(state.map.wmsLayers, state.map.customLayers)
+    console.log(layers)
+    return layers
+  },
   areas: (state) => {
     return state.areas.map(feature => {
       let area;
@@ -503,6 +517,17 @@ export const getters = {
     .filter(layer => rootState.data.wmsLayers.some(rootLayer => rootLayer.id === layer.id))
     .map(({ id, visible, opacity, showLegend }) => ({
       ...rootGetters['data/wmsLayers/constructed'].find(layer => layer.id === id),
+      visible,
+      showLegend,
+      opacity,
+    }))
+  },
+
+  customLayers: (state, getters, rootState, rootGetters) => {
+    return state.map.customLayers
+    .filter(layer => rootState.data.customLayers.some(rootLayer => rootLayer.id === layer.id))
+    .map(({ id, visible, opacity, showLegend }) => ({
+      ...rootGetters['data/customLayers/constructed'].find(layer => layer.id === id),
       visible,
       showLegend,
       opacity,

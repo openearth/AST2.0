@@ -73,6 +73,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    customLayers: {
+      type: Array,
+      default: () => [],
+    },
   },
 
   data: () => ({

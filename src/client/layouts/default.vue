@@ -35,6 +35,7 @@
           :map-zoom="zoom"
           :current-mode="mapMode"
           :wms-layers="wmsLayers"
+          :custom-layers="customLayers"
           :mode="mode"
           class="layout__map"
           @create="createArea"
@@ -123,7 +124,7 @@ export default {
       mode: state => state.mode.state,
       exportShown: state => state.flow.export,
     }),
-    ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers']),
+    ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers', 'customLayers']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings']),
     ...mapGetters({ selectedAreas:  'selectedAreas/features' }),
     ...mapGetters('map', ['isProject', 'point', 'line', 'polygon', 'interactive', 'search']),

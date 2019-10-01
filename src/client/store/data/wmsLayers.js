@@ -17,36 +17,6 @@ export const actions = {
     })
     dispatch('project/bootstrapWmsLayers', data.wmsLayers, { root: true })
   },
-
-  async getCustomMapLayers({ commit, dispatch }, parameters) {
-    const body = {
-      url: parameters.serverUrl,
-      type: parameters.serverType,
-    }
-    const data = await getRealApiData('maplayers', body)
-    return data
-  },
-
-  addCustomTilesToLayers({ state, commit, dispatch }, customLayers) {
-    const newLayers = customLayers.map(source => {
-      const id = source.id ? source.id : source.name.split(" ")[0]
-      const mapLayer = {
-        id: id,
-        title: source.name,
-        layerType: 'raster',
-        url: source.tiles,
-        showLegend: false,
-        tilesize: 256,
-        opacity: 1,
-        visible: true,
-        deleteLayer: true,
-        backgroundColor: randomColor(),
-      }
-      commit('addLayer', mapLayer)
-      return mapLayer
-    })
-    dispatch('project/bootstrapWmsLayers', newLayers, { root: true })
-  },
 }
 
 export const getters = {
@@ -58,14 +28,6 @@ export const getters = {
           ...rest,
           url: baseurl,
           tilesize,
-        }
-      } else if (layer.url) {
-        // If url already defined, return directly
-        return {
-          ...rest,
-          tilesize,
-          deleteLayer: layer.deleteLayer,
-          backgroundColor: layer.backgroundColor,
         }
       } else {
         return {

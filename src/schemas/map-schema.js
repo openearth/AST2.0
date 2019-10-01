@@ -30,5 +30,19 @@ export default {
         },
       },
     },
+    customLayers: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['id', 'showLegend', 'visible', 'opacity'],
+        properties: {
+          id: { type: 'string' },
+          showLegend: { type: 'boolean' },
+          visible: { type: 'boolean' },
+          opacity: { type: 'number' },
+        },
+      },
+    },
   },
 }

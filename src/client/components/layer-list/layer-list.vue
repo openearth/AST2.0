@@ -65,7 +65,7 @@
             <md-list-item
               v-if="layer.deleteLayer"
               class="md-inset"
-              @click="deleteWmsLayer(layer.id)">
+              @click="deleteCustomLayer(layer.id)">
               <md-icon>delete</md-icon>
               <span class="md-list-item-text">{{ $t('remove_layer') }}</span>
             </md-list-item>
@@ -79,7 +79,7 @@
         <span class="md-list-item-text">{{ $t('add_layers') }}</span>
       </md-button>
       <layer-dialog
-        :wms-layers="layers"
+        :custom-layers="customLayers"
         :show-layer-dialog.sync="showLayerDialog"
       />
     </div>
@@ -89,13 +89,18 @@
 <script>
 import InputRange from "../input-range";
 import LayerDialog from "../layer-dialog";
+import merge from 'lodash/merge';
 import { mapMutations } from "vuex";
 
 
 export default {
   components: { InputRange, LayerDialog },
   props: {
-    layers: {
+    wmsLayers: {
+      type: Array,
+      default: () => [],
+    },
+    customLayers: {
       type: Array,
       default: () => [],
     },
@@ -105,12 +110,17 @@ export default {
     showLayerDialog: false,
     maxHeight: 500,
   }),
+  computed: {
+    layers() {
+      return merge(this.wmsLayers, this.customLayers)
+    },
+  },
   mounted() {
     this.calculateMaxHeight();
   },
   methods: {
     ...mapMutations({
-      deleteWmsLayer: 'project/deleteWmsLayer',
+      deleteCustomLayer: 'project/deleteCustomLayer',
     }),
     setExpanded(id) {
       this.expanded = this.expanded !== id ? id : ''

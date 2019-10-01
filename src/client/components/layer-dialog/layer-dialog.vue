@@ -23,7 +23,7 @@
       <md-list v-if="state === 'layers'">
         <md-progress-spinner v-if="layers.length === 0" md-mode="indeterminate"/>
         <md-list-item v-for="layer in layers" :key="layer.name">
-          <md-checkbox v-model="layer.checked" :disabled="wmsLayerIds.includes(layer.id)"/>
+          <md-checkbox v-model="layer.checked" :disabled="customLayersIds.includes(layer.id)"/>
           <span class="md-list-item-text">{{ layer.name }}</span>
         </md-list-item>
       </md-list>
@@ -64,15 +64,15 @@ export default {
       type: Boolean,
       default: false,
     },
-    wmsLayers: {
+    customLayers: {
       type: Array,
       default: () => [],
     },
   },
   data() {
     return {
-      serverUrl: '',
-      serverType: '',
+      serverUrl: 'test',
+      serverType: 'MOCK',
       state: 'settings',
       layers: [],
       message: '',
@@ -97,17 +97,17 @@ export default {
       const option = this.options.find(option => option.name === this.serverType)
       return get('placeholder', option) || ""
     },
-    wmsLayerIds() {
-      return this.wmsLayers.map(layer => layer.id)
+    customLayersIds() {
+      return this.customLayers.map(layer => layer.id)
     },
   },
   mounted() {
-    this.serverType = this.options[0].name
+    // this.serverType = this.options[0].name
   },
   methods: {
     ...mapActions({
-      getCustomMapLayers: 'data/wmsLayers/getCustomMapLayers',
-      addCustomTilesToLayers: 'data/wmsLayers/addCustomTilesToLayers',
+      getCustomMapLayers: 'data/customLayers/getCustomMapLayers',
+      addCustomTilesToLayers: 'data/customLayers/addCustomTilesToLayers',
     }),
     retrieveLayers() {
       this.state = 'layers'
@@ -117,14 +117,16 @@ export default {
       this.message =  ''
       this.getCustomMapLayers({ serverUrl: this.serverUrl, serverType: this.serverType })
         .then(data => {
+          this.layers = data.layers
+
           // if errors on top level is not empty, something went wrong with
           // requesting the server or the corresponding type
-          if (data.errors !== '') {
-            this.state = 'error'
-            this.message = data.errors
-          } else {
-            this.layers = data.layers
-          }
+          // if (data.errors !== '') {
+          //   this.state = 'error'
+          //   this.message = data.errors
+          // } else {
+          //   this.layers = data.layers
+          // }
         })
         .catch(error => {
           this.message = error
@@ -134,7 +136,7 @@ export default {
     addLayers() {
       // Add the selected layers to the background layers of the application
       // and reset the state of the dialog
-      const newLayers = this.layers.filter(layer => layer.checked)
+      const newLayers = this.customLayers.filter(layer => layer.checked)
       this.addCustomTilesToLayers(newLayers)
       this.resetState()
     },
