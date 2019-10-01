@@ -9,13 +9,22 @@
         class="md-list-item-expand md-list-item-container"
       >
         <div class="md-list-item-content">
-          <md-avatar class="layer-list__avatar">
+          <md-avatar v-if="layer.imageUrl" class="layer-list__avatar">
             <img
               :src="layer.imageUrl"
               class="layer-list__avatar-img"
               alt=""
             >
           </md-avatar>
+          <div
+            v-else
+            :style="{'background-color': generateColor()}"
+            :aria-label="layer.title"
+            role="img"
+            class="layer-list__avatar-fake"
+          >
+            {{ layer.title.split('')[0] }}
+          </div>
 
           <span class="md-list-item-text layer-list__title">{{ layer.title }}</span>
 
@@ -78,6 +87,7 @@
 </template>
 
 <script>
+import randomColor from '../../lib/randomColor';
 import InputRange from "../input-range";
 import LayerDialog from "../layer-dialog";
 import { mapMutations } from "vuex";
@@ -103,6 +113,9 @@ export default {
     ...mapMutations({
       deleteWmsLayer: 'project/deleteWmsLayer',
     }),
+    generateColor() {
+      return randomColor()
+    },
     setExpanded(id) {
       this.expanded = this.expanded !== id ? id : ''
     },
@@ -130,6 +143,21 @@ export default {
 
 .layer-list__avatar {
   background-color: var(--neutral-color--light);
+}
+
+.layer-list__avatar-fake {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  margin-right: 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+  font-size: 1.3rem;
+  color: var(--background-color);
 }
 
 .layer-list__avatar-img:not([src]) {
