@@ -4,5 +4,6 @@ query ($id: ItemId){
     excludeAllMeasures,
     applicationTitle,
     measureOverrides,
+    scenarioName,
   }
 }

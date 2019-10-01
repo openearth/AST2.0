@@ -271,9 +271,9 @@ export const actions = {
 
       if (setting.multiple) {
         value = setting.options.reduce((obj, option) => ({
-                ...obj,
-                [option.value]: option.value === setting.defaultValue && setting.defaultValue.value,
-              }), {})
+            ...obj,
+            [option.value]: option.value === (setting.defaultValue && setting.defaultValue.value),
+          }), {})
       }
 
       if (setting.isSelect) {
@@ -372,6 +372,26 @@ export const actions = {
 
     dispatch('bootstrapSettingsProjectArea', areaSettings)
     dispatch('bootstrapSettingsTargets', kpiGroups)
+  },
+  applyDefaultValuesToAreaSettings({ state, dispatch, rootState, rootGetters }) {
+    const activeWorkspace = rootGetters['data/workspaces/activeWorkspace']
+    const filledInSettings = rootGetters['flow/fillesInSettings']
+    const areaSettings = rootState.data.areaSettings
+    const foo = areaSettings.map(item => {
+      const { defaultValue, ...itemRest } = item
+      const { key } = itemRest
+
+      const overriddenDefaultValue = activeWorkspace[key] && activeWorkspace[key].defaultValue
+        ? activeWorkspace[key].defaultValue
+        : defaultValue
+
+      return {
+        ...itemRest,
+        defaultValue: overriddenDefaultValue,
+      }
+    })
+
+    dispatch('bootstrapSettingsProjectArea', foo)
   },
 }
 
@@ -586,5 +606,8 @@ export const getters = {
       showLegend,
       opacity,
     }))
+  },
+  settingsProjectArea: (state) => {
+    return state.settings.projectArea
   },
 }

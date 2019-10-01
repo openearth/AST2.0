@@ -18,16 +18,21 @@
     <li class="item" v-for="(item, index) in list" :key="index">
       <label class="item__key">
         <span class="item__label">{{keyLabel}}:</span>
-        <input class="item__input" type="text" :value="item[keyProperty]" @change="updateKey($event, index)"/>
+        <input class="item__input" type="text" :data-previous-key="item[keyProperty]" :value="item[keyProperty]" @change="updateKey($event, index)"/>
       </label>
       <label class="item-value">
         <span class="item__label">{{valueLabel}}:</span>
-        <input class="item__input" type="text" :value="item[valueProperty]" @change="updateValue($event, index)"/>
+        <input class="item__input" type="text" :data-previous-value="item[valueProperty]" :value="item[valueProperty]" @change="updateValue($event, index)"/>
+      </label>
+      <label class="item-value">
+        <span class="item__label">Default value</span>
+        <input class="item__input" type="checkbox" :checked="isChecked(item[keyProperty], item[valueProperty])" @click="updateDefaultValue(index)"/>
       </label>
       <button class="item__remove DatoCMS-button--alert" @click="remove(index)">Remove</button>
     </li>
   </ul>
   <button class="DatoCMS-button" @click="add" :disabled="bootstrapped === false">Add value</button>
+  <pre>{{value}}</pre>
 </div>
 
 <script type="text/javascript">
@@ -50,12 +55,17 @@ DatoCmsPlugin.init(async function (_plugin) {
   app.locales = plugin.site.attributes.locales
   app.bootstrapped = true
 
-  app.value = app.locales.reduce((obj, locale) => {
+  const value = app.locales.reduce((obj, locale) => {
     const fieldPath = plugin.fieldPath.replace(new RegExp(`\.${plugin.locale}$`), `.${locale}`)
     const value = plugin.getFieldValue(fieldPath)
     obj[locale] = JSON.parse(value)
     return obj
   }, {})
+  const hasValue = !!Object.values(value).filter(x => x).length
+
+  if (hasValue) {
+    app.value = value
+  }
 })
 
 app = new Vue({
@@ -80,40 +90,81 @@ app = new Vue({
         item[this.valueProperty] = ''
 
         if (this.value[locale] === undefined) {
-          Vue.set(this.value, locale, [])
+          Vue.set(this.value, locale, {
+            options: [],
+            defaultValue: { [this.keyProperty]: '', [this.valueProperty]: '' }
+          })
         }
 
-        this.value[locale].push(item)
+        this.value[locale].options.push(item)
       })
       await this.$nextTick()
       this.store()
     },
     async remove(indexToRemove) {
       this.locales.forEach(locale => {
-        this.value[locale] = this.value[locale].filter((_, index) => index !== indexToRemove)
+        this.value[locale].options = this.value[locale].options.filter((_, index) => index !== indexToRemove)
       })
       await this.$nextTick()
       this.store()
     },
     async updateKey(event, index) {
+      const previousKey = event.target.dataset.previousKey
+      const currentValue = this.value[this.locale].options[index][this.valueProperty]
+      const defaultValue = this.value[this.locale].defaultValue
+      const setDefaultValue = previousKey === defaultValue[this.keyProperty] &&
+        currentValue === defaultValue[this.valueProperty]
+
+      if (setDefaultValue) {
+        Vue.set(this.value[this.locale].defaultValue, this.keyProperty, event.target.value)
+        Vue.set(this.value[this.locale].defaultValue, this.valueProperty, currentValue)
+      }
+
       if (this.translateKey) {
-        Vue.set(this.value[this.locale][index], this.keyProperty, event.target.value)
+        Vue.set(this.value[this.locale].options[index], this.keyProperty, event.target.value)
       } else {
         this.locales.forEach(locale => {
-          Vue.set(this.value[locale][index], this.keyProperty, event.target.value)
+          Vue.set(this.value[locale].options[index], this.keyProperty, event.target.value)
+          if (setDefaultValue) {
+            Vue.set(this.value[locale].defaultValue, this.keyProperty, event.target.value)
+          }
         })
       }
       await this.$nextTick()
       this.store()
     },
     async updateValue(event, index) {
+      const previousValue = event.target.dataset.previousValue
+      const currentKey = this.value[this.locale].options[index][this.keyProperty]
+      const defaultValue = this.value[this.locale].defaultValue
+      const setDefaultValue = currentKey === defaultValue[this.keyProperty] &&
+        previousValue === defaultValue[this.valueProperty]
+
+      if (setDefaultValue) {
+        Vue.set(this.value[this.locale].defaultValue, this.keyProperty, currentKey)
+        Vue.set(this.value[this.locale].defaultValue, this.valueProperty, event.target.value)
+      }
+
       if (this.translateValue) {
-        Vue.set(this.value[this.locale][index], this.valueProperty, event.target.value)
+        Vue.set(this.value[this.locale].options[index], this.valueProperty, event.target.value)
       } else {
         this.locales.forEach(locale => {
-          Vue.set(this.value[locale][index], this.valueProperty, event.target.value)
+          Vue.set(this.value[locale].options[index], this.valueProperty, event.target.value)
+          if (setDefaultValue) {
+            Vue.set(this.value[locale].defaultValue, this.valueProperty, event.target.value)
+          }
         })
       }
+      await this.$nextTick()
+      this.store()
+    },
+    async updateDefaultValue(index) {
+      this.locales.forEach(locale => {
+        const newKey = this.value[locale].options[index][this.keyProperty]
+        const newValue = this.value[locale].options[index][this.valueProperty]
+        Vue.set(this.value[locale].defaultValue, this.keyProperty, newKey)
+        Vue.set(this.value[locale].defaultValue, this.valueProperty, newValue)
+      })
       await this.$nextTick()
       this.store()
     },
@@ -122,6 +173,16 @@ app = new Vue({
         const fieldPath = plugin.fieldPath.replace(new RegExp(`\.${plugin.locale}$`), `.${locale}`);
         plugin.setFieldValue(fieldPath, JSON.stringify(this.value[locale]))
       })
+    },
+    isChecked(key, value) {
+      if (
+        key === this.value[this.locale].defaultValue[this.keyProperty] &&
+        value === this.value[this.locale].defaultValue[this.valueProperty]
+      ) {
+        return true
+      } else {
+        return false
+      }
     }
   },
   computed: {
@@ -129,13 +190,13 @@ app = new Vue({
       return JSON.stringify(this.value, null, 2)
     },
     list() {
-      return this.locale
-        ? this.value[this.locale]
+      return this.locale && this.value[this.locale]
+        ? this.value[this.locale].options
         : []
     },
     localesWithMissingValues() {
       return (this.locales || []).reduce((result, locale) => {
-        const localeValue = (this.value && this.value[locale]) || []
+        const localeValue = (this.value && this.value[locale] && this.value[locale].options) || []
         const foundLocale = localeValue.find(item =>
           item[this.keyProperty] === '' ||
           item[this.valueProperty] === ''
