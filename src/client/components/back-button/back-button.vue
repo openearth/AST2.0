@@ -1,5 +1,5 @@
 <template>
-  <header class="back-button__container">
+  <component :is="comp" class="back-button__container">
     <section class="back-button__inner">
       <md-button class="back-button__btn" @click="$router.back()">
         <md-icon>keyboard_arrow_left</md-icon>
@@ -9,8 +9,19 @@
     <section class="back-button__slot">
       <slot />
     </section>
-  </header>
+  </component>
 </template>
+
+<script>
+export default {
+  props: {
+    comp: {
+      type: String,
+      default: "header",
+    },
+  },
+}
+</script>
 
 <style>
 .back-button__container {

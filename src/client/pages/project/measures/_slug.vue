@@ -1,6 +1,6 @@
 <template>
   <div class="measure">
-    <back-button class="measure__top">
+    <back-button class="measure__top" comp="div">
       <md-button
         :disabled="!selectedFeatures.length"
         class="md-raised md-primary"
