@@ -53,6 +53,13 @@
                 :value="!layer.showLegend"
                 @change="value => $emit('legend-visibility-change', { id: layer.id, value: !!value })"/>
             </md-list-item>
+            <md-list-item
+              v-if="layer.deleteLayer"
+              class="md-inset"
+              @click="deleteWmsLayer(layer.id)">
+              <md-icon>delete</md-icon>
+              <span class="md-list-item-text">{{ $t('remove_layer') }}</span>
+            </md-list-item>
           </md-list>
         </div>
       </div>
@@ -73,6 +80,8 @@
 <script>
 import InputRange from "../input-range";
 import LayerDialog from "../layer-dialog";
+import { mapMutations } from "vuex";
+
 
 export default {
   components: { InputRange, LayerDialog },
@@ -91,6 +100,9 @@ export default {
     this.calculateMaxHeight();
   },
   methods: {
+    ...mapMutations({
+      deleteWmsLayer: 'project/deleteWmsLayer',
+    }),
     setExpanded(id) {
       this.expanded = this.expanded !== id ? id : ''
     },

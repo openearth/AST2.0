@@ -39,6 +39,7 @@ export const actions = {
         showLegend: false,
         opacity: 1,
         visible: true,
+        deleteLayer: true,
       }
       commit('addLayer', mapLayer)
       return mapLayer
@@ -61,8 +62,8 @@ export const getters = {
         // If url already defined, return directly
         return {
           ...rest,
-          imageUrl: layer.url,
           tilesize,
+          deleteLayer: layer.deleteLayer,
         }
       } else {
         return {
