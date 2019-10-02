@@ -22,9 +22,28 @@
       </p>
       <md-list v-if="state === 'layers'">
         <app-spinner v-if="layers.length === 0" />
-        <md-list-item v-for="layer in layers" :key="layer.name">
-          <md-checkbox v-model="layer.checked" :disabled="wmsLayerIds.includes(layer.id)"/>
-          <span class="md-list-item-text">{{ layer.name }}</span>
+        <md-list-item
+          v-for="layer in layers"
+          :key="layer.name"
+          class="layer-dialog__layer"
+        >
+          <md-checkbox
+            v-if="wmsLayerIds.includes(layer.id)"
+            :model="checked"
+            :disabled="wmsLayerIds.includes(layer.id)"
+          />
+          <md-checkbox v-else v-model="layer.checked"/>
+
+          <p class="md-list-item-text layer-dialog__layer-label">
+            <span :class="{'layer-dialog__layer-disabled': wmsLayerIds.includes(layer.id)}">
+              {{ layer.name }}
+            </span>
+            <span v-if="wmsLayerIds.includes(layer.id)" class="layer-dialog__layer-hint">
+              <md-icon class="layer-dialog__warn">warning</md-icon>
+              {{ $t('layer_already_exists') }}
+            </span>
+          </p>
+
         </md-list-item>
       </md-list>
     </md-dialog-content>
@@ -73,8 +92,8 @@ export default {
   },
   data() {
     return {
-      serverUrl: '', // test
-      serverType: '', // MOCK
+      serverUrl: '', // test || ''
+      serverType: '', // MOCK || ''
       state: 'settings',
       layers: [],
       message: '',
@@ -92,6 +111,7 @@ export default {
         placeholder: 'https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/',
       },
     ],
+    checked: true,
     }
   },
   computed: {
@@ -121,6 +141,7 @@ export default {
         .then(data => {
           // if errors on top level is not empty, something went wrong with
           // requesting the server or the corresponding type
+          console.log('data', data);
           if (data.errors !== '') {
             this.state = 'error'
             this.message = data.errors
@@ -162,4 +183,39 @@ export default {
   display: flex;
   margin-top: var(--spacing-default);
 }
+
+.layer-dialog__layer-label {
+  width: 100%;
+}
+
+.layer-dialog__layer-disabled {
+  text-decoration: line-through;
+}
+
+.layer-dialog__layer .md-list-item-content {
+  align-items: flex-start;
+  padding-top: 14px;
+}
+
+.layer-dialog__layer-hint {
+  width: 100%;
+  margin-top: 5px;
+  font-size: 14px;
+  color: var(--warning-color);
+}
+
+.layer-dialog__warn {
+  display: inline-block;
+  vertical-align: top;
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  margin-top: -2px;
+  margin-right: 4px;
+
+  font-size: 16px !important;
+  line-height: 16px;
+  color: var(--warning-color) !important;
+}
+
 </style>
