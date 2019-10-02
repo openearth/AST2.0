@@ -1,9 +1,13 @@
 <template>
   <div ref="base" class="layout">
-    <app-header :title="title" @onShowNavigation="showMenu"/>
+    <app-header
+      :title="title"
+      :legal-accepted="legalAccepted"
+      :project-title="projectTitle"
+      @onShowNavigation="showMenu"/>
     <app-menu
       :show-navigation="showNavigation"
-      :title="$t('ast')"
+      :title="title"
       :accepted-legal="acceptedLegal"
       :created-project-area="createdProjectArea"
       :filled-in-required-settings="filledInRequiredProjectAreaSettings"
@@ -30,6 +34,7 @@
           :line="line"
           :polygon="polygon"
           :search="search"
+          :add-only="addOnly"
           :interactive="interactive"
           :map-center="center"
           :map-zoom="zoom"
@@ -37,7 +42,7 @@
           :wms-layers="wmsLayers"
           :mode="mode"
           class="layout__map"
-          @create="createArea"
+          @create="onCreateArea"
           @update="updateArea"
           @delete="deleteArea"
           @selectionchange="selectionChange"
@@ -84,6 +89,9 @@
       :notifications="notifications"
       @remove-notification="removeNotification"
     />
+
+    <!-- portal for general popup -->
+    <portal-target name="popup-portal" />
   </div>
 </template>
 
@@ -106,27 +114,39 @@ export default {
       meta: [
         { hid: 'description', name: 'description', content: this.$i18n.t('app_description') },
       ],
+      title: this.title,
     }
   },
 
   computed: {
     ...mapState({
+      devMode: state => state.devMode,
       map: state => state.project.map,
       projectArea: state => state.project.settings.area,
       legalAccepted: state => state.project.legalAccepted,
       center: state => state.project.map.center,
       zoom: state => state.project.map.zoom,
       showNavigation: state => state.appMenu.show,
-      title: state => state.project.settings.general.title,
+      projectTitle: state => state.project.settings.general.title,
       mapMode: state => state.map.mode,
       notifications: state => state.notifications.messages,
       mode: state => state.mode.state,
       exportShown: state => state.flow.export,
+      inSetMeasureFlow: state => state.setMeasureFlow.inFlow,
+      userIsRefreshing: state => state.user.isRefreshing,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings']),
     ...mapGetters({ selectedAreas:  'selectedAreas/features' }),
-    ...mapGetters('map', ['isProject', 'point', 'line', 'polygon', 'interactive', 'search']),
+    ...mapGetters('map', ['isProject', 'point', 'line', 'polygon', 'addOnly', 'interactive', 'search']),
+    ...mapGetters('user', ['isLoggedIn']),
+    ...mapGetters('data/appConfig', ['title']),
+  },
+
+  watch: {
+    userIsRefreshing() {
+      window.removeEventListener('beforeunload', this.beforeUnload)
+    },
   },
   async beforeMount() {
     const locale = this.$i18n.locale
@@ -137,7 +157,9 @@ export default {
   mounted() {
     this.$refs.base.addEventListener('click', this.dispatchClickEvent)
 
-    window.addEventListener('beforeunload', this.beforeUnload)
+    if (this.devMode === false) {
+      window.addEventListener('beforeunload', this.beforeUnload)
+    }
   },
 
   beforeDestroy() {
@@ -165,6 +187,7 @@ export default {
       showError: 'notifications/showError',
       clearState: 'project/clearState',
       exportProject: 'project/exportProject',
+      connectMeasureToArea: 'setMeasureFlow/connectMeasureToArea',
     }),
     async onFileInput(event) {
       this.importProject(event)
@@ -185,6 +208,14 @@ export default {
 
       this.hideMenu()
       this.$router.push(`/${this.$i18n.locale}/new-project`)
+    },
+    onCreateArea(features) {
+      this.createArea(features)
+        .then(() => {
+          if (this.inSetMeasureFlow) {
+            this.connectMeasureToArea(features)
+          }
+        })
     },
     dispatchClickEvent(event) {
       EventBus.$emit(CLICK, event)

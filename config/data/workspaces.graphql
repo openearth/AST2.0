@@ -1,0 +1,9 @@
+query ($first: IntType, $skip: IntType = 0) {
+  workspaces: allWorkspaces(first: $first, skip: $skip) {
+    id,
+    name,
+  },
+  _allWorkspacesMeta {
+    count
+  }
+}

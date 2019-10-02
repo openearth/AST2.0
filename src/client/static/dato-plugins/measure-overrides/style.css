@@ -1,0 +1,76 @@
+@import 'default-values.css';
+@import 'climate-effect-tag.css';
+@import 'color-picker.css';
+@import 'upload-image.css';
+@import 'image-gallery.css';
+@import 'autocomplete.css';
+
+:root {
+  --spacing: 1rem;
+  --spacing-half: calc(var(--spacing) * 0.5);
+}
+
+img {
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid  #f0f0f0;
+}
+
+.measure__details {
+  border: 1px solid #f0f0f0;
+  border-radius: 4px;
+}
+
+.measure__details--exclude .measure__summary {
+  text-decoration: line-through;
+}
+
+.measure__summary {
+  background-color: #f5f5f5;
+  padding: var(--spacing-half) var(--spacing);
+  color: #848484;
+  cursor: pointer;
+}
+.measure__summary:focus {
+  outline: 1px solid var(--accent-color);
+}
+.measure__summary:hover {
+  color: black;
+}
+
+.override-item {
+  display: block;
+  color: #848484;
+  position: relative;
+  margin: var(--spacing) 0;
+}
+
+.override-item summary {
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.override-item summary:focus {
+  border-color: var(--primary-color);
+  color: black;
+}
+.override-item summary:hover {
+  color: black;
+}
+
+.override-item__remove-button {
+  align-self: end;
+}
+
+.measures {
+  margin-bottom: var(--spacing);
+}
+
+.measure {
+  margin-bottom: var(--spacing-half);
+}
+
+.measure__content {
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-half) var(--spacing);
+}

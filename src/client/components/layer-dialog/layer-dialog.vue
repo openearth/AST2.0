@@ -92,8 +92,8 @@ export default {
   },
   data() {
     return {
-      serverUrl: '', // test || ''
-      serverType: '', // MOCK || ''
+      serverUrl: '', // optional to debug: test || ''
+      serverType: '', // optional to debug:  MOCK || ''
       state: 'settings',
       layers: [],
       message: '',
