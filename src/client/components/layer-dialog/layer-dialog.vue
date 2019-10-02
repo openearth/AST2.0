@@ -5,7 +5,7 @@
       <form v-if="state === 'settings'">
         <md-field>
           <md-select v-model="serverType" md-dense>
-            <label> server url </label>
+            <!-- <label> server url</label> -->
             <md-option
               v-for="option in options"
               :key="option.value"
@@ -13,7 +13,7 @@
           </md-select>
         </md-field>
         <md-field>
-          <label> server url </label>
+          <label> server url</label>
           <md-input v-model="serverUrl" :placeholder="placeholder"/>
         </md-field>
       </form>
@@ -21,7 +21,7 @@
         {{ message }}
       </p>
       <md-list v-if="state === 'layers'">
-        <md-progress-spinner v-if="layers.length === 0" md-mode="indeterminate"/>
+        <app-spinner v-if="layers.length === 0" />
         <md-list-item v-for="layer in layers" :key="layer.name">
           <md-checkbox v-model="layer.checked" :disabled="wmsLayerIds.includes(layer.id)"/>
           <span class="md-list-item-text">{{ layer.name }}</span>
@@ -57,8 +57,10 @@
 <script>
 import { mapActions } from 'vuex';
 import get from 'lodash/get';
+import { AppSpinner } from '~/components'
 
 export default {
+  components: { AppSpinner },
   props: {
     showLayerDialog: {
       type: Boolean,
@@ -71,8 +73,8 @@ export default {
   },
   data() {
     return {
-      serverUrl: '',
-      serverType: '',
+      serverUrl: '', // test
+      serverType: '', // MOCK
       state: 'settings',
       layers: [],
       message: '',
