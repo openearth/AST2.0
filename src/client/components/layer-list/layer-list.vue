@@ -89,10 +89,9 @@
 </template>
 
 <script>
-import InputRange from "../input-range";
-import LayerDialog from "../layer-dialog";
 import { mapMutations } from "vuex";
 import { debounce } from 'lodash';
+import { LayerDialog, InputRange } from '~/components'
 
 
 export default {
