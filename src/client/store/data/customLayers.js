@@ -39,17 +39,3 @@ export const actions = {
     dispatch('project/bootstrapCustomLayers', newLayers, { root: true })
   },
 }
-
-export const getters = {
-  constructed(state) {
-    return state.map(layer => {
-      const { baseurl, service, tilesize, bbox, format, srs, layers, version, transparent, styles, ...rest } = layer
-        return {
-          ...rest,
-          tilesize,
-          deleteLayer: layer.deleteLayer,
-          backgroundColor: layer.backgroundColor,
-        }
-    })
-  },
-}

@@ -89,17 +89,21 @@ export default {
   }),
 
   computed: {
+    allMapLayers() {
+      const layers = [ ...this.wmsLayers, ...this.customLayers ]
+      return layers
+    },
     hasProjectArea() {
       return !!this.projectArea.properties
     },
     layerVisibility() {
-      return this.wmsLayers.reduce((obj, layer) => {
+      return this.allMapLayers.reduce((obj, layer) => {
         obj[layer.id] = layer.visible
         return obj
       }, {})
     },
     layerOpacity() {
-      return this.wmsLayers.reduce((obj, layer) => {
+      return this.allMapLayers.reduce((obj, layer) => {
         obj[layer.id] = layer.opacity
         return obj
       }, {})
@@ -119,6 +123,9 @@ export default {
     },
     wmsLayers() {
       [...this.wmsLayers].reverse().forEach(this.addWmsLayer)
+    },
+    customLayers() {
+      [...this.customLayers].reverse().forEach(this.addWmsLayer)
     },
   },
 
@@ -166,7 +173,7 @@ export default {
       this.map.on('draw.modechange', event => this.$emit('modechange', event.mode))
 
       this.map.on('load', () => {
-        [...this.wmsLayers].reverse().forEach(this.addWmsLayer)
+        this.allMapLayers.forEach(this.addWmsLayer)
         this.map.resize()
         this.map.addControl(this.draw, 'top-left')
         this.map.addControl(this.geoCoder)
@@ -179,7 +186,6 @@ export default {
       MapEventBus.$on(UPDATE_FEATURE_PROPERTY, ({ featureId, key, value }) => {
         if (this.draw.get(featureId) !== undefined) {
           const updatedFeature = this.draw.setFeatureProperty(featureId, key, value).get(featureId)
-          // console.log({ key, value, updatedFeature }) // Comment left on purpose for easy debugging
         }
       })
 

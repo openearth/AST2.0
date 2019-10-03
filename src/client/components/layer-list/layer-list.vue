@@ -89,7 +89,6 @@
 </template>
 
 <script>
-import merge from 'lodash/merge';
 import { mapMutations } from "vuex";
 import { debounce } from 'lodash';
 import { LayerDialog, InputRange } from '~/components'
@@ -114,8 +113,7 @@ export default {
   }),
   computed: {
     layers() {
-      const layers =  merge(this.wmsLayers, this.customLayers)
-      console.log('layers', layers)
+      const layers =  [ ...this.wmsLayers, ...this.customLayers ]
       return layers
     },
   },

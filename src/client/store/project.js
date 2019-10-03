@@ -114,23 +114,26 @@ export const mutations = {
   acceptLegal(state) {
     state.legalAccepted = true
   },
-  setLayerOpacity({ getters }, { id, value }) {
-    getters.allMapLayers.forEach(layer => {
+  setLayerOpacity(state, { id, value }) {
+    const layers = [ ...state.map.wmsLayers, ...state.map.customLayers ]
+    layers.forEach(layer => {
       if (id === layer.id) {
         layer.opacity = value
       }
     })
   },
-  setLayerVisibility( { getters }, { id, value }) {
-    getters.allMapLayers.forEach(layer => {
+  setLayerVisibility(state, { id, value }) {
+    const layers = [ ...state.map.wmsLayers, ...state.map.customLayers ]
+    layers.forEach(layer => {
       if (id === layer.id) {
         layer.visible = value
         layer.showLegend = value
       }
     })
   },
-  setLegendVisibility({ getters }, { id, value }) {
-    getters.allMapLayers.forEach(layer => {
+  setLegendVisibility(state, { id, value }) {
+    const layers = [ ...state.map.wmsLayers, ...state.map.customLayers ]
+    layers.forEach(layer => {
       if (id === layer.id && layer.legendUrl) {
         layer.showLegend = value
       }
@@ -303,7 +306,11 @@ export const actions = {
   },
   bootstrapCustomLayers({ state, commit }, layers) {
     layers.forEach(layer => {
-      commit('setCustomLayer', { id: layer.id, visible: false, showLegend: false, opacity: 1 })
+      commit('setCustomLayer', {
+        ...layer,
+        visible: false,
+        showLegend: false,
+        opacity: 1 })
     })
   },
   async updateProjectAreaSetting({ state, commit, rootGetters, getters, dispatch }, payload ) {
@@ -388,11 +395,6 @@ export const actions = {
 }
 
 export const getters = {
-  allMapLayers: (state) => {
-    const layers = merge(state.map.wmsLayers, state.map.customLayers)
-    console.log(layers)
-    return layers
-  },
   tableClimateAndCosts: (state, getters, rootState, rootGetters) => {
     if (state.areas.length) {
       const measureIds = getters.areas.map(area => get(area, 'properties.measure'))
@@ -606,13 +608,7 @@ export const getters = {
   },
 
   customLayers: (state, getters, rootState, rootGetters) => {
+    console.log(rootState)
     return state.map.customLayers
-    .filter(layer => rootState.data.customLayers.some(rootLayer => rootLayer.id === layer.id))
-    .map(({ id, visible, opacity, showLegend }) => ({
-      ...rootGetters['data/customLayers/constructed'].find(layer => layer.id === id),
-      visible,
-      showLegend,
-      opacity,
-    }))
   },
 }

@@ -158,7 +158,7 @@ export default {
     addLayers() {
       // Add the selected layers to the background layers of the application
       // and reset the state of the dialog
-      const newLayers = this.customLayers.filter(layer => layer.checked)
+      const newLayers = this.layers.filter(layer => layer.checked)
       this.addCustomTilesToLayers(newLayers)
       this.resetState()
     },
