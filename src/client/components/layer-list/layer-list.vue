@@ -8,6 +8,9 @@
         :class="{ 'md-active': expanded === layer.id }"
         class="md-list-item-expand md-list-item-container"
       >
+        <template v-if="layer.errors">
+          <p v-for="(error, index) in layer.errors" :key="index">layer has errors</p>
+        </template>
         <div class="md-list-item-content">
           <md-avatar v-if="layer.imageUrl" class="layer-list__avatar">
             <img
@@ -25,13 +28,11 @@
           >
             {{ layer.title.split('')[0] }}
           </div>
-
           <span class="md-list-item-text layer-list__title">{{ layer.title }}</span>
-
           <md-switch
             :value="!layer.visible"
-            @change="value => $emit('visibility-change', { id: layer.id, value: !!value })"/>
-
+            @change="value => $emit('visibility-change', { id: layer.id, value: !!value })"
+          />
           <md-button
             class="md-icon-button md-list-action"
             @click="setExpanded(layer.id)">
@@ -42,7 +43,6 @@
             >keyboard_arrow_down</md-icon>
           </md-button>
         </div>
-
         <div
           :style="{height: expanded === layer.id ? 'auto' : '0px'}"
           class="md-list-expand">
@@ -50,11 +50,13 @@
             <md-list-item class="md-inset">
               <input-range
                 :value="String(layer.opacity * 100)"
+                :numeric-enabled="false"
                 class="layer-list__input-range"
                 min="0"
                 max="100"
                 label="opacity"
-                @change="value => $emit('opacity-change', { id: layer.id, value: parseFloat(value / 100) })"/>
+                @change="value => $emit('opacity-change', { id: layer.id, value: parseFloat(value / 100) })"
+              />
             </md-list-item>
             <md-list-item v-if="layer.legendUrl" class="md-inset">
               legend
