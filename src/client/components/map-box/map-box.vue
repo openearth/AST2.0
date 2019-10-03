@@ -81,6 +81,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    mapLayers: {
+      type: Array,
+      default: () => [],
+    },
   },
 
   data: () => ({
@@ -90,7 +94,7 @@ export default {
 
   computed: {
     allMapLayers() {
-      const layers = [ ...this.wmsLayers, ...this.customLayers ]
+      const layers = [ ...this.wmsLayers, ...this.customLayers, ...this.mapLayers ]
       return layers
     },
     hasProjectArea() {
@@ -126,6 +130,9 @@ export default {
     },
     customLayers() {
       [...this.customLayers].reverse().forEach(this.addWmsLayer)
+    },
+    mapLayers() {
+      [...this.mapLayers].reverse().forEach(this.addWmsLayer)
     },
   },
 
@@ -317,13 +324,13 @@ export default {
     addWmsLayer({ layerType: type, id, url, tilesize: tileSize, title }) {
       if (!this.map.getLayer(`wms-layer-${id}`)) {
         const source = { type, tileSize }
-
         if  (url === 'mapbox://mapbox.satellite') {
           source.url = url
         } else {
           source.tiles = [ url ]
         }
         try {
+          console.log(source, type)
           this.map.addLayer({
             id: `wms-layer-${id}`,
             type,

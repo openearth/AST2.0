@@ -31,6 +31,7 @@ const initialState = () => ({
     },
     wmsLayers: [],
     customLayers: [],
+    mapLayers: [],
   },
 })
 
@@ -102,6 +103,9 @@ export const mutations = {
   setWmsLayer(state, layer) {
     state.map.wmsLayers.push(layer)
   },
+  setMapLayers(state, layer) {
+    state.map.mapLayers.push(layer)
+  },
   setCustomLayer(state, layer) {
     state.map.customLayers.push(layer)
   },
@@ -115,7 +119,7 @@ export const mutations = {
     state.legalAccepted = true
   },
   setLayerOpacity(state, { id, value }) {
-    const layers = [ ...state.map.wmsLayers, ...state.map.customLayers ]
+    const layers = [ ...state.map.wmsLayers,  ...state.map.mapLayers, ...state.map.customLayers ]
     layers.forEach(layer => {
       if (id === layer.id) {
         layer.opacity = value
@@ -123,7 +127,8 @@ export const mutations = {
     })
   },
   setLayerVisibility(state, { id, value }) {
-    const layers = [ ...state.map.wmsLayers, ...state.map.customLayers ]
+    const layers = [ ...state.map.wmsLayers,  ...state.map.mapLayers, ...state.map.customLayers ]
+    console.log(layers, state.map.mapLayers)
     layers.forEach(layer => {
       if (id === layer.id) {
         layer.visible = value
@@ -132,7 +137,7 @@ export const mutations = {
     })
   },
   setLegendVisibility(state, { id, value }) {
-    const layers = [ ...state.map.wmsLayers, ...state.map.customLayers ]
+    const layers = [ ...state.map.wmsLayers,  ...state.map.mapLayers, ...state.map.customLayers ]
     layers.forEach(layer => {
       if (id === layer.id && layer.legendUrl) {
         layer.showLegend = value
@@ -307,6 +312,16 @@ export const actions = {
   bootstrapCustomLayers({ state, commit }, layers) {
     layers.forEach(layer => {
       commit('setCustomLayer', {
+        ...layer,
+        visible: false,
+        showLegend: false,
+        opacity: 1 })
+    })
+  },
+  bootstrapMapLayers({ state, commit }, layers) {
+    console.log(layers)
+    layers.forEach(layer => {
+      commit('setMapLayers', {
         ...layer,
         visible: false,
         showLegend: false,
@@ -607,8 +622,17 @@ export const getters = {
     }))
   },
 
-  customLayers: (state, getters, rootState, rootGetters) => {
-    console.log(rootState)
+  customLayers: (state) => {
     return state.map.customLayers
+  },
+
+  mapLayers: (state, getters, rootState, rootGetters) => {
+    return state.map.mapLayers
+    .map(({ id, visible, opacity, showLegend }) => ({
+      ...rootGetters['data/mapLayers/constructed'].find(layer => layer.id === id),
+      visible,
+      showLegend,
+      opacity,
+    }))
   },
 }

@@ -107,6 +107,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    mapLayers: {
+      type: Array,
+      default: () => [],
+    },
   },
   data: () => ({
     expanded: '',
@@ -115,7 +119,7 @@ export default {
   }),
   computed: {
     layers() {
-      const layers =  [ ...this.wmsLayers, ...this.customLayers ]
+      const layers =  [ ...this.wmsLayers, ...this.mapLayers, ...this.customLayers ]
       return layers
     },
   },
