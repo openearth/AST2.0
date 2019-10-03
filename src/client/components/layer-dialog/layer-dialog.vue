@@ -108,7 +108,7 @@ export default {
       options: [{
         name: 'WMS',
         value: 'WMS',
-        placeholder: '', //TODO:  Ask for placeholder for WMS layer
+        placeholder: 'https://geodata.nationaalgeoregister.nl/ahn2/wms',
       }, {
         name: 'WMTS',
         value: 'WMTS',
