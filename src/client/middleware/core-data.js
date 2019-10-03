@@ -34,6 +34,10 @@ export default async function ({ store }) {
     store.dispatch('data/wmsLayers/getWmsLayers', store.state.i18n.locale)
   }
 
+  if (!store.state.data.mapLayers.length) {
+    store.dispatch('data/mapLayers/getMapLayers', store.state.i18n.locale)
+  }
+
   if (!Object.keys(store.state.data.workspaces).filter(ItemsWithoutUnderscore).length) {
     store.dispatch('data/workspaces/getWorkspaces')
   }
