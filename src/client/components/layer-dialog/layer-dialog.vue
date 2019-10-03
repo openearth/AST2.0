@@ -5,7 +5,7 @@
       <form v-if="state === 'settings'">
         <md-field>
           <md-select v-model="serverType" md-dense>
-            <label> server url </label>
+            <!-- <label> server url</label> -->
             <md-option
               v-for="option in options"
               :key="option.value"
@@ -13,7 +13,7 @@
           </md-select>
         </md-field>
         <md-field>
-          <label> server url </label>
+          <label> server url</label>
           <md-input v-model="serverUrl" :placeholder="placeholder"/>
         </md-field>
       </form>
@@ -21,10 +21,29 @@
         {{ message }}
       </p>
       <md-list v-if="state === 'layers'">
-        <md-progress-spinner v-if="layers.length === 0" md-mode="indeterminate"/>
-        <md-list-item v-for="layer in layers" :key="layer.name">
-          <md-checkbox v-model="layer.checked" :disabled="customLayersIds.includes(layer.id)"/>
-          <span class="md-list-item-text">{{ layer.name }}</span>
+        <app-spinner v-if="layers.length === 0" />
+        <md-list-item
+          v-for="layer in layers"
+          :key="layer.name"
+          class="layer-dialog__layer"
+        >
+          <md-checkbox
+            v-if="customLayersIds.includes(layer.id)"
+            :model="checked"
+            :disabled="customLayersIds.includes(layer.id)"
+          />
+          <md-checkbox v-else v-model="layer.checked"/>
+
+          <p class="md-list-item-text layer-dialog__layer-label">
+            <span :class="{'layer-dialog__layer-disabled': customLayersIds.includes(layer.id)}">
+              {{ layer.name }}
+            </span>
+            <span v-if="customLayersIds.includes(layer.id)" class="layer-dialog__layer-hint">
+              <md-icon class="layer-dialog__warn">warning</md-icon>
+              {{ $t('layer_already_exists') }}
+            </span>
+          </p>
+
         </md-list-item>
       </md-list>
     </md-dialog-content>
@@ -57,8 +76,10 @@
 <script>
 import { mapActions } from 'vuex';
 import get from 'lodash/get';
+import { AppSpinner } from '~/components'
 
 export default {
+  components: { AppSpinner },
   props: {
     showLayerDialog: {
       type: Boolean,
@@ -90,6 +111,7 @@ export default {
         placeholder: 'https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/',
       },
     ],
+    checked: true,
     }
   },
   computed: {
@@ -162,4 +184,39 @@ export default {
   display: flex;
   margin-top: var(--spacing-default);
 }
+
+.layer-dialog__layer-label {
+  width: 100%;
+}
+
+.layer-dialog__layer-disabled {
+  text-decoration: line-through;
+}
+
+.layer-dialog__layer .md-list-item-content {
+  align-items: flex-start;
+  padding-top: 14px;
+}
+
+.layer-dialog__layer-hint {
+  width: 100%;
+  margin-top: 5px;
+  font-size: 14px;
+  color: var(--warning-color);
+}
+
+.layer-dialog__warn {
+  display: inline-block;
+  vertical-align: top;
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  margin-top: -2px;
+  margin-right: 4px;
+
+  font-size: 16px !important;
+  line-height: 16px;
+  color: var(--warning-color) !important;
+}
+
 </style>

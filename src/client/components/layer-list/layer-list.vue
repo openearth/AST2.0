@@ -62,12 +62,14 @@
                 :value="!layer.showLegend"
                 @change="value => $emit('legend-visibility-change', { id: layer.id, value: !!value })"/>
             </md-list-item>
-            <md-list-item
-              v-if="layer.deleteLayer"
-              class="md-inset"
-              @click="deleteCustomLayer(layer.id)">
-              <md-icon>delete</md-icon>
-              <span class="md-list-item-text">{{ $t('remove_layer') }}</span>
+            <md-list-item v-if="layer.deleteLayer" class="md-inset">
+              <md-button
+                class="layer-list__delete"
+                @click="deleteCustomLayer(layer.id)"
+              >
+                <md-icon>delete</md-icon>
+                {{ $t('remove_layer') }}
+              </md-button>
             </md-list-item>
           </md-list>
         </div>
@@ -87,10 +89,10 @@
 </template>
 
 <script>
-import InputRange from "../input-range";
-import LayerDialog from "../layer-dialog";
 import merge from 'lodash/merge';
 import { mapMutations } from "vuex";
+import { debounce } from 'lodash';
+import { LayerDialog, InputRange } from '~/components'
 
 
 export default {
@@ -112,11 +114,17 @@ export default {
   }),
   computed: {
     layers() {
-      return merge(this.wmsLayers, this.customLayers)
+      const layers =  merge(this.wmsLayers, this.customLayers)
+      console.log('layers', layers)
+      return layers
     },
   },
   mounted() {
     this.calculateMaxHeight();
+    window.addEventListener('resize', this.resizeHandler)
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.resizeHandler)
   },
   methods: {
     ...mapMutations({
@@ -125,12 +133,14 @@ export default {
     setExpanded(id) {
       this.expanded = this.expanded !== id ? id : ''
     },
+    resizeHandler() {
+      debounce(this.calculateMaxHeight.bind(this), 100)()
+    },
     calculateMaxHeight() {
       /**
        * calculating possible max-height
        * magic numbers: 300 as distance to top, 80 as spacing at bottom
        */
-      // TODO/Extra: Add resize handler to recalculate maxHeight
       const top = this.$refs.list
         ? this.$refs.list.$el.getBoundingClientRect().top
         : 300;
@@ -165,11 +175,22 @@ export default {
 
   border-radius: 50%;
   font-size: 1.3rem;
-  color: var(--background-color);
+}
+
+.layer-list__avatar-fake:nth-child(even) {
+  background-color: gold;
+}
+
+.layer-list__avatar-fake:nth-child(odd) {
+  background-color: chocolate;
 }
 
 .layer-list__avatar-img:not([src]) {
   display: none;
+}
+
+.layer-list__delete {
+  margin-left: auto;
 }
 
 .layer-list__footer {

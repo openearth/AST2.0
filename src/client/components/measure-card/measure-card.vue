@@ -23,7 +23,7 @@
       </md-card-media>
     </md-card-header>
 
-    <md-card-actions>
+    <md-card-actions v-if="interactive">
       <md-button :to="`/${$i18n.locale}/project/measures/${measure.slug}`" class="md-dense">{{ $t('learn_more') }}</md-button>
       <md-button class="md-raised md-primary md-dense" @click="chooseMeasure">{{ $t('choose') }}</md-button>
     </md-card-actions>
@@ -43,6 +43,10 @@ export default {
     scores: {
       type: Array,
       required: true,
+    },
+    interactive: {
+      type: Boolean,
+      default: true,
     },
   },
   computed: {

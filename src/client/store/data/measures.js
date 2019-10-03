@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import getData from '../../lib/get-data'
+import get from 'lodash/fp/get'
+
 export const state = () => []
 
 export const mutations = {
@@ -26,20 +28,44 @@ export const actions = {
 }
 
 export const getters = {
-  orderedMeasures: state => {
-    return [...state].sort((a, b) => {
+  workspaceMeasures: (storedMeasures, getters, rootState, rootGetters) => {
+    const activeWorkspace = rootGetters['data/workspaces/activeWorkspace']
+    const workspaceMeasures = get('measures', activeWorkspace)
+    const excludeAllMeasures = get('excludeAllMeasures', activeWorkspace)
+
+    if (Boolean(workspaceMeasures) === false) return storedMeasures
+
+    const resetToExcludeAllMeasuresSetting = measure => ({
+      ...measure,
+      workspaceInclude: excludeAllMeasures ? false : measure.workspaceInclude,
+    })
+
+    const applyOverrideMeasureData = measure => ({
+      ...measure,
+      ...workspaceMeasures[measure.measureId],
+    })
+
+    const measureMarkedForInclusion = ({ workspaceInclude }) => workspaceInclude === true
+
+    return storedMeasures
+      .map(resetToExcludeAllMeasuresSetting)
+      .map(applyOverrideMeasureData)
+      .filter(measureMarkedForInclusion)
+  },
+  orderedMeasures: (state, { workspaceMeasures }) => {
+    return [...workspaceMeasures].sort((a, b) => {
       if (a.title < b.title) return -1
       if (a.title > b.title) return 1
       return 0
     })
   },
-  measuresBySystemSuitability: (state, getters) => {
-    return [...state].sort((a, b) => b.systemSuitability - a.systemSuitability)
+  measuresBySystemSuitability: (state, { workspaceMeasures }) => {
+    return [...workspaceMeasures].sort((a, b) => b.systemSuitability - a.systemSuitability)
   },
-  measureById: state => id => {
-    return state.find(measure => measure.measureId === id)
+  measureById: (state, { workspaceMeasures }) => id => {
+    return workspaceMeasures.find(measure => measure.measureId === id)
   },
-  measureDetails: state => slug => {
-    return state.find(measure => measure.slug === slug)
+  measureDetails: (state, { workspaceMeasures }) => slug => {
+    return workspaceMeasures.find(measure => measure.slug === slug)
   },
 }

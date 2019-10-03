@@ -1,0 +1,10 @@
+.color-picker__trigger {
+  width: 75px;
+  height: 50px;
+}
+
+.color-picker__reset {
+  border-radius: 2px;
+  border-width: 1px;
+  background-color: transparent;
+}

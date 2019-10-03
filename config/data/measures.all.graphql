@@ -1,6 +1,7 @@
 query ($locale: SiteLocale, $first: IntType, $skip: IntType = 0) {
   measures: allMeasures(locale: $locale, first: $first, skip: $skip) {
     title,
+    workspaceInclude,
     slug,
     measureId,
     body,

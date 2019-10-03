@@ -2,6 +2,8 @@ import Vue from 'vue'
 import turfArea from '@turf/area'
 import turfLength from '@turf/length'
 import merge from 'lodash/merge'
+import get from 'lodash/get'
+import round from 'lodash/round'
 import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT, REPAINT } from '../lib/map-event-bus'
 import { getApiDataForFeature, getRankedMeasures } from "../lib/get-api-data";
 import FileSaver from 'file-saver'
@@ -44,9 +46,6 @@ export const mutations = {
   setMapCenter(state, value) {
     state.map.center.lat = value.lat
     state.map.center.lng = value.lng
-  },
-  setTitle(state, value) {
-    state.settings.title = value
   },
   addProjectArea(state, value) {
     return state.settings.area = value
@@ -154,25 +153,30 @@ export const actions = {
     center && commit('setMapCenter', center)
   },
   createArea({ state, commit, dispatch }, features) {
-    features.forEach(feature => {
-      const area = turfArea(feature.geometry)
+    const promises = features.map(feature => {
+      return new Promise((resolve, reject) => {
+        const area = turfArea(feature.geometry)
 
-      if (!state.settings.area.id) {
-        commit('addProjectArea', feature)
-        commit('updateProjectAreaProperty', { area, isProjectArea: true })
-        return
-      }
+        if (!state.settings.area.id) {
+          commit('addProjectArea', feature)
+          commit('updateProjectAreaProperty', { area, isProjectArea: true })
+          resolve()
+          return
+        }
 
-      commit('addArea', feature)
+        commit('addArea', feature)
 
-      const areaNumber = state.areas.length
-      dispatch('fetchAreaApiData', [feature])
-      commit('updateAreaProperty', { id: feature.id, properties: { name: `Area-${areaNumber}`, hidden: false } })
+        const areaNumber = state.areas.length
+        dispatch('fetchAreaApiData', [feature])
+        commit('updateAreaProperty', { id: feature.id, properties: { name: `Area-${areaNumber}`, hidden: false } })
 
-      setTimeout(() => {
-        MapEventBus.$emit(SELECT, feature.id)
-      }, 0)
+        setTimeout(() => {
+          MapEventBus.$emit(SELECT, feature.id)
+        }, 0)
+        resolve()
+      })
     })
+    return Promise.all(promises)
   },
   updateArea({ state, commit, dispatch, getters }, features) {
     features.forEach(feature => {
@@ -389,6 +393,84 @@ export const getters = {
     console.log(layers)
     return layers
   },
+  tableClimateAndCosts: (state, getters, rootState, rootGetters) => {
+    if (state.areas.length) {
+      const measureIds = getters.areas.map(area => get(area, 'properties.measure'))
+      const measureById = rootGetters['data/measures/measureById']
+      const kpiKeys = ['storageCapacity', 'returnTime', 'groundwater_recharge', 'evapotranspiration', 'tempReduction', 'coolSpot', 'constructionCost', 'maintenanceCost']
+      const kpiKeysTitleMap = rootGetters['data/kpiGroups/kpiKeysTitleMap']
+      const kpiKeysUnitMap = rootGetters['data/kpiGroups/kpiKeysUnitMap']
+      const toTwoDecimals = value => round(value, 2)
+      const measueTitleForId = id => get(measureById(id), 'title')
+      const kpiTitleByKey = key => `${kpiKeysTitleMap[key]}${kpiKeysUnitMap[key] ? ` (${kpiKeysUnitMap[key]})` : ''}`
+
+      const measureValueMap = getters.areas
+        .map(area => {
+          const values = kpiKeys.map(key => get(area, `properties.apiData[${key}]`))
+          return [area.properties.measure, area.properties.area, ...values]
+        })
+        .reduce((obj, row) => {
+          const [measureId, ...values] = row
+          if (obj[measureId] === undefined) {
+            obj[measureId] = values
+          } else {
+            values.forEach((value, index) => obj[measureId][index] += value)
+          }
+          return obj
+        }, {})
+
+      return {
+        "title": rootState.i18n.messages.climate_and_costs,
+        "header": [
+          rootState.i18n.messages.measure,
+          rootState.i18n.messages.surface,
+          ...kpiKeys.map(kpiTitleByKey),
+        ],
+        rows: Object.entries(measureValueMap)
+          .map(([id, values]) => [measueTitleForId(id), ...values.map(toTwoDecimals)]),
+      }
+    }
+  },
+
+  tableCoBenefits: (state, getters, rootState, rootGetters) => {
+    if (state.areas.length) {
+      const measureIds = getters.areas.map(area => get(area, 'properties.measure'))
+      const measureById = rootGetters['data/measures/measureById']
+      const kpiKeys = ['filteringUnit', 'captureUnit', 'settlingUnit']
+      const kpiKeysTitleMap = rootGetters['data/kpiGroups/kpiKeysTitleMap']
+      const kpiKeysUnitMap = rootGetters['data/kpiGroups/kpiKeysUnitMap']
+      const toTwoDecimals = value => round(value, 2)
+      const measueTitleForId = id => get(measureById(id), 'title')
+      const kpiTitleByKey = key => `${kpiKeysTitleMap[key]}${kpiKeysUnitMap[key] ? ` (${kpiKeysUnitMap[key]})` : ''}`
+
+      const measureValueMap = getters.areas
+        .map(area => {
+          const values = kpiKeys.map(key => get(area, `properties.apiData[${key}]`))
+          return [area.properties.measure, area.properties.area, ...values]
+        })
+        .reduce((obj, row) => {
+          const [measureId, ...values] = row
+          if (obj[measureId] === undefined) {
+            obj[measureId] = values
+          } else {
+            values.forEach((value, index) => obj[measureId][index] += value)
+          }
+          return obj
+        }, {})
+
+      return {
+        "title": rootState.i18n.messages.co_benefits,
+        "header": [
+          rootState.i18n.messages.measure,
+          rootState.i18n.messages.surface,
+          ...kpiKeys.map(kpiTitleByKey),
+        ],
+        rows: Object.entries(measureValueMap)
+          .map(([id, values]) => [measueTitleForId(id), ...values.map(toTwoDecimals)]),
+      }
+    }
+  },
+
   areas: (state) => {
     return state.areas.map(feature => {
       let area;
@@ -418,14 +500,14 @@ export const getters = {
       )
     })
   },
-  areasByMeasure: (state, getters, rootState) => {
+  areasByMeasure: (state, getters, rootState, rootGetters) => {
     return getters.areas.reduce((obj, area) => {
       const measureId = area.properties.measure
 
       if (measureId) {
         if (!obj[measureId]) {
           obj[measureId] = {
-            measure: rootState.data.measures.find(measure => measure.measureId === measureId),
+            measure: rootGetters['data/measures/workspaceMeasures'].find(measure => measure.measureId === measureId),
             areas: [],
           }
         }

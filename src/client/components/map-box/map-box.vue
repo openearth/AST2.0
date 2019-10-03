@@ -29,6 +29,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    addOnly: {
+      type: Boolean,
+      default: false,
+    },
     interactive: {
       type: Boolean,
       default: true,
@@ -251,7 +255,7 @@ export default {
       })
     },
     fillMap() {
-      if (!this.interactive) {
+      if (this.interactive === false || this.addOnly === true) {
         this.hasProjectArea && this.addGeojsonLayer({ ...this.projectArea, id: 'projectArea' })
         this.areas.forEach(area => this.addGeojsonLayer(area))
         return

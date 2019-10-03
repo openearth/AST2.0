@@ -23,8 +23,8 @@
       tag="ul"
       name="suggestions-list">
       <li
-        v-for="(suggestion, index) in suggestions"
-        :key="index"
+        v-for="suggestion in suggestions"
+        :key="suggestion.id"
         class="search-input__suggestion">
         <button class="search-input__suggestion-button" @mousedown="() => fly(suggestion)">{{ suggestion['place_name'] }}</button>
       </li>
@@ -52,6 +52,7 @@ export default {
   },
   mounted() {
     MapEventBus.$on(SEARCH_SUGGESTIONS, (items) => {
+      console.log({ items })
       this.suggestions = items
     })
   },
