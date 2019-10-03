@@ -136,7 +136,7 @@ export default {
     },
   },
   mounted() {
-    this.serverType = this.options[0].name
+    // this.serverType = this.options[0].name
   },
   methods: {
     ...mapActions({
