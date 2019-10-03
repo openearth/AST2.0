@@ -92,8 +92,8 @@ export default {
   },
   data() {
     return {
-      serverUrl: '', // optional to debug: test || ''
-      serverType: '', // optional to debug:  MOCK || ''
+      serverUrl: 'test', // optional to debug: test || ''
+      serverType: 'MOCK', // optional to debug:  MOCK || ''
       state: 'settings',
       layers: [],
       message: '',
@@ -124,7 +124,7 @@ export default {
     },
   },
   mounted() {
-    this.serverType = this.options[0].name
+    // this.serverType = this.options[0].name
   },
   methods: {
     ...mapActions({
@@ -141,7 +141,6 @@ export default {
         .then(data => {
           // if errors on top level is not empty, something went wrong with
           // requesting the server or the corresponding type
-          console.log('data', data);
           if (data.errors !== '') {
             this.state = 'error'
             this.message = data.errors

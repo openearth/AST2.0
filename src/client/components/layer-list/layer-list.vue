@@ -8,6 +8,12 @@
         :class="{ 'md-active': expanded === layer.id }"
         class="md-list-item-expand md-list-item-container"
       >
+
+        <template v-if="layer.errors">
+          <p v-for="(error, index) in layer.errors" :key="index">layer has errors</p>
+        </template>
+
+
         <div class="md-list-item-content">
           <md-avatar v-if="layer.imageUrl" class="layer-list__avatar">
             <img
@@ -48,14 +54,18 @@
           class="md-list-expand">
           <md-list>
             <md-list-item class="md-inset">
+
               <input-range
                 :value="String(layer.opacity * 100)"
+                :numeric-enabled="false"
                 class="layer-list__input-range"
                 min="0"
                 max="100"
                 label="opacity"
-                @change="value => $emit('opacity-change', { id: layer.id, value: parseFloat(value / 100) })"/>
+                @change="value => $emit('opacity-change', { id: layer.id, value: parseFloat(value / 100) })"
+              />
             </md-list-item>
+
             <md-list-item v-if="layer.legendUrl" class="md-inset">
               legend
               <md-switch

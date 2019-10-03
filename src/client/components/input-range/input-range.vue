@@ -11,6 +11,7 @@
         type="range"
         v-on="inputListeners">
       <numeric-input
+        v-if="numericEnabled"
         :label="label"
         :value="stringValue"
         :on-change="value => $emit('change', isNaN(value) ? null : value)"
@@ -18,6 +19,9 @@
         force-keyboard
         hide-label
       />
+      <div v-else class="md-field numeric-input input-range__number md-theme-default md-has-value">
+        <span class="md-input">{{ Math.floor(value) }}</span>
+      </div>
     </div>
   </div>
 </template>
@@ -45,6 +49,10 @@ export default {
     max: {
       type: String,
       default: "1",
+    },
+    numericEnabled: {
+      type: Boolean,
+      default: true,
     },
   },
   computed: {
