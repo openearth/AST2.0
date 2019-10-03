@@ -1,8 +1,8 @@
 <template>
   <md-list ref="list" :style="{maxHeight: maxHeight + 'px'}">
     <li
-      v-for="(layer, index) in layers"
-      :key="layer.id + index"
+      v-for="layer in layers"
+      :key="layer.id"
       class="md-list-item">
       <div
         :class="{ 'md-active': expanded === layer.id }"
