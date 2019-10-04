@@ -1,14 +1,19 @@
 <template>
-  <article class="app-disclaimer">
+  <article
+    class="app-disclaimer"
+    role="dialog"
+    aria-labelledby="disclaimer-title"
+    aria-describedby="disclaimer-content"
+  >
     <div class="app-disclaimer__content">
 
       <header>
-        <h3 class="title">
+        <h3 id="disclaimer-title" class="title">
           {{ disclaimer.title }}
         </h3>
       </header>
 
-      <section class="app-disclaimer__body">
+      <section id="disclaimer-content" class="app-disclaimer__body">
         <div class="app-disclaimer__text md-body-1" v-html="disclaimer.content" />
         <nuxt-link :to="`/${$i18n.locale}/legal`" class="app-disclaimer__link md-body-1">
           {{ $t('read_full_terms_and_conditions') }}
