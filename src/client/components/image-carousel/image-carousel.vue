@@ -9,7 +9,11 @@
       :data-index="index"
       :data-name="`image-${index}`">
 
-      <fixed-ratio :height="2" :width="3">
+      <fixed-ratio
+        :height="2"
+        :width="3"
+        comp-inner="figure"
+      >
         <img :src="image.image.url" class="md-image" >
       </fixed-ratio>
     </slide>
