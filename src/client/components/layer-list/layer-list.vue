@@ -9,7 +9,7 @@
         class="md-list-item-expand md-list-item-container"
       >
         <template v-if="layer.errors">
-          <p v-for="(error, index) in layer.errors" :key="index">layer has errors</p>
+          <p v-for="(error, index) in layer.errors" :key="index">{{ $t('layer_has_errors') }}</p>
         </template>
         <div class="md-list-item-content">
           <md-avatar v-if="layer.imageUrl" class="layer-list__avatar">
