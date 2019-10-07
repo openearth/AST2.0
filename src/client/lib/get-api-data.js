@@ -1,19 +1,6 @@
 import cloneDeep from 'lodash/cloneDeep'
 
-export function getApiData(uri, body) {
-  return fetch(
-    `https://ast-measure-api.now.sh/v2/${uri}/measure-model`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    }
-  ).then(res => res.json())
-}
-
-export function getRealApiData(uri, body) {
+function getRealApiData(uri, body) {
   return fetch(
     `${process.env.API_BASE}/api/${uri}`,
     {
@@ -25,6 +12,10 @@ export function getRealApiData(uri, body) {
     }
   )
   .then(res => res.json())
+}
+
+export function getApiData(uri, body) {
+  return getRealApiData(uri, body)
 }
 
 export async function getApiDataForFeature(feature, projectArea, scenarioName, currentReturnTime = 1) {

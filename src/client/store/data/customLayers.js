@@ -1,5 +1,5 @@
 import randomColor from '../../lib/random-color';
-import { getRealApiData } from "../../lib/get-api-data";
+import { getApiData } from "../../lib/get-api-data";
 export const state = () => []
 
 export const mutations = {
@@ -14,7 +14,7 @@ export const actions = {
       url: parameters.serverUrl,
       type: parameters.serverType,
     }
-    const data = await getRealApiData('maplayers', body)
+    const data = await getApiData('maplayers', body)
     return data
   },
 
