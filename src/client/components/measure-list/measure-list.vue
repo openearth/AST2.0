@@ -12,6 +12,12 @@
 
         <div class="md-toolbar-section-end">
           <md-button
+            :class="{'md-primary': listView}"
+            class="md-icon-button"
+            @click="listView = !listView">
+            <md-icon>list</md-icon>
+          </md-button>
+          <md-button
             :class="{'md-primary': alphaSorted}"
             class="md-icon-button"
             @click="alphaSorted = !alphaSorted">
@@ -22,26 +28,40 @@
 
     </md-toolbar>
 
-    <ul class="measure-list__list">
-      <li
-        v-for="measure in filteredMeasures"
-        :key="measure.id"
-        class="measure-list__item">
-        <measure-card
-          :measure="measure"
-          :scores="measure.climateEffectTags"
-          class="measure-list__card"
-          @choose="choose"/>
-      </li>
+    <ul :class="{'measure-list__list-bars': listView}" class="measure-list__list">
+      <template v-if="listView">
+        <li
+          v-for="measure in filteredMeasures"
+          :key="measure.id"
+          class="measure-list__item">
+          <measure-bar
+            :measure="measure"
+            :scores="measure.climateEffectTags"
+            @choose="choose"/>
+        </li>
+      </template>
+      <template v-else>
+        <li
+          v-for="measure in filteredMeasures"
+          :key="measure.id"
+          class="measure-list__item">
+          <measure-card
+            :measure="measure"
+            :scores="measure.climateEffectTags"
+            class="measure-list__card"
+            @choose="choose"/>
+        </li>
+      </template>
+
     </ul>
   </div>
 </template>
 
 <script>
-import { MeasureCard } from "..";
+import { MeasureCard, MeasureBar } from "..";
 import TextInput from '../text-input'
 export default {
-  components: { MeasureCard, TextInput },
+  components: { MeasureCard, TextInput, MeasureBar },
   props: {
     measures: {
       type: Array,
@@ -51,6 +71,7 @@ export default {
   data: () => ({
     searchValue: '',
     alphaSorted: false,
+    listView: false,
   }),
   computed: {
     alphaSortedMeasures() {
@@ -74,6 +95,7 @@ export default {
         return measure.title.match(new RegExp(this.searchValue, 'i'))
       })
     },
+
   },
   methods: {
     choose(value) {
@@ -91,6 +113,18 @@ export default {
   grid-gap: var(--spacing-double);
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   padding: var(--spacing-default);
+}
+
+.measure-list__list-bars {
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, 100%);
+  grid-gap: 0;
+}
+
+@media screen and (min-width: 1400px) {
+  .measure-list__list-bars {
+    grid-template-columns: repeat(auto-fill, 50%);
+  }
 }
 
 .measure-list__card {
