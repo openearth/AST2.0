@@ -3,6 +3,7 @@
     :md-active="showLayerDialog"
     class="md-fullscreen layer-dialog"
   >
+    <md-dialog-title>{{ title }}</md-dialog-title>
     <md-dialog-content>
       <form v-if="state === 'settings'">
         <md-field>
@@ -135,6 +136,9 @@ export default {
     },
     layerError() {
       return this.layers.map(layer => layer.errors.length > 0 );
+    },
+    title() {
+      return `${this.$i18n.t('add_layers')}${this.state !== 'settings' ? ` - ${this.state}` : ''}`
     },
   },
   mounted() {
