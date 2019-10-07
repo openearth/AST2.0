@@ -103,6 +103,9 @@ export const mutations = {
     state.map.wmsLayers.push(layer)
   },
   setCustomLayer(state, layer) {
+    if (state.map.customLayers === undefined) {
+      Vue.set(state.map, 'customLayers', [])
+    }
     state.map.customLayers.push(layer)
   },
   deleteCustomLayer(state, id) {
