@@ -66,7 +66,7 @@
             </md-list-item>
             <md-list-item v-if="layer.deleteLayer" class="md-inset">
               <md-button
-                class="layer-list__delete"
+                class="layer-list__delete md-accent"
                 @click="deleteCustomLayer(layer.id)"
               >
                 <md-icon>delete</md-icon>
