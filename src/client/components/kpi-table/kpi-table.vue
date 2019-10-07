@@ -45,9 +45,6 @@ export default {
       return [this.tableClimateAndCosts, this.tableCoBenefits]
     },
   },
-  mounted() {
-    console.log('tables', this.tables);
-  },
 }
 </script>
 
