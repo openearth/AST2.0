@@ -1,6 +1,8 @@
 <template>
-  <md-dialog :md-active="showLayerDialog" class="md-fullscreen">
-    <md-dialog-title>{{ $t(state) }}</md-dialog-title>
+  <md-dialog
+    :md-active="showLayerDialog"
+    class="md-fullscreen layer-dialog"
+  >
     <md-dialog-content>
       <form v-if="state === 'settings'">
         <md-field>
@@ -189,8 +191,7 @@ export default {
 
 <style>
 .layer-dialog {
-  max-width: 40vw;
-  position: absolute;
+  min-width: 30vw;
 }
 
 .layer-dialog__actions {
