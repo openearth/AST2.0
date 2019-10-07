@@ -1,9 +1,13 @@
 <template>
-  <md-dialog :md-active="showLayerDialog" class="md-fullscreen">
-    <md-dialog-title>{{ $t(state) }}</md-dialog-title>
+  <md-dialog
+    :md-active="showLayerDialog"
+    class="md-fullscreen layer-dialog"
+  >
+    <md-dialog-title>{{ title }}</md-dialog-title>
     <md-dialog-content>
       <form v-if="state === 'settings'">
         <md-field>
+          <label>{{ $t('choose_layer_server') }}</label>
           <md-select v-model="serverType" md-dense>
             <md-option
               v-for="option in options"
@@ -11,9 +15,10 @@
               :value="option.value">{{ option.name }}</md-option>
           </md-select>
         </md-field>
-        <md-field>
-          <label> server url</label>
+        <md-field v-if="serverType !== ''">
+          <label>{{ $t('server_url') }}</label>
           <md-input v-model="serverUrl" :placeholder="placeholder"/>
+          <span v-if="exampleUrl" class="md-helper-text">{{ $t('example_url') }}: {{ exampleUrl }}</span>
         </md-field>
       </form>
       <p v-if="state === 'layers' || 'error'">
@@ -56,8 +61,8 @@
       </md-list>
     </md-dialog-content>
     <md-dialog-actions>
-      <md-button class="md-primary" @click="$emit('update:showLayerDialog', false); resetState">
-        Cancel
+      <md-button class="md-primary" @click="onCancel">
+        {{ $t('cancel') }}
       </md-button>
       <md-button
         v-if="state !== 'settings'"
@@ -67,12 +72,14 @@
       </md-button>
       <md-button
         v-if="state === 'settings'"
+        :disabled="serverType === '' || serverUrl === ''"
         class="md-primary"
         @click="retrieveLayers()">
         {{ $t('retrieve_layers') }}
       </md-button>
       <md-button
         v-if="state === 'layers'"
+        :disabled="checkedLayers.length === 0"
         class="md-primary"
         @click="addLayers(); $emit('update:showLayerDialog', false)">
         {{ $t('add_layers') }}
@@ -105,21 +112,27 @@ export default {
       state: 'settings',
       layers: [],
       message: '',
-      options: [{
-        name: 'WMS',
-        value: 'WMS',
-        placeholder: 'https://geodata.nationaalgeoregister.nl/ahn2/wms',
-      }, {
-        name: 'WMTS',
-        value: 'WMTS',
-        placeholder: 'https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/WMTS',
-      }, {
-        name: 'ArcREST',
-        value: 'ESRI',
-        placeholder: 'https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/',
-      },
-    ],
-    checked: true,
+      options: [
+        {
+          name: 'WMS',
+          value: 'WMS',
+          placeholder: 'https://geodata.nationaalgeoregister.nl/ahn2/wms',
+          exampleUrl: 'https://img.nj.gov/imagerywms/Natural2015?',
+        },
+        {
+          name: 'WMTS',
+          value: 'WMTS',
+          placeholder: 'https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/WMTS',
+          exampleUrl: 'https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/WMTS',
+        },
+        {
+          name: 'ArcREST',
+          value: 'ESRI',
+          placeholder: 'https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/',
+          exampleUrl: 'https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/',
+        },
+      ],
+      checked: true,
     }
   },
   computed: {
@@ -134,9 +147,15 @@ export default {
     layerError() {
       return this.layers.map(layer => layer.errors.length > 0 );
     },
-  },
-  mounted() {
-    // this.serverType = this.options[0].name
+    title() {
+      return `${this.$i18n.t('add_layers')}${this.state !== 'settings' ? ` - ${this.state}` : ''}`
+    },
+    checkedLayers() {
+      return(this.layers || []).filter(layer => layer.checked)
+    },
+    exampleUrl() {
+      return this.options.find(item => item.value === this.serverType).exampleUrl
+    },
   },
   methods: {
     ...mapActions({
@@ -171,26 +190,26 @@ export default {
     addLayers() {
       // Add the selected layers to the background layers of the application
       // and reset the state of the dialog
-      const newLayers = this.layers.filter(layer => layer.checked)
+      const newLayers = this.checkedLayers
       this.addCustomTilesToLayers(newLayers)
       this.resetState()
     },
-
     resetState() {
       this.layers = []
       this.state = 'settings'
       this.message = ''
     },
+    onCancel() {
+      this.$emit('update:showLayerDialog', false)
+      this.resetState()
+    },
   },
-
-
 }
 </script>
 
 <style>
 .layer-dialog {
-  max-width: 40vw;
-  position: absolute;
+  min-width: 30vw;
 }
 
 .layer-dialog__actions {
@@ -203,20 +222,19 @@ export default {
 }
 
 .layer-dialog__layer-disabled {
-  /* text-decoration: line-through; */
   color: var(--text-light-color);
   cursor: not-allowed;
 }
 
 .layer-dialog__layer .md-list-item-content {
   align-items: flex-start;
-  padding-top: 14px;
+  padding-top: var(--font-size-small);
 }
 
 .layer-dialog__layer-hint {
   width: 100%;
   margin-top: 5px;
-  font-size: 14px;
+  font-size: var(--font-size-small);
   color: var(--text-light-color);
 }
 
@@ -228,14 +246,14 @@ export default {
 .layer-dialog__warn {
   display: inline-block;
   vertical-align: top;
-  width: 18px;
-  height: 18px;
-  min-width: 18px;
+  width: var(--font-size-medium);
+  height: var(--font-size-medium);
+  min-width: var(--font-size-medium);
   margin-top: -2px;
   margin-right: 4px;
 
-  font-size: 16px !important;
-  line-height: 16px;
+  font-size: var(--font-size-default) !important;
+  line-height: var(--font-size-default);
   color: var(--text-light-color) !important;
 }
 

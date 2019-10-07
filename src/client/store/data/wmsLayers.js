@@ -1,6 +1,6 @@
 import getData from '../../lib/get-data'
 import randomColor from '../../lib/random-color';
-import { getRealApiData } from "../../lib/get-api-data";
+
 export const state = () => []
 
 export const mutations = {

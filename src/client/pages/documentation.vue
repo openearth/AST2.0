@@ -1,6 +1,6 @@
 <template>
   <md-drawer md-permanent="clipped" class="page">
-    <button class="md-link" @click="$router.go(-1)">&#x2190; {{ $t('back') }}</button>
+    <back-button />
     <h1 class="md-title">{{ documentation.title }}</h1>
     <div
       v-for="(item, index) in documentation.content"
@@ -12,12 +12,12 @@
 </template>
 
 <script>
-import { RichText, ResponsiveImage } from '~/components'
+import { RichText, ResponsiveImage, BackButton } from '~/components'
 import getData from '~/lib/get-data'
 
 export default {
   middleware: ['state-is-inactive'],
-  components: { RichText, ResponsiveImage },
+  components: { RichText, ResponsiveImage, BackButton },
   async asyncData({ params, store }) {
     const { locale } = store.state.i18n
     const { documentation } = await getData({ locale, slug: 'documentation' })

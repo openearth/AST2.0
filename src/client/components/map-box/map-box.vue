@@ -21,6 +21,7 @@ import MapEventBus, {
   SEARCH_SUGGESTIONS,
   FLY_TO,
   REPAINT,
+  DELETE_LAYER,
 } from '../../lib/map-event-bus'
 
 export default {
@@ -226,6 +227,10 @@ export default {
         this.draw.delete(ids)
       })
 
+      MapEventBus.$on(DELETE_LAYER, id => {
+        this.removeWmsLayer(id)
+      })
+
       MapEventBus.$on(ZOOM_IN, () => this.map.zoomIn())
       MapEventBus.$on(ZOOM_OUT, () => this.map.zoomOut())
 
@@ -321,7 +326,13 @@ export default {
       // this.map.addLayer(fill)
       this.map.addLayer(line)
     },
-    addWmsLayer({ layerType: type, id, url, tilesize: tileSize, title }) {
+    removeWmsLayer(id) {
+      const layer = this.map.getLayer(`wms-layer-${id}`)
+      if (layer) {
+        this.map.removeLayer(`wms-layer-${id}`)
+      }
+    },
+    addWmsLayer({ layerType: type, id, url, tilesize: tileSize, title, visible }) {
       if (!this.map.getLayer(`wms-layer-${id}`)) {
         const source = { type, tileSize }
         if  (url === 'mapbox://mapbox.satellite') {
@@ -330,16 +341,25 @@ export default {
           source.tiles = [ url ]
         }
         try {
-          console.log(source, type)
+          const layers = this.map.getStyle().layers
+          const lastWmsLayerIndex = layers
+            .filter(layer => /wms-layer-/.test(layer.id))
+            .map(layer => layers.indexOf(layer))
+            .reduce((_, item) => item, undefined)
+
+          const lastWmsLayerId = layers[lastWmsLayerIndex]
+            ? layers[lastWmsLayerIndex].id
+            : undefined
+
           this.map.addLayer({
             id: `wms-layer-${id}`,
             type,
             source,
             layout: {
-              visibility: 'none',
+              visibility: visible ? 'visible' : 'none',
             },
             paint: {},
-          })
+          }, lastWmsLayerId)
         } catch (err) {
           this.showError({ message: `Could not load WMS Layer: ${title}`, duration: 0 })
         }
