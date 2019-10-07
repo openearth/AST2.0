@@ -314,7 +314,7 @@ export default {
       // this.map.addLayer(fill)
       this.map.addLayer(line)
     },
-    addWmsLayer({ layerType: type, id, url, tilesize: tileSize, title }) {
+    addWmsLayer({ layerType: type, id, url, tilesize: tileSize, title, visible }) {
       if (!this.map.getLayer(`wms-layer-${id}`)) {
         const source = { type, tileSize }
 
@@ -324,15 +324,25 @@ export default {
           source.tiles = [ url ]
         }
         try {
+          const layers = this.map.getStyle().layers
+          const lastWmsLayerIndex = layers
+            .filter(layer => /wms-layer-/.test(layer.id))
+            .map(layer => layers.indexOf(layer))
+            .reduce((_, item) => item, undefined)
+
+          const lastWmsLayerId = layers[lastWmsLayerIndex]
+            ? layers[lastWmsLayerIndex].id
+            : undefined
+
           this.map.addLayer({
             id: `wms-layer-${id}`,
             type,
             source,
             layout: {
-              visibility: 'none',
+              visibility: visible ? 'visible' : 'none',
             },
             paint: {},
-          })
+          }, lastWmsLayerId)
         } catch (err) {
           this.showError({ message: `Could not load WMS Layer: ${title}`, duration: 0 })
         }
