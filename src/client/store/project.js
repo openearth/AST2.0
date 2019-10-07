@@ -310,7 +310,8 @@ export const actions = {
         ...layer,
         visible: false,
         showLegend: false,
-        opacity: 1 })
+        opacity: 1,
+      })
     })
   },
   async updateProjectAreaSetting({ state, commit, rootGetters, getters, dispatch }, payload ) {
