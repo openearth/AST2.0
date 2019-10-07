@@ -164,17 +164,17 @@ export default {
 }
 
 .layer-list__avatar-fake {
-  width: 40px;
-  height: 40px;
-  min-width: 40px;
-  margin-right: 16px;
+  width: var(--spacing-double);
+  height: var(--spacing-double);
+  min-width: var(--spacing-double);
+  margin-right: var(--spacing-default);
 
   display: flex;
   align-items: center;
   justify-content: center;
 
   border-radius: 50%;
-  font-size: 1.3rem;
+  font-size: var(--font-size-medium);
 }
 
 .layer-list__avatar-fake:nth-child(even) {
@@ -210,7 +210,7 @@ export default {
 }
 
 .layer-list__add-btn .md-ripple {
-  padding: 12px 16px 12px 24px;
+  padding: var(--spacing-small) var(--spacing-default) var(--spacing-small) var(--spacing-medium);
 }
 
 .layer-list__add-btn .md-button-content {
@@ -220,7 +220,7 @@ export default {
 }
 
 .layer-list__add-btn .md-list-item-text {
-  margin-left: 23px;
+  margin-left: var(--spacing-medium);
 }
 
 </style>
