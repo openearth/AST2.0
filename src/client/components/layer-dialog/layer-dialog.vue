@@ -18,6 +18,7 @@
         <md-field v-if="serverType !== ''">
           <label>{{ $t('server_url') }}</label>
           <md-input v-model="serverUrl" :placeholder="placeholder"/>
+          <span v-if="exampleUrl" class="md-helper-text">{{ $t('example_url') }}: {{ exampleUrl }}</span>
         </md-field>
       </form>
       <p v-if="state === 'layers' || 'error'">
@@ -116,16 +117,19 @@ export default {
           name: 'WMS',
           value: 'WMS',
           placeholder: 'https://geodata.nationaalgeoregister.nl/ahn2/wms',
+          exampleUrl: 'https://img.nj.gov/imagerywms/Natural2015?',
         },
         {
           name: 'WMTS',
           value: 'WMTS',
           placeholder: 'https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/WMTS',
+          exampleUrl: 'https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/WMTS',
         },
         {
           name: 'ArcREST',
           value: 'ESRI',
           placeholder: 'https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/',
+          exampleUrl: 'https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/',
         },
       ],
       checked: true,
@@ -148,6 +152,9 @@ export default {
     },
     checkedLayers() {
       return(this.layers || []).filter(layer => layer.checked)
+    },
+    exampleUrl() {
+      return this.options.find(item => item.value === this.serverType).exampleUrl
     },
   },
   methods: {
