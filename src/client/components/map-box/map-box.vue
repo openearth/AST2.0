@@ -21,6 +21,7 @@ import MapEventBus, {
   SEARCH_SUGGESTIONS,
   FLY_TO,
   REPAINT,
+  DELETE_LAYER,
 } from '../../lib/map-event-bus'
 
 export default {
@@ -219,6 +220,10 @@ export default {
         this.draw.delete(ids)
       })
 
+      MapEventBus.$on(DELETE_LAYER, id => {
+        this.removeWmsLayer(id)
+      })
+
       MapEventBus.$on(ZOOM_IN, () => this.map.zoomIn())
       MapEventBus.$on(ZOOM_OUT, () => this.map.zoomOut())
 
@@ -313,6 +318,12 @@ export default {
       // const fill = Object.assign({}, baseObj, fillDetails)
       // this.map.addLayer(fill)
       this.map.addLayer(line)
+    },
+    removeWmsLayer(id) {
+      const layer = this.map.getLayer(`wms-layer-${id}`)
+      if (layer) {
+        this.map.removeLayer(`wms-layer-${id}`)
+      }
     },
     addWmsLayer({ layerType: type, id, url, tilesize: tileSize, title, visible }) {
       if (!this.map.getLayer(`wms-layer-${id}`)) {

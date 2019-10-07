@@ -4,7 +4,7 @@ import turfLength from '@turf/length'
 import merge from 'lodash/merge'
 import get from 'lodash/get'
 import round from 'lodash/round'
-import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT, REPAINT } from '../lib/map-event-bus'
+import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT, REPAINT, DELETE_LAYER } from '../lib/map-event-bus'
 import { getApiDataForFeature, getRankedMeasures } from "../lib/get-api-data";
 import FileSaver from 'file-saver'
 import getLoadedFileContents from '../lib/get-loaded-file-contents'
@@ -110,6 +110,7 @@ export const mutations = {
   },
   deleteCustomLayer(state, id) {
     state.map.customLayers = state.map.customLayers.filter(layer => layer.id !== id)
+    MapEventBus.$emit(DELETE_LAYER, id)
   },
   toggleProjectAreaNestedSetting(state, { key, option, value }) {
     state.settings.projectArea[key][option] = !state.settings.projectArea[key][option]
