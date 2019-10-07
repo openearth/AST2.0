@@ -215,20 +215,19 @@ export default {
 }
 
 .layer-dialog__layer-disabled {
-  /* text-decoration: line-through; */
   color: var(--text-light-color);
   cursor: not-allowed;
 }
 
 .layer-dialog__layer .md-list-item-content {
   align-items: flex-start;
-  padding-top: 14px;
+  padding-top: var(--font-size-small);
 }
 
 .layer-dialog__layer-hint {
   width: 100%;
   margin-top: 5px;
-  font-size: 14px;
+  font-size: var(--font-size-small);
   color: var(--text-light-color);
 }
 
@@ -240,14 +239,14 @@ export default {
 .layer-dialog__warn {
   display: inline-block;
   vertical-align: top;
-  width: 18px;
-  height: 18px;
-  min-width: 18px;
+  width: var(--font-size-medium);
+  height: var(--font-size-medium);
+  min-width: var(--font-size-medium);
   margin-top: -2px;
   margin-right: 4px;
 
-  font-size: 16px !important;
-  line-height: 16px;
+  font-size: var(--font-size-default) !important;
+  line-height: var(--font-size-default);
   color: var(--text-light-color) !important;
 }
 
