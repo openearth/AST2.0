@@ -7,6 +7,7 @@
     <md-dialog-content>
       <form v-if="state === 'settings'">
         <md-field>
+          <label>{{ $t('choose_layer_server') }}</label>
           <md-select v-model="serverType" md-dense>
             <md-option
               v-for="option in options"
@@ -14,8 +15,8 @@
               :value="option.value">{{ option.name }}</md-option>
           </md-select>
         </md-field>
-        <md-field>
-          <label> server url</label>
+        <md-field v-if="serverType !== ''">
+          <label>{{ $t('server_url') }}</label>
           <md-input v-model="serverUrl" :placeholder="placeholder"/>
         </md-field>
       </form>
@@ -59,8 +60,8 @@
       </md-list>
     </md-dialog-content>
     <md-dialog-actions>
-      <md-button class="md-primary" @click="$emit('update:showLayerDialog', false); resetState">
-        Cancel
+      <md-button class="md-primary" @click="onCancel">
+        {{ $t('cancel') }}
       </md-button>
       <md-button
         v-if="state !== 'settings'"
@@ -70,12 +71,14 @@
       </md-button>
       <md-button
         v-if="state === 'settings'"
+        :disabled="serverType === '' || serverUrl === ''"
         class="md-primary"
         @click="retrieveLayers()">
         {{ $t('retrieve_layers') }}
       </md-button>
       <md-button
         v-if="state === 'layers'"
+        :disabled="checkedLayers.length === 0"
         class="md-primary"
         @click="addLayers(); $emit('update:showLayerDialog', false)">
         {{ $t('add_layers') }}
@@ -108,21 +111,24 @@ export default {
       state: 'settings',
       layers: [],
       message: '',
-      options: [{
-        name: 'WMS',
-        value: 'WMS',
-        placeholder: 'https://geodata.nationaalgeoregister.nl/ahn2/wms',
-      }, {
-        name: 'WMTS',
-        value: 'WMTS',
-        placeholder: 'https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/WMTS',
-      }, {
-        name: 'ArcREST',
-        value: 'ESRI',
-        placeholder: 'https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/',
-      },
-    ],
-    checked: true,
+      options: [
+        {
+          name: 'WMS',
+          value: 'WMS',
+          placeholder: 'https://geodata.nationaalgeoregister.nl/ahn2/wms',
+        },
+        {
+          name: 'WMTS',
+          value: 'WMTS',
+          placeholder: 'https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/WMTS',
+        },
+        {
+          name: 'ArcREST',
+          value: 'ESRI',
+          placeholder: 'https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/',
+        },
+      ],
+      checked: true,
     }
   },
   computed: {
@@ -140,9 +146,9 @@ export default {
     title() {
       return `${this.$i18n.t('add_layers')}${this.state !== 'settings' ? ` - ${this.state}` : ''}`
     },
-  },
-  mounted() {
-    // this.serverType = this.options[0].name
+    checkedLayers() {
+      return(this.layers || []).filter(layer => layer.checked)
+    },
   },
   methods: {
     ...mapActions({
@@ -177,19 +183,20 @@ export default {
     addLayers() {
       // Add the selected layers to the background layers of the application
       // and reset the state of the dialog
-      const newLayers = this.layers.filter(layer => layer.checked)
+      const newLayers = this.checkedLayers
       this.addCustomTilesToLayers(newLayers)
       this.resetState()
     },
-
     resetState() {
       this.layers = []
       this.state = 'settings'
       this.message = ''
     },
+    onCancel() {
+      this.$emit('update:showLayerDialog', false)
+      this.resetState()
+    },
   },
-
-
 }
 </script>
 
