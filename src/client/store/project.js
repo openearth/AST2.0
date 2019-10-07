@@ -608,7 +608,6 @@ export const getters = {
   },
 
   customLayers: (state, getters, rootState, rootGetters) => {
-    console.log(rootState)
     return state.map.customLayers
   },
 }
