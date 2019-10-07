@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from "vuex"
+import { mapGetters, mapState, mapMutations } from "vuex"
 import { AppPanel, MeasureStepper, MeasureCard } from '~/components'
 
 export default {
@@ -21,6 +21,34 @@ export default {
       measure() {
         return this.measureById(this.measureId)
       },
+    },
+    mounted() {
+      this.measure.canDrawPolygon
+       ? this.polygonActive()
+       : this.polygonInactive()
+
+      this.measure.canDrawPolyline
+       ? this.lineActive()
+       : this.lineInactive()
+
+      this.measure.canDrawPoint
+       ? this.pointActive()
+       : this.pointInactive()
+    },
+    destroyed() {
+      this.polygonActive()
+      this.lineActive()
+      this.pointActive()
+    },
+    methods: {
+      ...mapMutations({
+        polygonActive: 'map/polygonActive',
+        polygonInactive: 'map/polygonInactive',
+        lineActive: 'map/lineActive',
+        lineInactive: 'map/lineInactive',
+        pointActive: 'map/pointActive',
+        pointInactive: 'map/pointInactive',
+      }),
     },
 }
 </script>
