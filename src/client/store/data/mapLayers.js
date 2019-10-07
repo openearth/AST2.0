@@ -21,7 +21,6 @@ export const actions = {
 
 export const getters = {
   constructed(state) {
-    console.log('hoi')
     return state.map(layer => {
       return {
        id: layer.id,

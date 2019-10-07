@@ -132,7 +132,6 @@ export const mutations = {
   },
   setLayerVisibility(state, { id, value }) {
     const layers = [ ...state.map.wmsLayers,  ...state.map.mapLayers, ...state.map.customLayers ]
-    console.log(layers, state.map.mapLayers)
     layers.forEach(layer => {
       if (id === layer.id) {
         layer.visible = value
@@ -324,7 +323,6 @@ export const actions = {
     })
   },
   bootstrapMapLayers({ state, commit }, layers) {
-    console.log(layers)
     layers.forEach(layer => {
       commit('setMapLayers', {
         ...layer,
