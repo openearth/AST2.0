@@ -63,7 +63,8 @@
         <layer-list
           v-if="showLayersPanel"
           ref="layerlist"
-          :layers="wmsLayers"
+          :wms-layers="wmsLayers"
+          :custom-layers="customLayers"
           class="map-controls__layer-list"
           @opacity-change="event => $emit('layer-opacity-change', event)"
           @visibility-change="event => $emit('layer-visibility-change', event)"
@@ -138,6 +139,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    customLayers: {
+      type: Array,
+      default: () => [],
+    },
   },
   data: () => ({
     showLayersPanel: false,
@@ -156,8 +161,11 @@ export default {
   },
   methods: {
     handleOutideClick(event) {
+      if(!this.$refs.layerlist) return;
+
       const path = event.path || event.composedPath()
-      const layerlist = this.$refs.layerlist.$el
+      const layerlist = this.$refs.layerlist.$el;
+
       if (path && path.indexOf(layerlist) === -1) {
         this.showLayersPanel = false
       }
@@ -187,8 +195,10 @@ export default {
 
 .map-controls__layer-list {
   position: absolute;
-  background-color: red;
   left: 50px;
   top: 0;
+  display: block;
+  overflow-y: auto;
+  padding-bottom: 0;
 }
 </style>

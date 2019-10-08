@@ -30,5 +30,25 @@ export default {
         },
       },
     },
+    customLayers: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['id', 'showLegend', 'visible', 'opacity'],
+        properties: {
+          backgroundColor: { type: 'string' },
+          deleteLayer: { type: 'boolean' },
+          id: { type: 'string' },
+          layerType: { type: 'string' },
+          showLegend: { type: 'boolean' },
+          tilesize: { type: 'number' },
+          title: { type: 'string' },
+          url: { type: 'string' },
+          visible: { type: 'boolean' },
+          opacity: { type: 'number' },
+        },
+      },
+    },
   },
 }

@@ -1,4 +1,6 @@
 import getData from '../../lib/get-data'
+import randomColor from '../../lib/random-color';
+
 export const state = () => []
 
 export const mutations = {

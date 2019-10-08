@@ -12,6 +12,7 @@
       :map-zoom="mapZoom"
       :map-center="mapCenter"
       :wms-layers="wmsLayers"
+      :custom-layers="customLayers"
       :mode="mode"
       class="map-viewer__map"
       @create="onCreate"
@@ -30,6 +31,7 @@
       :trash="interactive"
       :layers="interactive && layers"
       :wms-layers="wmsLayers"
+      :custom-layers="customLayers"
       :current-mode="currentMode"
       class="map-viewer__controls--draw"
       @setMode="setMode"
@@ -118,6 +120,10 @@ export default {
       default: '',
     },
     wmsLayers: {
+      type: Array,
+      default: () => [],
+    },
+    customLayers: {
       type: Array,
       default: () => [],
     },
