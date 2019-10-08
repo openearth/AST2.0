@@ -12,17 +12,17 @@
 
         <div class="md-toolbar-section-end">
           <md-button
-            :class="{'md-primary': featureSorted}"
+            :class="{'md-primary': sortType === FEATUERD}"
             class="md-icon-button"
-            @click="sortHandler('featureSorted')">
+            @click="sortHandler(FEATUERD)">
             <md-icon v-if="featureSorted">star</md-icon>
             <md-icon v-else>star_border</md-icon>
           </md-button>
 
           <md-button
-            :class="{'md-primary': alphaSorted}"
+            :class="{'md-primary': sortType === ALPHA}"
             class="md-icon-button"
-            @click="sortHandler('alphaSorted')">
+            @click="sortHandler(ALPHA)">
             <md-icon>sort_by_alpha</md-icon>
           </md-button>
         </div>
@@ -48,6 +48,11 @@
 <script>
 import { MeasureCard } from "..";
 import TextInput from '../text-input'
+
+const SYSTEM_SUITABILITY = 'system-suitability'
+const ALPHA = 'alpha'
+const FEATUERD = 'featured'
+
 export default {
   components: { MeasureCard, TextInput },
   props: {
@@ -57,9 +62,11 @@ export default {
     },
   },
   data: () => ({
+    SYSTEM_SUITABILITY,
+    ALPHA,
+    FEATUERD,
     searchValue: '',
-    alphaSorted: false,
-    featureSorted: true,
+    sortType: FEATUERD,
   }),
   computed: {
     alphaSortedMeasures() {
@@ -84,15 +91,30 @@ export default {
         return 0
       })
     },
+    featureSorted() {
+      const featured = this.systemSuitabilitySortedMeasures.filter(({ featured }) => featured === true)
+      const nonfeatured = this.systemSuitabilitySortedMeasures.filter(({ featured }) => featured === false)
+      return [...featured, ...nonfeatured]
+    },
     sortedMeasures() {
       return this.alphaSorted
         ? this.alphaSortedMeasures
         : this.systemSuitabilitySortedMeasures
     },
     filteredMeasures() {
-      return this.sortedMeasures.filter(measure => {
+      const searchFiltered = list => list.filter(measure => {
         return measure.title.match(new RegExp(this.searchValue, 'i'))
       })
+
+      switch (this.sortType) {
+        case ALPHA:
+          return searchFiltered(this.alphaSortedMeasures)
+        case FEATUERD:
+          return searchFiltered(this.featureSorted)
+        case SYSTEM_SUITABILITY:
+        default:
+          return searchFiltered(this.systemSuitabilitySortedMeasures)
+      }
     },
   },
   methods: {
@@ -100,10 +122,9 @@ export default {
       this.$emit('choose', value)
     },
     sortHandler(selected) {
-      const types = ['alphaSorted', 'featureSorted'];
-      types.forEach( type => {
-        this[type] = selected === type ? !this[type] : false
-      })
+      this.sortType = this.sortType === selected
+       ? SYSTEM_SUITABILITY
+       : selected
     },
   },
 }
