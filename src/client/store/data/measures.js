@@ -30,6 +30,7 @@ export const actions = {
 export const getters = {
   workspaceMeasures: (storedMeasures, getters, rootState, rootGetters) => {
     const activeWorkspace = rootGetters['data/workspaces/activeWorkspace']
+    const settingsProjectArea = rootGetters['project/settingsProjectArea']
     const workspaceMeasures = get('measures', activeWorkspace)
     const excludeAllMeasures = get('excludeAllMeasures', activeWorkspace)
 
@@ -45,11 +46,17 @@ export const getters = {
       ...workspaceMeasures[measure.measureId],
     })
 
+    const markMeasureAsFeatured = measure => ({
+      ...measure,
+      featured: (measure.scenarioNames || []).includes(settingsProjectArea.scenarioName),
+    })
+
     const measureMarkedForInclusion = ({ workspaceInclude }) => workspaceInclude === true
 
     return storedMeasures
       .map(resetToExcludeAllMeasuresSetting)
       .map(applyOverrideMeasureData)
+      .map(markMeasureAsFeatured)
       .filter(measureMarkedForInclusion)
   },
   orderedMeasures: (state, { workspaceMeasures }) => {

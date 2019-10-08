@@ -587,4 +587,7 @@ export const getters = {
       opacity,
     }))
   },
+  settingsProjectArea: (state) => {
+    return state.settings.projectArea
+  },
 }
