@@ -4,6 +4,7 @@ query ($locale: SiteLocale, $first: IntType, $skip: IntType = 0) {
     workspaceInclude,
     slug,
     measureId,
+    scenarioNames,
     body,
     color {
       hex
