@@ -59,16 +59,6 @@ export const getters = {
       .map(markMeasureAsFeatured)
       .filter(measureMarkedForInclusion)
   },
-  orderedMeasures: (state, { workspaceMeasures }) => {
-    return [...workspaceMeasures].sort((a, b) => {
-      if (a.title < b.title) return -1
-      if (a.title > b.title) return 1
-      return 0
-    })
-  },
-  measuresBySystemSuitability: (state, { workspaceMeasures }) => {
-    return [...workspaceMeasures].sort((a, b) => b.systemSuitability - a.systemSuitability)
-  },
   measureById: (state, { workspaceMeasures }) => id => {
     return workspaceMeasures.find(measure => measure.measureId === id)
   },
