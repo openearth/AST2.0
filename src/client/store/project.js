@@ -4,7 +4,7 @@ import turfLength from '@turf/length'
 import merge from 'lodash/merge'
 import get from 'lodash/get'
 import round from 'lodash/round'
-import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT, REPAINT } from '../lib/map-event-bus'
+import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT, REPAINT, DELETE_LAYER } from '../lib/map-event-bus'
 import { getApiDataForFeature, getRankedMeasures } from "../lib/get-api-data";
 import FileSaver from 'file-saver'
 import getLoadedFileContents from '../lib/get-loaded-file-contents'
@@ -30,6 +30,7 @@ const initialState = () => ({
       lng: 4.916535879906178,
     },
     wmsLayers: [],
+    customLayers: [],
   },
 })
 
@@ -101,6 +102,16 @@ export const mutations = {
   setWmsLayer(state, layer) {
     state.map.wmsLayers.push(layer)
   },
+  setCustomLayer(state, layer) {
+    if (state.map.customLayers === undefined) {
+      Vue.set(state.map, 'customLayers', [])
+    }
+    state.map.customLayers.push(layer)
+  },
+  deleteCustomLayer(state, id) {
+    state.map.customLayers = state.map.customLayers.filter(layer => layer.id !== id)
+    MapEventBus.$emit(DELETE_LAYER, id)
+  },
   toggleProjectAreaNestedSetting(state, { key, option, value }) {
     state.settings.projectArea[key][option] = !state.settings.projectArea[key][option]
   },
@@ -108,14 +119,16 @@ export const mutations = {
     state.legalAccepted = true
   },
   setLayerOpacity(state, { id, value }) {
-    state.map.wmsLayers.forEach(layer => {
+    const layers = [ ...state.map.wmsLayers, ...state.map.customLayers ]
+    layers.forEach(layer => {
       if (id === layer.id) {
         layer.opacity = value
       }
     })
   },
   setLayerVisibility(state, { id, value }) {
-    state.map.wmsLayers.forEach(layer => {
+    const layers = [ ...state.map.wmsLayers, ...state.map.customLayers ]
+    layers.forEach(layer => {
       if (id === layer.id) {
         layer.visible = value
         layer.showLegend = value
@@ -123,8 +136,9 @@ export const mutations = {
     })
   },
   setLegendVisibility(state, { id, value }) {
-    state.map.wmsLayers.forEach(layer => {
-      if (id === layer.id) {
+    const layers = [ ...state.map.wmsLayers, ...state.map.customLayers ]
+    layers.forEach(layer => {
+      if (id === layer.id && layer.legendUrl) {
         layer.showLegend = value
       }
     })
@@ -292,6 +306,16 @@ export const actions = {
   bootstrapWmsLayers({ state, commit }, layers) {
     layers.forEach(layer => {
       commit('setWmsLayer', { id: layer.id, visible: false, showLegend: false, opacity: 1 })
+    })
+  },
+  bootstrapCustomLayers({ state, commit }, layers) {
+    layers.forEach(layer => {
+      commit('setCustomLayer', {
+        ...layer,
+        visible: false,
+        showLegend: false,
+        opacity: 1,
+      })
     })
   },
   async updateProjectAreaSetting({ state, commit, rootGetters, getters, dispatch }, payload ) {
@@ -586,6 +610,9 @@ export const getters = {
       showLegend,
       opacity,
     }))
+  },
+  customLayers: (state, getters, rootState, rootGetters) => {
+    return state.map.customLayers
   },
   settingsProjectArea: (state) => {
     return state.settings.projectArea

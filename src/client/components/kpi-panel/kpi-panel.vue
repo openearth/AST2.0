@@ -32,7 +32,7 @@
     </div>
 
     <footer v-if="hasFooter" class="kpi-panel__footer">
-      <md-button class="md-raised" @click="togglePopup(true)">View as table</md-button>
+      <md-button class="md-raised" @click="togglePopup(true)">{{ $t('view_as_table') }}</md-button>
       <app-popup
         v-if="openState"
         :title="$t('results')"
