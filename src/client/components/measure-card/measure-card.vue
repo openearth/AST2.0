@@ -6,7 +6,7 @@
         <div class="md-caption measure-card__tags">
           <md-chip v-if="measure.systemSuitability" class="md-body-2">{{ measure.systemSuitability.toFixed(1) }}</md-chip>
           <md-chip
-            v-for="(score, index) in scores"
+            v-for="(score, index) in scoresWithImageProxy"
             :key="index"
 
             class="measure-card__tag">
@@ -55,6 +55,12 @@ export default {
         return [...acc, curr.title]
       }, [])
       return scores.join(' - ')
+    },
+    scoresWithImageProxy() {
+      return this.scores.map(score => {
+        const iconUrl = score.icon.url.replace('https://www.datocms-assets.com/', '/dato-assets/')
+        return { ...score, icon: { url: iconUrl } }
+      })
     },
   },
   methods: {
