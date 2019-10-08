@@ -1,6 +1,7 @@
+import Vue from 'vue'
 import getData from '../../lib/get-data'
 import randomColor from '../../lib/random-color';
-import { getRealApiData } from "../../lib/get-api-data";
+
 export const state = () => []
 
 export const mutations = {
@@ -30,7 +31,7 @@ export const getters = {
        showLegend: false,
        tilesize: 256,
        opacity: 1,
-       visible: true,
+       visible: false,
        backgroundColor: randomColor(),
      }
     })

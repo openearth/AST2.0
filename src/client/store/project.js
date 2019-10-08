@@ -39,7 +39,8 @@ export const state = () => (initialState())
 
 export const mutations = {
   import(state, file) {
-    Object.keys(file).forEach(key => Vue.set(state, key, file[key]))
+    const newState = merge({}, state, file)
+    Object.keys(newState).forEach(key => Vue.set(state, key, newState[key]))
   },
   setMapZoom(state, value) {
     state.map.zoom = value
@@ -104,6 +105,9 @@ export const mutations = {
     state.map.wmsLayers.push(layer)
   },
   setMapLayers(state, layer) {
+    if (state.map.mapLayers === undefined) {
+      Vue.set(state.map, 'mapLayers', [])
+    }
     state.map.mapLayers.push(layer)
   },
   setCustomLayer(state, layer) {
@@ -324,11 +328,7 @@ export const actions = {
   },
   bootstrapMapLayers({ state, commit }, layers) {
     layers.forEach(layer => {
-      commit('setMapLayers', {
-        ...layer,
-        visible: false,
-        showLegend: false,
-        opacity: 1 })
+      commit('setMapLayers', { id: layer.id, visible: false, showLegend: false, opacity: 1 })
     })
   },
   async updateProjectAreaSetting({ state, commit, rootGetters, getters, dispatch }, payload ) {
@@ -379,6 +379,7 @@ export const actions = {
     }
 
     commit('appMenu/hideMenu', null, { root: true })
+    dispatch('bootstrapMapLayers', rootState.data.mapLayers)
 
     if (!validProject.valid) {
       throw new Error('New error')
@@ -630,12 +631,9 @@ export const getters = {
   },
 
   mapLayers: (state, getters, rootState, rootGetters) => {
-    return state.map.mapLayers
-    .map(({ id, visible, opacity, showLegend }) => ({
-      ...rootGetters['data/mapLayers/constructed'].find(layer => layer.id === id),
-      visible,
-      showLegend,
-      opacity,
-    }))
+    return rootGetters['data/mapLayers/constructed'].map(layer => {
+      const storerdSettings = state.map.mapLayers.find(({ id }) => id === layer.id)
+      return { ...layer, ...storerdSettings }
+    })
   },
 }
