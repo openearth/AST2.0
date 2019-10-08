@@ -9,7 +9,11 @@
       :data-index="index"
       :data-name="`image-${index}`">
 
-      <fixed-ratio :height="2" :width="3">
+      <fixed-ratio
+        :height="2"
+        :width="3"
+        comp-inner="figure"
+      >
         <img :src="image.image.url" class="md-image" >
       </fixed-ratio>
     </slide>
@@ -36,6 +40,7 @@ export default {
 }
 
 .image-carousel img {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
