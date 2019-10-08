@@ -1,3 +1,7 @@
+<!--
+  Note: this tab/view was removed from settings view as it was unused
+-->
+
 <template>
   <aside>
     <header>
