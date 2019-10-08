@@ -1,12 +1,19 @@
 <template>
   <div class="input-range">
-    <span v-if="label !== ''" class="input-range__label">{{ label }}</span>
+    <label
+      v-if="label !== ''"
+      :for="label"
+      class="input-range__label"
+    >
+      {{ label }}
+    </label>
     <div class="input-range__value-wrapper">
       <input
         :value="value"
         :min="floatMin"
         :max="max"
         :step="steps"
+        :name="label"
         class="input-range__range"
         type="range"
         v-on="inputListeners">
@@ -98,9 +105,9 @@ export default {
 
 <style>
 .input-range {
+  position: relative;
   display: flex;
   flex-direction: column;
-  position: relative;
 }
 
 .input-range:focus-within .input-range__label {
@@ -108,9 +115,9 @@ export default {
 }
 
 .input-range__label {
+  position: absolute;
   font-size: var(--font-size-extra-small);
   color: rgba(0,0,0,0.54);
-  position: absolute;
 }
 
 .input-range__value-wrapper {
@@ -124,14 +131,13 @@ export default {
 }
 
 .input-range__number {
-  width: 4rem;
   position: relative;
+  width: 4rem;
 }
 
 .input-range__number .md-input {
-  width: 100%;
-  text-align: center;
   position: absolute;
   width: 100%;
+  text-align: center;
 }
 </style>

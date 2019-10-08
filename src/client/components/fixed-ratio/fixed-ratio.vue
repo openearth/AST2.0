@@ -1,6 +1,13 @@
 <template>
-  <div :style="{ paddingBottom: `${ratio}%` }" class="fixed-ratio">
-    <div class="fixed-ratio__content">
+  <div
+    :is="compOuter"
+    :style="{ paddingBottom: `${ratio}%` }"
+    class="fixed-ratio"
+  >
+    <div
+      :is="compInner"
+      class="fixed-ratio__content"
+    >
       <slot/>
     </div>
   </div>
@@ -11,6 +18,8 @@ export default {
   props: {
     height: { type: Number, required: true },
     width:  { type: Number, required: true },
+    compOuter: { type: String, default: "div" },
+    compInner: { type: String, default: "div" },
   },
   computed: {
     ratio() {
