@@ -24,6 +24,8 @@ export const getters = {
         return `€/${rootState.i18n.messages.year}`
       case 'years':
         return rootState.i18n.messages.years
+      case 'Ratemmy':
+        return `mm/${rootState.i18n.messages.year}`
       default:
         return state.find(unit => unit.key === key)['metric']
     }
