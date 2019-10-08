@@ -73,10 +73,21 @@ export default {
         return 0
       })
     },
+    systemSuitabilitySortedMeasures() {
+      return [...this.measures].sort((a, b) => {
+        if (a.systemSuitability > b.systemSuitability) {
+          return 1
+        }
+        if (a.systemSuitability < b.systemSuitability) {
+          return -1
+        }
+        return 0
+      })
+    },
     sortedMeasures() {
       return this.alphaSorted
         ? this.alphaSortedMeasures
-        : this.measures
+        : this.systemSuitabilitySortedMeasures
     },
     filteredMeasures() {
       return this.sortedMeasures.filter(measure => {
