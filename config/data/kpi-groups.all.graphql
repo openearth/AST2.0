@@ -5,6 +5,7 @@ query ($locale: SiteLocale, $first: IntType, $skip: IntType = 0) {
     kpis {
       title,
       key,
+      integer,
       unit {
         key
       }
