@@ -20,11 +20,14 @@ query ($locale: SiteLocale, $first: IntType, $skip: IntType = 0) {
     summary,
     images {
       title,
+      source,
       image {
         url,
         format,
         width,
-        height
+        height,
+        copyright,
+        author
       },
     }
     content,

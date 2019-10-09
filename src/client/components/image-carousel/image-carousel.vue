@@ -16,6 +16,31 @@
       >
         <img :src="image.image.url" class="md-image" >
       </fixed-ratio>
+      <p
+        v-if="image.image.copyright || image.image.author || image.source"
+        class="image-carousel__caption"
+      >
+        <span
+          v-if="image.image.copyright"
+          class="image-carousel__caption-entry"
+        >
+          {{ image.image.copyright }}
+        </span>
+        <span
+          v-if="image.image.author"
+          class="image-carousel__caption-entry"
+        >
+          author: {{ image.image.author }}
+        </span>
+        <a
+          v-if="image.source"
+          :href="image.source"
+          class="image-carousel__caption-entry"
+        >
+          image source
+          <!-- TODO: add translation if approved by PO -->
+        </a>
+      </p>
     </slide>
   </carousel>
 </template>
@@ -36,7 +61,37 @@ export default {
 
 <style>
 .image-carousel {
+  position: relative;
   margin-bottom: var(--spacing-double);
+  z-index: 1;
+}
+
+.image-carousel .VueCarousel-slide {
+  position: relative;
+}
+
+.image-carousel .fixed-ratio {
+  z-index: 1;
+}
+
+.image-carousel__caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  padding: calc( var(--spacing-half) * 0.25) var(--spacing-half);
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.image-carousel__caption-entry {
+  display: inline-block;
+  font-size: var(--font-size-small);
+}
+
+.image-carousel__caption-entry:not(:last-child):after {
+  content: ',';
+  display: inline-block;
+  margin-right: 0.3em;
 }
 
 .image-carousel img {
