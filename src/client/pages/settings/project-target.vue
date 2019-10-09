@@ -33,7 +33,7 @@
         <md-table-cell width="60%">
           <numeric-input
             :label="kpi.title"
-            :value="String(targets[group.key][kpi.key].value || '')"
+            :value="getDefaultValue(group.key, targets[group.key][kpi.key].value)"
             :on-change="value => setTarget({
               group: group.key,
               key: kpi.key,
@@ -69,6 +69,10 @@ export default {
     }),
     unit(...args) {
       return this.$store.getters['data/units/displayValue'](...args)
+    },
+    getDefaultValue(key, value) {
+      const defaultValue = key === 'waterquality' ? '100' : String(value)
+      return value ? defaultValue : ''
     },
   },
 }
