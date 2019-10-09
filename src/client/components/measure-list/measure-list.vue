@@ -38,6 +38,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import { MeasureCard } from "..";
 import TextInput from '../text-input'
 export default {
@@ -70,15 +71,36 @@ export default {
         : this.measures
     },
     filteredMeasures() {
-      return this.sortedMeasures.filter(measure => {
+      const types = {
+        'Polygon': 'canDrawPolygon',
+        'LineString': 'canDrawPolyline',
+        'Point': 'canDrawPoint',
+      }
+      const type = this.selectedType();
+      const availableMeasures = type
+        ? this.filterMeasureByType(types[type])
+        : this.sortedMeasures;
+
+
+      return availableMeasures.filter(measure => {
         return measure.title.match(new RegExp(this.searchValue, 'i'))
       })
+      // return this.sortedMeasures.filter(measure => {
+      //   return measure.title.match(new RegExp(this.searchValue, 'i'))
+      // })
     },
   },
   methods: {
+    filterMeasureByType(type) {
+      const filtered  = this.sortedMeasures.filter(measure => {
+        return measure[type] === true
+      })
+      return filtered;
+    },
     choose(value) {
       this.$emit('choose', value)
     },
+    ...mapGetters({ selectedType: 'selectedAreas/selectedGeometryType' }),
   },
 }
 </script>
