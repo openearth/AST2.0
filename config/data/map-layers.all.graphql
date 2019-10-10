@@ -6,5 +6,5 @@ query ($locale: SiteLocale, $first: IntType, $skip: IntType = 0) {
   },
   _allMapLayersMeta {
     count
-  }
+  },
 }
