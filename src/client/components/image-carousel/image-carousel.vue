@@ -30,16 +30,14 @@
           v-if="image.image.author"
           class="image-carousel__caption-entry"
         >
-          author: {{ image.image.author }}
+          {{ image.image.author }}
         </span>
-        <a
+        <span
           v-if="image.source"
-          :href="image.source"
           class="image-carousel__caption-entry"
         >
-          image source
-          <!-- TODO: add translation if approved by PO -->
-        </a>
+          {{ image.source }}
+        </span>
       </p>
     </slide>
   </carousel>
@@ -80,12 +78,12 @@ export default {
   left: 0;
   z-index: 2;
   padding: calc( var(--spacing-half) * 0.25) var(--spacing-half);
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 0.9);
 }
 
 .image-carousel__caption-entry {
   display: inline-block;
-  font-size: var(--font-size-small);
+  font-size: var(--font-size-extra-small);
 }
 
 .image-carousel__caption-entry:not(:last-child):after {
