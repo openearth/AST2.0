@@ -31,6 +31,7 @@ const initialState = () => ({
     },
     wmsLayers: [],
     customLayers: [],
+    mapLayers: [],
   },
 })
 
@@ -38,7 +39,8 @@ export const state = () => (initialState())
 
 export const mutations = {
   import(state, file) {
-    Object.keys(file).forEach(key => Vue.set(state, key, file[key]))
+    const newState = merge({}, state, file)
+    Object.keys(newState).forEach(key => Vue.set(state, key, newState[key]))
   },
   setMapZoom(state, value) {
     state.map.zoom = value
@@ -102,6 +104,12 @@ export const mutations = {
   setWmsLayer(state, layer) {
     state.map.wmsLayers.push(layer)
   },
+  setMapLayers(state, layer) {
+    if (state.map.mapLayers === undefined) {
+      Vue.set(state.map, 'mapLayers', [])
+    }
+    state.map.mapLayers.push(layer)
+  },
   setCustomLayer(state, layer) {
     if (state.map.customLayers === undefined) {
       Vue.set(state.map, 'customLayers', [])
@@ -119,7 +127,7 @@ export const mutations = {
     state.legalAccepted = true
   },
   setLayerOpacity(state, { id, value }) {
-    const layers = [ ...state.map.wmsLayers, ...state.map.customLayers ]
+    const layers = [ ...state.map.wmsLayers,  ...state.map.mapLayers, ...state.map.customLayers ]
     layers.forEach(layer => {
       if (id === layer.id) {
         layer.opacity = value
@@ -127,7 +135,7 @@ export const mutations = {
     })
   },
   setLayerVisibility(state, { id, value }) {
-    const layers = [ ...state.map.wmsLayers, ...state.map.customLayers ]
+    const layers = [ ...state.map.wmsLayers,  ...state.map.mapLayers, ...state.map.customLayers ]
     layers.forEach(layer => {
       if (id === layer.id) {
         layer.visible = value
@@ -136,7 +144,7 @@ export const mutations = {
     })
   },
   setLegendVisibility(state, { id, value }) {
-    const layers = [ ...state.map.wmsLayers, ...state.map.customLayers ]
+    const layers = [ ...state.map.wmsLayers,  ...state.map.mapLayers, ...state.map.customLayers ]
     layers.forEach(layer => {
       if (id === layer.id && layer.legendUrl) {
         layer.showLegend = value
@@ -318,6 +326,11 @@ export const actions = {
       })
     })
   },
+  bootstrapMapLayers({ state, commit }, layers) {
+    layers.forEach(layer => {
+      commit('setMapLayers', { id: layer.id, visible: false, showLegend: false, opacity: 1 })
+    })
+  },
   async updateProjectAreaSetting({ state, commit, rootGetters, getters, dispatch }, payload ) {
     const { type } = payload
 
@@ -366,6 +379,7 @@ export const actions = {
     }
 
     commit('appMenu/hideMenu', null, { root: true })
+    dispatch('bootstrapMapLayers', rootState.data.mapLayers)
 
     if (!validProject.valid) {
       throw new Error('New error')
@@ -631,8 +645,14 @@ export const getters = {
       opacity,
     }))
   },
-  customLayers: (state, getters, rootState, rootGetters) => {
+  customLayers: (state) => {
     return state.map.customLayers
+  },
+  mapLayers: (state, getters, rootState, rootGetters) => {
+    return rootGetters['data/mapLayers/constructed'].map(layer => {
+      const storerdSettings = state.map.mapLayers.find(({ id }) => id === layer.id)
+      return { ...layer, ...storerdSettings }
+    })
   },
   settingsProjectArea: (state) => {
     return state.settings.projectArea

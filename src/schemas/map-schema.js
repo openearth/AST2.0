@@ -30,6 +30,20 @@ export default {
         },
       },
     },
+    mapLayers: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['id', 'showLegend', 'visible', 'opacity'],
+        properties: {
+          id: { type: 'string' },
+          showLegend: { type: 'boolean' },
+          visible: { type: 'boolean' },
+          opacity: { type: 'number' },
+        },
+      },
+    },
     customLayers: {
       type: 'array',
       items: {

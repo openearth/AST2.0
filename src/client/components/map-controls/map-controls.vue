@@ -65,6 +65,7 @@
           ref="layerlist"
           :wms-layers="wmsLayers"
           :custom-layers="customLayers"
+          :map-layers="mapLayers"
           class="map-controls__layer-list"
           @opacity-change="event => $emit('layer-opacity-change', event)"
           @visibility-change="event => $emit('layer-visibility-change', event)"
@@ -140,6 +141,10 @@ export default {
       default: () => [],
     },
     customLayers: {
+      type: Array,
+      default: () => [],
+    },
+    mapLayers: {
       type: Array,
       default: () => [],
     },
