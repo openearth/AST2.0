@@ -23,7 +23,6 @@
         :value="stringValue"
         :on-change="value => $emit('change', isNaN(value) ? null : value)"
         class="input-range__number"
-        force-keyboard
         hide-label
       />
       <div v-else class="md-field numeric-input input-range__number md-theme-default md-has-value">
@@ -131,12 +130,11 @@ export default {
 }
 
 .input-range__number {
+  width: 6rem;
   position: relative;
-  width: 4rem;
 }
 
 .input-range__number .md-input {
-  position: absolute;
   width: 100%;
   text-align: center;
 }
