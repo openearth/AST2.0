@@ -1,8 +1,15 @@
 <template>
-  <div class="app-menu">
+  <aside class="app-menu">
     <md-drawer :md-active="showNavigation">
       <md-toolbar class="md-transparent app-menu__header" md-elevation="0">
-        <span v-if="title" class="md-body-2">{{ title }}</span>
+        <h3
+          v-if="title"
+          class="md-body-2"
+          role="heading"
+          aria-level="2"
+        >
+          {{ title }}
+        </h3>
 
         <md-button class="md-icon-button" @click="() => $emit('onCloseNavigation')">
           <md-icon>clear</md-icon>
@@ -10,110 +17,113 @@
       </md-toolbar>
       <md-divider />
 
-      <md-list>
-        <md-list-item>
-          <md-button
-            :disabled="!acceptedLegal"
-            class="app-menu__button"
-            @click="$emit('newProject')">
-            <md-icon>add</md-icon>
-            <span class="md-body-1">
-              {{ $t('new_project') }}
-            </span>
-          </md-button>
-        </md-list-item>
+      <nav>
+        <md-list>
+          <md-list-item>
+            <md-button
+              :disabled="!acceptedLegal"
+              class="app-menu__button"
+              @click="$emit('newProject')">
+              <md-icon>add</md-icon>
+              <span class="md-body-1">
+                {{ $t('new_project') }}
+              </span>
+            </md-button>
+          </md-list-item>
 
-        <md-list-item class="app-menu__open-folder">
-          <md-button
-            :to="`/${$i18n.locale}/`"
-            :disabled="!acceptedLegal"
-            class="app-menu__button app-menu__open-folder-button">
-            <md-icon>folder_open</md-icon>
-            <span class="md-body-1">
-              {{ $t('open_project') }}
-            </span>
-          </md-button>
-          <input
-            v-if="acceptedLegal"
-            class="app-menu__input-file"
-            type="file"
-            accept="application/json"
-            @change="event => $emit('importProject', event)">
-        </md-list-item>
-        <md-divider />
+          <md-list-item class="app-menu__open-folder">
+            <md-button
+              :to="`/${$i18n.locale}/`"
+              :disabled="!acceptedLegal"
+              class="app-menu__button app-menu__open-folder-button">
+              <md-icon>folder_open</md-icon>
+              <span class="md-body-1">
+                {{ $t('open_project') }}
+              </span>
+            </md-button>
+            <input
+              v-if="acceptedLegal"
+              class="app-menu__input-file"
+              type="file"
+              accept="application/json"
+              @change="event => $emit('importProject', event)">
+          </md-list-item>
+          <md-divider />
 
-        <md-list-item>
-          <md-button
-            :to="`/${$i18n.locale}/settings/project-area/`"
-            :disabled="!createdProjectArea"
-            class="app-menu__button">
-            <md-icon>settings</md-icon>
-            <span class="md-body-1">
-              {{ $t('project_settings') }}
-            </span>
-          </md-button>
-        </md-list-item>
+          <md-list-item>
+            <md-button
+              :to="`/${$i18n.locale}/settings/project-area/`"
+              :disabled="!createdProjectArea"
+              class="app-menu__button">
+              <md-icon>settings</md-icon>
+              <span class="md-body-1">
+                {{ $t('project_settings') }}
+              </span>
+            </md-button>
+          </md-list-item>
 
-        <md-list-item>
-          <md-button
-            :disabled="!createdProjectArea"
-            class="app-menu__button"
-            @click="$emit('saveProject')">
-            <md-icon>save</md-icon>
-            <span class="md-body-1">
-              {{ $t('save_project') }}
-            </span>
-          </md-button>
-        </md-list-item>
+          <md-list-item>
+            <md-button
+              :disabled="!createdProjectArea"
+              class="app-menu__button"
+              @click="$emit('saveProject')">
+              <md-icon>save</md-icon>
+              <span class="md-body-1">
+                {{ $t('save_project') }}
+              </span>
+            </md-button>
+          </md-list-item>
 
-        <md-list-item>
-          <md-button
-            :disabled="!hasAreas"
-            class="app-menu__button"
-            @click="$emit('exportProject')">
-            <md-icon>publish</md-icon>
-            <span class="md-body-1">
-              {{ $t('export_project') }}
-            </span>
-          </md-button>
-        </md-list-item>
-        <md-divider />
+          <md-list-item>
+            <md-button
+              :disabled="!hasAreas"
+              class="app-menu__button"
+              @click="$emit('exportProject')">
+              <md-icon>publish</md-icon>
+              <span class="md-body-1">
+                {{ $t('export_project') }}
+              </span>
+            </md-button>
+          </md-list-item>
+          <md-divider />
 
-        <md-list-item>
-          <md-button
-            :to="`/${$i18n.locale}/about/`"
-            class="app-menu__button">
-            <md-icon>info</md-icon>
-            <span class="md-body-1">
-              {{ $t('about') }}
-            </span>
-          </md-button>
-        </md-list-item>
+          <md-list-item>
+            <md-button
+              :to="`/${$i18n.locale}/about/`"
+              class="app-menu__button">
+              <md-icon>info</md-icon>
+              <span class="md-body-1">
+                {{ $t('about') }}
+              </span>
+            </md-button>
+          </md-list-item>
 
-        <md-list-item>
-          <md-button
-            :to="`/${$i18n.locale}/documentation/`"
-            class="app-menu__button">
-            <md-icon>help</md-icon>
-            <span class="md-body-1">
-              {{ $t('documentation') }}
-            </span>
-          </md-button>
-        </md-list-item>
+          <md-list-item>
+            <md-button
+              :to="`/${$i18n.locale}/documentation/`"
+              class="app-menu__button">
+              <md-icon>help</md-icon>
+              <span class="md-body-1">
+                {{ $t('documentation') }}
+              </span>
+            </md-button>
+          </md-list-item>
 
-        <md-list-item>
-          <md-button
-            :to="`/${$i18n.locale}/legal/`"
-            class="app-menu__button">
-            <md-icon>list_alt</md-icon>
-            <span class="md-body-1">
-              {{ $t('legal') }}
-            </span>
-          </md-button>
-        </md-list-item>
-      </md-list>
+          <md-list-item>
+            <md-button
+              :to="`/${$i18n.locale}/legal/`"
+              class="app-menu__button">
+              <md-icon>list_alt</md-icon>
+              <span class="md-body-1">
+                {{ $t('legal') }}
+              </span>
+            </md-button>
+          </md-list-item>
+        </md-list>
+      </nav>
+
     </md-drawer>
-  </div>
+  </aside>
 </template>
 
 <script>
@@ -202,11 +212,10 @@
   }
 
   .app-menu__input-file {
-    display: block;
     position: absolute;
+    top: 0;
     width: 100%;
     height: 100%;
-    top: 0;
     opacity: 0;
     z-index: 1;
   }
