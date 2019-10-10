@@ -30,7 +30,7 @@ export const actions = {
     }
 
     if (!features.length && !rootGetters['flow/isNewProjectView']) {
-      this.$router.push({ path: `/${rootState.i18n.locale}/project/` })
+      this.$router.push({ path: `/${rootState.i18n.locale}/project/` }).catch(err => {})
     }
   },
 }

@@ -208,7 +208,7 @@ export default {
       }
 
       this.hideMenu()
-      this.$router.push(`/${this.$i18n.locale}/new-project`)
+      this.$router.push(`/${this.$i18n.locale}/new-project`).catch(err => {})
     },
     onCreateArea(features) {
       this.createArea(features)
