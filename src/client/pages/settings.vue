@@ -6,10 +6,6 @@
       </template>
 
       <md-tab
-        id="tab-general"
-        :to="`/${locale}/settings/general/`"
-        :md-label="$t('general')"/>
-      <md-tab
         id="tab-project-area"
         :to="`/${locale}/settings/project-area/`"
         :md-label="$t('project_area')"/>
@@ -53,10 +49,6 @@ export default {
   middleware: ['settings-root', 'state-is-inactive'],
   data: () => ({
     tabs: [
-      {
-        key: 'general',
-        validatorKey: 'createdProjectArea',
-      },
       {
         key: 'project-area',
         validatorKey: 'createdProjectArea',
