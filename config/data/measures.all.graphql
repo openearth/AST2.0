@@ -4,6 +4,10 @@ query ($locale: SiteLocale, $first: IntType, $skip: IntType = 0) {
     workspaceInclude,
     slug,
     measureId,
+    scenarioNames,
+    canDrawPolygon,
+    canDrawPolyline,
+    canDrawPoint,
     body,
     color {
       hex

@@ -1,6 +1,6 @@
 <template>
   <measure-list
-    :measures="orderedMeasures"
+    :measures="workspaceMeasures"
     @choose="chooseMeasure"
   />
 </template>
@@ -12,7 +12,7 @@ import { mapGetters, mapActions } from "vuex"
 export default {
     components: { AppPanel, MeasureStepper, MeasureList },
     computed: {
-    ...mapGetters('data/measures', ['orderedMeasures']),
+    ...mapGetters('data/measures', ['workspaceMeasures']),
     },
     methods: {
       ...mapActions({

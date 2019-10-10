@@ -4,13 +4,19 @@
       <md-card-header-text>
         <div class="md-subheading measure-card__title">{{ measure.title }}</div>
         <div class="md-caption measure-card__tags">
-          <md-chip v-if="measure.systemSuitability" class="md-body-2">{{ measure.systemSuitability.toFixed(1) }}</md-chip>
+          <md-chip v-if="measure.systemSuitability" class="md-body-2">
+            {{ measure.systemSuitability.toFixed(1) }}
+          </md-chip>
           <md-chip
             v-for="(score, index) in scores"
             :key="index"
-
             class="measure-card__tag">
             <md-icon :md-src="score.icon.url" class="measure-card__icon" />
+          </md-chip>
+          <md-chip v-if="measure.featured === true" class="measure-card__tag">
+            <md-icon class="measure-card__icon">
+              star
+            </md-icon>
           </md-chip>
         </div>
       </md-card-header-text>

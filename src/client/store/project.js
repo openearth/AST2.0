@@ -625,15 +625,16 @@ export const getters = {
       opacity,
     }))
   },
-
   customLayers: (state) => {
     return state.map.customLayers
   },
-
   mapLayers: (state, getters, rootState, rootGetters) => {
     return rootGetters['data/mapLayers/constructed'].map(layer => {
       const storerdSettings = state.map.mapLayers.find(({ id }) => id === layer.id)
       return { ...layer, ...storerdSettings }
     })
+  },
+  settingsProjectArea: (state) => {
+    return state.settings.projectArea
   },
 }
