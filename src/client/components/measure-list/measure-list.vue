@@ -12,10 +12,10 @@
 
         <div class="md-toolbar-section-end">
           <md-button
-            :class="{'md-primary': sortType === FEATUERD}"
+            :class="{'md-primary': sortFeatured === true}"
             class="md-icon-button"
-            @click="sortHandler(FEATUERD)">
-            <md-icon v-if="featureSorted">star</md-icon>
+            @click="sortFeatured = !sortFeatured">
+            <md-icon v-if="featureSorted">star_border</md-icon>
             <md-icon v-else>star_border</md-icon>
           </md-button>
 
@@ -23,7 +23,13 @@
             :class="{'md-primary': sortType === ALPHA}"
             class="md-icon-button"
             @click="sortHandler(ALPHA)">
-            <md-icon>sort_by_alpha</md-icon>
+            <sup>A</sup>/<sub>Z</sub>
+          </md-button>
+          <md-button
+            :class="{'md-primary': sortType === SYSTEM_SUITABILITY}"
+            class="md-icon-button"
+            @click="sortHandler(SYSTEM_SUITABILITY)">
+            <sup>1</sup>/<sub>9</sub>
           </md-button>
         </div>
       </div>
@@ -67,7 +73,8 @@ export default {
     ALPHA,
     FEATUERD,
     searchValue: '',
-    sortType: FEATUERD,
+    sortType: SYSTEM_SUITABILITY,
+    sortFeatured: true,
   }),
   computed: {
     ...mapGetters({ selectedType: 'selectedAreas/selectedGeometryType' }),
@@ -94,9 +101,17 @@ export default {
       })
     },
     featureSorted() {
-      const featured = this.systemSuitabilitySortedMeasures.filter(({ featured }) => featured === true)
-      const nonfeatured = this.systemSuitabilitySortedMeasures.filter(({ featured }) => featured === false)
-      return [...featured, ...nonfeatured]
+      const list = this.sortType === SYSTEM_SUITABILITY
+        ? this.systemSuitabilitySortedMeasures
+        : this.alphaSortedMeasures
+
+      if (this.sortFeatured) {
+        const featured = list.filter(({ featured }) => featured === true)
+        const nonfeatured = list.filter(({ featured }) => featured === false)
+        return [...featured, ...nonfeatured]
+      } else {
+        return list
+      }
     },
     sortedMeasures() {
       return this.alphaSorted
@@ -117,15 +132,7 @@ export default {
         .filter(measure => measure[selectedType] === true || showAll)
         .filter(measure => measure.title.match(searchRE))
 
-      switch (this.sortType) {
-        case ALPHA:
-          return searchFiltered(this.alphaSortedMeasures)
-        case FEATUERD:
-          return searchFiltered(this.featureSorted)
-        case SYSTEM_SUITABILITY:
-        default:
-          return searchFiltered(this.systemSuitabilitySortedMeasures)
-      }
+      return searchFiltered(this.featureSorted)
     },
   },
   methods: {
