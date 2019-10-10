@@ -34,7 +34,12 @@
               <div class="areas__choose-wrapper">
                 <div class="areas__choose-content">
                   <p v-if="appliedMeasure">{{ appliedMeasure.title }}</p>
-                  <md-button :to="`/${locale}/project/measures`" class="md-primary md-raised areas__choose-button">{{ appliedMeasure ? $t('change_measure') : $t('choose_measure') }}</md-button>
+                  <md-button
+                    :to="`/${locale}/project/measures`"
+                    class="md-primary md-raised areas__choose-button"
+                  >
+                    {{ appliedMeasure ? $t('change_measure') : $t('choose_measure') }}
+                  </md-button>
                 </div>
                 <div v-if="appliedMeasure" class="areas__choose-icon">
                   <img :src="appliedMeasure.image.url" >
