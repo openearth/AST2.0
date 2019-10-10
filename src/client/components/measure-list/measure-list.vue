@@ -76,18 +76,15 @@ export default {
         'LineString': 'canDrawPolyline',
         'Point': 'canDrawPoint',
       }
-      const type = this.selectedType();
-      const availableMeasures = type
-        ? this.filterMeasureByType(types[type])
+      const selectedType = this.selectedType();
+      const availableMeasures = selectedType
+        ? this.filterMeasureByType(types[selectedType])
         : this.sortedMeasures;
 
 
       return availableMeasures.filter(measure => {
         return measure.title.match(new RegExp(this.searchValue, 'i'))
       })
-      // return this.sortedMeasures.filter(measure => {
-      //   return measure.title.match(new RegExp(this.searchValue, 'i'))
-      // })
     },
   },
   methods: {
