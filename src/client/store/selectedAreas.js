@@ -26,11 +26,11 @@ export const actions = {
     idsToAdd.forEach(id => commit('addAreaId', id))
 
     if (features.length && !features.find(({ id }) => id === area.id)) {
-      this.$router.push({ path: `/${rootState.i18n.locale}/project/areas/` })
+      this.$router.push({ path: `/${rootState.i18n.locale}/project/areas/` }).catch(err => {})
     }
 
     if (!features.length && !rootGetters['flow/isNewProjectView']) {
-      this.$router.push({ path: `/${rootState.i18n.locale}/project/` })
+      this.$router.push({ path: `/${rootState.i18n.locale}/project/` }).catch(err => {})
     }
   },
 }

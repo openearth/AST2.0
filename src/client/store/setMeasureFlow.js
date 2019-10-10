@@ -48,7 +48,7 @@ export const actions = {
     commit('setMeasureId', id)
     commit('updateCurrentStep', 1)
     commit('mode/isAddOnly', null, { root: true })
-    this.$router.push({ path })
+    this.$router.push({ path }).catch(err => {})
   },
   async connectMeasureToArea({ commit, state, rootGetters, dispatch }, features) {
     const measure = rootGetters['data/measures/workspaceMeasures'].find(({ measureId }) => measureId === state.id)
@@ -62,14 +62,14 @@ export const actions = {
     commit('setInFlow', false)
     commit('mode/isDefault', null, { root:true })
     if (relocate) {
-      this.$router.push(`/${rootState.i18n.locale}/project/`)
+      this.$router.push(`/${rootState.i18n.locale}/project/`).catch(err => {})
     }
   },
   toStep({ commit, rootState }, step) {
     commit('updateCurrentStep', step.id)
     const locale = rootState.i18n.locale
     const path = `/${locale}/${step.slug}/`
-    this.$router.push({ path })
+    this.$router.push({ path }).catch(err => {})
   },
 }
 

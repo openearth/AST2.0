@@ -125,7 +125,7 @@ export default {
     ...mapActions({ updateAreaProperties: 'project/updateAreaProperties' }),
     ...mapMutations({ updateAreaProperty: 'project/updateAreaProperty' }),
     onDone() {
-      this.$router.push(`/${this.locale}/project/`)
+      this.$router.push(`/${this.locale}/project/`).catch(err => {})
       MapEventBus.$emit(MODE, 'simple_select')
     },
     getDefaultValueProperty(key, property, defaultValues) {
