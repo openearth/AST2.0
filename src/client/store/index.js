@@ -10,6 +10,12 @@ export const plugins = [ (store) => {
       }
     }
   )
+  store.watch(
+    (state, getters) => getters['data/workspaces/activeWorkspace'],
+    (newValue, oldValue) => {
+      store.dispatch('project/applyDefaultValuesToAreaSettings')
+    }
+  )
   store.subscribe(({ type, payload }, state) => {
     if (type === 'data/workspaces/setDomain') {
       const domain = state.data.workspaces._domain

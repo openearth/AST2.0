@@ -41,7 +41,7 @@ export const getters = {
       .filter(feature => state.indexOf(feature.id) !== -1)
   },
   selectedGeometryType(state, getters, rootState) {
-    if(!state[0] || rootState.project.areas.length < 1) return null
+    if(!state[0] || rootState.project.areas.length < 1) return 'all'
     const firstSelectedArea = rootState.project.areas.find(area => area.id === state[0])
     return firstSelectedArea.geometry.type
   },

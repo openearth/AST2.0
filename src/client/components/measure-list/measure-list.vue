@@ -12,9 +12,17 @@
 
         <div class="md-toolbar-section-end">
           <md-button
-            :class="{'md-primary': alphaSorted}"
+            :class="{'md-primary': sortType === FEATUERD}"
             class="md-icon-button"
-            @click="alphaSorted = !alphaSorted">
+            @click="sortHandler(FEATUERD)">
+            <md-icon v-if="featureSorted">star</md-icon>
+            <md-icon v-else>star_border</md-icon>
+          </md-button>
+
+          <md-button
+            :class="{'md-primary': sortType === ALPHA}"
+            class="md-icon-button"
+            @click="sortHandler(ALPHA)">
             <md-icon>sort_by_alpha</md-icon>
           </md-button>
         </div>
@@ -41,6 +49,11 @@
 import { mapGetters } from "vuex";
 import { MeasureCard } from "..";
 import TextInput from '../text-input'
+
+const SYSTEM_SUITABILITY = 'system-suitability'
+const ALPHA = 'alpha'
+const FEATUERD = 'featured'
+
 export default {
   components: { MeasureCard, TextInput },
   props: {
@@ -50,10 +63,25 @@ export default {
     },
   },
   data: () => ({
+    SYSTEM_SUITABILITY,
+    ALPHA,
+    FEATUERD,
     searchValue: '',
-    alphaSorted: false,
+    sortType: FEATUERD,
   }),
   computed: {
+    ...mapGetters({ selectedType: 'selectedAreas/selectedGeometryType' }),
+    systemSuitabilitySortedMeasures() {
+      return [...this.measures].sort((a, b) => {
+        if (a.systemSuitability > b.systemSuitability) {
+          return 1
+        }
+        if (a.systemSuitability < b.systemSuitability) {
+          return -1
+        }
+        return 0
+      })
+    },
     alphaSortedMeasures() {
       return [...this.measures].sort((a, b) => {
         if (a.title > b.title) {
@@ -65,39 +93,50 @@ export default {
         return 0
       })
     },
+    featureSorted() {
+      const featured = this.systemSuitabilitySortedMeasures.filter(({ featured }) => featured === true)
+      const nonfeatured = this.systemSuitabilitySortedMeasures.filter(({ featured }) => featured === false)
+      return [...featured, ...nonfeatured]
+    },
     sortedMeasures() {
       return this.alphaSorted
         ? this.alphaSortedMeasures
-        : this.measures
+        : this.systemSuitabilitySortedMeasures
     },
     filteredMeasures() {
+      const searchRE = new RegExp(this.searchValue, 'i')
       const types = {
         'Polygon': 'canDrawPolygon',
         'LineString': 'canDrawPolyline',
         'Point': 'canDrawPoint',
       }
-      const selectedType = this.selectedType();
-      const availableMeasures = selectedType
-        ? this.filterMeasureByType(types[selectedType])
-        : this.sortedMeasures;
+      const selectedType = types[this.selectedType]
+      const showAll = this.selectedType === 'all'
 
+      const searchFiltered = list => list
+        .filter(measure => measure[selectedType] === true || showAll)
+        .filter(measure => measure.title.match(searchRE))
 
-      return availableMeasures.filter(measure => {
-        return measure.title.match(new RegExp(this.searchValue, 'i'))
-      })
+      switch (this.sortType) {
+        case ALPHA:
+          return searchFiltered(this.alphaSortedMeasures)
+        case FEATUERD:
+          return searchFiltered(this.featureSorted)
+        case SYSTEM_SUITABILITY:
+        default:
+          return searchFiltered(this.systemSuitabilitySortedMeasures)
+      }
     },
   },
   methods: {
-    filterMeasureByType(type) {
-      const filtered  = this.sortedMeasures.filter(measure => {
-        return measure[type] === true
-      })
-      return filtered;
-    },
     choose(value) {
       this.$emit('choose', value)
     },
-    ...mapGetters({ selectedType: 'selectedAreas/selectedGeometryType' }),
+    sortHandler(selected) {
+      this.sortType = this.sortType === selected
+       ? SYSTEM_SUITABILITY
+       : selected
+    },
   },
 }
 </script>
