@@ -407,18 +407,20 @@ export const getters = {
       const kpiKeys = ['storageCapacity', 'returnTime', 'groundwater_recharge', 'evapotranspiration', 'tempReduction', 'coolSpot', 'constructionCost', 'maintenanceCost']
       const kpiKeysTitleMap = rootGetters['data/kpiGroups/kpiKeysTitleMap']
       const kpiKeysUnitMap = rootGetters['data/kpiGroups/kpiKeysUnitMap']
-      const kpiKeysIntegerMap = rootGetters['data/kpiGroups/kpiKeysIntegerMap']
-      const toTwoDecimals = value => round(value, 2)
+      const kpiKeysDecimalScaleMap = rootGetters['data/kpiGroups/kpiKeysDecimalScaleMap']
+
+      const toTwoDecimals = (value, precision = 2) => round(value, precision)
       const measueTitleForId = id => get(measureById(id), 'title')
       const kpiTitleByKey = key => `${kpiKeysTitleMap[key]}${kpiKeysUnitMap[key] ? ` (${kpiKeysUnitMap[key]})` : ''}`
 
       const measureValueMap = getters.areas
+        .filter(area => area.properties.hasOwnProperty('measure'))
         .map(area => {
           const values = kpiKeys.map(key => {
             const value = get(area, `properties.apiData[${key}]`)
-            const isInteger = kpiKeysIntegerMap && kpiKeysIntegerMap[key]
-            const val = isInteger ? Math.round(value) : toTwoDecimals(value)
-            return val
+            const decimalScale = kpiKeysDecimalScaleMap && kpiKeysDecimalScaleMap[key]
+            const scale = decimalScale ? decimalScale : 0;
+            return toTwoDecimals(value, scale)
           })
           return [area.properties.measure, toTwoDecimals(area.properties.area), ...values]
         })
@@ -452,17 +454,20 @@ export const getters = {
       const kpiKeys = ['filteringUnit', 'captureUnit', 'settlingUnit']
       const kpiKeysTitleMap = rootGetters['data/kpiGroups/kpiKeysTitleMap']
       const kpiKeysUnitMap = rootGetters['data/kpiGroups/kpiKeysUnitMap']
-      const kpiKeyIntegerMap = rootGetters['data/kpiGroups/kpiKeyIntegerMap']
-      const toTwoDecimals = value => round(value, 2)
+      const kpiKeysDecimalScaleMap = rootGetters['data/kpiGroups/kpiKeysDecimalScaleMap']
+
+      const toTwoDecimals = (value, precision = 2) => round(value, precision)
       const measueTitleForId = id => get(measureById(id), 'title')
       const kpiTitleByKey = key => `${kpiKeysTitleMap[key]}${kpiKeysUnitMap[key] ? ` (${kpiKeysUnitMap[key]})` : ''}`
 
       const measureValueMap = getters.areas
+        .filter(area => area.properties.hasOwnProperty('measure'))
         .map(area => {
           const values = kpiKeys.map(key => {
             const value = get(area, `properties.apiData[${key}]`)
-            const isInteger = kpiKeyIntegerMap && kpiKeyIntegerMap[key]
-            return isInteger ? Math.round(value) : toTwoDecimals(value)
+            const decimalScale = kpiKeysDecimalScaleMap && kpiKeysDecimalScaleMap[key]
+            const scale = decimalScale ? decimalScale : 0
+            return toTwoDecimals(value, scale)
           })
           return [area.properties.measure, toTwoDecimals(area.properties.area), ...values]
         })
