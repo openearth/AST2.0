@@ -611,8 +611,10 @@ export const getters = {
       opacity,
     }))
   },
-
   customLayers: (state, getters, rootState, rootGetters) => {
     return state.map.customLayers
+  },
+  settingsProjectArea: (state) => {
+    return state.settings.projectArea
   },
 }
