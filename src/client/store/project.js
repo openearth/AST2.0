@@ -407,14 +407,20 @@ export const getters = {
       const kpiKeys = ['storageCapacity', 'returnTime', 'groundwater_recharge', 'evapotranspiration', 'tempReduction', 'coolSpot', 'constructionCost', 'maintenanceCost']
       const kpiKeysTitleMap = rootGetters['data/kpiGroups/kpiKeysTitleMap']
       const kpiKeysUnitMap = rootGetters['data/kpiGroups/kpiKeysUnitMap']
+      const kpiKeysIntegerMap = rootGetters['data/kpiGroups/kpiKeysIntegerMap']
       const toTwoDecimals = value => round(value, 2)
       const measueTitleForId = id => get(measureById(id), 'title')
       const kpiTitleByKey = key => `${kpiKeysTitleMap[key]}${kpiKeysUnitMap[key] ? ` (${kpiKeysUnitMap[key]})` : ''}`
 
       const measureValueMap = getters.areas
         .map(area => {
-          const values = kpiKeys.map(key => get(area, `properties.apiData[${key}]`))
-          return [area.properties.measure, area.properties.area, ...values]
+          const values = kpiKeys.map(key => {
+            const value = get(area, `properties.apiData[${key}]`)
+            const isInteger = kpiKeysIntegerMap && kpiKeysIntegerMap[key]
+            const val = isInteger ? Math.round(value) : toTwoDecimals(value)
+            return val
+          })
+          return [area.properties.measure, toTwoDecimals(area.properties.area), ...values]
         })
         .reduce((obj, row) => {
           const [measureId, ...values] = row
@@ -434,7 +440,7 @@ export const getters = {
           ...kpiKeys.map(kpiTitleByKey),
         ],
         rows: Object.entries(measureValueMap)
-          .map(([id, values]) => [measueTitleForId(id), ...values.map(toTwoDecimals)]),
+          .map(([id, values]) => [measueTitleForId(id), ...values]),
       }
     }
   },
@@ -446,14 +452,19 @@ export const getters = {
       const kpiKeys = ['filteringUnit', 'captureUnit', 'settlingUnit']
       const kpiKeysTitleMap = rootGetters['data/kpiGroups/kpiKeysTitleMap']
       const kpiKeysUnitMap = rootGetters['data/kpiGroups/kpiKeysUnitMap']
+      const kpiKeyIntegerMap = rootGetters['data/kpiGroups/kpiKeyIntegerMap']
       const toTwoDecimals = value => round(value, 2)
       const measueTitleForId = id => get(measureById(id), 'title')
       const kpiTitleByKey = key => `${kpiKeysTitleMap[key]}${kpiKeysUnitMap[key] ? ` (${kpiKeysUnitMap[key]})` : ''}`
 
       const measureValueMap = getters.areas
         .map(area => {
-          const values = kpiKeys.map(key => get(area, `properties.apiData[${key}]`))
-          return [area.properties.measure, area.properties.area, ...values]
+          const values = kpiKeys.map(key => {
+            const value = get(area, `properties.apiData[${key}]`)
+            const isInteger = kpiKeyIntegerMap && kpiKeyIntegerMap[key]
+            return isInteger ? Math.round(value) : toTwoDecimals(value)
+          })
+          return [area.properties.measure, toTwoDecimals(area.properties.area), ...values]
         })
         .reduce((obj, row) => {
           const [measureId, ...values] = row
@@ -473,7 +484,7 @@ export const getters = {
           ...kpiKeys.map(kpiTitleByKey),
         ],
         rows: Object.entries(measureValueMap)
-          .map(([id, values]) => [measueTitleForId(id), ...values.map(toTwoDecimals)]),
+          .map(([id, values]) => [measueTitleForId(id), ...values]),
       }
     }
   },

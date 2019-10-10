@@ -56,4 +56,13 @@ export const getters = {
 
     return map
   },
+  kpiKeysIntegerMap: state => {
+    let map = {}
+    state.forEach(group => {
+      group.kpis.forEach(kpi => {
+        map[kpi.key] = kpi.integer
+      })
+    })
+    return map
+  },
 }
