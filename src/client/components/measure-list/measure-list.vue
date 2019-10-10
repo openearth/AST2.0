@@ -73,10 +73,10 @@ export default {
     ...mapGetters({ selectedType: 'selectedAreas/selectedGeometryType' }),
     systemSuitabilitySortedMeasures() {
       return [...this.measures].sort((a, b) => {
-        if (a.systemSuitability > b.systemSuitability) {
+        if (a.systemSuitability < b.systemSuitability) {
           return 1
         }
-        if (a.systemSuitability < b.systemSuitability) {
+        if (a.systemSuitability > b.systemSuitability) {
           return -1
         }
         return 0
