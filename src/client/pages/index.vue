@@ -23,6 +23,16 @@
           accept="application/json"
           @change="onFileInput">
       </div>
+
+      <div class="page-index__docs-button-wrapper">
+        <md-button
+          :to="`/${$i18n.locale}/documentation/`"
+          :disabled="!acceptedLegal"
+          class="md-raised page-index__docs-button">
+          {{ $t('documentation') }}
+        </md-button>
+      </div>
+
     </div>
   </div>
 </template>
@@ -92,6 +102,20 @@ export default {
 
 .page-index__input-file:hover {
   cursor: pointer;
+}
+
+.page-index__docs-button-wrapper {
+  grid-column: span 3;
+  margin-top: var(--spacing-default);
+  padding-right: 8px;
+  padding-left: 8px;
+  text-align: center;
+}
+
+.page-index__docs-button {
+  width: 100%;
+  margin-right: 0;
+  margin-left: 0;
 }
 
 @supports (display: grid) {
