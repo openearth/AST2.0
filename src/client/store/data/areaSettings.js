@@ -3,7 +3,7 @@ export const state = () => []
 
 export const mutations = {
   addSetting(state, setting) {
-    state.push(setting)
+    state.push(Object.freeze(setting))
   },
 }
 

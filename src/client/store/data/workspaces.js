@@ -15,7 +15,7 @@ export const mutations = {
     Vue.set(state, workspace.name, workspace)
   },
   fillWorkspace(state, workspaceData) {
-    Vue.set(state, workspaceData.name, workspaceData)
+    Vue.set(state, workspaceData.name, Object.freeze(workspaceData))
   },
   setUserWorkspace(state, workspaceName) {
     Vue.set(state, '_user', workspaceName)

@@ -70,8 +70,9 @@ export default {
         : this.measures
     },
     filteredMeasures() {
+      const regexp = new RegExp(this.searchValue, 'i')
       return this.sortedMeasures.filter(measure => {
-        return measure.title.match(new RegExp(this.searchValue, 'i'))
+        return measure.title.match(regexp)
       })
     },
   },

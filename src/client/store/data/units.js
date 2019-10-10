@@ -4,7 +4,7 @@ export const state = () => []
 
 export const mutations = {
   addUnit(state, unit) {
-    state.push(unit)
+    state.push(Object.freeze(unit))
   },
 }
 

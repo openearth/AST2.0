@@ -6,7 +6,7 @@ export const state = () => []
 
 export const mutations = {
   addMeasure(state, measure) {
-    state.push(measure)
+    state.push(Object.freeze(measure))
   },
 
   addMeasuresRanking(state, rankedMeasures) {

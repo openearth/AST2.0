@@ -9,7 +9,7 @@ export const mutations = {
       ...kpi,
       unit: kpi.unit.key,
     }))
-    state.push({ ...group, kpis })
+    state.push(Object.freeze({ ...group, kpis }))
   },
 }
 

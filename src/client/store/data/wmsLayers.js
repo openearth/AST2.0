@@ -5,7 +5,7 @@ export const state = () => []
 
 export const mutations = {
   addLayer(state, layer) {
-    state.push(layer)
+    state.push(Object.freeze(layer))
   },
 }
 

@@ -7,7 +7,7 @@ export const mutations = {
   setConfig(state, settings) {
     Object.entries(settings)
       .forEach(([key, value]) => {
-        Vue.set(state, key, value)
+        Vue.set(state, key, Object.freeze(value))
       })
   },
 }
