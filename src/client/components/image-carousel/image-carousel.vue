@@ -8,7 +8,6 @@
       :key="index"
       :data-index="index"
       :data-name="`image-${index}`">
-
       <fixed-ratio
         :height="2"
         :width="3"
