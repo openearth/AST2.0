@@ -140,7 +140,7 @@ export default {
   padding: var(--spacing-half);
 
   text-align: right;
-  box-shadow: var(--shadow-small-grey);
+  border-top: 1px solid var(--border-color);
   background-color: var(--background-color);
 }
 </style>

@@ -67,6 +67,6 @@ export default {
 
   text-align: right;
   background-color: var(--background-color);
-  box-shadow: var(--shadow-small-grey);
+  border-top: 1px solid var(--border-color);
 }
 </style>
