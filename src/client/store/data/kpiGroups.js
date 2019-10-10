@@ -60,7 +60,6 @@ export const getters = {
     let map = {}
     state.forEach(group => {
       group.kpis.forEach(kpi => {
-        console.log('kpi', kpi);
         map[kpi.key] = kpi.decimalScale
       })
     })
