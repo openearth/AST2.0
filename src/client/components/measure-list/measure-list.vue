@@ -19,17 +19,23 @@
             <md-icon v-else>star_border</md-icon>
           </md-button>
 
+          <div class="measure-list__filter-seperator" />
+
           <md-button
             :class="{'md-primary': sortType === ALPHA}"
             class="md-icon-button"
             @click="sortHandler(ALPHA)">
-            <sup>A</sup>/<sub>Z</sub>
+            <component :is="sortType === ALPHA ? 'strong' : 'span'">
+              <sup>A</sup>/<sub>Z</sub>
+            </component>
           </md-button>
           <md-button
             :class="{'md-primary': sortType === SYSTEM_SUITABILITY}"
             class="md-icon-button"
             @click="sortHandler(SYSTEM_SUITABILITY)">
-            <sup>1</sup>/<sub>9</sub>
+            <component :is="sortType === SYSTEM_SUITABILITY ? 'strong' : 'span'">
+              <sup>1</sup>/<sub>9</sub>
+            </component>
           </md-button>
         </div>
       </div>
@@ -160,5 +166,12 @@ export default {
 
 .measure-list__card {
   height: 100%;
+}
+
+.measure-list__filter-seperator {
+  border-right: 1px solid grey;
+  height: var(--spacing-double);
+  width: 1px;
+  opacity: 0.5;
 }
 </style>
