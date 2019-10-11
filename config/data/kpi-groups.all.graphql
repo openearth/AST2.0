@@ -7,7 +7,8 @@ query ($locale: SiteLocale, $first: IntType, $skip: IntType = 0) {
       key,
       unit {
         key
-      }
+      },
+      defaultTargetValue,
     }
   }
   _allKpiGroupsMeta {
