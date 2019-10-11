@@ -26,6 +26,7 @@
             class="md-icon-button"
             @click="sortType = ALPHA">
             <svg
+              class="measure-list__sort-icon"
               xmlns:svg="http://www.w3.org/2000/svg"
               version="1.1"
               viewBox="0 0 6.3499999 6.3500002">
@@ -59,6 +60,7 @@
             class="md-icon-button"
             @click="sortType = SYSTEM_SUITABILITY">
             <svg
+              class="measure-list__sort-icon"
               xmlns:svg="http://www.w3.org/2000/svg"
               version="1.1"
               viewBox="0 0 6.3499999 6.3500002">
@@ -218,5 +220,9 @@ export default {
   height: var(--spacing-double);
   width: 1px;
   opacity: 0.5;
+}
+
+.measure-list__sort-icon {
+  width: 100%;
 }
 </style>

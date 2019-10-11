@@ -137,5 +137,6 @@ export default {
 .input-range__number .md-input {
   width: 100%;
   text-align: center;
+  min-width: 0;
 }
 </style>
