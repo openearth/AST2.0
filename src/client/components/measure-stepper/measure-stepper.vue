@@ -46,7 +46,8 @@ export default {
 <style>
 /* overwriting default styles for .md-steppers-navigation */
 .md-steppers-navigation {
-  box-shadow: var(--shadow-small-grey);
+  box-shadow: none;
+  border-bottom: 1px solid var(--border-color);
 }
 
 /* extending default styles for .md-stepper-header */
