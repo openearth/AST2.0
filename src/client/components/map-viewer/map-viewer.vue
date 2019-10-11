@@ -13,6 +13,7 @@
       :map-center="mapCenter"
       :wms-layers="wmsLayers"
       :custom-layers="customLayers"
+      :map-layers="mapLayers"
       :mode="mode"
       class="map-viewer__map"
       @create="onCreate"
@@ -32,6 +33,7 @@
       :layers="interactive && layers"
       :wms-layers="wmsLayers"
       :custom-layers="customLayers"
+      :map-layers="mapLayers"
       :current-mode="currentMode"
       class="map-viewer__controls--draw"
       @setMode="setMode"
@@ -50,7 +52,7 @@
 
     <layer-legend
       v-if="interactive && layers"
-      :layers="wmsLayers"
+      :layers="legendLayers"
       class="map-viewer__layer-legend"/>
 
 
@@ -127,9 +129,18 @@ export default {
       type: Array,
       default: () => [],
     },
+    mapLayers: {
+      type: Array,
+      default: () => [],
+    },
     mode: {
       type: String,
       default: '',
+    },
+  },
+  computed: {
+    legendLayers() {
+      return [...this.wmsLayers, ...this.mapLayers]
     },
   },
   methods: {
