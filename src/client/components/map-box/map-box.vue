@@ -341,7 +341,7 @@ export default {
         layers = style.layers
       } catch (err) {
         console.groupCollapsed(`Map styles are not loaded yet. Ignore adding layer ${title}`)
-        console.error(err)
+          console.error(err)
         console.groupEnd()
         return
       }
@@ -376,8 +376,8 @@ export default {
         } catch (err) {
           this.showError({ message: `Could not load WMS Layer: ${title}`, duration: 0 })
           console.groupCollapsed(`Could not load WMS Layer: ${title}`)
-          console.error(err)
-          console.log({ layer: { type, id, url, tileSize, title, visible } })
+            console.error(err)
+            console.log({ layer: { type, id, url, tileSize, title, visible } })
           console.groupEnd()
         }
       }
