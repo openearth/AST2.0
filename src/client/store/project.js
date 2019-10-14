@@ -268,12 +268,20 @@ export const actions = {
       dispatch('updateAreaProperties', { features: [feature], properties })
     })
   },
-  fetchAreaApiData({ state, commit }, features) {
+  async fetchAreaApiData({ state, commit, dispatch }, features) {
     features.forEach(async (feature) => {
       const projectArea = state.settings.area.properties.area
       const { scenarioName } = state.settings.projectArea
-      const apiData = await getApiDataForFeature(feature, projectArea, scenarioName)
-      commit('updateAreaProperty', { id: feature.id, properties: { apiData } })
+
+      getApiDataForFeature(feature, projectArea, scenarioName)
+        .then(apiData => commit('updateAreaProperty', { id: feature.id, properties: { apiData } }))
+        .catch(error => {
+          dispatch(
+            'notifications/showError',
+            { message: `Could not calculate data for ${feature.properties.name}!`, duration: 0 },
+            { root: true }
+          )
+        })
     })
   },
   deleteArea({ state, commit }, features) {
@@ -357,14 +365,22 @@ export const actions = {
 
     dispatch('updateMeasuresRanking')
   },
-  async updateMeasuresRanking({ state, commit, rootGetters }) {
+  async updateMeasuresRanking({ state, commit, rootGetters, dispatch }) {
     const filledInRequiredProjectAreaSettings = rootGetters['flow/filledInRequiredProjectAreaSettings']
 
     if (filledInRequiredProjectAreaSettings) {
       const { projectArea } = state.settings
-      const rankedMeasures = await getRankedMeasures(projectArea)
-
-      commit('data/measures/addMeasuresRanking', rankedMeasures, { root: true })
+      getRankedMeasures(projectArea)
+        .then(rankedMeasures =>
+          commit('data/measures/addMeasuresRanking', rankedMeasures, { root: true })
+        )
+        .catch(error => {
+          dispatch(
+            'notifications/showError',
+            { message: `Could not get measure ranking data!`, duration: 0 },
+            { root: true }
+          )
+        })
     }
   },
   async importProject({ state, commit, dispatch, rootGetters, rootState }, event) {
