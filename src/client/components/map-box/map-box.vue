@@ -362,7 +362,18 @@ export default {
             paint: {},
           }, lastWmsLayerId)
         } catch (err) {
-          console.error(err)
+          console.error({
+            message: `Could not load WMS Layer: ${title}`,
+            err,
+            layer: {
+              type,
+              id,
+              url,
+              tileSize,
+              title,
+              visible,
+            },
+          })
           this.showError({ message: `Could not load WMS Layer: ${title}`, duration: 0 })
         }
       }
