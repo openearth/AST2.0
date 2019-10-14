@@ -60,6 +60,6 @@ export default {
 .menu-icon__line-top--rotated,
 .menu-icon__line-center--rotated,
 .menu-icon__line-bottom--rotated {
-  transition: all .2s ease-in-out;
+  /* transition: all .2s ease-in-out; */
 }
 </style>

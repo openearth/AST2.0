@@ -109,7 +109,7 @@ export default {
 .legend__item {
   border-left-width: 8px;
   border-left-style: solid;
-  transition: border-left-color .3s ease-in-out;
+  /* transition: border-left-color .3s ease-in-out; */
 }
 
 .legend__item-header {

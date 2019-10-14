@@ -17,18 +17,18 @@
         </md-button>
       </text-input>
     </div>
-    <transition-group
+    <!-- <transition-group
       v-if="suggestions.length"
       class="search-input__suggestions"
       tag="ul"
-      name="suggestions-list">
-      <li
-        v-for="suggestion in suggestions"
-        :key="suggestion.id"
-        class="search-input__suggestion">
-        <button class="search-input__suggestion-button" @mousedown="() => fly(suggestion)">{{ suggestion['place_name'] }}</button>
-      </li>
-    </transition-group>
+      name="suggestions-list"> -->
+    <li
+      v-for="suggestion in suggestions"
+      :key="suggestion.id"
+      class="search-input__suggestion">
+      <button class="search-input__suggestion-button" @mousedown="() => fly(suggestion)">{{ suggestion['place_name'] }}</button>
+    </li>
+    <!-- </transition-group> -->
   </div>
 </template>
 
@@ -122,7 +122,7 @@ export default {
 }
 
 .suggestions-list {
-  transition: all 0.5s;
+  /* transition: all 0.5s; */
 
 }
 .suggestions-list-enter, .suggestions-list-leave-to {
@@ -137,7 +137,7 @@ export default {
 
 .suggestions-list-move {
   opacity: 1;
-  transition: all 0.5s;
+  /* transition: all 0.5s; */
 }
 
 @keyframes show {
