@@ -21,5 +21,10 @@ query ($id: ItemId){
       transparent,
       styles,
     },
+    mapLayers {
+      id,
+      title,
+      url
+    },
   }
 }
