@@ -1,0 +1,10 @@
+query ($locale: SiteLocale, $first: IntType, $skip: IntType = 0) {
+  mapLayers: allMapLayers(locale: $locale, first: $first, skip: $skip){
+    id,
+    title,
+    url
+  },
+  _allMapLayersMeta {
+    count
+  }
+}

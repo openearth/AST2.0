@@ -2,11 +2,32 @@ import MapEventBus, { MODE } from "../lib/map-event-bus";
 
 export const state = () => ({
   mode: '',
+  polygon: true,
+  line: true,
+  point: true,
 })
 
 export const mutations = {
   mode(state, mode) {
     state.mode = mode
+  },
+  polygonActive(state) {
+    state.polygon = true
+  },
+  polygonInactive(state) {
+    state.polygon = false
+  },
+  lineActive(state) {
+    state.line = true
+  },
+  lineInactive(state) {
+    state.line = false
+  },
+  pointActive(state) {
+    state.point = true
+  },
+  pointInactive(state) {
+    state.point = false
   },
 }
 
@@ -38,7 +59,7 @@ export const getters = {
       case 'modal':
         return false
       default:
-        return true
+        return state.point
     }
   },
 
@@ -51,7 +72,7 @@ export const getters = {
       case 'modal':
         return false
       default:
-        return true
+        return state.line
     }
   },
 
@@ -65,7 +86,7 @@ export const getters = {
       case 'modal':
         return false
       default:
-        return true
+        return state.polygon
     }
   },
 
@@ -78,6 +99,17 @@ export const getters = {
         return false
       default:
         return true
+    }
+  },
+
+  addOnly(state, getters, rootState) {
+    const mode = rootState.mode.state
+
+    switch (mode) {
+      case 'add-only':
+        return true
+      default:
+        return false
     }
   },
 

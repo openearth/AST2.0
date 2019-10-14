@@ -1,8 +1,13 @@
-query ($locale: SiteLocale) {
-  measures: allMeasures(locale: $locale, first: 1000000) {
+query ($locale: SiteLocale, $first: IntType, $skip: IntType = 0) {
+  measures: allMeasures(locale: $locale, first: $first, skip: $skip) {
     title,
+    workspaceInclude,
     slug,
     measureId,
+    scenarioNames,
+    canDrawPolygon,
+    canDrawPolyline,
+    canDrawPoint,
     body,
     color {
       hex
@@ -16,11 +21,14 @@ query ($locale: SiteLocale) {
     summary,
     images {
       title,
+      source,
       image {
         url,
         format,
         width,
-        height
+        height,
+        copyright,
+        author
       },
     }
     content,
@@ -39,5 +47,8 @@ query ($locale: SiteLocale) {
       min,
       max
     }
+  }
+  _allMeasuresMeta {
+    count
   }
 }

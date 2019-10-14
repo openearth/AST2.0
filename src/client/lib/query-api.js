@@ -1,7 +1,11 @@
 const fetch = require('node-fetch')
 const curry = require('lodash/fp/curry')
+const times = require('lodash/fp/times')
+const camelCase = require('lodash/camelCase')
 
-module.exports = curry(function query(token, variables, query) {
+const defaultFirst = 100;
+
+function executeFetch(token, variables, query) {
   return fetch(
     'https://graphql.datocms.com/',
     {
@@ -20,5 +24,44 @@ module.exports = curry(function query(token, variables, query) {
       }
       return res.json()
     })
-    .then((res) => res.data)
+}
+
+function getPaginatedData(token, variables, query) {
+  return async function(response) {
+    const keyRegex = /_all(.+)Meta/
+    const allKey = Object.keys(response.data).find(key => keyRegex.test(key))
+
+    if (allKey) {
+      const { count } = response.data[allKey]
+      const [_, originalKey] = allKey.match(keyRegex).map(camelCase)
+      const itemsInResponse = response.data[originalKey]
+      const remainingAmount = count - itemsInResponse.length
+      const totalRemainingRequests = Math.ceil(remainingAmount / itemsInResponse.length)
+      const promises = times(iteration => {
+          const skip = (iteration * variables.first) + itemsInResponse.length
+          return executeFetch(token, { ...variables, skip }, query)
+        }, totalRemainingRequests)
+
+      await Promise.all(promises)
+        .then(responses =>
+          responses.forEach(res => {
+            response.data[originalKey] = [...response.data[originalKey], ...res.data[originalKey]]
+          })
+        )
+
+      delete response.data[allKey]
+    }
+    return response
+  }
+}
+
+function returnData(response) {
+  return response.data
+}
+
+module.exports = curry(function query(token, variables, query) {
+  const args = [token, { first: defaultFirst, ...variables }, query]
+  return executeFetch(...args)
+    .then(getPaginatedData(...args))
+    .then(returnData)
 })

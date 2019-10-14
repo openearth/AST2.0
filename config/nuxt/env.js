@@ -13,4 +13,5 @@ module.exports = {
   baseUrl: process.env.URL,
   branch: process.env.BRANCH,
   MAPBOX_ACCESS_TOKEN: process.env.MAPBOX_ACCESS_TOKEN,
+  API_BASE: process.env.API_BASE,
 }

@@ -1,6 +1,7 @@
 <template>
   <div class="map-viewer">
     <map-box
+      :add-only="addOnly"
       :interactive="interactive"
       :point="point"
       :line="line"
@@ -11,6 +12,8 @@
       :map-zoom="mapZoom"
       :map-center="mapCenter"
       :wms-layers="wmsLayers"
+      :custom-layers="customLayers"
+      :map-layers="mapLayers"
       :mode="mode"
       class="map-viewer__map"
       @create="onCreate"
@@ -29,6 +32,8 @@
       :trash="interactive"
       :layers="interactive && layers"
       :wms-layers="wmsLayers"
+      :custom-layers="customLayers"
+      :map-layers="mapLayers"
       :current-mode="currentMode"
       class="map-viewer__controls--draw"
       @setMode="setMode"
@@ -47,7 +52,7 @@
 
     <layer-legend
       v-if="interactive && layers"
-      :layers="wmsLayers"
+      :layers="legendLayers"
       class="map-viewer__layer-legend"/>
 
 
@@ -67,6 +72,10 @@ export default {
     interactive: {
       type: Boolean,
       default: true,
+    },
+    addOnly: {
+      type: Boolean,
+      default: false,
     },
     point: {
       type: Boolean,
@@ -116,9 +125,22 @@ export default {
       type: Array,
       default: () => [],
     },
+    customLayers: {
+      type: Array,
+      default: () => [],
+    },
+    mapLayers: {
+      type: Array,
+      default: () => [],
+    },
     mode: {
       type: String,
       default: '',
+    },
+  },
+  computed: {
+    legendLayers() {
+      return [...this.wmsLayers, ...this.mapLayers]
     },
   },
   methods: {

@@ -6,8 +6,12 @@
       v-for="kpi in kpiGroup.kpis"
       :key="kpi.key"
       class="kpi-group__kpi">
-      <span class="md-body-1 kpi-group__kpi-title">{{ kpi.title }}:</span>
-      <p v-if="type === 'numbers'" class="kpi-group__kpi-value">{{ roundValue(kpiByKey(kpi.key)) }} {{ unit(kpi.unit) }}</p>
+      <span class="md-body-1 kpi-group__kpi-title">
+        {{ kpi.title }}:
+      </span>
+      <p v-if="type === 'numbers'" class="kpi-group__kpi-value">
+        {{ roundValue(kpiByKey(kpi.key)) }} {{ unit(kpi.unit) }}
+      </p>
 
       <md-progress-bar
         v-if="type === 'bars'"

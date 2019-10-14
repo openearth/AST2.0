@@ -2,7 +2,9 @@ import Vue from 'vue'
 import turfArea from '@turf/area'
 import turfLength from '@turf/length'
 import merge from 'lodash/merge'
-import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT, REPAINT } from '../lib/map-event-bus'
+import get from 'lodash/get'
+import round from 'lodash/round'
+import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT, REPAINT, DELETE_LAYER } from '../lib/map-event-bus'
 import { getApiDataForFeature, getRankedMeasures } from "../lib/get-api-data";
 import FileSaver from 'file-saver'
 import getLoadedFileContents from '../lib/get-loaded-file-contents'
@@ -28,6 +30,8 @@ const initialState = () => ({
       lng: 4.916535879906178,
     },
     wmsLayers: [],
+    customLayers: [],
+    mapLayers: [],
   },
 })
 
@@ -35,7 +39,8 @@ export const state = () => (initialState())
 
 export const mutations = {
   import(state, file) {
-    Object.keys(file).forEach(key => Vue.set(state, key, file[key]))
+    const newState = merge({}, state, file)
+    Object.keys(newState).forEach(key => Vue.set(state, key, newState[key]))
   },
   setMapZoom(state, value) {
     state.map.zoom = value
@@ -43,9 +48,6 @@ export const mutations = {
   setMapCenter(state, value) {
     state.map.center.lat = value.lat
     state.map.center.lng = value.lng
-  },
-  setTitle(state, value) {
-    state.settings.title = value
   },
   addProjectArea(state, value) {
     return state.settings.area = value
@@ -102,6 +104,22 @@ export const mutations = {
   setWmsLayer(state, layer) {
     state.map.wmsLayers.push(layer)
   },
+  setMapLayers(state, layer) {
+    if (state.map.mapLayers === undefined) {
+      Vue.set(state.map, 'mapLayers', [])
+    }
+    state.map.mapLayers.push(layer)
+  },
+  setCustomLayer(state, layer) {
+    if (state.map.customLayers === undefined) {
+      Vue.set(state.map, 'customLayers', [])
+    }
+    state.map.customLayers.push(layer)
+  },
+  deleteCustomLayer(state, id) {
+    state.map.customLayers = state.map.customLayers.filter(layer => layer.id !== id)
+    MapEventBus.$emit(DELETE_LAYER, id)
+  },
   toggleProjectAreaNestedSetting(state, { key, option, value }) {
     state.settings.projectArea[key][option] = !state.settings.projectArea[key][option]
   },
@@ -109,14 +127,16 @@ export const mutations = {
     state.legalAccepted = true
   },
   setLayerOpacity(state, { id, value }) {
-    state.map.wmsLayers.forEach(layer => {
+    const layers = [ ...state.map.wmsLayers,  ...state.map.mapLayers, ...state.map.customLayers ]
+    layers.forEach(layer => {
       if (id === layer.id) {
         layer.opacity = value
       }
     })
   },
   setLayerVisibility(state, { id, value }) {
-    state.map.wmsLayers.forEach(layer => {
+    const layers = [ ...state.map.wmsLayers,  ...state.map.mapLayers, ...state.map.customLayers ]
+    layers.forEach(layer => {
       if (id === layer.id) {
         layer.visible = value
         layer.showLegend = value
@@ -124,8 +144,9 @@ export const mutations = {
     })
   },
   setLegendVisibility(state, { id, value }) {
-    state.map.wmsLayers.forEach(layer => {
-      if (id === layer.id) {
+    const layers = [ ...state.map.wmsLayers,  ...state.map.mapLayers, ...state.map.customLayers ]
+    layers.forEach(layer => {
+      if (id === layer.id && layer.legendUrl) {
         layer.showLegend = value
       }
     })
@@ -147,25 +168,30 @@ export const actions = {
     center && commit('setMapCenter', center)
   },
   createArea({ state, commit, dispatch }, features) {
-    features.forEach(feature => {
-      const area = turfArea(feature.geometry)
+    const promises = features.map(feature => {
+      return new Promise((resolve, reject) => {
+        const area = turfArea(feature.geometry)
 
-      if (!state.settings.area.id) {
-        commit('addProjectArea', feature)
-        commit('updateProjectAreaProperty', { area, isProjectArea: true })
-        return
-      }
+        if (!state.settings.area.id) {
+          commit('addProjectArea', feature)
+          commit('updateProjectAreaProperty', { area, isProjectArea: true })
+          resolve()
+          return
+        }
 
-      commit('addArea', feature)
+        commit('addArea', feature)
 
-      const areaNumber = state.areas.length
-      dispatch('fetchAreaApiData', [feature])
-      commit('updateAreaProperty', { id: feature.id, properties: { name: `Area-${areaNumber}`, hidden: false } })
+        const areaNumber = state.areas.length
+        dispatch('fetchAreaApiData', [feature])
+        commit('updateAreaProperty', { id: feature.id, properties: { name: `Area-${areaNumber}`, hidden: false } })
 
-      setTimeout(() => {
-        MapEventBus.$emit(SELECT, feature.id)
-      }, 0)
+        setTimeout(() => {
+          MapEventBus.$emit(SELECT, feature.id)
+        }, 0)
+        resolve()
+      })
     })
+    return Promise.all(promises)
   },
   updateArea({ state, commit, dispatch, getters }, features) {
     features.forEach(feature => {
@@ -267,9 +293,9 @@ export const actions = {
 
       if (setting.multiple) {
         value = setting.options.reduce((obj, option) => ({
-                ...obj,
-                [option.value]: option.value === setting.defaultValue && setting.defaultValue.value,
-              }), {})
+            ...obj,
+            [option.value]: option.value === (setting.defaultValue && setting.defaultValue.value),
+          }), {})
       }
 
       if (setting.isSelect) {
@@ -281,13 +307,35 @@ export const actions = {
   },
   bootstrapSettingsTargets({ state, commit }, targets) {
     targets.forEach(({ key, kpis }) => {
-      const value = kpis.reduce((obj, kpi) => ({ ...obj, [kpi.key]: { include: true, value: "0" } }), {})
+      const getDefaultValue = value => value !== null ? String(value) : '0'
+      const value = kpis.reduce((obj, kpi) => ({
+        ...obj,
+        [kpi.key]: {
+          include: true,
+          value: getDefaultValue(kpi.defaultTargetValue),
+        },
+      }), {})
       commit('setTargets', { key, value })
     })
   },
   bootstrapWmsLayers({ state, commit }, layers) {
     layers.forEach(layer => {
       commit('setWmsLayer', { id: layer.id, visible: false, showLegend: false, opacity: 1 })
+    })
+  },
+  bootstrapCustomLayers({ state, commit }, layers) {
+    layers.forEach(layer => {
+      commit('setCustomLayer', {
+        ...layer,
+        visible: false,
+        showLegend: false,
+        opacity: 1,
+      })
+    })
+  },
+  bootstrapMapLayers({ state, commit }, layers) {
+    layers.forEach(layer => {
+      commit('setMapLayers', { id: layer.id, visible: false, showLegend: false, opacity: 1 })
     })
   },
   async updateProjectAreaSetting({ state, commit, rootGetters, getters, dispatch }, payload ) {
@@ -338,6 +386,7 @@ export const actions = {
     }
 
     commit('appMenu/hideMenu', null, { root: true })
+    dispatch('bootstrapMapLayers', rootState.data.mapLayers)
 
     if (!validProject.valid) {
       throw new Error('New error')
@@ -369,9 +418,137 @@ export const actions = {
     dispatch('bootstrapSettingsProjectArea', areaSettings)
     dispatch('bootstrapSettingsTargets', kpiGroups)
   },
+  applyDefaultValuesToAreaSettings({ state, dispatch, rootState, rootGetters }) {
+    const activeWorkspace = rootGetters['data/workspaces/activeWorkspace']
+    const filledInSettings = rootGetters['flow/fillesInSettings']
+    const areaSettings = rootState.data.areaSettings
+    const foo = areaSettings.map(item => {
+      const { defaultValue, ...itemRest } = item
+      const { key } = itemRest
+
+      const overriddenDefaultValue = activeWorkspace[key] && activeWorkspace[key].defaultValue
+        ? activeWorkspace[key].defaultValue
+        : defaultValue
+
+      return {
+        ...itemRest,
+        defaultValue: overriddenDefaultValue,
+      }
+    })
+
+    dispatch('bootstrapSettingsProjectArea', foo)
+  },
 }
 
 export const getters = {
+  tableClimateAndCosts: (state, getters, rootState, rootGetters) => {
+    if (state.areas.length) {
+      const measureIds = getters.areas.map(area => get(area, 'properties.measure'))
+      const measureById = rootGetters['data/measures/measureById']
+      const kpiKeys = ['storageCapacity', 'returnTime', 'groundwater_recharge', 'evapotranspiration', 'tempReduction', 'coolSpot', 'constructionCost', 'maintenanceCost']
+      const kpiKeysTitleMap = rootGetters['data/kpiGroups/kpiKeysTitleMap']
+      const kpiKeysUnitMap = rootGetters['data/kpiGroups/kpiKeysUnitMap']
+      const kpiKeysDecimalScaleMap = rootGetters['data/kpiGroups/kpiKeysDecimalScaleMap']
+
+      const toDecimalPricision = (value, precision = 2) => round(value, precision)
+      const measueTitleForId = id => get(measureById(id), 'title')
+      const kpiTitleByKey = key => `${kpiKeysTitleMap[key]}${kpiKeysUnitMap[key] ? ` (${kpiKeysUnitMap[key]})` : ''}`
+
+      const measureValueMap = getters.areas
+        .filter(area => area.properties.hasOwnProperty('measure'))
+        .map(area => {
+          const values = kpiKeys.map(key => get(area, `properties.apiData[${key}]`))
+          return [area.properties.measure, area.properties.area, ...values]
+        })
+        .reduce((obj, row) => {
+          const [measureId, ...values] = row
+          if (obj[measureId] === undefined) {
+            obj[measureId] = values
+          } else {
+            values.forEach((value, index) => obj[measureId][index] += value)
+          }
+          return obj
+        }, {})
+
+      return {
+        "title": rootState.i18n.messages.climate_and_costs,
+        "header": [
+          rootState.i18n.messages.measure,
+          rootState.i18n.messages.surface,
+          ...kpiKeys.map(kpiTitleByKey),
+        ],
+        rows: Object.entries(measureValueMap)
+          .map(([id, values]) => {
+            const [surface, ...kpiValues] = values
+            return [
+              measueTitleForId(id),
+              toDecimalPricision(surface, 2),
+              ...kpiValues.map((val, index) => {
+                const kpiKey = kpiKeys[index]
+                const decimalScale = kpiKeysDecimalScaleMap && kpiKeysDecimalScaleMap[kpiKey]
+                const scale = decimalScale ? decimalScale : 0;
+                return toDecimalPricision(val, scale)
+              }),
+            ]
+          }),
+      }
+    }
+  },
+
+  tableCoBenefits: (state, getters, rootState, rootGetters) => {
+    if (state.areas.length) {
+      const measureIds = getters.areas.map(area => get(area, 'properties.measure'))
+      const measureById = rootGetters['data/measures/measureById']
+      const kpiKeys = ['filteringUnit', 'captureUnit', 'settlingUnit']
+      const kpiKeysTitleMap = rootGetters['data/kpiGroups/kpiKeysTitleMap']
+      const kpiKeysUnitMap = rootGetters['data/kpiGroups/kpiKeysUnitMap']
+      const kpiKeysDecimalScaleMap = rootGetters['data/kpiGroups/kpiKeysDecimalScaleMap']
+
+      const toDecimalPricision = (value, precision = 2) => round(value, precision)
+      const measueTitleForId = id => get(measureById(id), 'title')
+      const kpiTitleByKey = key => `${kpiKeysTitleMap[key]}${kpiKeysUnitMap[key] ? ` (${kpiKeysUnitMap[key]})` : ''}`
+
+      const measureValueMap = getters.areas
+        .filter(area => area.properties.hasOwnProperty('measure'))
+        .map(area => {
+          const values = kpiKeys.map(key => get(area, `properties.apiData[${key}]`))
+          return [area.properties.measure, area.properties.area, ...values]
+        })
+        .reduce((obj, row) => {
+          const [measureId, ...values] = row
+          if (obj[measureId] === undefined) {
+            obj[measureId] = values
+          } else {
+            values.forEach((value, index) => obj[measureId][index] += value)
+          }
+          return obj
+        }, {})
+
+      return {
+        "title": rootState.i18n.messages.co_benefits,
+        "header": [
+          rootState.i18n.messages.measure,
+          rootState.i18n.messages.surface,
+          ...kpiKeys.map(kpiTitleByKey),
+        ],
+        rows: Object.entries(measureValueMap)
+        .map(([id, values]) => {
+          const [surface, ...kpiValues] = values
+          return [
+            measueTitleForId(id),
+            toDecimalPricision(surface, 2),
+            ...kpiValues.map((val, index) => {
+              const kpiKey = kpiKeys[index]
+              const decimalScale = kpiKeysDecimalScaleMap && kpiKeysDecimalScaleMap[kpiKey]
+              const scale = decimalScale ? decimalScale : 0;
+              return toDecimalPricision(val, scale)
+            }),
+          ]
+        }),
+      }
+    }
+  },
+
   areas: (state) => {
     return state.areas.map(feature => {
       let area;
@@ -401,14 +578,14 @@ export const getters = {
       )
     })
   },
-  areasByMeasure: (state, getters, rootState) => {
+  areasByMeasure: (state, getters, rootState, rootGetters) => {
     return getters.areas.reduce((obj, area) => {
       const measureId = area.properties.measure
 
       if (measureId) {
         if (!obj[measureId]) {
           obj[measureId] = {
-            measure: rootState.data.measures.find(measure => measure.measureId === measureId),
+            measure: rootGetters['data/measures/workspaceMeasures'].find(measure => measure.measureId === measureId),
             areas: [],
           }
         }
@@ -504,5 +681,17 @@ export const getters = {
       showLegend,
       opacity,
     }))
+  },
+  customLayers: (state) => {
+    return state.map.customLayers
+  },
+  mapLayers: (state, getters, rootState, rootGetters) => {
+    return rootGetters['data/mapLayers/constructed'].map(layer => {
+      const storerdSettings = state.map.mapLayers.find(({ id }) => id === layer.id)
+      return { ...layer, ...storerdSettings }
+    })
+  },
+  settingsProjectArea: (state) => {
+    return state.settings.projectArea
   },
 }

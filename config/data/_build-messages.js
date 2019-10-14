@@ -2,7 +2,7 @@ const path = require('path')
 const { readFileSync, writeFileSync } = require('fs')
 const { pipe, curry, get, map, reduce, assign } = require('lodash/fp')
 
-const locales = ['en', 'nl']
+const locales = ['en', 'nl', 'zh_CN']
 const dataDir = path.join(__dirname, '../../src/client/static/data')
 const sourceFilename = 'translations.json'
 const targetFilename = 'messages.json'

@@ -21,6 +21,7 @@ import MapEventBus, {
   SEARCH_SUGGESTIONS,
   FLY_TO,
   REPAINT,
+  DELETE_LAYER,
 } from '../../lib/map-event-bus'
 
 export default {
@@ -28,6 +29,10 @@ export default {
     initialShapes: {
       type: Array,
       default: () => [],
+    },
+    addOnly: {
+      type: Boolean,
+      default: false,
     },
     interactive: {
       type: Boolean,
@@ -73,6 +78,14 @@ export default {
       type: Array,
       default: () => [],
     },
+    customLayers: {
+      type: Array,
+      default: () => [],
+    },
+    mapLayers: {
+      type: Array,
+      default: () => [],
+    },
   },
 
   data: () => ({
@@ -81,17 +94,21 @@ export default {
   }),
 
   computed: {
+    allMapLayers() {
+      const layers = [ ...this.wmsLayers, ...this.customLayers, ...this.mapLayers ]
+      return layers
+    },
     hasProjectArea() {
       return !!this.projectArea.properties
     },
     layerVisibility() {
-      return this.wmsLayers.reduce((obj, layer) => {
+      return this.allMapLayers.reduce((obj, layer) => {
         obj[layer.id] = layer.visible
         return obj
       }, {})
     },
     layerOpacity() {
-      return this.wmsLayers.reduce((obj, layer) => {
+      return this.allMapLayers.reduce((obj, layer) => {
         obj[layer.id] = layer.opacity
         return obj
       }, {})
@@ -108,6 +125,15 @@ export default {
     mode(mode) {
       this.clearMap()
       this.$nextTick(this.fillMap)
+    },
+    wmsLayers() {
+      [...this.wmsLayers].reverse().forEach(this.addWmsLayer)
+    },
+    customLayers() {
+      [...this.customLayers].reverse().forEach(this.addWmsLayer)
+    },
+    mapLayers() {
+      [...this.mapLayers].reverse().forEach(this.addWmsLayer)
     },
   },
 
@@ -155,7 +181,7 @@ export default {
       this.map.on('draw.modechange', event => this.$emit('modechange', event.mode))
 
       this.map.on('load', () => {
-        [...this.wmsLayers].reverse().forEach(this.addWmsLayer)
+        this.allMapLayers.forEach(this.addWmsLayer)
         this.map.resize()
         this.map.addControl(this.draw, 'top-left')
         this.map.addControl(this.geoCoder)
@@ -168,7 +194,6 @@ export default {
       MapEventBus.$on(UPDATE_FEATURE_PROPERTY, ({ featureId, key, value }) => {
         if (this.draw.get(featureId) !== undefined) {
           const updatedFeature = this.draw.setFeatureProperty(featureId, key, value).get(featureId)
-          // console.log({ key, value, updatedFeature }) // Comment left on purpose for easy debugging
         }
       })
 
@@ -200,6 +225,10 @@ export default {
         const ids = features.map(({ id }) => id)
         this.$emit('delete', features)
         this.draw.delete(ids)
+      })
+
+      MapEventBus.$on(DELETE_LAYER, id => {
+        this.removeWmsLayer(id)
       })
 
       MapEventBus.$on(ZOOM_IN, () => this.map.zoomIn())
@@ -244,7 +273,7 @@ export default {
       })
     },
     fillMap() {
-      if (!this.interactive) {
+      if (this.interactive === false || this.addOnly === true) {
         this.hasProjectArea && this.addGeojsonLayer({ ...this.projectArea, id: 'projectArea' })
         this.areas.forEach(area => this.addGeojsonLayer(area))
         return
@@ -297,25 +326,40 @@ export default {
       // this.map.addLayer(fill)
       this.map.addLayer(line)
     },
-    addWmsLayer({ layerType: type, id, url, tilesize: tileSize, title }) {
+    removeWmsLayer(id) {
+      const layer = this.map.getLayer(`wms-layer-${id}`)
+      if (layer) {
+        this.map.removeLayer(`wms-layer-${id}`)
+      }
+    },
+    addWmsLayer({ layerType: type, id, url, tilesize: tileSize, title, visible }) {
       if (!this.map.getLayer(`wms-layer-${id}`)) {
         const source = { type, tileSize }
-
         if  (url === 'mapbox://mapbox.satellite') {
           source.url = url
         } else {
           source.tiles = [ url ]
         }
         try {
+          const layers = this.map.getStyle().layers
+          const lastWmsLayerIndex = layers
+            .filter(layer => /wms-layer-/.test(layer.id))
+            .map(layer => layers.indexOf(layer))
+            .reduce((_, item) => item, undefined)
+
+          const lastWmsLayerId = layers[lastWmsLayerIndex]
+            ? layers[lastWmsLayerIndex].id
+            : undefined
+
           this.map.addLayer({
             id: `wms-layer-${id}`,
             type,
             source,
             layout: {
-              visibility: 'none',
+              visibility: visible ? 'visible' : 'none',
             },
             paint: {},
-          })
+          }, lastWmsLayerId)
         } catch (err) {
           this.showError({ message: `Could not load WMS Layer: ${title}`, duration: 0 })
         }

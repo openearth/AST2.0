@@ -1,7 +1,10 @@
-{
-  redirects: allRedirects {
+query ($first: IntType, $skip: IntType = 0) {
+  redirects: allRedirects(first: $first, skip: $skip) {
     from,
     to,
     statusCode
+  },
+  _allRedirectsMeta {
+    count
   }
 }

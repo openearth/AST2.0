@@ -1,12 +1,14 @@
 <template>
   <div class="measure">
-    <div class="measure__actions">
-      <nuxt-link :to="`/${$i18n.locale}/project/measures/`" class="md-link measure__link">&#x2190; {{ $t('back') }}</nuxt-link>
+    <back-button class="measure__top" comp="div">
       <md-button
         :disabled="!selectedFeatures.length"
         class="md-raised md-primary"
-        @click="() => onChoose(measure)">{{ $t('choose') }}</md-button>
-    </div>
+        @click="() => onChoose(measure)"
+      >
+        {{ $t('choose') }}
+      </md-button>
+    </back-button>
 
     <header class="measure__header">
       <div class="measure__image">
@@ -37,10 +39,10 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex"
-import { RichText, FixedRatio, ImageCarousel } from '~/components'
+import { RichText, FixedRatio, ImageCarousel, BackButton } from '~/components'
 
 export default {
-  components: { RichText, FixedRatio, ImageCarousel },
+  components: { RichText, FixedRatio, ImageCarousel, BackButton },
   asyncData ({ params }) {
     return { slug: params.slug }
   },
@@ -53,7 +55,10 @@ export default {
     ...mapActions({ setAreaMeasure: 'project/setAreaMeasure' }),
     onChoose(measure) {
       this.setAreaMeasure({ features: this.selectedFeatures, measure })
-      this.$router.push(`/${this.$i18n.locale}/project/areas/`)
+      this.$router.push(`/${this.$i18n.locale}/project/areas/`).catch(err => {})
+    },
+    back() {
+      this.$router.back()
     },
   },
 }
@@ -69,6 +74,10 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: var(--spacing-double);
+}
+
+.measure__top {
   margin-bottom: var(--spacing-double);
 }
 

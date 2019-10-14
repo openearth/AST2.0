@@ -92,7 +92,7 @@
 
 <script>
 import Vue from 'vue'
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 import { SelectInput } from '~/components'
 
 export default {
@@ -107,8 +107,10 @@ export default {
     ...mapState({
       locale: state => state.i18n.locale,
       projectArea: state => state.project.settings.area,
-      projectAreaSettings: state => state.project.settings.projectArea,
-      areaSettings: state => state.data.areaSettings,
+    }),
+    ...mapGetters({
+      projectAreaSettings: 'project/settingsProjectArea',
+      areaSettings: 'data/areaSettings/overriddenAreaSettings',
     }),
     area() { return this.projectArea.properties && Math.round(this.projectArea.properties.area) },
   },

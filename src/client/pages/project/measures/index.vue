@@ -26,15 +26,10 @@ export default {
   },
   computed: {
     ...mapState('data', ['measures']),
-    ...mapGetters('data/measures', ['orderedMeasures', 'measuresBySystemSuitability']),
+    ...mapGetters('data/measures', ['workspaceMeasures']),
     ...mapGetters('selectedAreas', { selectedFeatures: 'features' }),
-    measuresList() {
-      return this.isAlphabeticallyOrdered
-        ? this.orderedMeasures
-        : this.measuresBySystemSuitability || this.measures
-    },
     filteredMeasuresList() {
-      return this.measuresList.filter(item => item.title.toLowerCase().indexOf(this.searchValue.toLowerCase()) !== -1)
+      return this.workspaceMeasures.filter(item => item.title.toLowerCase().indexOf(this.searchValue.toLowerCase()) !== -1)
     },
   },
   mounted() {
@@ -48,9 +43,9 @@ export default {
       this.searchValue = val
     },
     onChooseMeasure(measureId) {
-      const measure = this.orderedMeasures.find(measure => measure.measureId === measureId)
+      const measure = this.workspaceMeasures.find(measure => measure.measureId === measureId)
       this.$store.dispatch('project/setAreaMeasure', { features: this.selectedFeatures, measure })
-      this.$router.push(`/${this.$i18n.locale}/project/areas/`)
+      this.$router.push(`/${this.$i18n.locale}/project/areas/`).catch(err => {})
     },
   },
 }

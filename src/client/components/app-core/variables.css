@@ -16,6 +16,8 @@
   --neutral-color--dark: #696969;
   --neutral-color--medium: #adadad;
   --neutral-color--light: #f5f5f5;
+  --warning-color: #ff1919;
+  --border-color: #E0E0E0;
 
 /* suffixes */
   --suffix-opacity: .5;
@@ -34,10 +36,11 @@
  --font-size-extra-large: 1.6875rem; /* 27px */
 
   /* spacing */
-  --spacing-default: 1rem;
-  --spacing-medium: 1.5rem;
-  --spacing-double: 2rem;
-  --spacing-half: .5rem;
+  --spacing-small: 0.75rem; /* 12px */
+  --spacing-default: 1rem; /* 16px */
+  --spacing-medium: 1.5rem; /* 24px */
+  --spacing-double: 2rem; /* 32px */
+  --spacing-half: .5rem; /* 8px */
 
   /* layers */
   --layer--raised: 1;

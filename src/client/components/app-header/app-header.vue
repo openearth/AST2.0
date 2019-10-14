@@ -1,17 +1,18 @@
 <template>
-  <md-toolbar class="md-primary">
-    <div class="md-toolbar-section-start">
+  <md-toolbar class="md-primary" role="banner">
+    <section class="md-toolbar-section-start">
       <md-button class="md-icon-button" @click="() => $emit('onShowNavigation')">
         <md-icon>menu</md-icon>
       </md-button>
 
-      <h2
+      <h1
         :class="{
           'md-subheading': hasTitle,
           'md-title': !hasTitle
         }"
-      >{{ $t('ast') }}</h2>
-    </div>
+      >
+        {{ title }}</h1>
+    </section>
 
     <small
       v-if="hasTitle"
@@ -19,9 +20,11 @@
         'md-subheading': !hasTitle,
         'md-title': hasTitle
       }"
-    >{{ formattedTitle }}</small>
+    >
+      {{ formattedTitle }}
+    </small>
 
-    <div class="md-toolbar-section-end">
+    <section class="md-toolbar-section-end">
       <md-button
         v-if="currentFilledInLevel.level >= LEVEL_PROJECT_AREA"
         :key="2"
@@ -30,7 +33,8 @@
         <md-icon>settings</md-icon>
       </md-button>
       <fullscreen-button />
-    </div>
+      <LogIn v-if="legalAccepted" />
+    </section>
   </md-toolbar>
 </template>
 
@@ -39,13 +43,23 @@ import startCase from 'lodash/startCase'
 import { mapGetters } from "vuex";
 import { LEVEL_PROJECT_AREA } from "../../lib/flow-levels";
 import FullscreenButton from '../fullscreen-button'
+import LogIn from '../log-in'
 
 export default {
   components: {
     FullscreenButton,
+    LogIn,
   },
   props: {
     title: {
+      type: String,
+      default: '',
+    },
+    legalAccepted: {
+      type: Boolean,
+      required: true,
+    },
+    projectTitle: {
       type: String,
       default: '',
     },
@@ -54,12 +68,11 @@ export default {
   computed: {
     ...mapGetters('flow', ['currentFilledInLevel']),
     hasTitle() {
-      return !!this.title
+      return !!this.projectTitle
     },
     formattedTitle() {
-      return startCase(this.title)
+      return startCase(this.projectTitle)
     },
   },
 }
 </script>
-
