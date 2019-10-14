@@ -487,7 +487,8 @@ export const getters = {
                 const kpiKey = kpiKeys[index]
                 const decimalScale = kpiKeysDecimalScaleMap && kpiKeysDecimalScaleMap[kpiKey]
                 const scale = decimalScale ? decimalScale : 0;
-                return toDecimalPricision(val, scale)
+                const value = toDecimalPricision(val, scale)
+                return isNaN(value) ? '-' : value
               }),
             ]
           }),
@@ -541,7 +542,8 @@ export const getters = {
               const kpiKey = kpiKeys[index]
               const decimalScale = kpiKeysDecimalScaleMap && kpiKeysDecimalScaleMap[kpiKey]
               const scale = decimalScale ? decimalScale : 0;
-              return toDecimalPricision(val, scale)
+              const value = toDecimalPricision(val, scale)
+              return isNaN(value) ? '-' : value
             }),
           ]
         }),

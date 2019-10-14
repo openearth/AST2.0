@@ -42,7 +42,10 @@ export default {
   computed: {
     ...mapGetters('project', ['tableClimateAndCosts', 'tableCoBenefits']),
     tables() {
-      return [this.tableClimateAndCosts, this.tableCoBenefits]
+      return [
+        this.tableClimateAndCosts ? this.tableClimateAndCosts : [],
+        this.tableCoBenefits ? this.tableCoBenefits : [],
+      ]
     },
   },
 }
