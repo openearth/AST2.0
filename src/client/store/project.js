@@ -673,14 +673,15 @@ export const getters = {
     }, {})
   },
   wmsLayers: (state, getters, rootState, rootGetters) => {
+    const { wmsLayers: rootWmsLayers = [] } = rootGetters['data/workspaces/activeWorkspace'] || {}
     return state.map.wmsLayers
-    .filter(layer => rootState.data.wmsLayers.some(rootLayer => rootLayer.id === layer.id))
-    .map(({ id, visible, opacity, showLegend }) => ({
-      ...rootGetters['data/wmsLayers/constructed'].find(layer => layer.id === id),
-      visible,
-      showLegend,
-      opacity,
-    }))
+      .filter(layer => rootWmsLayers.some(rootLayer => rootLayer.id === layer.id))
+      .map(({ id, visible, opacity, showLegend }) => ({
+        ...rootGetters['data/wmsLayers/constructed'].find(layer => layer.id === id),
+        visible,
+        showLegend,
+        opacity,
+      }))
   },
   customLayers: (state) => {
     return state.map.customLayers

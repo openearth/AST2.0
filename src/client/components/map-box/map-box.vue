@@ -333,6 +333,7 @@ export default {
       }
     },
     addWmsLayer({ layerType: type, id, url, tilesize: tileSize, title, visible }) {
+      if (!this.map) return
       if (!this.map.getLayer(`wms-layer-${id}`)) {
         const source = { type, tileSize }
         if  (url === 'mapbox://mapbox.satellite') {
@@ -394,17 +395,17 @@ export default {
       })
     },
     showWmsLayer(id) {
-      if (this.map.getLayer(`wms-layer-${id}`)) {
+      if (this.map && this.map.getLayer(`wms-layer-${id}`)) {
         this.map.setLayoutProperty(`wms-layer-${id}`, 'visibility', 'visible');
       }
     },
     hideWmsLayer(id) {
-      if (this.map.getLayer(`wms-layer-${id}`)) {
+      if (this.map && this.map.getLayer(`wms-layer-${id}`)) {
         this.map.setLayoutProperty(`wms-layer-${id}`, 'visibility', 'none');
       }
     },
     wmsLayerOpacity(id, value) {
-      if (this.map.getLayer(`wms-layer-${id}`)) {
+      if (this.map && this.map.getLayer(`wms-layer-${id}`)) {
         this.map.setPaintProperty(`wms-layer-${id}`, 'raster-opacity', value);
       }
     },

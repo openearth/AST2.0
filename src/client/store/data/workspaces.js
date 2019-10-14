@@ -3,7 +3,9 @@ import getData from '../../lib/get-data'
 import kebabCase from 'lodash/kebabCase'
 import unset from 'lodash/unset'
 
-const defaultDomain = 'kbstoolbox-nl'
+const defaultDomain = process.env.NODE_ENV === 'development'
+  ? 'toolboxks-nl'
+  : 'kbstoolbox-nl'
 
 export const state = () => ({
   _domain: undefined,
@@ -39,7 +41,7 @@ export const actions = {
       .forEach(workspace => commit('addWorkspace', workspace))
   },
 
-  async storeWorkspaceData({ commit }, name) {
+  async storeWorkspaceData({ commit, dispatch }, name) {
     const _workspace = await getData({ folder: 'data/workspaces', slug: name })
     if (_workspace) {
       const workspace = {
@@ -60,6 +62,7 @@ export const actions = {
       }
 
       commit('fillWorkspace', workspace)
+      dispatch('project/bootstrapWmsLayers', workspace.wmsLayers, { root: true })
     }
   },
 }

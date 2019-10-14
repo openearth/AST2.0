@@ -1,27 +1,16 @@
 import getData from '../../lib/get-data'
 import randomColor from '../../lib/random-color';
 
-export const state = () => []
-
-export const mutations = {
-  addLayer(state, layer) {
-    state.push(layer)
-  },
-}
-
-export const actions = {
-  async getWmsLayers({ commit, dispatch }, locale) {
-    const data = await getData({ locale, slug: 'wms-layers' })
-    data.wmsLayers.forEach(layer => {
-      commit('addLayer', layer)
-    })
-    dispatch('project/bootstrapWmsLayers', data.wmsLayers, { root: true })
-  },
-}
+// This state is not used directly. wmsLayers are loaded from the workspace.
+// This file exists to let the `constructed` have a place to live.
+// The `state` const need to be exported in order for the getter to be available
+export const state = () => undefined
 
 export const getters = {
-  constructed(state) {
-    return state.map(layer => {
+  constructed(state, getters, rootState, rootGetters) {
+    const { wmsLayers = [] } = rootGetters['data/workspaces/activeWorkspace'] || {}
+
+    return wmsLayers.map(layer => {
       const { baseurl, service, tilesize, bbox, format, srs, layers, version, transparent, styles, ...rest } = layer
       if (baseurl === 'mapbox://mapbox.satellite') {
         return {
