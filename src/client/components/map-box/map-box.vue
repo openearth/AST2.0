@@ -334,6 +334,18 @@ export default {
     },
     addWmsLayer({ layerType: type, id, url, tilesize: tileSize, title, visible }) {
       if (!this.map) return
+
+      let layers;
+      try {
+        const style = this.map.getStyle()
+        layers = style.layers
+      } catch (err) {
+        console.groupCollapsed(`Map styles are not loaded yet. Ignore adding layer ${title}`)
+        console.error(err)
+        console.groupEnd()
+        return
+      }
+
       if (!this.map.getLayer(`wms-layer-${id}`)) {
         const source = { type, tileSize }
         if  (url === 'mapbox://mapbox.satellite') {
@@ -362,19 +374,11 @@ export default {
             paint: {},
           }, lastWmsLayerId)
         } catch (err) {
-          console.error({
-            message: `Could not load WMS Layer: ${title}`,
-            err,
-            layer: {
-              type,
-              id,
-              url,
-              tileSize,
-              title,
-              visible,
-            },
-          })
           this.showError({ message: `Could not load WMS Layer: ${title}`, duration: 0 })
+          console.groupCollapsed(`Could not load WMS Layer: ${title}`)
+          console.error(err)
+          console.log({ layer: { type, id, url, tileSize, title, visible } })
+          console.groupEnd()
         }
       }
     },
