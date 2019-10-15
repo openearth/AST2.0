@@ -8,7 +8,7 @@
       {{ label }}
       <slot name="info"/>
     </label>
-    <div class="input-range__value-wrapper">\
+    <div class="input-range__value-wrapper">
       <input
         :value="value"
         :min="floatMin"

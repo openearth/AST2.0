@@ -54,7 +54,12 @@
                 :label="$t('area_depth')"
                 @change="value => updateAreaProperties({ features: [feature], properties: { areaDepth: value }})"
               >
-                <template v-slot:info>slot for info button</template>
+                <template v-slot:info>
+                  <app-tooltip
+                    :message="$t('area_depth_info')"
+                    class="areas__info-button"
+                  />
+                </template>
               </input-range>
 
               <input-range
@@ -63,7 +68,15 @@
                 :min="getDefaultValueProperty('inflow', 'min', appliedMeasure.defaultValues)"
                 :max="getDefaultValueProperty('inflow', 'max', appliedMeasure.defaultValues)"
                 :label="$t('area_inflow')"
-                @change="value => updateAreaProperties({ features: [feature], properties: { areaInflow: value }})"/>
+                @change="value => updateAreaProperties({ features: [feature], properties: { areaInflow: value }})"
+              >
+                <template v-slot:info>
+                  <app-tooltip
+                    :message="$t('area_inflow_info')"
+                    class="areas__info-button"
+                  />
+                </template>
+              </input-range>
 
               <input-range
                 v-if="appliedMeasure && feature.geometry.type === 'LineString'"
@@ -72,7 +85,14 @@
                 :max="getDefaultValueProperty('width', 'max', appliedMeasure.defaultValues)"
                 :label="$t('area_width')"
                 @change="value => updateAreaProperties({ features: [feature], properties: { areaWidth: value }})"
-              />
+              >
+                <template v-slot:info>
+                  <app-tooltip
+                    :message="$t('area_width_info')"
+                    class="areas__info-button"
+                  />
+                </template>
+              </input-range>
 
               <input-range
                 v-if="appliedMeasure && feature.geometry.type === 'Point'"
@@ -81,7 +101,14 @@
                 :max="getDefaultValueProperty('radius', 'max', appliedMeasure.defaultValues)"
                 :label="$t('area_radius')"
                 @change="value => updateAreaProperties({ features: [feature], properties: { areaRadius: value }})"
-              />
+              >
+                <template v-slot:info>
+                  <app-tooltip
+                    :message="$t('area_radius_info')"
+                    class="areas__info-button"
+                  />
+                </template>
+              </input-range>
 
             </md-card-content>
 
@@ -101,10 +128,11 @@ import MapEventBus, { REDRAW, MODE } from "../../lib/map-event-bus";
 import InputRange from '../../components/input-range'
 import TextInput from '../../components/text-input'
 import HintText from '~/components/hint-text'
+import AppTooltip from '~/components/app-tooltip'
 
 export default {
   middleware: ['access-level-settings'],
-  components: { InputRange, TextInput, HintText },
+  components: { InputRange, TextInput, HintText, AppTooltip },
   data() {
     return {
       visibleAreas: [],
@@ -203,5 +231,11 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.areas__info-button {
+  position: absolute;
+  top: -16px;
+  right: -40px;
 }
 </style>
