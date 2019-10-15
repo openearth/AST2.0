@@ -3,6 +3,12 @@ import delay from '../lib/delay'
 import kebabCase from 'lodash/kebabCase'
 
 export default ({ store }) => {
+  console.log(
+    `%c AST 2.0 %c branch: ${process.env.GIT_REV} - commit: ${process.env.GIT_COMMIT} `,
+    'background: #008fc5; color: #fff; border-radius: 3px 0 0 3px;',
+    'background: #263238; color: #eeffff; border-radius: 0 3px 3px 0; font-weight: 400;',
+  )
+
   const storeUser = async user => {
     store.commit('user/setUser', user || null)
     store.commit('data/workspaces/setDomain', kebabCase(window.location.hostname))

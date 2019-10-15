@@ -1,5 +1,17 @@
 require('dotenv-safe').config() // load env variables from .env file into process.env
 
+const rev = require('fs').readFileSync('.git/HEAD').toString();
+let branch;
+let commit;
+if (rev.indexOf(':') === -1) {
+  commit = rev;
+  branch = rev
+} else {
+  const file = require('path').join(__dirname, '../..', '.git/' + rev.substring(5).trim())
+  commit = require('fs').readFileSync(file).toString().substring(0, 8).trim();
+  branch = rev.substring(16).trim()
+}
+
 /**
  * Use Netlify's URL variable:
  * @see https://www.netlify.com/docs/continuous-deployment/#build-environment-variables
@@ -14,4 +26,6 @@ module.exports = {
   branch: process.env.BRANCH,
   MAPBOX_ACCESS_TOKEN: process.env.MAPBOX_ACCESS_TOKEN,
   API_BASE: process.env.API_BASE,
+  GIT_COMMIT: commit,
+  GIT_REV: branch,
 }
