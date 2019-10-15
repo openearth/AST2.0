@@ -4,7 +4,10 @@
     @click="toggle"
   >
     <md-icon>info</md-icon>
-    <md-tooltip :md-active="active" md-direction="top">
+    <md-tooltip
+      :md-active="active"
+      md-direction="top"
+    >
       {{ message }}
     </md-tooltip>
   </md-button>
@@ -41,6 +44,3 @@ export default {
   },
 }
 </script>
-
-<style>
-</style>
