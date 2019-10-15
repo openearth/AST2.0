@@ -1,3 +1,5 @@
+import  MapEventBus, { REPOSITION } from '../lib/map-event-bus';
+
 export const state = () => ({})
 
 export const plugins = [ (store) => {
@@ -24,6 +26,16 @@ export const plugins = [ (store) => {
             },
           }
         )
+        setTimeout(() => {
+          MapEventBus.$emit(REPOSITION, {
+            instant: true,
+            zoom: zoomLevel,
+            center: {
+              lat: startLocation.latitude,
+              lng: startLocation.longitude,
+            },
+          })
+        }, 10)
       }
     }
   )

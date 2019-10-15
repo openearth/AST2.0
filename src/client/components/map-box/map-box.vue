@@ -205,8 +205,12 @@ export default {
         this.geoCoder.setInput(value).query(value)
       })
 
-      MapEventBus.$on(REPOSITION, ({ center, zoom }) => {
-        this.$nextTick(() => this.map.flyTo({ center, zoom }))
+      MapEventBus.$on(REPOSITION, ({ center, zoom, instant = false }) => {
+        if (instant) {
+          this.$nextTick(() => this.map.jumpTo({ center, zoom }))
+        } else {
+          this.$nextTick(() => this.map.flyTo({ center, zoom }))
+        }
       })
 
       MapEventBus.$on(RELOAD_LAYERS, () => {
