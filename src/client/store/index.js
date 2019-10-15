@@ -13,7 +13,18 @@ export const plugins = [ (store) => {
   store.watch(
     (state, getters) => getters['data/workspaces/activeWorkspace'],
     (newValue, oldValue) => {
+      const { zoomLevel, startLocation } = newValue
       store.dispatch('project/applyDefaultValuesToAreaSettings')
+      if (zoomLevel && startLocation) {
+        store.dispatch('project/setMapPosition', {
+            zoom: zoomLevel,
+            center: {
+              lat: startLocation.latitude,
+              lng: startLocation.longitude,
+            },
+          }
+        )
+      }
     }
   )
   store.subscribe(({ type, payload }, state) => {

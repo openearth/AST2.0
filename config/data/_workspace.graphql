@@ -5,6 +5,11 @@ query ($id: ItemId){
     applicationTitle,
     measureOverrides,
     scenarioName,
+    startLocation {
+      latitude,
+      longitude,
+    },
+    zoomLevel,
     wmsLayers {
       id,
       title,
