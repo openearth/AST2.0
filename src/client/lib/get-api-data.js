@@ -70,7 +70,7 @@ export async function getApiDataForFeature(feature, projectArea, scenarioName, c
   if (measureId) {
     return Promise.all([
         getRealApiData('heatstress/cost', { scenarioName, area, id }),
-        getRealApiData('heatstress/temperature', { scenarioName, area, id, projectArea }),
+        getRealApiData('heatstress/temperature', { scenarioName, area, id/*, projectArea */ }),
         getRealApiData('heatstress/waterquality', { scenarioName, area, id, projectArea }),
         getRealApiData('pluvflood', { scenarioName, area, id, returnTime, inflow, depth, projectArea }),
         getRealApiData('groundwater_recharge', { scenarioName, area, id, returnTime, inflow, depth, projectArea }),
