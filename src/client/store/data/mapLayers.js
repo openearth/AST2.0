@@ -2,27 +2,15 @@ import Vue from 'vue'
 import getData from '../../lib/get-data'
 import randomColor from '../../lib/random-color';
 
+// This state is not used directly. mapLayers are loaded from the workspace.
+// This file exists to let the `constructed` have a place to live.
+// The `state` const need to be exported in order for the getter to be available
 export const state = () => []
 
-export const mutations = {
-  addLayer(state, layer) {
-    state.push(layer)
-  },
-}
-
-export const actions = {
-  async getMapLayers({ commit, dispatch }, locale) {
-    const data = await getData({ locale, slug: 'map-layers' })
-    data.mapLayers.forEach(layer => {
-      commit('addLayer', layer)
-    })
-    dispatch('project/bootstrapMapLayers', data.mapLayers, { root: true })
-  },
-}
-
 export const getters = {
-  constructed(state) {
-    return state.map(layer => {
+  constructed(state, getters, rootState, rootGetters) {
+    const { mapLayers = [] } = rootGetters['data/workspaces/activeWorkspace'] || {}
+    return mapLayers.map(layer => {
       return {
        id: layer.id,
        title: layer.title,

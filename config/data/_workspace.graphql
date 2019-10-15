@@ -5,5 +5,26 @@ query ($id: ItemId){
     applicationTitle,
     measureOverrides,
     scenarioName,
+    wmsLayers {
+      id,
+      title,
+      layerType,
+      tilesize,
+      baseurl,
+      layers,
+      version,
+      tilesize,
+      bbox,
+      format,
+      service,
+      srs,
+      transparent,
+      styles,
+    },
+    mapLayers {
+      id,
+      title,
+      url
+    },
   }
 }

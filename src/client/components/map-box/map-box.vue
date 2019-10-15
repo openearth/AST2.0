@@ -333,6 +333,19 @@ export default {
       }
     },
     addWmsLayer({ layerType: type, id, url, tilesize: tileSize, title, visible }) {
+      if (!this.map) return
+
+      let layers;
+      try {
+        const style = this.map.getStyle()
+        layers = style.layers
+      } catch (err) {
+        console.groupCollapsed(`Map styles are not loaded yet. Ignore adding layer ${title}`)
+          console.error(err)
+        console.groupEnd()
+        return
+      }
+
       if (!this.map.getLayer(`wms-layer-${id}`)) {
         const source = { type, tileSize }
         if  (url === 'mapbox://mapbox.satellite') {
@@ -362,6 +375,10 @@ export default {
           }, lastWmsLayerId)
         } catch (err) {
           this.showError({ message: `Could not load WMS Layer: ${title}`, duration: 0 })
+          console.groupCollapsed(`Could not load WMS Layer: ${title}`)
+            console.error(err)
+            console.log({ layer: { type, id, url, tileSize, title, visible } })
+          console.groupEnd()
         }
       }
     },
@@ -394,17 +411,17 @@ export default {
       })
     },
     showWmsLayer(id) {
-      if (this.map.getLayer(`wms-layer-${id}`)) {
+      if (this.map && this.map.getLayer(`wms-layer-${id}`)) {
         this.map.setLayoutProperty(`wms-layer-${id}`, 'visibility', 'visible');
       }
     },
     hideWmsLayer(id) {
-      if (this.map.getLayer(`wms-layer-${id}`)) {
+      if (this.map && this.map.getLayer(`wms-layer-${id}`)) {
         this.map.setLayoutProperty(`wms-layer-${id}`, 'visibility', 'none');
       }
     },
     wmsLayerOpacity(id, value) {
-      if (this.map.getLayer(`wms-layer-${id}`)) {
+      if (this.map && this.map.getLayer(`wms-layer-${id}`)) {
         this.map.setPaintProperty(`wms-layer-${id}`, 'raster-opacity', value);
       }
     },
