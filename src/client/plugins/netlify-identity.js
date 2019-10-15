@@ -4,7 +4,7 @@ import kebabCase from 'lodash/kebabCase'
 
 export default ({ store }) => {
   console.log(
-    `%c AST 2.0 %c branch: ${process.env.GIT_REV} - commit: ${process.env.GIT_COMMIT} `,
+    `%c AST 2.0 %c commit: ${process.env.GIT_COMMIT} `,
     'background: #008fc5; color: #fff; border-radius: 3px 0 0 3px;',
     'background: #263238; color: #eeffff; border-radius: 0 3px 3px 0; font-weight: 400;',
   )
