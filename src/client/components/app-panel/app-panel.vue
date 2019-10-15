@@ -43,8 +43,14 @@ export default {
 
 .app-panel__wide {
   width: 100%;
-  min-width: 400px;
-  max-width: calc(100vw - var(--width-large));
+  max-width: var(--width-small);
+}
+
+@media screen and (min-width: 1200px) {
+  .app-panel__wide {
+    min-width: 400px;
+    max-width: calc(100vw - var(--width-large));
+  }
 }
 
 /* overwriting default styles for .md-toolbar */

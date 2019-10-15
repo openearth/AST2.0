@@ -1,10 +1,4 @@
 :root {
-  --max-width: 600px;
-  --width-small: 265px;
-  --width-medium: 400px;
-  --width-large: 700px;
-  --width-extra-large: 900px;
-
 /* colors */
   --action-color: #6a9ce4;
   --background-color: #fff;
@@ -28,12 +22,19 @@
   --shadow-wide-grey: 0 2px 10px #ccc;
 
 /* fonts */
- --font-size-extra-small: .75rem; /* 12px */
- --font-size-small: .875rem; /* 14px */
- --font-size-default: 1rem; /* 16px */
- --font-size-medium: 1.125rem; /* 18px */
- --font-size-large: 1.5rem; /* 24px */
- --font-size-extra-large: 1.6875rem; /* 27px */
+  --font-size-extra-small: .75rem; /* 12px */
+  --font-size-small: .875rem; /* 14px */
+  --font-size-default: 1rem; /* 16px */
+  --font-size-medium: 1.125rem; /* 18px */
+  --font-size-large: 1.5rem; /* 24px */
+  --font-size-extra-large: 1.6875rem; /* 27px */
+
+  /* width */
+  --max-width: 600px;
+  --width-small: 265px;
+  --width-medium: 400px;
+  --width-large: 700px;
+  --width-extra-large: 900px;
 
   /* spacing */
   --spacing-small: 0.75rem; /* 12px */

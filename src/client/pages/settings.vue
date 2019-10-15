@@ -91,7 +91,14 @@ export default {
 .settings-view {
   display: flex;
   flex-direction: column;
-  width: 600px;
+  /* width: 600px; */
+  width: var(--width-small);
+}
+
+@media screen and (min-width: 1200px) {
+  .settings-view {
+    width: var(--width-medium);
+  }
 }
 
 .settings-view__content {

@@ -49,6 +49,13 @@ export default {
 .new-project {
   display: flex;
   flex-direction: column;
+  width: var(--width-small);
+}
+
+@media screen and (min-width: 1200px) {
+  .new-project {
+    width: var(--width-medium);
+  }
 }
 
 .new-project__content {

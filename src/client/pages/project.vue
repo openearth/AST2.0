@@ -56,12 +56,30 @@ export default {
   flex-direction: column;
 }
 
+/* ========================= small */
 .view-project__medium {
-  width: var(--width-medium);
+  width: var(--width-small);
 }
+
+@media screen and (min-width: 1200px) {
+  .view-project__medium {
+    width: var(--width-medium);
+  }
+}
+
+/* ========================= large */
 .view-project__large {
-  width: var(--width-large);
+  width: calc(100% - 300px);
+  max-width: var(--width-large);
 }
+
+@media screen and (min-width: 1200px) {
+  .view-project__large {
+    width: var(--width-large);
+  }
+}
+
+/* ========================= extras small */
 .view-project__extra-large {
   width: var(--width-extra-large);
 }
