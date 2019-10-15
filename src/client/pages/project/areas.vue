@@ -52,7 +52,10 @@
                 :min="getDefaultValueProperty('depth', 'min', appliedMeasure.defaultValues)"
                 :max="getDefaultValueProperty('depth', 'max', appliedMeasure.defaultValues)"
                 :label="$t('area_depth')"
-                @change="value => updateAreaProperties({ features: [feature], properties: { areaDepth: value }})"/>
+                @change="value => updateAreaProperties({ features: [feature], properties: { areaDepth: value }})"
+              >
+                <template v-slot:info>slot for info button</template>
+              </input-range>
 
               <input-range
                 v-if="appliedMeasure"
