@@ -62,7 +62,7 @@ Vue.component('image-gallery', {
     this.value.forEach(item => this.images.push(item))
     this.original.forEach(async id => {
       const genericImage = await dato.items.find(id)
-      const image = await dato.uploads.find(genericImage.image)
+      const image = await dato.uploads.find(genericImage.image.uploadId)
       this.originalImages.push(image.url)
     })
   },

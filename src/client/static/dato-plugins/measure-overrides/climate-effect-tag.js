@@ -49,7 +49,7 @@ Vue.component('climate-effect-tag', {
     const tagType = itemTypes.find(type => type.apiKey === 'tag')
     this.tags = await dato.items.all({ 'filter[type]': tagType.id })
       .then(tags => Promise.all(tags.map(tag =>
-        dato.uploads.find(tag.icon)
+        dato.uploads.find(tag.icon.uploadId)
           .then(icon => ({
             key: tag.key,
             title: tag.title.en,
