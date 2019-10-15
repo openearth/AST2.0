@@ -79,13 +79,13 @@
       </md-dialog-actions>
     </md-dialog>
 
-    <transition name="slide-up">
-      <app-disclaimer
-        v-if="!legalAccepted"
-        :disclaimer="disclaimer"
-        class="layout__disclaimer"
-        @accepted="acceptLegal"/>
-    </transition>
+    <!-- <transition name="slide-up"> -->
+    <app-disclaimer
+      v-if="!legalAccepted"
+      :disclaimer="disclaimer"
+      class="layout__disclaimer"
+      @accepted="acceptLegal"/>
+    <!-- </transition> -->
 
     <notification-area
       :notifications="notifications"

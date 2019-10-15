@@ -1,9 +1,9 @@
 <template>
   <div class="responsive-video">
     <figure>
-      <fixed-ratio 
-        :width="video.width" 
-        :height="video.height" 
+      <fixed-ratio
+        :width="video.width"
+        :height="video.height"
         class="responsive-video__canvas">
         <lazy-load>
           <div
@@ -30,9 +30,9 @@
         </a>
       </fixed-ratio>
       <figcaption v-if="video.title">
-        <a 
-          :href="video.url" 
-          target="_blank" 
+        <a
+          :href="video.url"
+          target="_blank"
           rel="noopener" >
           {{ video.title }}
         </a>
@@ -163,7 +163,7 @@ export default {
   right: 0;
   bottom: 0;
   left: 0;
-  transition: background-color .25s ease;
+  /* transition: background-color .25s ease; */
 }
 
 .responsive-video__button:hover,

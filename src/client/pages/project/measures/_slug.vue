@@ -4,8 +4,9 @@
       <md-button
         :disabled="!selectedFeatures.length"
         class="md-raised md-primary"
-        @click="() => onChoose(measure)"
+
       >
+        <!-- @click="() => onChoose(measure)" -->
         {{ $t('choose') }}
       </md-button>
     </back-button>
@@ -26,7 +27,7 @@
 
     <rich-text :text="measure.summary" />
 
-    <image-carousel :images="measure.images"/>
+    <!-- <image-carousel :images="measure.images"/> -->
 
     <rich-text :text="measure.content" />
 

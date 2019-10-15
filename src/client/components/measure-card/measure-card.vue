@@ -1,39 +1,63 @@
 <template>
-  <md-card :style="`border-left-color: ${measure.color.hex}`" class="measure-card">
-    <md-card-header>
-      <md-card-header-text>
-        <div class="md-subheading measure-card__title">{{ measure.title }}</div>
-        <div class="md-caption measure-card__tags">
-          <md-chip v-if="measure.systemSuitability" class="md-body-2">
-            {{ measure.systemSuitability.toFixed(1) }}
-          </md-chip>
-          <md-chip
-            v-for="(score, index) in scoresWithImageProxy"
-            :key="index"
-            class="measure-card__tag">
-            <md-icon :md-src="score.icon.url" class="measure-card__icon" />
-          </md-chip>
-          <md-chip v-if="measure.featured === true" class="measure-card__tag">
-            <md-icon class="measure-card__icon">
-              star
-            </md-icon>
-          </md-chip>
-        </div>
-      </md-card-header-text>
+  <div
+    :style="`border-left-color: ${measure.color.hex}`"
+    :class="{'measure-card__reduced': reduced}"
+    class="measure-card"
+  >
+    <div class="measure-card__content">
+      <h5 class="md-subheading measure-card__title">{{ measure.title }}</h5>
 
-      <md-card-media>
-        <img
-          :src="measure.image.url"
-          class="md-image measure-card__img"
-          alt="">
-      </md-card-media>
-    </md-card-header>
+      <img
+        v-if="!reduced"
+        :src="measure.image.url"
+        class="measure-card__media"
+        alt="">
 
-    <md-card-actions v-if="interactive">
-      <md-button :to="`/${$i18n.locale}/project/measures/${measure.slug}`" class="md-dense">{{ $t('learn_more') }}</md-button>
-      <md-button class="md-raised md-primary md-dense" @click="chooseMeasure">{{ $t('choose') }}</md-button>
-    </md-card-actions>
-  </md-card>
+      <ul class="measure-card__tags">
+        <li v-if="measure.systemSuitability" class="measure-card__tag measure-card__tag-float">
+          {{ measure.systemSuitability.toFixed(1) }}
+        </li>
+        <li
+          v-for="(score, index) in scoresWithImageProxy"
+          :key="index"
+          class="measure-card__tag">
+          <!-- <md-icon :md-src="score.icon.url" class="measure-card__icon" /> -->
+        </li>
+        <li v-if="measure.featured === true" class="measure-card__tag">
+          <!-- <md-icon class="measure-card__icon">
+            star
+          </md-icon> -->
+        </li>
+      </ul>
+    </div>
+
+    <div v-if="interactive" class="measure-card__actions">
+      <!-- <md-button
+        v-if="!reduced"
+        :to="`/${$i18n.locale}/project/measures/${measure.slug}`"
+        class="md-dense"
+      >
+        {{ $t('learn_more') }}
+      </md-button> -->
+      <!-- <md-button
+        class="md-raised md-primary md-dense"
+        @click="chooseMeasure"
+      >
+        {{ $t('choose') }}
+      </md-button> -->
+      <nuxt-link
+        v-if="!reduced"
+        :to="`/${$i18n.locale}/project/measures/${measure.slug}`"
+      >
+        {{ $t('learn_more') }}
+      </nuxt-link>
+      <button
+        @click="chooseMeasure"
+      >
+        {{ $t('choose') }}
+      </button>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -53,6 +77,10 @@ export default {
     interactive: {
       type: Boolean,
       default: true,
+    },
+    reduced: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
@@ -79,7 +107,96 @@ export default {
 </script>
 
 <style>
-.measure-card {
+.measure-card:not(.measure-card__reduced) {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: var(--spacing-default);
+  box-shadow: var(--shadow-wide-grey);
+}
+
+.measure-card.measure-card__reduced {
+  display: flex;
+  padding: 0;
+  box-shadow: none;
+}
+
+/* ================================ content */
+.measure-card:not(.measure-card__reduced) .measure-card__content {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  flex-grow: 2;
+}
+
+.measure-card.measure-card__reduced .measure-card__content {
+  width: auto;
+  flex-grow: 2;
+}
+
+.measure-card__title {
+  width: 100%;
+}
+
+/* ================================ tags */
+.measure-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  padding-left: 0;
+  list-style-type: none;
+}
+
+.measure-card__tag {
+  min-width: 32px;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: cneter;
+  margin-right: var(--spacing-small);
+
+  background-color: var(--border-color);
+  border-radius: 30px;
+  list-style-type: none;
+}
+
+.measure-card__tag-float {
+  padding-right: var(--spacing-small);
+  padding-left: var(--spacing-small);
+  line-height: 32px;
+}
+
+.measure-card__icon {
+  width: 24px;
+  height: 24px;
+  user-select: none;
+}
+
+/* ================================ media */
+.measure-card__media {
+  display: block;
+  width: 100px;
+  height: auto;
+}
+
+/* ================================ actions */
+.measure-card:not(.measure-card__reduced) .measure-card__actions {
+  margin-top: var(--spacing-small);
+  text-align: right;
+}
+
+.measure-card.measure-card__reduced .measure-card__actions {
+  display: flex;
+  flex-direction: column;
+}
+
+.measure-card.measure-card__reduced .measure-card__actions > * {
+  width: 100%;
+  margin-right: 0;
+  margin-left: 0;
+}
+
+/* .measure-card {
   display: flex;
   flex-direction: column;
   align-items: space-between;
@@ -123,5 +240,5 @@ export default {
 
 .measure-card__icon svg {
   max-width: 20px;
-}
+} */
 </style>

@@ -1,10 +1,10 @@
 .slide-up-enter-active,
 .slide-up-leave-active {
-  transition: all .4s ease;
+  /* transition: all .4s ease; */
 }
 
 .slide-up-leave-active {
-  transition: all .4s ease;
+  /* transition: all .4s ease; */
 }
 
 .slide-up-enter,
@@ -14,11 +14,11 @@
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity .3s ease-out;
+  /* transition: opacity .3s ease-out; */
 }
 
 .fade-leave-active {
-  transition: opacity .3s ease-out;
+  /* transition: opacity .3s ease-out; */
 }
 
 .fade-enter,

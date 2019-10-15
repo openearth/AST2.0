@@ -59,18 +59,18 @@
       >
         <md-icon>layers</md-icon>
       </md-button>
-      <transition name="fade">
-        <layer-list
-          v-if="showLayersPanel"
-          ref="layerlist"
-          :wms-layers="wmsLayers"
-          :custom-layers="customLayers"
-          :map-layers="mapLayers"
-          class="map-controls__layer-list"
-          @opacity-change="event => $emit('layer-opacity-change', event)"
-          @visibility-change="event => $emit('layer-visibility-change', event)"
-          @legend-visibility-change="event => $emit('legend-visibility-change', event)"/>
-      </transition>
+      <!-- <transition name="fade"> -->
+      <layer-list
+        v-if="showLayersPanel"
+        ref="layerlist"
+        :wms-layers="wmsLayers"
+        :custom-layers="customLayers"
+        :map-layers="mapLayers"
+        class="map-controls__layer-list"
+        @opacity-change="event => $emit('layer-opacity-change', event)"
+        @visibility-change="event => $emit('layer-visibility-change', event)"
+        @legend-visibility-change="event => $emit('legend-visibility-change', event)"/>
+        <!-- </transition> -->
     </li>
 
     <li v-if="zoomIn" class="map-controls__item map-controls__item--zoom-in">

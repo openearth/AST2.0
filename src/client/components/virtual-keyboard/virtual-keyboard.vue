@@ -1,32 +1,32 @@
 <template>
-  <transition name="slide-up">
-    <div v-if="inputElementRef" class="virtual-keyboard">
-      <div class="virtual-keyboard__wrapper">
-        <md-field
-          v-if="inputElementRef.dataset.type !== 'number'"
-          class="virtual-keyboard__input md-theme-default md-focused">
-          <label>{{ label }}</label>
-          <md-input :value="value" />
-          <div class="virtual-keyboard__input-overlay"/>
-        </md-field>
-        <div class="virtual-keyboard__input">
-          <numeric-input
-            v-if="inputElementRef.dataset.type === 'number'"
-            :label="label"
-            :value="value"
-            class="md-focused"/>
-          <div class="virtual-keyboard__input-overlay"/>
-        </div>
-        <vue-touch-keyboard
-          :layout="layout"
-          :cancel="hide"
-          :accept="accept"
-          :input="inputElementRef"
-          :change="change"
-        />
+  <!-- <transition name="slide-up"> -->
+  <div v-if="inputElementRef" class="virtual-keyboard">
+    <div class="virtual-keyboard__wrapper">
+      <md-field
+        v-if="inputElementRef.dataset.type !== 'number'"
+        class="virtual-keyboard__input md-theme-default md-focused">
+        <label>{{ label }}</label>
+        <md-input :value="value" />
+        <div class="virtual-keyboard__input-overlay"/>
+      </md-field>
+      <div class="virtual-keyboard__input">
+        <numeric-input
+          v-if="inputElementRef.dataset.type === 'number'"
+          :label="label"
+          :value="value"
+          class="md-focused"/>
+        <div class="virtual-keyboard__input-overlay"/>
       </div>
+      <vue-touch-keyboard
+        :layout="layout"
+        :cancel="hide"
+        :accept="accept"
+        :input="inputElementRef"
+        :change="change"
+      />
     </div>
-  </transition>
+  </div>
+  <!-- </transition> -->
 </template>
 
 <script>
