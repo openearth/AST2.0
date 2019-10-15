@@ -31,7 +31,13 @@
 
     <md-card-actions v-if="interactive">
       <md-button :to="`/${$i18n.locale}/project/measures/${measure.slug}`" class="md-dense">{{ $t('learn_more') }}</md-button>
-      <md-button class="md-raised md-primary md-dense" @click="chooseMeasure">{{ $t('choose') }}</md-button>
+      <md-button
+        :disabled="measure.measureId === '0'"
+        class="md-raised md-primary md-dense"
+        @click="chooseMeasure"
+      >
+        {{ $t('choose') }}
+      </md-button>
     </md-card-actions>
   </md-card>
 </template>

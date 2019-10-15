@@ -14,8 +14,18 @@ export const mutations = {
 
     measures.forEach(measure => {
       const rankedMeasure = rankedMeasures.find(item => measure.measureId === String(item.ast_id))
-
-      Vue.set(measure, 'systemSuitability', rankedMeasure.system_suitability)
+      if (rankedMeasure) {
+        Vue.set(measure, 'systemSuitability', rankedMeasure.system_suitability)
+      } else {
+        console.groupCollapsed(
+          `%c Error %c Can't set systemSuitability for measure ${measure.measureId} `,
+          'background: #F44336; color: #fff; border-radius: 3px 0 0 3px;',
+          'background: #263238; color: #eeffff; border-radius: 0 3px 3px 0; font-weight: 400;',
+        )
+        console.log(measure)
+        console.groupEnd()
+        throw new Error(measure.title)
+      }
     })
   },
 }
@@ -60,9 +70,26 @@ export const getters = {
       .filter(measureMarkedForInclusion)
   },
   measureById: (state, { workspaceMeasures }) => id => {
-    return workspaceMeasures.find(measure => measure.measureId === id)
+    const measure = workspaceMeasures.find(measure => measure.measureId === id)
+    if (measure) {
+      return measure
+    } else {
+      console.groupCollapsed(
+        `%c Error %c Could not find measure with id: ${id} `,
+        'background: #F44336; color: #fff; border-radius: 3px 0 0 3px;',
+        'background: #263238; color: #eeffff; border-radius: 0 3px 3px 0; font-weight: 400;',
+      )
+      console.trace()
+      console.groupEnd()
+      return workspaceMeasures.find(measure => measure.measureId === '0')
+    }
   },
   measureDetails: (state, { workspaceMeasures }) => slug => {
-    return workspaceMeasures.find(measure => measure.slug === slug)
+    const measure = workspaceMeasures.find(measure => measure.slug === slug)
+    if (measure) {
+      return measure
+    } else {
+      return workspaceMeasures.find(measure => measure.measureId === '0')
+    }
   },
 }

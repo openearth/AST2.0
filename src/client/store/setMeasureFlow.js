@@ -51,7 +51,7 @@ export const actions = {
     this.$router.push({ path }).catch(err => {})
   },
   async connectMeasureToArea({ commit, state, rootGetters, dispatch }, features) {
-    const measure = rootGetters['data/measures/workspaceMeasures'].find(({ measureId }) => measureId === state.id)
+    const measure = rootGetters['data/measures/measureById'](state.id)
     await dispatch('project/setAreaMeasure', { features, measure }, { root: true })
     commit('setDrawnAreas', features)
   },

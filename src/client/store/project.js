@@ -405,10 +405,10 @@ export const actions = {
         .then(rankedMeasures =>
           commit('data/measures/addMeasuresRanking', rankedMeasures, { root: true })
         )
-        .catch(error => {
+        .catch(({ message: title }) => {
           dispatch(
             'notifications/showError',
-            { message: `Could not get measure ranking data!`, duration: 0 },
+            { message: `Could not get ranking data for measure: ${title}!`, duration: 0 },
             { root: true }
           )
         })
@@ -626,13 +626,14 @@ export const getters = {
     })
   },
   areasByMeasure: (state, getters, rootState, rootGetters) => {
+    const measureById = rootGetters['data/measures/measureById']
     return getters.areas.reduce((obj, area) => {
       const measureId = area.properties.measure
 
       if (measureId) {
         if (!obj[measureId]) {
           obj[measureId] = {
-            measure: rootGetters['data/measures/workspaceMeasures'].find(measure => measure.measureId === measureId),
+            measure: measureById(measureId),
             areas: [],
           }
         }

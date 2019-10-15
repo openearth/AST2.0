@@ -28,6 +28,7 @@ export default {
     ...mapState('data', ['measures']),
     ...mapGetters('data/measures', ['workspaceMeasures']),
     ...mapGetters('selectedAreas', { selectedFeatures: 'features' }),
+    ...mapGetters('data/measures', ['measureById']),
     filteredMeasuresList() {
       return this.workspaceMeasures.filter(item => item.title.toLowerCase().indexOf(this.searchValue.toLowerCase()) !== -1)
     },
@@ -43,7 +44,7 @@ export default {
       this.searchValue = val
     },
     onChooseMeasure(measureId) {
-      const measure = this.workspaceMeasures.find(measure => measure.measureId === measureId)
+      const measure = this.measureById(measureId)
       this.$store.dispatch('project/setAreaMeasure', { features: this.selectedFeatures, measure })
       this.$router.push(`/${this.$i18n.locale}/project/areas/`).catch(err => {})
     },
