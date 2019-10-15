@@ -49,4 +49,7 @@
   --layer--popup: 15;
 
   --border-radius-small: 3px;
+
+  /* custom dimensions */
+  --avatar-size: 40px;
 }

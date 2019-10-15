@@ -168,9 +168,9 @@ export default {
 }
 
 .layer-list__avatar-fake {
-  width: var(--spacing-double);
-  height: var(--spacing-double);
-  min-width: var(--spacing-double);
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+  min-width: var(--avatar-size);
   margin-right: var(--spacing-default);
 
   display: flex;
@@ -179,6 +179,7 @@ export default {
 
   border-radius: 50%;
   font-size: var(--font-size-medium);
+  text-transform: uppercase;
 }
 
 .layer-list__avatar-fake:nth-child(even) {
