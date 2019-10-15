@@ -81,7 +81,7 @@ export const getters = {
       )
       console.trace()
       console.groupEnd()
-      return workspaceMeasures.find(measure => measure.measureId === '0')
+      return state.find(measure => measure.measureId === '0')
     }
   },
   measureDetails: (state, { workspaceMeasures }) => slug => {
@@ -89,7 +89,7 @@ export const getters = {
     if (measure) {
       return measure
     } else {
-      return workspaceMeasures.find(measure => measure.measureId === '0')
+      return state.find(measure => measure.measureId === '0')
     }
   },
 }
