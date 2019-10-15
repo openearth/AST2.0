@@ -235,7 +235,7 @@ export default {
 
 .areas__info-button {
   position: absolute;
-  top: -16px;
+  top: -9px;
   right: -40px;
 }
 </style>
