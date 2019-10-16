@@ -91,14 +91,7 @@ export default {
 .settings-view {
   display: flex;
   flex-direction: column;
-  /* width: 600px; */
-  width: var(--width-small);
-}
-
-@media screen and (min-width: 1200px) {
-  .settings-view {
-    width: var(--width-medium);
-  }
+  width: var(--width-medium);
 }
 
 .device-mobile.device-Safari .settings-view {
@@ -142,5 +135,10 @@ export default {
   position: absolute;
   border-radius: 100%;
   transform: translate(25%, 25%)
+}
+
+.settings-view .numeric-input .md-input {
+  min-width: 0;
+  width: 50px;
 }
 </style>

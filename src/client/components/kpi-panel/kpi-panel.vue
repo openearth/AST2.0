@@ -132,7 +132,7 @@ export default {
 }
 
 .device-mobile.device-Safari .kpi-panel__header {
-  height: max-content;
+  min-height: max-content;
 }
 
 .kpi-panel__title {
