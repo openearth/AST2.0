@@ -4,7 +4,7 @@
       <md-toolbar class="md-transparent app-menu__header" md-elevation="0">
         <h3
           v-if="title"
-          class="md-body-2"
+          class="md-body-2 app-menu__title"
           role="heading"
           aria-level="2"
         >
@@ -170,7 +170,15 @@
 
   .app-menu__header {
     display: flex;
+    flex-wrap: nowrap;
     justify-content: space-between;
+    align-content: center;
+    padding-top: var(--spacing-half);
+    padding-bottom: var(--spacing-half);
+  }
+
+  .app-menu__title {
+    line-height: 1.2em;
   }
 
   .app-menu__button {
