@@ -55,11 +55,7 @@ export default {
   },
   methods: {
     kpiByKey(key) { return this.kpiValues[key] },
-    percentageKpiByKey(key) {
-      const test = this.kpiPercentageValues[key]
-      console.log('test', key, test);
-      return this.kpiPercentageValues[key]
-    },
+    percentageKpiByKey(key) { return this.kpiPercentageValues[key] },
     unit(...args) {
       return this.$store.getters['data/units/displayValue'](...args)
     },

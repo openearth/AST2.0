@@ -36,6 +36,11 @@ export default {
   background-color: var(--background-color);
 }
 
+.device-mobile.device-Safari .app-panel {
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+
 .app-panel__content {
   position: relative;
   z-index: 1;
