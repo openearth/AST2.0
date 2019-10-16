@@ -257,4 +257,10 @@ export default {
   color: var(--text-light-color) !important;
 }
 
+.layer-dialog .md-helper-text {
+  bottom: -30px;
+  word-break: break-all;
+  line-height: 1.2em;
+}
+
 </style>
