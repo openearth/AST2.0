@@ -304,5 +304,6 @@ export default {
   position: absolute;
   width: 100vw;
   height: 100vh;
+  height: var(--vh, 100vh);
 }
 </style>

@@ -101,14 +101,33 @@ export default {
   }
 }
 
+.device-mobile.device-Safari .settings-view {
+  overflow-y: scroll; /* has to be scroll, not auto */
+  -webkit-overflow-scrolling: touch;
+}
+
 .settings-view__content {
   flex: 1;
   overflow-y: scroll;
 }
 
+.settings-view__content .md-checkbox:first-child,
+.settings-view__content .md-radio:first-child {
+  margin-right: var(--spacing-default);
+}
+
+@media screen and (min-width: 1200px) {
+  .settings-view__content .md-checkbox:first-child,
+  .settings-view__content .md-radio:first-child {
+    margin-right: 36px; /* reset to vue material default */
+  }
+}
+
 .settings-view__action-wrapper {
   display: flex;
   justify-content: flex-end;
+  padding: var(--spacing-half);
+  border-top: 1px solid var(--border-color);
 }
 
 .settings-view__tab-error {

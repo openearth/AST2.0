@@ -131,6 +131,10 @@ export default {
   background-color: var(--md-theme-default-toolbarvariant, #f5f5f5);
 }
 
+.device-mobile.device-Safari .kpi-panel__header {
+  height: max-content;
+}
+
 .kpi-panel__title {
   width: 100%;
   font-weight: 400;

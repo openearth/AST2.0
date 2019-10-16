@@ -106,13 +106,13 @@ export default {
 }
 
 .project-area__checkbox,
-.project-area__checkbox {
+.project-area__radio {
   margin-right: var(--spacing-default);
 }
 
 @media screen and (min-width: 1200px) {
   .project-area__checkbox,
-  .project-area__checkbox {
+  .project-area__radio {
     margin-right: 36px; /* reset to vue material default */
   }
 }

@@ -63,10 +63,6 @@ export default {
   background-color: var(--text-color);
 }
 
-.device-iOS.device-Safari .app-disclaimer__content {
-  padding-bottom: calc(var(--spacing-double) * 1.5);
-}
-
 .app-disclaimer__body {
   max-height: 19vh;
   margin-bottom: var(--spacing-double);

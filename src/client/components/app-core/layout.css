@@ -37,6 +37,11 @@ button:hover {
   padding: var(--spacing-double);
 }
 
+.device-mobile.device-Safari .page {
+  overflow-y: scroll; /* has to be scroll, not auto */
+  -webkit-overflow-scrolling: touch;
+}
+
 .page .md-link {
   margin: 0;
   padding: 0;
