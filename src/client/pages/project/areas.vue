@@ -10,7 +10,8 @@
         :key="feature.id"
         class="areas__item">
         <md-card>
-          <div :style="`border-left-color: ${appliedMeasure ? appliedMeasure.color.hex : 'transparent'}`" class="areas__item-content">
+          <!-- :style="`border-left-color: ${appliedMeasure ? appliedMeasure.color.hex : 'transparent'}`" -->
+          <div class="areas__item-content">
             <md-card-header>
               <md-avatar class="areas__avatar">
                 <img
@@ -153,8 +154,8 @@ export default {
 }
 
 .areas__item-content {
-  border-left-width: 5px;
-  border-left-style: solid;
+  /* border-left-width: 5px;
+  border-left-style: solid; */
 }
 
 .areas__avatar {
@@ -162,9 +163,14 @@ export default {
 }
 
 .areas__choose-wrapper {
-  display: flex;
-  align-items: center;
   padding-bottom: var(--spacing-double);
+}
+
+@media screen and (min-width: 1200px) {
+  .areas__choose-wrapper {
+    display: flex;
+    align-items: center;
+  }
 }
 
 .areas__choose-content {
@@ -185,8 +191,15 @@ export default {
 .areas__choose-icon {
   width: 100px;
   height: 100px;
+  margin-top: var(--spacing-small);
   border: 5px solid lightgrey;
   border-radius: 3px;
+}
+
+@media screen and (min-width: 1200px) {
+  .areas__choose-icon {
+    margin-top: 0;
+  }
 }
 
 .areas__choose-icon img {

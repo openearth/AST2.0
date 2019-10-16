@@ -205,7 +205,7 @@ export default {
 .measure-list__list {
   display: grid;
   grid-gap: var(--spacing-default);
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   padding: var(--spacing-default);
 
   list-style: none;
@@ -214,8 +214,6 @@ export default {
 @media screen and (min-width: 1200px) {
   .measure-list__list {
     grid-gap: var(--spacing-double);
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    padding: var(--spacing-default);
   }
 }
 

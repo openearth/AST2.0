@@ -23,6 +23,7 @@
               <md-checkbox
                 v-if="setting.multiple && !setting.isSelect"
                 :value="!projectAreaSettings[setting.key][option.value]"
+                class="project-area__checkbox"
                 @change="value => updateProjectAreaSetting({
                   type: 'checkbox',
                   key: setting.key,
@@ -34,6 +35,7 @@
                 v-else
                 :value="projectAreaSettings[setting.key] !== option.value"
                 required
+                class="project-area__radio"
                 @change="value => updateProjectAreaSetting({
                   type: 'radio',
                   key: setting.key,
@@ -102,4 +104,27 @@ export default {
 .project-area .md-list-item-expand {
   border: none;
 }
+
+.project-area__checkbox,
+.project-area__checkbox {
+  margin-right: var(--spacing-default);
+}
+
+@media screen and (min-width: 1200px) {
+  .project-area__checkbox,
+  .project-area__checkbox {
+    margin-right: 36px; /* reset to vue material default */
+  }
+}
+
+.project-area .md-list-item-text {
+  white-space: initial;
+}
+
+@media screen and (min-width: 1200px) {
+  .project-area .md-list-item-text {
+    white-space: nowrap; /* reset to vue material default */
+  }
+}
+
 </style>

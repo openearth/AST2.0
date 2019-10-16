@@ -187,16 +187,18 @@ export default {
   right: 10px;
 }
 
-.map-viewer__controls--draw {
+.map-viewer__controls--draw,
+.map-viewer__controls--zoom {
   position: absolute;
+  left: calc( var(--spacing-small) * 0.5 );
+}
+
+.map-viewer__controls--draw {
   top: 0;
-  left: 0;
 }
 
 .map-viewer__controls--zoom {
-  position: absolute;
   bottom: 0;
-  left: 0;
 }
 
 .map-viewer__layer-legend {

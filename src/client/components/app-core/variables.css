@@ -31,6 +31,7 @@
 
   /* width */
   --max-width: 600px;
+  --width-extra-small: 200px;
   --width-small: 265px;
   --width-medium: 400px;
   --width-large: 700px;

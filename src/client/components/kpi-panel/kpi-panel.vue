@@ -1,9 +1,9 @@
 <template>
   <section :class="{ 'kpi-panel__has-footer': hasFooter }" class="kpi-panel">
     <div class="kpi-panel__header">
-      <h4 class="md-title">{{ $t('results') }}</h4>
+      <h4 class="md-title kpi-panel__title">{{ $t('results') }}</h4>
 
-      <div>
+      <div class="kpi-panel__filter">
         <md-button
           :class="{'md-primary': displayType === 'numbers'}"
           class="md-icon-button"
@@ -97,9 +97,17 @@ export default {
 <style>
 .kpi-panel {
   position: relative;
-  width: var(--width-medium);
-  padding: var(--spacing-default);
+  width: var(--width-extra-small);
+  padding-right: var(--spacing-default);
+  padding-bottom: var(--spacing-default);
+  padding-left: var(--spacing-default);
   overflow-y: auto;
+}
+
+@media screen and (min-width: 1200px) {
+  .kpi-panel {
+    width: var(--width-medium);
+  }
 }
 
 .kpi-panel__has-footer {
@@ -109,14 +117,45 @@ export default {
 }
 
 .kpi-panel__header {
+  width: calc(100% + var(--spacing-default) * 2);
+  margin-bottom: var(--spacing-default);
+  margin-left: calc( var(--spacing-default) * -1 );
+
+  padding: var(--spacing-default);
+
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--spacing-default);
+  flex-wrap: wrap;
+
+  background-color: var(--md-theme-default-toolbarvariant, #f5f5f5);
 }
 
-.kpi-panel__header .md-button:last-child {
-  margin: 0;
+.kpi-panel__title {
+  width: 100%;
+  font-weight: 400;
+}
+
+@media screen and (min-width: 1200px) {
+  .kpi-panel__title {
+    width: auto;
+  }
+}
+
+.kpi-panel__filter {
+  margin-left: -8px; /* align buttons to headline // 8px from padding of ripple inside button */
+}
+
+@media screen and (min-width: 1200px) {
+  .kpi-panel__filter {
+    margin-left: 0;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .kpi-panel__filter {
+    margin-left: 0;
+  }
 }
 
 .kpi-panel__has-footer .kpi-panel__content {
