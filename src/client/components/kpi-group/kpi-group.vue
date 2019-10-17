@@ -13,10 +13,11 @@
         {{ roundValue(kpiByKey(kpi.key)) }} {{ unit(kpi.unit) }}
       </p>
 
-      <md-progress-bar
+      <bar-graph
         v-if="type === 'bars'"
-        :md-value="percentageKpiByKey(kpi.key)"
-        class="kpi-group__kpi-meter"
+        :amount="percentageKpiByKey(kpi.key)"
+        :fragment="selectedAreas ? getFragmentValue(selectedAreas, kpi.key) : 0"
+        class="kpi-group__area-impact"
       />
 
       <div v-if="(type === 'numbers') && selectedAreas" class="kpi-group__measure-kpi">
@@ -28,7 +29,11 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+import { BarGraph } from '~/components'
+
 export default {
+  components: { BarGraph },
   props: {
     kpiGroup: {
       type: Object,
@@ -53,6 +58,9 @@ export default {
       default: () => {},
     },
   },
+  computed: {
+    ...mapGetters('project', ['kpiTargetValues']),
+  },
   methods: {
     kpiByKey(key) { return this.kpiValues[key] },
     percentageKpiByKey(key) { return this.kpiPercentageValues[key] },
@@ -65,6 +73,10 @@ export default {
       } else {
         return Math.round(value * 100) / 100
       }
+    },
+    getFragmentValue(selectedAreas, key) {
+      const value = this.roundValue(selectedAreas.properties.apiData[key]) / this.kpiTargetValues[key];
+      return value === Infinity ? 1 : value
     },
   },
 }
@@ -99,8 +111,8 @@ export default {
 }
 
 .kpi-group__kpi-meter {
-  position: absolute;
-  bottom: 0;
+  /* position: absolute;
+  bottom: 0; */
   flex-basis: 100%;
   width: 100%;
 }
@@ -114,5 +126,12 @@ export default {
   font-size: var(--font-size-extra-small);
   color: var(--neutral-color--dark);
   margin-bottom: var(--spacing-half);
+}
+
+.kpi-group__area-impact {
+  /* position: absolute;
+  bottom: 0;
+  left: 0;
+  transform: translateY(100%); */
 }
 </style>
