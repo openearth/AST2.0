@@ -90,6 +90,7 @@
 import Vue from 'vue'
 import { mapState, mapActions, mapGetters } from 'vuex'
 import { SelectInput } from '~/components'
+import log from '~/lib/log'
 
 export default {
   middleware: ['access-level-project-area'],
@@ -112,15 +113,15 @@ export default {
     area() { return this.projectArea.properties && Math.round(this.projectArea.properties.area) },
   },
   mounted() {
-    if (this.userViewedProjectSettings) {
-      console.log('User did see settings before')
-    } else {
-      console.log('User did NOT see settings before')
+    if (this.userViewedProjectSettings === false) {
+      log.info('User did not see settings before. Start filling with smart defaults')
+      this.setSmartDefaultsForProjectSettings()
     }
   },
   methods: {
     ...mapActions({
       updateProjectAreaSetting: 'project/updateProjectAreaSetting',
+      setSmartDefaultsForProjectSettings: 'project/setSmartDefaultsForProjectSettings',
     }),
     setActiveTooltip(key) {
       if (this.activeTooltipKey === key) {

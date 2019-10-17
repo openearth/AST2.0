@@ -6,13 +6,14 @@ import get from 'lodash/get'
 import round from 'lodash/round'
 import unset from 'lodash/unset'
 import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT, REPAINT, DELETE_LAYER } from '../lib/map-event-bus'
-import { getApiDataForFeature, getRankedMeasures } from "../lib/get-api-data";
+import { getApiDataForFeature, getRankedMeasures, getDefaultValueForProjectSetting } from "../lib/get-api-data";
 import FileSaver from 'file-saver'
 import getLoadedFileContents from '../lib/get-loaded-file-contents'
 import validateProject from '../lib/validate-project'
 import projectToGeoJson from '../lib/project-to-geojson'
 import projectToCsv from '../lib/project-to-csv'
 import delay from '../lib/delay'
+import log from '../lib/log'
 
 const initialState = () => ({
   legalAccepted: false,
@@ -385,6 +386,37 @@ export const actions = {
     layers.forEach(layer => {
       commit('setMapLayers', { id: layer.id, visible: false, showLegend: false, opacity: 1 })
     })
+  },
+  setSmartDefaultsForProjectSettings({ state, rootState, dispatch }) {
+    const { properties, id,...area } = state.settings.area
+
+    rootState.data.areaSettings
+      .filter(({ defaultValueEndpoint }) => defaultValueEndpoint)
+      .forEach(setting => {
+        const { defaultValueEndpoint, key } = setting
+        const payload = { ...defaultValueEndpoint, area }
+        getDefaultValueForProjectSetting(payload)
+          .then(({ errors, value }) => {
+            if (errors) return
+            const { isSelect, multiple } = setting
+            let type;
+
+            switch (true) {
+              case  multiple && !isSelect: { type = 'checkbox'; break; }
+              case !multiple && !isSelect: { type = 'radio';    break; }
+              case !multiple &&  isSelect: { type = 'select';   break; }
+            }
+
+            dispatch('updateProjectAreaSetting', { type, key, value })
+          })
+          .catch(error => {
+            log.error(
+              `Could not get default value for "${key}"`,
+              'payload:', payload,
+              error
+            )
+          })
+      })
   },
   async updateProjectAreaSetting({ state, commit, rootGetters, getters, dispatch }, payload ) {
     const { type } = payload

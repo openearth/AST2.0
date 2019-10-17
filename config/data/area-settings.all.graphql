@@ -13,6 +13,7 @@ query ($locale: SiteLocale, $first: IntType, $skip: IntType = 0) {
       title,
       value,
     },
+    defaultValueEndpoint,
   },
   _allAreaSettingsMeta {
     count
