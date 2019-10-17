@@ -6,6 +6,7 @@
       class="input-range__label"
     >
       {{ label }}
+      <slot name="info"/>
     </label>
     <div class="input-range__value-wrapper">
       <input
