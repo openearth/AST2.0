@@ -103,12 +103,20 @@ export default {
     ...mapState({
       locale: state => state.i18n.locale,
       projectArea: state => state.project.settings.area,
+      userViewedProjectSettings: state => state.project.settings.userViewedProjectSettings,
     }),
     ...mapGetters({
       projectAreaSettings: 'project/settingsProjectArea',
       areaSettings: 'data/areaSettings/overriddenAreaSettings',
     }),
     area() { return this.projectArea.properties && Math.round(this.projectArea.properties.area) },
+  },
+  mounted() {
+    if (this.userViewedProjectSettings) {
+      console.log('User did see settings before')
+    } else {
+      console.log('User did NOT see settings before')
+    }
   },
   methods: {
     ...mapActions({

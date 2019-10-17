@@ -22,6 +22,7 @@ const initialState = () => ({
     general: {
       title: '',
     },
+    userViewedProjectSettings: false,
     projectArea: {},
     targets: {},
   },
@@ -42,6 +43,11 @@ export const state = () => (initialState())
 export const mutations = {
   import(state, file) {
     const newState = merge({}, state, file)
+
+    if (file.settings.hasOwnProperty('userViewedProjectSettings') === false) {
+      newState.settings.userViewedProjectSettings = true
+    }
+
     Object.keys(newState).forEach(key => Vue.set(state, key, newState[key]))
   },
   setMapZoom(state, value) {
@@ -50,6 +56,9 @@ export const mutations = {
   setMapCenter(state, value) {
     state.map.center.lat = value.lat
     state.map.center.lng = value.lng
+  },
+  setUserViewedProjectSettings(state) {
+    state.settings.userViewedProjectSettings = true
   },
   addProjectArea(state, value) {
     return state.settings.area = value

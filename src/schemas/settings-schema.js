@@ -56,6 +56,9 @@ export default (areaSettings, kpiGroups) => ({
           title: { type: 'string' },
         },
       },
+      userViewedProjectSettings: {
+        type: 'boolean',
+      },
       projectArea: {
         type: 'object',
         additionalProperties: false,
