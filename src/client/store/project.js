@@ -26,8 +26,8 @@ const initialState = () => ({
   map: {
     zoom: 16.5,
     center: {
-      lat: 52.36599335162853,
-      lng: 4.916535879906178,
+      lat: 51.9856484,
+      lng: 4.380215599999929,
     },
     wmsLayers: [],
     customLayers: [],
