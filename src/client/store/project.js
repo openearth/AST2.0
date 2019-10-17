@@ -4,6 +4,7 @@ import turfLength from '@turf/length'
 import merge from 'lodash/merge'
 import get from 'lodash/get'
 import round from 'lodash/round'
+import unset from 'lodash/unset'
 import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT, REPAINT, DELETE_LAYER } from '../lib/map-event-bus'
 import { getApiDataForFeature, getRankedMeasures } from "../lib/get-api-data";
 import FileSaver from 'file-saver'
@@ -11,6 +12,7 @@ import getLoadedFileContents from '../lib/get-loaded-file-contents'
 import validateProject from '../lib/validate-project'
 import projectToGeoJson from '../lib/project-to-geojson'
 import projectToCsv from '../lib/project-to-csv'
+import delay from '../lib/delay'
 
 const initialState = () => ({
   legalAccepted: false,
@@ -88,6 +90,12 @@ export const mutations = {
           value: properties[key],
         })
       })
+  },
+  removeAreaProperties(state, { id, propertyPaths = [] }) {
+    const areaToUpdate = (state.areas.find(area => area.id === id))
+    const properties = { ...areaToUpdate.properties }
+    propertyPaths.forEach(path => unset(properties, path))
+    Vue.set(areaToUpdate, 'properties', properties)
   },
   deleteArea(state, value) {
     state.areas = state.areas.filter(area => area.id !== value)
@@ -268,12 +276,43 @@ export const actions = {
       dispatch('updateAreaProperties', { features: [feature], properties })
     })
   },
-  fetchAreaApiData({ state, commit }, features) {
+  removeAreaMeasure({ commit }, features) {
+    features.forEach(feature => {
+      commit('updateAreaProperty', { id: feature.id, properties: { apiData: {} } })
+      commit('removeAreaProperties', {
+        id: feature.id,
+        propertyPaths: [
+          'measure',
+          'color',
+          'defaultInflow',
+          'defaultDepth',
+          'defaultWidth',
+          'defaultRadius',
+          'areaInflow',
+          'areaDepth',
+          'areaWidth',
+          'areaRadius',
+        ],
+      })
+    })
+    delay(10)
+    MapEventBus.$emit(RELOAD_LAYERS)
+  },
+  async fetchAreaApiData({ state, commit, dispatch }, features) {
     features.forEach(async (feature) => {
       const projectArea = state.settings.area.properties.area
       const { scenarioName } = state.settings.projectArea
-      const apiData = await getApiDataForFeature(feature, projectArea, scenarioName)
-      commit('updateAreaProperty', { id: feature.id, properties: { apiData } })
+
+      getApiDataForFeature(feature, projectArea, scenarioName)
+        .then(apiData => commit('updateAreaProperty', { id: feature.id, properties: { apiData } }))
+        .catch(error => {
+          dispatch('removeAreaMeasure', [feature])
+          dispatch(
+            'notifications/showError',
+            { message: `Could not calculate data for ${feature.properties.name}!`, duration: 0 },
+            { root: true }
+          )
+        })
     })
   },
   deleteArea({ state, commit }, features) {
@@ -357,14 +396,22 @@ export const actions = {
 
     dispatch('updateMeasuresRanking')
   },
-  async updateMeasuresRanking({ state, commit, rootGetters }) {
+  async updateMeasuresRanking({ state, commit, rootGetters, dispatch }) {
     const filledInRequiredProjectAreaSettings = rootGetters['flow/filledInRequiredProjectAreaSettings']
 
     if (filledInRequiredProjectAreaSettings) {
       const { projectArea } = state.settings
-      const rankedMeasures = await getRankedMeasures(projectArea)
-
-      commit('data/measures/addMeasuresRanking', rankedMeasures, { root: true })
+      getRankedMeasures(projectArea)
+        .then(rankedMeasures =>
+          commit('data/measures/addMeasuresRanking', rankedMeasures, { root: true })
+        )
+        .catch(({ message: title }) => {
+          dispatch(
+            'notifications/showError',
+            { message: `Could not get ranking data for measure: ${title}!`, duration: 0 },
+            { root: true }
+          )
+        })
     }
   },
   async importProject({ state, commit, dispatch, rootGetters, rootState }, event) {
@@ -581,13 +628,14 @@ export const getters = {
     })
   },
   areasByMeasure: (state, getters, rootState, rootGetters) => {
+    const measureById = rootGetters['data/measures/measureById']
     return getters.areas.reduce((obj, area) => {
       const measureId = area.properties.measure
 
       if (measureId) {
         if (!obj[measureId]) {
           obj[measureId] = {
-            measure: rootGetters['data/measures/workspaceMeasures'].find(measure => measure.measureId === measureId),
+            measure: measureById(measureId),
             areas: [],
           }
         }

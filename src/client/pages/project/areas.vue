@@ -130,7 +130,7 @@ export default {
     },
     getDefaultValueProperty(key, property, defaultValues) {
       const values = defaultValues.find(values => values.key.toLowerCase() === key)
-      const value = values[property]
+      const value = values ? values[property] : ''
       return String(value)
     },
     inputValue(value, defaultValue) {
