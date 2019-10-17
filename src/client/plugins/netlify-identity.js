@@ -1,13 +1,10 @@
 import netlifyIdentity from 'netlify-identity-widget'
 import delay from '../lib/delay'
+import log from '../lib/log'
 import kebabCase from 'lodash/kebabCase'
 
 export default ({ store }) => {
-  console.log(
-    `%c AST 2.0 %c commit: ${process.env.GIT_COMMIT} `,
-    'background: #008fc5; color: #fff; border-radius: 3px 0 0 3px;',
-    'background: #263238; color: #eeffff; border-radius: 0 3px 3px 0; font-weight: 400;',
-  )
+  log.info(`commit: ${process.env.GIT_COMMIT}`)
 
   const storeUser = async user => {
     store.commit('user/setUser', user || null)

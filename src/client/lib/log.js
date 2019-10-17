@@ -1,10 +1,13 @@
+const astColor = 'background: #008fc5; color: #fff; border-radius: 3px 0 0 3px;'
+
 function log(label, color1, color2) {
   return function ({ isGroup = false } = {}) {
     return function (...values) {
       const [title, ...vals] = values
       if (values.length > 1) {
         console.groupCollapsed(
-          `%c ${label} %c ${title} `,
+          `%c AST 2.0 %c ${label} %c ${title} `.replace(/\s{2,}/, ''),
+          astColor,
           color1,
           color2,
         )
@@ -16,22 +19,35 @@ function log(label, color1, color2) {
               console.log(value)
             }
           })
+          console.groupCollapsed(
+            '%c Trace: ',
+            'background: #263238; color: #eeffff; border-radius: 0 3px 3px 0; font-weight: 400;'
+          )
+          console.trace()
+          console.groupEnd()
           console.groupEnd()
         }
       } else {
         if (isGroup) {
           console.groupCollapsed(
-            `%c ${label} %c ${title} `,
+            `%c AST 2.0 %c ${label} %c ${title} `.replace(/\s{2,}/, ''),
+            astColor,
             color1,
             color2,
           )
         } else {
           console.groupCollapsed(
-            `%c ${label} %c ${title} `,
+            `%c AST 2.0 %c ${label} %c ${title} `.replace(/\s{2,}/, ''),
+            astColor,
             color1,
             color2,
           )
+          console.groupCollapsed(
+            '%c Trace ',
+            'background: #263238; color: #eeffff; border-radius: 0 3px 3px 0; font-weight: 400;'
+          )
           console.trace()
+          console.groupEnd()
           console.groupEnd()
         }
       }
@@ -42,17 +58,17 @@ function log(label, color1, color2) {
 const methods = {
   error: log(
     'Error:',
-    'background: #F44336; color: #fff; border-radius: 3px 0 0 3px;',
+    'background: #F44336; color: #fff;',
     'background: #263238; color: #eeffff; border-radius: 0 3px 3px 0; font-weight: 400;'
   ),
   warning: log(
     'Warning:',
-    'background: #c6a700; color: #fff; border-radius: 3px 0 0 3px;',
+    'background: #c6a700; color: #fff;',
     'background: #263238; color: #eeffff; border-radius: 0 3px 3px 0; font-weight: 400;'
   ),
   info: log(
-    'Info:',
-    'background: #0069c0; color: #fff; border-radius: 3px 0 0 3px;',
+    '',
+    '',
     'background: #263238; color: #eeffff; border-radius: 0 3px 3px 0; font-weight: 400;'
   ),
 }
