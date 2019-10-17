@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import getData from '../../lib/get-data'
 import get from 'lodash/fp/get'
+import log from '../../lib/log'
 
 export const state = () => []
 
@@ -17,13 +18,7 @@ export const mutations = {
       if (rankedMeasure) {
         Vue.set(measure, 'systemSuitability', rankedMeasure.system_suitability)
       } else {
-        console.groupCollapsed(
-          `%c Error %c Can't set systemSuitability for measure ${measure.measureId} `,
-          'background: #F44336; color: #fff; border-radius: 3px 0 0 3px;',
-          'background: #263238; color: #eeffff; border-radius: 0 3px 3px 0; font-weight: 400;',
-        )
-        console.log(measure)
-        console.groupEnd()
+        log.error(`Can't set systemSuitability for measure ${measure.measureId}`, measure)
         throw new Error(measure.title)
       }
     })
@@ -71,16 +66,15 @@ export const getters = {
   },
   measureById: (state, { workspaceMeasures }) => id => {
     const measure = workspaceMeasures.find(measure => measure.measureId === id)
+
+    if (id === '') {
+      return undefined
+    }
+
     if (measure) {
       return measure
     } else {
-      console.groupCollapsed(
-        `%c Error %c Could not find measure with id: ${id} `,
-        'background: #F44336; color: #fff; border-radius: 3px 0 0 3px;',
-        'background: #263238; color: #eeffff; border-radius: 0 3px 3px 0; font-weight: 400;',
-      )
-      console.trace()
-      console.groupEnd()
+      log.error(`Could not find measure with id: ${id}`)
       return state.find(measure => measure.measureId === '0')
     }
   },

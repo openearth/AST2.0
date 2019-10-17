@@ -23,6 +23,7 @@ import MapEventBus, {
   REPAINT,
   DELETE_LAYER,
 } from '../../lib/map-event-bus'
+import log from '../../lib/log'
 
 export default {
   props: {
@@ -344,9 +345,7 @@ export default {
         const style = this.map.getStyle()
         layers = style.layers
       } catch (err) {
-        console.groupCollapsed(`Map styles are not loaded yet. Ignore adding layer ${title}`)
-          console.error(err)
-        console.groupEnd()
+        log.warning(`Map styles are not loaded yet. Ignore adding layer ${title}`, err)
         return
       }
 
@@ -379,10 +378,11 @@ export default {
           }, lastWmsLayerId)
         } catch (err) {
           this.showError({ message: `Could not load WMS Layer: ${title}`, duration: 0 })
-          console.groupCollapsed(`Could not load WMS Layer: ${title}`)
-            console.error(err)
-            console.log({ layer: { type, id, url, tileSize, title, visible } })
-          console.groupEnd()
+          log.error(
+            `Could not load WMS Layer: ${title}`,
+            err,
+            { layer: { type, id, url, tileSize, title, visible } }
+          )
         }
       }
     },
