@@ -42,6 +42,17 @@ button:hover {
   -webkit-overflow-scrolling: touch;
 }
 
+/*
+bug in Safari and Firefox: padding bottom not visible of flex child
+suggested solution is to use a pseudo element as spacer
+ */
+.device-Firefox .page:after,
+.device-Safari .page:after {
+  content: '';
+  display: block;
+  height: 1px;
+}
+
 .page .md-link {
   margin: 0;
   padding: 0;

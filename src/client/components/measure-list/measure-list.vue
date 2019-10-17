@@ -204,6 +204,11 @@ export default {
 </script>
 
 <style>
+.measure-list .numeric-input .md-input {
+  min-width: 0;
+  width: 50px;
+}
+
 .measure-list__filters {
   flex-wrap: wrap;
 }

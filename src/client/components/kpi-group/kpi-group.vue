@@ -100,8 +100,9 @@ export default {
 
 @media screen and (min-width: 1200px) {
   .kpi-group__kpi-title {
-    margin-bottom: var(--spacing-half);
+    width: auto;
     max-width: 90%;
+    margin-bottom: var(--spacing-half);
   }
 }
 

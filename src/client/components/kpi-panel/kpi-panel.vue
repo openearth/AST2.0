@@ -120,23 +120,22 @@ export default {
   width: calc(100% + var(--spacing-default) * 2);
   margin-bottom: var(--spacing-default);
   margin-left: calc( var(--spacing-default) * -1 );
-
   padding: var(--spacing-default);
-
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
 
   background-color: var(--md-theme-default-toolbarvariant, #f5f5f5);
 }
 
-.device-mobile.device-Safari .kpi-panel__header {
-  min-height: max-content;
+@media screen and (min-width: 1200px) {
+  .kpi-panel__header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+  }
 }
 
 .kpi-panel__title {
   width: 100%;
+  display: flex;
+  align-items: center;
   font-weight: 400;
 }
 
