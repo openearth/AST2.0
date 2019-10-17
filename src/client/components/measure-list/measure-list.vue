@@ -1,13 +1,15 @@
 <template>
-  <div>
+  <div class="measure-list">
     <md-toolbar md-elevation="0">
-      <div class="md-toolbar-row">
+      <div class="md-toolbar-row measure-list__filters">
         <div class="md-toolbar-section-start">
           <text-input
             :value="searchValue"
             :on-change="value => searchValue = value"
             md-clearable
-            label="search" />
+            label="search"
+            class="measure-search"
+          />
         </div>
 
         <div class="md-toolbar-section-end">
@@ -202,13 +204,41 @@ export default {
 </script>
 
 <style>
+.measure-list .numeric-input .md-input {
+  min-width: 0;
+  width: 50px;
+}
+
+.measure-list__filters {
+  flex-wrap: wrap;
+}
+
+.measure-list .md-toolbar-section-start,
+.measure-list .md-toolbar-section-end {
+  width: 100%;
+}
+
+@media screen and (min-width: 1200px) {
+  .measure-list .md-toolbar-section-start,
+  .measure-list .md-toolbar-section-end {
+    width: auto;
+  }
+}
+
 .measure-list__list {
-  list-style: none;
-  padding: 0;
   display: grid;
-  grid-gap: var(--spacing-double);
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-gap: var(--spacing-default);
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
   padding: var(--spacing-default);
+
+  list-style: none;
+}
+
+@media screen and (min-width: 1200px) {
+  .measure-list__list {
+    grid-gap: var(--spacing-double);
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
 }
 
 .measure-list__card {

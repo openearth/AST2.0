@@ -71,4 +71,8 @@ export default {
   padding-left: var(--spacing-default);
   color: var(--md-theme-default-primary);
 }
+
+.measure-stepper .md-stepper-text {
+  white-space: initial;
+}
 </style>

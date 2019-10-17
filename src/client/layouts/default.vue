@@ -99,10 +99,12 @@
 
 <script>
 import { mapState, mapMutations, mapGetters, mapActions } from "vuex";
+import { addDeviceClasses, isMobile, getUserAgent } from '../lib/device-detection'
 import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea } from '../components'
 import { mapFields } from 'vuex-map-fields';
 import getData from '~/lib/get-data'
 import EventBus, { CLICK } from "~/lib/event-bus";
+import { debounce } from 'lodash';
 
 export default {
   components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea },
@@ -154,7 +156,15 @@ export default {
     const locale = this.$i18n.locale
     const data =  await getData({ locale, slug: 'legal' })
     this.disclaimer = { ...data.legal.disclaimer }
+
+    addDeviceClasses(document.documentElement)
+
+    this.setViewportHeightProperty()
+    window.addEventListener('resize', this.resizeHandler)
   },
+
+  // beforeMount() {
+  // },
 
   mounted() {
     this.$refs.base.addEventListener('click', this.dispatchClickEvent)
@@ -167,6 +177,7 @@ export default {
   beforeDestroy() {
     this.$refs.base.removeEventListener('click', this.dispatchClickEvent)
     window.removeEventListener('beforeunload', this.beforeUnload)
+    window.removeEventListener('resize', this.resizeHandler)
   },
 
   methods: {
@@ -227,6 +238,12 @@ export default {
       e.returnValue = message
       return message
     },
+    resizeHandler() {
+      debounce(this.setViewportHeightProperty.bind(this), 100)()
+    },
+    setViewportHeightProperty() {
+      document.documentElement.style.setProperty('--vh', `${window.innerHeight}px`);
+    },
   },
 }
 </script>
@@ -238,6 +255,7 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  height: var(--vh, 100vh);
   overflow: hidden;
   position: relative;
 }
@@ -286,5 +304,6 @@ export default {
   position: absolute;
   width: 100vw;
   height: 100vh;
+  height: var(--vh, 100vh);
 }
 </style>

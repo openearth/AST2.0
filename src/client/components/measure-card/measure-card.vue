@@ -1,5 +1,6 @@
 <template>
-  <md-card :style="`border-left-color: ${measure.color.hex}`" class="measure-card">
+  <!-- :style="`border-left-color: ${measure.color.hex}`" -->
+  <md-card class="measure-card">
     <md-card-header>
       <md-card-header-text>
         <div class="md-subheading measure-card__title">{{ measure.title }}</div>
@@ -84,12 +85,38 @@ export default {
   flex-direction: column;
   align-items: space-between;
   justify-content: space-between;
-  border-left-width: 5px;
-  border-left-style: solid;
+  /* border-left-width: 5px;
+  border-left-style: solid; */
+}
+
+.measure-card .md-card-header-flex {
+  flex-direction: column;
+  flex-grow: 2;
+}
+
+@media screen and (min-width: 1200px) {
+  .measure-card .md-card-header-flex {
+    flex-direction: row;
+    flex-grow: initial;
+  }
 }
 
 .measure-card__title {
   font-size: 20px;
+}
+
+.measure-card .md-card-header .md-card-media {
+  margin-top: var(--spacing-small);
+  margin-left: 0;
+  flex: none;
+}
+
+@media screen and (min-width: 1200px) {
+  .measure-card .md-card-header .md-card-media {
+    margin-top: 0;
+    margin-left: 16px;
+    flex: 0 0 80px;
+  }
 }
 
 .measure-card__img {
@@ -98,8 +125,14 @@ export default {
 }
 
 .measure-card__tags {
-  margin-top: var(--spacing-default);
+  margin-top: var(--spacing-small);
   display: flex;
+}
+
+@media screen and (min-width: 1200px) {
+  .measure-card__tags {
+    margin-top: var(--spacing-default);
+  }
 }
 
 .measure-card__tag{

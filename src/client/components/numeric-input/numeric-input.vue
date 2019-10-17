@@ -80,7 +80,7 @@ export default {
 
 <style>
 .numeric-input {
-  position: relatie;
+  position: relativ;
 }
 
 .numeric-input__click-highjack {

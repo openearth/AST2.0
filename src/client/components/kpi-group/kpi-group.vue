@@ -9,7 +9,7 @@
       <span class="md-body-1 kpi-group__kpi-title">
         {{ kpi.title }}:
       </span>
-      <p v-if="type === 'numbers'" class="kpi-group__kpi-value">
+      <p v-if="type === 'numbers'" class="md-body-1 kpi-group__kpi-value">
         {{ roundValue(kpiByKey(kpi.key)) }} {{ unit(kpi.unit) }}
       </p>
 
@@ -80,27 +80,43 @@ export default {
 }
 
 .kpi-group__kpi .md-list-item-content {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
   position: relative;
   margin-bottom: var(--spacing-half);
   padding: 0;
   min-height: 30px; /* overwrites material ui min-height */
+
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
 
 .kpi-group__kpi-title {
-  margin-bottom: var(--spacing-half);
-  max-width: 90%;
+  width: 100%;
+  white-space: normal;
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  hyphens: auto;
+}
+
+@media screen and (min-width: 1200px) {
+  .kpi-group__kpi-title {
+    width: auto;
+    max-width: 90%;
+    margin-bottom: var(--spacing-half);
+  }
 }
 
 .kpi-group__kpi-value {
-  margin-bottom: var(--spacing-half);
+  margin-bottom: calc( var(--spacing-half) * 0.5 );
+}
+
+@media screen and (min-width: 1200px) {
+  .kpi-group__kpi-value {
+    margin-bottom: var(--spacing-half);
+  }
 }
 
 .kpi-group__kpi-meter {
-  position: absolute;
-  bottom: 0;
   flex-basis: 100%;
   width: 100%;
 }
@@ -109,10 +125,19 @@ export default {
   position: relative;
   flex-basis: 100%;
   width: 100%;
-  display: flex;
-  justify-content: space-between;
   font-size: var(--font-size-extra-small);
   color: var(--neutral-color--dark);
   margin-bottom: var(--spacing-half);
+}
+
+@media screen and (min-width: 1200px) {
+  .kpi-group__measure-kpi {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+.kpi-group__measure-kpi span {
+  display: block;
 }
 </style>

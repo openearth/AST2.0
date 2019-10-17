@@ -36,6 +36,11 @@ export default {
   background-color: var(--background-color);
 }
 
+.device-mobile.device-Safari .app-panel {
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+
 .app-panel__content {
   position: relative;
   z-index: 1;
@@ -43,8 +48,14 @@ export default {
 
 .app-panel__wide {
   width: 100%;
-  min-width: 400px;
-  max-width: calc(100vw - var(--width-large));
+  max-width: var(--width-small);
+}
+
+@media screen and (min-width: 1200px) {
+  .app-panel__wide {
+    min-width: 400px;
+    max-width: calc(100vw - var(--width-large));
+  }
 }
 
 /* overwriting default styles for .md-toolbar */

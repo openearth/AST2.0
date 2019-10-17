@@ -125,8 +125,19 @@ export default {
 }
 
 .input-range__range {
-  flex: 1;
+  width: calc(100% - 100px);
+  min-width: calc(100% - 100px);
+  max-width: calc(100% - 100px);
   margin-right: var(--spacing-default);
+}
+
+@media screen and (min-width: 1200px) {
+  .input-range__range {
+    flex: 1;
+    width: auto;
+    min-width: 0;
+    max-width: none;
+  }
 }
 
 .input-range__number {

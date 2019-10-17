@@ -18,9 +18,6 @@ export default {
       ...mapActions({
         chooseMeasure: 'setMeasureFlow/chooseMeasure',
       }),
-      cancel() {
-        console.log('clicked cancel')
-      },
     },
 }
 </script>
