@@ -21,7 +21,7 @@ function log(label, color1, color2) {
           })
           console.groupCollapsed(
             '%c Trace: ',
-            'background: #263238; color: #eeffff; border-radius: 0 3px 3px 0; font-weight: 400;'
+            'background: #263238; color: #eeffff; border-radius: 3px; font-weight: 400;'
           )
           console.trace()
           console.groupEnd()
@@ -44,7 +44,7 @@ function log(label, color1, color2) {
           )
           console.groupCollapsed(
             '%c Trace ',
-            'background: #263238; color: #eeffff; border-radius: 0 3px 3px 0; font-weight: 400;'
+            'background: #263238; color: #eeffff; border-radius: 3px; font-weight: 400;'
           )
           console.trace()
           console.groupEnd()
