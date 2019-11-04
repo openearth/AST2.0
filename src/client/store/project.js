@@ -13,28 +13,29 @@ import validateProject from '../lib/validate-project'
 import projectToGeoJson from '../lib/project-to-geojson'
 import projectToCsv from '../lib/project-to-csv'
 import delay from '../lib/delay'
+import log from "../lib/log";
 
 const initialState = () => ({
-  legalAccepted: false,
   areas: [],
+  legalAccepted: false,
+  map: {
+    center: {
+      lat: 51.9856484,
+      lng: 4.380215599999929,
+    },
+    customLayers: [],
+    mapLayers: [],
+    wmsLayers: [],
+    zoom: 16.5,
+  },
   settings: {
     area: {},
     general: {
       title: '',
     },
-    userViewedProjectSettings: false,
     projectArea: {},
     targets: {},
-  },
-  map: {
-    zoom: 16.5,
-    center: {
-      lat: 51.9856484,
-      lng: 4.380215599999929,
-    },
-    wmsLayers: [],
-    customLayers: [],
-    mapLayers: [],
+    userViewedProjectSettings: false,
   },
 })
 
@@ -43,6 +44,11 @@ export const state = () => (initialState())
 export const mutations = {
   import(state, file) {
     const newState = merge({}, state, file)
+
+    // Explicitly use stored mapbox features. Since they are object, their
+    // values are merged when using `merge()`
+    newState.settings.area = file.settings.area
+    newState.areas = file.areas
 
     if (file.settings.hasOwnProperty('userViewedProjectSettings') === false) {
       newState.settings.userViewedProjectSettings = true
@@ -445,7 +451,8 @@ export const actions = {
     dispatch('bootstrapMapLayers', rootState.data.mapLayers)
 
     if (!validProject.valid) {
-      throw new Error('New error')
+      log.error('Invalid project')
+      throw new Error('Invalid project')
     }
   },
   saveProject({ state, commit }) {

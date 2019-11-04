@@ -103,6 +103,7 @@ import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu
 import { mapFields } from 'vuex-map-fields';
 import getData from '~/lib/get-data'
 import EventBus, { CLICK } from "~/lib/event-bus";
+import log from '~/lib/log'
 
 export default {
   components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea },
@@ -194,7 +195,12 @@ export default {
     async onFileInput(event) {
       this.importProject(event)
         .then(() => this.$router.push(this.currentFilledInLevel.uri))
-        .catch(error => this.showError({ message: this.$i18n.t('could_not_load_file') }))
+        .catch(error => {
+          if (error.name !== 'NavigationDuplicated') {
+            log.error('Could not load file', error);
+            this.showError({ message: this.$i18n.t('could_not_load_file') })
+          }
+        })
     },
     onNewProject() {
       if (this.projectArea.id || this.areas.length) {

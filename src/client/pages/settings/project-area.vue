@@ -111,13 +111,6 @@ export default {
     }),
     area() { return this.projectArea.properties && Math.round(this.projectArea.properties.area) },
   },
-  mounted() {
-    if (this.userViewedProjectSettings) {
-      console.log('User did see settings before')
-    } else {
-      console.log('User did NOT see settings before')
-    }
-  },
   methods: {
     ...mapActions({
       updateProjectAreaSetting: 'project/updateProjectAreaSetting',

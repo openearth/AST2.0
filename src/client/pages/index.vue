@@ -40,6 +40,7 @@
 <script>
 import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
 import MapEventBus, { REDRAW } from "../lib/map-event-bus"
+import log from '../lib/log'
 
 export default {
   middleware: ['state-is-modal'],
@@ -58,7 +59,12 @@ export default {
     async onFileInput(event) {
       this.importProject(event)
         .then(() => this.$router.push(this.currentFilledInLevel.uri))
-        .catch(error => this.showError({ message: this.$i18n.t('could_not_load_file') }))
+        .catch(error => {
+          if (error.name !== 'NavigationDuplicated') {
+            log.error('Could not load file', error);
+            this.showError({ message: this.$i18n.t('could_not_load_file') })
+          }
+        })
     },
   },
 }
