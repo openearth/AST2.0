@@ -1,5 +1,5 @@
-query ($id: ItemId){
-  workspace(filter: {id: {eq: $id}}) {
+query ($locale: SiteLocale, $id: ItemId){
+  workspace(locale: $locale, filter: {id: {eq: $id}}) {
     name,
     excludeAllMeasures,
     applicationTitle,
