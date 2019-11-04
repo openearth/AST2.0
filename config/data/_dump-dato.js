@@ -20,6 +20,7 @@ dotenv.config()
 const DATO_API_TOKEN = process.env.DATO_API_TOKEN
 
 const availableLocales = ['en', 'nl', 'zh_CN']
+
 const dataFolder = path.resolve(__dirname, '../../src/client/static/data')
 
 const tap = input => { console.log(input); return input; }
@@ -68,21 +69,24 @@ const queryFilesPerLocale = Object.keys(queryFilePaths).map(locale => {
 
 const workspaceQuery = readFileSync(path.join(__dirname, '_workspace.graphql'),  { encoding: 'utf8' })
 
-const addFilePathToObject = item => {
+const addFilePathToObject = locale => item => {
   const slug = kebabCase(item.workspace.name)
-  const filePath = path.join('workspaces', `${slug}.json`)
+  const filePath = path.join(locale, 'workspaces', `${slug}.json`)
   return set('filePath', filePath, item)
 }
 
 Promise.all(flatten(queryFilesPerLocale))
-  .then(mkdirp(path.join(dataFolder, 'workspaces')))
   .then(() => readFileFromPath(path.join(dataFolder, 'workspaces.json')))
   .then(JSON.parse)
   .then(get('workspaces'))
-  .then(map(({ id }) => queryApi(DATO_API_TOKEN, { id }, workspaceQuery)))
-  .then(promises => Promise.all(promises))
-  .then(map(addFilePathToObject))
-  .then(map(({ workspace, filePath }) => {
-    writeToFile(path.join(dataFolder, filePath))(workspace)
-    console.log(`Written ${filePath}`)
+  .then(map(({ id }) => {
+    availableLocales.forEach(locale => {
+      mkdirp(path.join(dataFolder, locale, 'workspaces'))
+      queryApi(DATO_API_TOKEN, { id, locale }, workspaceQuery)
+        .then(addFilePathToObject(locale))
+        .then(({ workspace, filePath }) => {
+          writeToFile(path.join(dataFolder, filePath))(workspace)
+          console.log(`Written workspacefile: ${filePath}`)
+        })
+    })
   }))

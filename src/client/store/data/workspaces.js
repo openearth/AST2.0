@@ -41,8 +41,8 @@ export const actions = {
       .forEach(workspace => commit('addWorkspace', workspace))
   },
 
-  async storeWorkspaceData({ commit, dispatch }, name) {
-    const _workspace = await getData({ folder: 'data/workspaces', slug: name })
+  async storeWorkspaceData({ commit, dispatch }, { domain: slug, locale }) {
+    const _workspace = await getData({ slug: `workspaces/${slug}`, locale })
     if (_workspace) {
       const workspace = {
         ..._workspace,
