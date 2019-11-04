@@ -20,6 +20,7 @@ dotenv.config()
 const DATO_API_TOKEN = process.env.DATO_API_TOKEN
 
 const availableLocales = ['en', 'nl', 'zh_CN']
+
 const dataFolder = path.resolve(__dirname, '../../src/client/static/data')
 
 const tap = input => { console.log(input); return input; }
