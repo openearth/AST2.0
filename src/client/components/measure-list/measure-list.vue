@@ -189,6 +189,7 @@ export default {
       const searchFiltered = list => list
         .filter(measure => measure[selectedType] === true || showAll)
         .filter(measure => measure.title.match(searchRE))
+        .filter(measure => measure.measureId !== '0')
 
       return searchFiltered(this.featureSorted)
     },
