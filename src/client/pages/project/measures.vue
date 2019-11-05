@@ -1,6 +1,6 @@
 <template>
   <md-drawer md-permanent="clipped" class="measures">
-    <nuxt-child />
+    <nuxt-child keep-alive/>
   </md-drawer>
 </template>
 

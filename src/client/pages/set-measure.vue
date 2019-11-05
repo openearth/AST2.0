@@ -5,7 +5,7 @@
       :current="activeStep.id"
       :wide="activeStep.isWide"
       @to-step="toStep"/>
-    <nuxt-child/>
+    <nuxt-child keep-alive/>
     <md-button
       slot="footer"
       class="md-raised"
