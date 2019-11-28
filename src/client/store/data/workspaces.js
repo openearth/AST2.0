@@ -23,7 +23,7 @@ export const mutations = {
     Vue.set(state, '_user', workspaceName)
   },
   setDomain(state, _domain) {
-    const [domain] = /\w+-\w+$/.exec(_domain) || []
+    const [domain] = /(\w+-)+\w+$/.exec(_domain) || []
     const availableWorkspaces = Object.keys(state)
     const domainName = availableWorkspaces.indexOf(domain) === -1
       ? defaultDomain
