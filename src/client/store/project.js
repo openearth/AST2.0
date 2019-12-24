@@ -443,15 +443,13 @@ export const actions = {
 
       MapEventBus.$emit(RELOAD_LAYERS)
       MapEventBus.$emit(REPOSITION, { zoom: map.zoom, center: map.center })
-    } else {
-      console.error(validProject.errors)
     }
 
     commit('appMenu/hideMenu', null, { root: true })
     dispatch('bootstrapMapLayers', rootState.data.mapLayers)
 
     if (!validProject.valid) {
-      log.error('Invalid project')
+      log.error('Invalid project', validProject.errors)
       throw new Error('Invalid project')
     }
   },
