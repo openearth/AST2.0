@@ -14,6 +14,7 @@
       :wms-layers="wmsLayers"
       :custom-layers="customLayers"
       :map-layers="mapLayers"
+      :layer-list="layerList"
       :mode="mode"
       class="map-viewer__map"
       @create="onCreate"
@@ -34,6 +35,7 @@
       :wms-layers="wmsLayers"
       :custom-layers="customLayers"
       :map-layers="mapLayers"
+      :layer-list="layerList"
       :current-mode="currentMode"
       class="map-viewer__controls--draw"
       @setMode="setMode"
@@ -130,6 +132,10 @@ export default {
       default: () => [],
     },
     mapLayers: {
+      type: Array,
+      default: () => [],
+    },
+    layerList: {
       type: Array,
       default: () => [],
     },
