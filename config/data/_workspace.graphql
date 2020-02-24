@@ -1,6 +1,7 @@
 query ($locale: SiteLocale, $id: ItemId){
   workspace(locale: $locale, filter: {id: {eq: $id}}) {
     name,
+    currencySymbol,
     excludeAllMeasures,
     applicationTitle,
     measureOverrides,
