@@ -113,6 +113,7 @@
 import { mapGetters } from "vuex";
 import { MeasureCard } from "..";
 import TextInput from '../text-input'
+import isNan from "lodash/isNaN";
 
 const SYSTEM_SUITABILITY = 'system-suitability'
 const ALPHA = 'alpha'
@@ -137,7 +138,9 @@ export default {
   computed: {
     ...mapGetters({ selectedType: 'selectedAreas/selectedGeometryType' }),
     systemSuitabilitySortedMeasures() {
-      return [...this.measures].sort((a, b) => {
+      const withSystemSuitability = this.measures.filter(item => isNaN(Number(item.systemSuitability)) === false)
+      const withoutSuitablility = this.measures.filter(item => isNaN(Number(item.systemSuitability)))
+      const sorted = [...withSystemSuitability].sort((a, b) => {
         if (a.systemSuitability < b.systemSuitability) {
           return 1
         }
@@ -146,6 +149,7 @@ export default {
         }
         return 0
       })
+      return [...sorted, ...withoutSuitablility]
     },
     alphaSortedMeasures() {
       return [...this.measures].sort((a, b) => {
@@ -162,7 +166,6 @@ export default {
       const list = this.sortType === SYSTEM_SUITABILITY
         ? this.systemSuitabilitySortedMeasures
         : this.alphaSortedMeasures
-
       if (this.sortFeatured) {
         const featured = list.filter(({ featured }) => featured === true)
         const nonfeatured = list.filter(({ featured }) => featured === false)
