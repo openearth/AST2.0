@@ -87,6 +87,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    layerList: {
+      type: Array,
+      default: () => [],
+    },
   },
 
   data: () => ({
@@ -96,7 +100,7 @@ export default {
 
   computed: {
     allMapLayers() {
-      const layers = [ ...this.wmsLayers, ...this.customLayers, ...this.mapLayers ]
+      const layers = [ ...this.wmsLayers, ...this.customLayers, ...this.mapLayers, ...this.layerList ]
       return layers
     },
     hasProjectArea() {
@@ -135,6 +139,9 @@ export default {
     },
     mapLayers() {
       [...this.mapLayers].reverse().forEach(this.addWmsLayer)
+    },
+    layerList() {
+      [...this.layerList].reverse().forEach(this.addWmsLayer)
     },
   },
 

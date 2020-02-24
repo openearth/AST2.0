@@ -42,6 +42,7 @@
           :wms-layers="wmsLayers"
           :custom-layers="customLayers"
           :map-layers="mapLayers"
+          :layer-list="layerList"
           :mode="mode"
           class="layout__map"
           @create="onCreateArea"
@@ -138,12 +139,15 @@ export default {
       inSetMeasureFlow: state => state.setMeasureFlow.inFlow,
       userIsRefreshing: state => state.user.isRefreshing,
     }),
-    ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers', 'customLayers', 'mapLayers']),
+    ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers', 'customLayers', 'mapLayers', 'layers']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings']),
     ...mapGetters({ selectedAreas:  'selectedAreas/features' }),
     ...mapGetters('map', ['isProject', 'point', 'line', 'polygon', 'addOnly', 'interactive', 'search']),
     ...mapGetters('user', ['isLoggedIn']),
     ...mapGetters('data/appConfig', ['title']),
+    layerList() {
+      return [...this.customLayers, ...this.layers, ...this.mapLayers, ...this.wmsLayers]
+    },
   },
 
   watch: {

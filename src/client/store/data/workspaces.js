@@ -4,7 +4,7 @@ import kebabCase from 'lodash/kebabCase'
 import unset from 'lodash/unset'
 
 const defaultDomain = process.env.NODE_ENV === 'development'
-  ? 'toolboxks-nl'
+  ? 'kbstoolbox-nl'
   : 'kbstoolbox-nl'
 
 export const state = () => ({
@@ -64,6 +64,7 @@ export const actions = {
       commit('fillWorkspace', workspace)
       dispatch('project/bootstrapWmsLayers', workspace.wmsLayers, { root: true })
       dispatch('project/bootstrapMapLayers', workspace.mapLayers, { root: true })
+      dispatch('project/bootstrapLayers', workspace.layers, { root: true })
     }
   },
 }
