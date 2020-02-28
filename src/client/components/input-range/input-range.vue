@@ -140,4 +140,15 @@ export default {
   text-align: center;
   min-width: 0;
 }
+
+/* target (old) edge only */
+@supports (-ms-ime-align:auto) {
+    .input-range__value-wrapper {
+        align-items: center;
+    }
+    .input-range__range {
+      margin-top: 25px;
+    }
+}
+
 </style>

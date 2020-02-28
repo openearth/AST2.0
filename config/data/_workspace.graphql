@@ -1,6 +1,7 @@
 query ($locale: SiteLocale, $id: ItemId){
   workspace(locale: $locale, filter: {id: {eq: $id}}) {
     name,
+    currencySymbol,
     excludeAllMeasures,
     applicationTitle,
     measureOverrides,
@@ -10,6 +11,31 @@ query ($locale: SiteLocale, $id: ItemId){
       longitude,
     },
     zoomLevel,
+    layers {
+      ... on MapLayerRecord {
+        _modelApiKey
+        id
+        title
+        url
+      }
+      ... on WmsLayerRecord {
+        _modelApiKey
+        id
+        title
+        layerType
+        tilesize
+        baseurl
+        layers
+        version
+        tilesize
+        bbox
+        format
+        service
+        srs
+        transparent
+        styles
+      }
+    },
     wmsLayers {
       id,
       title,

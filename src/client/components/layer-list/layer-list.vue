@@ -1,7 +1,7 @@
 <template>
   <md-list ref="list" :style="{maxHeight: maxHeight + 'px'}">
     <li
-      v-for="layer in layers"
+      v-for="layer in layerList"
       :key="layer.id"
       class="md-list-item">
       <div
@@ -99,15 +99,11 @@ import { LayerDialog, InputRange } from '~/components'
 export default {
   components: { InputRange, LayerDialog },
   props: {
-    wmsLayers: {
-      type: Array,
-      default: () => [],
-    },
     customLayers: {
       type: Array,
       default: () => [],
     },
-    mapLayers: {
+    layerList: {
       type: Array,
       default: () => [],
     },
@@ -117,12 +113,6 @@ export default {
     showLayerDialog: false,
     maxHeight: 500,
   }),
-  computed: {
-    layers() {
-      const layers =  [ ...this.wmsLayers, ...this.mapLayers, ...this.customLayers ]
-      return layers
-    },
-  },
   mounted() {
     this.calculateMaxHeight();
     window.addEventListener('resize', this.resizeHandler)

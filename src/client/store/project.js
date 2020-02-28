@@ -26,6 +26,7 @@ const initialState = () => ({
     customLayers: [],
     mapLayers: [],
     wmsLayers: [],
+    layers: [],
     zoom: 16.5,
   },
   settings: {
@@ -139,6 +140,12 @@ export const mutations = {
     }
     state.map.customLayers.push(layer)
   },
+  setLayer(state, layer) {
+    if (state.map.layers === undefined) {
+      Vue.set(state.map, 'layers', [])
+    }
+    state.map.layers.push(layer)
+  },
   deleteCustomLayer(state, id) {
     state.map.customLayers = state.map.customLayers.filter(layer => layer.id !== id)
     MapEventBus.$emit(DELETE_LAYER, id)
@@ -150,7 +157,7 @@ export const mutations = {
     state.legalAccepted = true
   },
   setLayerOpacity(state, { id, value }) {
-    const layers = [ ...state.map.wmsLayers,  ...state.map.mapLayers, ...state.map.customLayers ]
+    const layers = [ ...state.map.wmsLayers,  ...state.map.mapLayers, ...state.map.customLayers, ...state.map.layers ]
     layers.forEach(layer => {
       if (id === layer.id) {
         layer.opacity = value
@@ -158,7 +165,7 @@ export const mutations = {
     })
   },
   setLayerVisibility(state, { id, value }) {
-    const layers = [ ...state.map.wmsLayers,  ...state.map.mapLayers, ...state.map.customLayers ]
+    const layers = [ ...state.map.wmsLayers,  ...state.map.mapLayers, ...state.map.customLayers, ...state.map.layers ]
     layers.forEach(layer => {
       if (id === layer.id) {
         layer.visible = value
@@ -167,7 +174,7 @@ export const mutations = {
     })
   },
   setLegendVisibility(state, { id, value }) {
-    const layers = [ ...state.map.wmsLayers,  ...state.map.mapLayers, ...state.map.customLayers ]
+    const layers = [ ...state.map.wmsLayers,  ...state.map.mapLayers, ...state.map.customLayers, ...state.map.layers ]
     layers.forEach(layer => {
       if (id === layer.id && layer.legendUrl) {
         layer.showLegend = value
@@ -390,6 +397,11 @@ export const actions = {
   bootstrapMapLayers({ state, commit }, layers) {
     layers.forEach(layer => {
       commit('setMapLayers', { id: layer.id, visible: false, showLegend: false, opacity: 1 })
+    })
+  },
+  bootstrapLayers({ state, commit }, layers) {
+    layers.forEach(layer => {
+      commit('setLayer', { id: layer.id, visible: false, showLegend: false, opacity: 1 })
     })
   },
   async updateProjectAreaSetting({ state, commit, rootGetters, getters, dispatch }, payload ) {
@@ -755,6 +767,17 @@ export const getters = {
       const storerdSettings = state.map.mapLayers.find(({ id }) => id === layer.id)
       return { ...layer, ...storerdSettings }
     })
+  },
+  layers: (state, getters, rootState, rootGetters) => {
+    const { layers: rootLayers = [] } = rootGetters['data/workspaces/activeWorkspace'] || {}
+    return state.map.layers
+      .filter(layer => rootLayers.some(rootLayer => rootLayer.id === layer.id))
+      .map(({ id, visible, opacity, showLegend }) => ({
+        ...rootGetters['data/layers/constructed'].find(layer => layer.id === id),
+        visible,
+        showLegend,
+        opacity,
+      }))
   },
   settingsProjectArea: (state) => {
     return state.settings.projectArea
