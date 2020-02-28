@@ -11,6 +11,10 @@ query ($locale: SiteLocale, $id: ItemId){
       longitude,
     },
     zoomLevel,
+    scenarios {
+      title,
+      value,
+    },
     layers {
       ... on MapLayerRecord {
         _modelApiKey

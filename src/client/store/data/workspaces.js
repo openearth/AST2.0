@@ -4,7 +4,7 @@ import kebabCase from 'lodash/kebabCase'
 import unset from 'lodash/unset'
 
 const defaultDomain = process.env.NODE_ENV === 'development'
-  ? 'kbstoolbox-nl'
+  ? 'toolboxks-nl'
   : 'kbstoolbox-nl'
 
 export const state = () => ({
@@ -70,10 +70,19 @@ export const actions = {
 }
 
 export const getters = {
-  activeWorkspace(state) {
+  activeWorkspace(state, getters, rootState) {
     const activeDomain = state._domain;
     const activeUser = state._user;
     const activeName = activeUser || activeDomain;
-    return state[activeName]
+    const workspace = state[activeName]
+    let scenarioName
+    if (workspace && rootState.data.scenarios) {
+      const options = (workspace.scenarios || []).length ? workspace.scenarios : rootState.data.scenarios
+      scenarioName = {
+        defaultValue: options[0],
+        options,
+      }
+    }
+    return workspace ? { ...workspace, scenarioName  } : workspace
   },
 }

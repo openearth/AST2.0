@@ -1,0 +1,10 @@
+query ($locale: SiteLocale, $first: IntType, $skip: IntType = 0) {
+  scenarios: allScenarios(locale: $locale, first: $first, skip: $skip, filter: {includeInAllWorkspaces: {eq: "true"}}) {
+    title
+    value
+    includeInAllWorkspaces
+  }
+  _allScenariosMeta {
+    count
+  }
+}
