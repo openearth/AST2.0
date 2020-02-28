@@ -58,6 +58,7 @@
                   <app-tooltip
                     :message="$t('area_depth_info')"
                     class="areas__info-button"
+                    direction="left"
                   />
                 </template>
               </input-range>
@@ -74,6 +75,7 @@
                   <app-tooltip
                     :message="$t('area_inflow_info')"
                     class="areas__info-button"
+                    direction="left"
                   />
                 </template>
               </input-range>
