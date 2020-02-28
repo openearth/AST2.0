@@ -124,7 +124,7 @@
 
 <script>
 import { mapGetters, mapActions, mapMutations, mapState } from "vuex";
-import MapEventBus, { REDRAW, MODE } from "../../lib/map-event-bus";
+import MapEventBus, { REDRAW, MODE, DELETE } from "../../lib/map-event-bus";
 import InputRange from '../../components/input-range'
 import TextInput from '../../components/text-input'
 import HintText from '~/components/hint-text'
@@ -151,10 +151,18 @@ export default {
   },
   mounted() {
     MapEventBus.$emit(REDRAW)
+    MapEventBus.$on(DELETE, this.onDelete)
+  },
+  destroyed() {
+    MapEventBus.$off(DELETE, this.onDelete)
   },
   methods: {
     ...mapActions({ updateAreaProperties: 'project/updateAreaProperties' }),
     ...mapMutations({ updateAreaProperty: 'project/updateAreaProperty' }),
+    onDelete() {
+      this.$router.push(`/${this.locale}/project/`).catch(err => {})
+      MapEventBus.$emit(MODE, 'simple_select')
+    },
     onDone() {
       this.$router.push(`/${this.locale}/project/`).catch(err => {})
       MapEventBus.$emit(MODE, 'simple_select')

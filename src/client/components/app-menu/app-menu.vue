@@ -41,8 +41,10 @@
                 {{ $t('open_project') }}
               </span>
             </md-button>
+            <!-- this input element is being references by its id in default.vue -->
             <input
               v-if="acceptedLegal"
+              id="open-project"
               class="app-menu__input-file"
               type="file"
               accept="application/json"

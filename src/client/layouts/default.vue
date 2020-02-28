@@ -167,6 +167,13 @@ export default {
     if (this.devMode === false) {
       window.addEventListener('beforeunload', this.beforeUnload)
     }
+
+    window.addEventListener('keydown', event => {
+      if (event.key === 'o' && event.metaKey) {
+        event.preventDefault()
+        document.querySelector('#open-project').click()
+      }
+    })
   },
 
   beforeDestroy() {
