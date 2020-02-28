@@ -6,8 +6,9 @@ import log from '../../lib/log'
 export const state = () => []
 
 export const mutations = {
-  addMeasure(state, measure) {
-    state.push(measure)
+  addMeasure(state, { scenarios, ...measure }) {
+    const scenarioNames = scenarios.map(({ value }) => value)
+    state.push({ ...measure, scenarioNames })
   },
 
   addMeasuresRanking(state, rankedMeasures) {
