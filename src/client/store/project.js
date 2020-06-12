@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import turfArea from '@turf/area'
 import turfLength from '@turf/length'
+import cloneDeep from 'lodash/cloneDeep'
 import merge from 'lodash/merge'
 import get from 'lodash/get'
 import round from 'lodash/round'
@@ -442,9 +443,19 @@ export const actions = {
     }
   },
   async importProject({ state, commit, dispatch, rootGetters, rootState }, event) {
-    const { name } = event.target.files[0]
+
+    // Workspaces can have custom scenario names. We need to augment the
+    // rootState.data object, which contains the scenarioNames, with the scenarios
+    // from the activeWorkspace
+    const rootData = cloneDeep(rootState.data)
+    const activeWorkspace = rootGetters['data/workspaces/activeWorkspace']
+    const workspaceScenarios = cloneDeep(activeWorkspace.scenarios) || []
+    const scenarioNames = get(rootData, 'areaSettings').find(({ key }) => key == 'scenarioName')
+    scenarioNames.options = [...scenarioNames.options, ...workspaceScenarios]
     const loadedProject = await getLoadedFileContents(event)
-    const validProject = validateProject(loadedProject, rootState.data)
+
+    const { name } = event.target.files[0]
+    const validProject = validateProject(loadedProject, rootData)
     const { map } = loadedProject
 
     loadedProject.settings.general.title = name.replace('.json', '')
