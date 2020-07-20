@@ -2,6 +2,15 @@
   <aside class="app-results-panel">
     <header class="app-results-panel__header">
       <h4 class="md-title app-results-panel__title">{{ $t('results') }}</h4>
+
+      <md-button
+        :class="{'app-results-panel__rivm': activePanel === 'rivm'}"
+        class="md-icon-button"
+        @click="setActivePanel('rivm')"
+      >
+        <md-icon>local_florist</md-icon>
+      </md-button>
+
       <md-button
         :class="{'md-primary': activePanel === 'numbers'}"
         class="md-icon-button"
@@ -77,6 +86,11 @@ export default {
   padding: var(--spacing-default);
   padding-bottom: 0;
   flex: 1;
+}
+
+.app-results-panel__rivm.md-button.md-theme-default,
+.app-results-panel__rivm .md-icon.md-theme-default.md-icon-font {
+  color: var(--nature-green-color);
 }
 
 </style>

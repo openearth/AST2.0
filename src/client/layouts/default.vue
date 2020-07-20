@@ -60,6 +60,9 @@
               :kpi-percentage-values="filteredKpiPercentageValues"
               :selected-areas="selectedAreas && selectedAreas[0]"
             />
+            <app-results-rivm
+              v-if="scope.active === 'rivm'"
+            />
           </template>
         </app-results-panel>
       </md-content>
@@ -108,13 +111,14 @@
 import { mapState, mapMutations, mapGetters, mapActions } from "vuex";
 import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea } from '../components'
 import AppResultsPanel from '../components/app-results-panel'
+import AppResultsRIVM from '../components/app-results-rivm'
 import { mapFields } from 'vuex-map-fields';
 import getData from '~/lib/get-data'
 import EventBus, { CLICK } from "~/lib/event-bus";
 import log from '~/lib/log'
 
 export default {
-  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea, AppResultsPanel },
+  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea, AppResultsPanel, AppResultsRIVM },
   data() {
     return {
       disclaimer: {},
