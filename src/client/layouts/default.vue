@@ -50,12 +50,18 @@
           @delete="deleteArea"
           @selectionchange="selectionChange"
           @move="setMapPosition"/>
-        <kpi-panel
-          v-if="filledInSettings"
-          :kpis="filteredKpiGroups"
-          :kpi-values="filteredKpiValues"
-          :kpi-percentage-values="filteredKpiPercentageValues"
-          :selected-areas="selectedAreas && selectedAreas[0]"/>
+        <app-results-panel v-if="filledInSettings">
+          <template slot-scope="scope">
+            <kpi-panel
+              v-if="scope.active === 'bars' || scope.active === 'numbers'"
+              :display-type="scope.active"
+              :kpis="filteredKpiGroups"
+              :kpi-values="filteredKpiValues"
+              :kpi-percentage-values="filteredKpiPercentageValues"
+              :selected-areas="selectedAreas && selectedAreas[0]"
+            />
+          </template>
+        </app-results-panel>
       </md-content>
     </div>
 
@@ -101,13 +107,14 @@
 <script>
 import { mapState, mapMutations, mapGetters, mapActions } from "vuex";
 import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea } from '../components'
+import AppResultsPanel from '../components/app-results-panel'
 import { mapFields } from 'vuex-map-fields';
 import getData from '~/lib/get-data'
 import EventBus, { CLICK } from "~/lib/event-bus";
 import log from '~/lib/log'
 
 export default {
-  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea },
+  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea, AppResultsPanel },
   data() {
     return {
       disclaimer: {},
