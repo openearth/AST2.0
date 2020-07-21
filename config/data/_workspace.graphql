@@ -3,6 +3,7 @@ query ($locale: SiteLocale, $id: ItemId){
     name,
     currencySymbol,
     excludeAllMeasures,
+    showRivmCoBenefits,
     applicationTitle,
     measureOverrides,
     scenarioName,

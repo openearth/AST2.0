@@ -4,28 +4,16 @@
       <h4 class="md-title app-results-panel__title">{{ $t('results') }}</h4>
 
       <md-button
-        :class="{'app-results-panel__rivm': activePanel === 'rivm'}"
+        v-for="button in nonEmptyButtonList"
+        :key="button.id"
+        :class="{[`app-results-panel__button--active`]: activePanel === button.id}"
+        :style="`--button-color: var(${button.color || '--md-theme-default-primary'})`"
         class="md-icon-button"
-        @click="setActivePanel('rivm')"
+        @click="setActivePanel(button.id)"
       >
-        <md-icon>local_florist</md-icon>
+        <md-icon>{{ button.icon }}</md-icon>
       </md-button>
 
-      <md-button
-        :class="{'md-primary': activePanel === 'numbers'}"
-        class="md-icon-button"
-        @click="setActivePanel('numbers')"
-      >
-        <md-icon>format_list_numbered</md-icon>
-      </md-button>
-
-      <md-button
-        :class="{'md-primary': activePanel === 'bars'}"
-        class="md-icon-button"
-        @click="setActivePanel('bars')"
-      >
-        <md-icon>insert_chart</md-icon>
-      </md-button>
     </header>
 
     <div class="app-results-panel__content">
@@ -37,10 +25,31 @@
 
 <script>
 export default {
+  props: {
+    buttons: {
+      type: Array,
+      default: () => [],
+      validator: list => list
+        .filter(x => x)
+        .every(item => typeof item.id == 'string' && typeof item.icon == 'string'),
+    },
+    defaultActive: {
+      type: String,
+      required: true,
+    },
+  },
   data() {
     return {
-      activePanel: 'numbers',
+      activePanel: '',
     }
+  },
+  computed: {
+    nonEmptyButtonList() {
+      return this.buttons.filter(x => x)
+    },
+  },
+  created() {
+    this.activePanel = this.defaultActive
   },
   methods: {
     setActivePanel(panel) {
@@ -88,9 +97,9 @@ export default {
   flex: 1;
 }
 
-.app-results-panel__rivm.md-button.md-theme-default,
-.app-results-panel__rivm .md-icon.md-theme-default.md-icon-font {
-  color: var(--nature-green-color);
+.app-results-panel__button--active.md-button.md-theme-default,
+.app-results-panel__button--active .md-icon.md-theme-default.md-icon-font {
+  color: var(--button-color);
 }
 
 </style>

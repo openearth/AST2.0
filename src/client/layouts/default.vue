@@ -50,7 +50,15 @@
           @delete="deleteArea"
           @selectionchange="selectionChange"
           @move="setMapPosition"/>
-        <app-results-panel v-if="filledInSettings">
+        <app-results-panel
+          v-if="filledInSettings"
+          :buttons="[
+            (activeWorkspace.showRivmCoBenefits && { id: 'rivm', icon: 'local_florist', color: '--nature-green-color' }),
+            { id: 'numbers', icon: 'format_list_numbered' },
+            { id: 'bars', icon: 'insert_chart' }
+          ]"
+          default-active="numbers"
+        >
           <template slot-scope="scope">
             <kpi-panel
               v-if="scope.active === 'bars' || scope.active === 'numbers'"
@@ -159,6 +167,7 @@ export default {
     ...mapGetters('map', ['isProject', 'point', 'line', 'polygon', 'addOnly', 'interactive', 'search']),
     ...mapGetters('user', ['isLoggedIn']),
     ...mapGetters('data/appConfig', ['title']),
+    ...mapGetters('data/workspaces', ['activeWorkspace']),
     layerList() {
       return [...this.customLayers, ...this.layers, ...this.mapLayers, ...this.wmsLayers]
     },
