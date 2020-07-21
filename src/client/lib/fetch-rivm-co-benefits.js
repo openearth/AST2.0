@@ -1,4 +1,30 @@
-export default async function fetchRivmCoBenefits() {
+import omit from 'lodash/omit'
+
+function prepareArea(area) {
+  const properties = omit(area.properties, ['color', 'hidden', 'apiData'])
+
+  properties.areaDepth = properties.areaDepth || properties.defaultDepth
+  properties.areaWidth = properties.areaWidth || properties.defaultWidth
+  properties.areaInflow = properties.areaInflow || properties.defaultInflow
+  properties.areaRadius = properties.areaRadius || properties.defaultRadius
+
+  delete properties.defaultDepth
+  delete properties.defaultWidth
+  delete properties.defaultInflow
+  delete properties.defaultRadius
+
+  area.properties = properties
+
+  return area
+}
+
+export default async function fetchRivmCoBenefits({ areas, projectArea } = {}) {
+  const preparedAreas = areas.map(prepareArea)
+  const payload = {
+    type: 'FeatureCollection',
+    features: [projectArea, ...preparedAreas],
+  }
+
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve({

@@ -195,7 +195,6 @@ export const mutations = {
     }
   },
   setRivmCoBenefits(state, data) {
-    console.log({ state })
     Vue.set(state, 'rivmCoBenefits', data)
   },
 }
@@ -529,8 +528,13 @@ export const actions = {
 
     dispatch('bootstrapSettingsProjectArea', foo)
   },
-  async fetchRivmCoBenefits({ commit }) {
-    const data = await fetchCoBenefitsFromRivm()
+  async fetchRivmCoBenefits({ state, commit }) {
+
+    // We clone to get rid of the Vue Observer properties
+    const areas = cloneDeep(state.areas)
+    const projectArea = cloneDeep(state.settings.area)
+
+    const data = await fetchCoBenefitsFromRivm({ areas, projectArea })
     const receivedAt = Date.now()
     const flattenedEntries = flatten((data.assessmentResults || []).map(item => get(item, 'entries', [])))
     const entries = flattenedEntries.map(entry => pick(entry, ['code', 'model', 'name', 'units', 'tablevalue']))

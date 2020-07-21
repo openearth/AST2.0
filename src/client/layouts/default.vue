@@ -168,9 +168,6 @@ export default {
     userIsRefreshing() {
       window.removeEventListener('beforeunload', this.beforeUnload)
     },
-    rivmCoBenefits() {
-      console.log(this.rivmCoBenefits)
-    },
   },
   async beforeMount() {
     const locale = this.$i18n.locale
