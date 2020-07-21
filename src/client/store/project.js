@@ -484,9 +484,20 @@ export const actions = {
   },
   exportProject({ state, getters, rootGetters }, format) {
     const { title } = state.settings.general
-    const data = format === 'csv'
-      ? projectToCsv(getters.areas, Object.keys(getters.kpiValues), rootGetters['data/measures/measureById'])
-      : projectToGeoJson(getters.areas)
+    let data
+    switch (format) {
+      case 'csv':
+        data = projectToCsv(getters.areas, Object.keys(getters.kpiValues), rootGetters['data/measures/measureById'])
+        break;
+      case 'geojson':
+        data = projectToGeoJson(getters.areas)
+        break;
+      case 'pdf':
+        this.$router.push(`/${rootState.i18n.locale}/pdf-export`)
+      default:
+        return
+    }
+
     const type = format === 'csv' ? 'text/csv' : 'application/json';
     const blob = new Blob([data], { type })
     return FileSaver.saveAs(blob, `${title || 'ast_project'}.${format}`)

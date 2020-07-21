@@ -81,6 +81,9 @@
             <md-option value="geojson">
               {{ $t('geojson') }}
             </md-option>
+            <md-option value="pdf">
+              {{ $t('pdf') }}
+            </md-option>
           </md-select>
         </md-field>
       </md-dialog-content>
