@@ -31,7 +31,21 @@
 
     <footer class="app-results-rivm__footer">
       <small>Laatste berekening: {{ receivedAt }}</small>
-      <md-button class="app-results-rivm__cta md-raised" @click="handleFetchData">Bereken groene baten</md-button>
+      <div class="app-results-rivm__footer-cta-wrapper">
+        <md-button
+          :disabled="isLoading"
+          class="app-results-rivm__cta md-raised"
+          @click="handleFetchData">
+          Bereken groene baten
+        </md-button>
+        <md-progress-spinner
+          v-if="isLoading"
+          :md-diameter="30"
+          :md-stroke="3"
+          class="app-results-rivm__loading-indicator"
+          md-mode="indeterminate"
+        />
+      </div>
     </footer>
   </article>
 </template>
@@ -45,6 +59,11 @@ export default {
       type: Object,
       default: () => {},
     },
+  },
+  data() {
+    return {
+      isLoading: false,
+    }
   },
   computed: {
     receivedAt() {
@@ -83,8 +102,14 @@ export default {
       }
     },
   },
+  watch: {
+    receivedAt() {
+      this.isLoading = false
+    },
+  },
   methods: {
     handleFetchData() {
+      this.isLoading = true
       this.$emit('fetch-data')
     },
   },
@@ -121,6 +146,17 @@ export default {
 .app-results-rivm__cta.md-button.md-theme-default.md-raised:not([disabled]) {
   background-color: var(--nature-green-color);
   color: var(--neutral-color);
+}
+
+.app-results-rivm__footer-cta-wrapper {
+  position: relative;
+}
+
+.app-results-rivm__loading-indicator {
+  position: absolute;
+  top: calc(50% - 15px); /* 15px is half of the with. somehow translate does not have any effect */
+  left: calc(50% - 25px); /* 15px is half of the with. somehow translate does not have any effect */
+  --md-theme-default-primary: var(--nature-green-color);
 }
 
 .app-results-rivm__data-section {
