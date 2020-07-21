@@ -1,17 +1,25 @@
 <template>
   <article class="app-results-rivm">
-    <div class="app-results-rivm__content">
+    <p v-if="transformedData.length === 0" class="app-results-rivm__content">
+      Nog geen data geladen.
+      <br >
+      Klik op "Bereken groene baten".
+    </p>
+    <div v-if="transformedData.length > 0" class="app-results-rivm__content">
       <section
-        v-for="section in rivmData"
+        v-for="section in transformedData"
         :key="section.title"
         class="app-results-rivm__data-section"
       >
         <header>
-          <h5 v-html="section.title" />
+          <h5 class="app-results-rivm__section-title md-body-2" v-html="section.title" />
         </header>
         <dl class="app-results-rivm__definition-list">
           <template v-for="definition in section.definitions">
-            <dt :key="`${definition.title}-term`" v-html="definition.title" />
+            <dt
+              :key="`${definition.title}-term`"
+              class="md-body-1"
+              v-html="definition.title" />
             <dd :key="`${definition.title}-definition`">
               <span>{{ definition.value }}</span>
               <span class="app-results-rivm__unit">{{ definition.unit }}</span>
@@ -22,49 +30,63 @@
     </div>
 
     <footer class="app-results-rivm__footer">
-      <md-button class="app-results-rivm__cta md-raised">Bereken groene baten</md-button>
+      <small>Laatste berekening: {{ receivedAt }}</small>
+      <md-button class="app-results-rivm__cta md-raised" @click="handleFetchData">Bereken groene baten</md-button>
     </footer>
   </article>
 </template>
 
 <script>
+import log from '../../lib/log'
+
 export default {
-  data() {
-    return {
-      rivmData: [
-        {
-          title: 'Gezondheid',
-          definitions: [
-            { title: 'Vermeden gezondheidskosten', value: -12000, unit: '€/jr' },
-            { title: 'Vermeden kosten voor arbeidsverlies', value: -12000, unit: '€/jr' },
-          ],
-        },
-        {
-          title: 'Mobiliteit',
-          definitions: [
-            { title: 'Vermeden vroegtijdige sterfgevallen door fietsen woon/werkverkeer', value: -12000, unit: '€/jr' },
-          ],
-        },
-        {
-          title: 'Lucht regulatie',
-          definitions: [
-            { title: 'Depositie van fijnstof', value: -12000, unit: '€/jr' },
-          ],
-        },
-        {
-          title: 'CO<sub>2</sub> opslag',
-          definitions: [
-            { title: 'Opslag van CO<sub>2</sub>', value: -12000, unit: '€/jr' },
-          ],
-        },
-        {
-          title: 'Vastgoedwaarde',
-          definitions: [
-            { title: 'Meerwaarde van woningen', value: -12000, unit: '€' },
-          ],
-        },
-      ],
-    }
+  props: {
+    data: {
+      type: Object,
+      default: () => {},
+    },
+  },
+  computed: {
+    receivedAt() {
+      try {
+        const date = new Date(this.data.receivedAt)
+        return date.toLocaleString()
+      } catch (error) {
+        return ''
+      }
+    },
+    transformedData(){
+      try {
+      return this.data.entries
+        .map(item => {
+          const id = item.code
+          const title = item.name.replace(/\[.+\]/, '').trim()
+          const value = item.tablevalue
+          const unit = item.units.replace(/euros?/i, '€').replace(/jaar|year/i, 'jr')
+          const section = item.model
+
+          return { id, title, value, unit, section }
+        })
+        .reduce((collection, item) => {
+          let section = collection.find(section => section.title === item.section)
+          if (!section) {
+            section = { title: item.section, definitions: [] }
+            collection.push(section)
+          }
+
+          section.definitions.push(item)
+
+          return collection
+        }, [])
+      } catch (error) {
+        return []
+      }
+    },
+  },
+  methods: {
+    handleFetchData() {
+      this.$emit('fetch-data')
+    },
   },
 }
 </script>
@@ -82,6 +104,8 @@ export default {
 }
 
 .app-results-rivm__footer {
+  display: grid;
+  grid-template-columns: auto min-content;
   position: sticky;
   bottom: 0;
   z-index: 10;
@@ -90,7 +114,6 @@ export default {
 
   padding: var(--spacing-half);
 
-  text-align: right;
   border-top: 1px solid var(--border-color);
   background-color: var(--background-color);
 }
@@ -101,13 +124,21 @@ export default {
 }
 
 .app-results-rivm__data-section {
-  margin-bottom: 1rem;
+  margin-bottom: var(--spacing-default);
+}
+
+.app-results-rivm__section-title {
+  margin-bottom: var(--spacing-half);
 }
 
 .app-results-rivm__definition-list {
   display: grid;
-  column-gap: 1rem;
+  column-gap: var(--spacing-default);
   grid-template-columns: 1fr max-content;
+}
+
+.app-results-rivm__definition-list > * {
+  margin-bottom: var(--spacing-default)
 }
 
 .app-results-rivm__unit::before {

@@ -62,6 +62,8 @@
             />
             <app-results-rivm
               v-if="scope.active === 'rivm'"
+              :data="rivmCoBenefits"
+              @fetch-data="fetchRivmCoBenefits"
             />
           </template>
         </app-results-panel>
@@ -111,14 +113,14 @@
 import { mapState, mapMutations, mapGetters, mapActions } from "vuex";
 import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea } from '../components'
 import AppResultsPanel from '../components/app-results-panel'
-import AppResultsRIVM from '../components/app-results-rivm'
+import AppResultsRivm from '../components/app-results-rivm'
 import { mapFields } from 'vuex-map-fields';
 import getData from '~/lib/get-data'
 import EventBus, { CLICK } from "~/lib/event-bus";
 import log from '~/lib/log'
 
 export default {
-  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea, AppResultsPanel, AppResultsRIVM },
+  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea, AppResultsPanel, AppResultsRivm },
   data() {
     return {
       disclaimer: {},
@@ -149,6 +151,7 @@ export default {
       exportShown: state => state.flow.export,
       inSetMeasureFlow: state => state.setMeasureFlow.inFlow,
       userIsRefreshing: state => state.user.isRefreshing,
+      rivmCoBenefits: state => state.project.rivmCoBenefits,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers', 'customLayers', 'mapLayers', 'layers']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings']),
@@ -164,6 +167,9 @@ export default {
   watch: {
     userIsRefreshing() {
       window.removeEventListener('beforeunload', this.beforeUnload)
+    },
+    rivmCoBenefits() {
+      console.log(this.rivmCoBenefits)
     },
   },
   async beforeMount() {
@@ -213,6 +219,7 @@ export default {
       clearState: 'project/clearState',
       exportProject: 'project/exportProject',
       connectMeasureToArea: 'setMeasureFlow/connectMeasureToArea',
+      fetchRivmCoBenefits: 'project/fetchRivmCoBenefits',
     }),
     async onFileInput(event) {
       this.importProject(event)

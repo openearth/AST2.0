@@ -6,6 +6,7 @@ import merge from 'lodash/merge'
 import get from 'lodash/get'
 import round from 'lodash/round'
 import unset from 'lodash/unset'
+import flatten from 'lodash/flatten'
 import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT, REPAINT, DELETE_LAYER } from '../lib/map-event-bus'
 import { getApiDataForFeature, getRankedMeasures } from "../lib/get-api-data";
 import FileSaver from 'file-saver'
@@ -15,6 +16,8 @@ import projectToGeoJson from '../lib/project-to-geojson'
 import projectToCsv from '../lib/project-to-csv'
 import delay from '../lib/delay'
 import log from "../lib/log";
+import fetchCoBenefitsFromRivm from '../lib/fetch-rivm-co-benefits'
+import { pick } from 'lodash'
 
 const initialState = () => ({
   areas: [],
@@ -190,6 +193,10 @@ export const mutations = {
     while (state.areas.length) {
       state.areas.pop()
     }
+  },
+  setRivmCoBenefits(state, data) {
+    console.log({ state })
+    Vue.set(state, 'rivmCoBenefits', data)
   },
 }
 
@@ -521,6 +528,13 @@ export const actions = {
     })
 
     dispatch('bootstrapSettingsProjectArea', foo)
+  },
+  async fetchRivmCoBenefits({ commit }) {
+    const data = await fetchCoBenefitsFromRivm()
+    const receivedAt = Date.now()
+    const flattenedEntries = flatten((data.assessmentResults || []).map(item => get(item, 'entries', [])))
+    const entries = flattenedEntries.map(entry => pick(entry, ['code', 'model', 'name', 'units', 'tablevalue']))
+    commit('setRivmCoBenefits', { receivedAt, entries })
   },
 }
 
