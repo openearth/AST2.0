@@ -4,5 +4,5 @@
   functions = "./dist/server/functions/"
 
 [build.environment]
-  AWS_LAMBDA_JS_RUNTIME = "nodejs13.x"
-  NODE_VERSION = "13.x"
+  AWS_LAMBDA_JS_RUNTIME = "nodejs13.13.0"
+  NODE_VERSION = "v13.13.0"
