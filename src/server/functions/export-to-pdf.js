@@ -1,54 +1,96 @@
-const chromium = require('chrome-aws-lambda')
-const puppeteer = require('puppeteer-core')
+const puppeteer = require('puppeteer')
 
-exports.handler = async (event, context, callback) => {
-  let theTitle = null
-  let browser = null
-  console.log('spawning chrome headless')
+const delay = ms => new Promise(resolve => setTimeout(() => resolve(), ms))
+
+async function loadProjectInPage(project) {
   try {
-    const executablePath = await chromium.executablePath
+    const projectFile = new File([project], 'project-name')
+    const event = { target: { files: [projectFile] } }
+    await $nuxt.$store.dispatch('project/importProject', event)
+    return {}
+  } catch (error) {
+    return { error: error.message }
+  }
+}
 
-    // setup
-    browser = await puppeteer.launch({
-      args: chromium.args,
-      executablePath: executablePath,
-      headless: chromium.headless,
-    })
+async function allowImagesToLoad() {
+  const eventListeners = [...document.querySelectorAll('img')]
+    .map(image => new Promise(resolve => {
+      image.addEventListener('load', () => resolve())
+    }))
 
-    // Do stuff with headless chrome
+  return Promise.all(eventListeners)
+}
+
+function startTimer(id, description) {
+  const start = Date.now()
+
+  return function endTimer() {
+    const end = Date.now()
+    console.log(`${description} (${end - start}ms)`)
+    return `${id};dur=${end - start};desc="${description}"`
+  }
+}
+
+exports.handler = async (event, context) => {
+  const start = Date.now()
+  const timings = []
+  let browser = null
+  let result = null
+  let pdf = null
+  const log = message => console.log(new Date(Date.now() - start).getSeconds(), 's: ', message)
+
+  try {
+    const endBrowserTimer = startTimer('launch', 'Launch Puppeteer')
+    browser = await puppeteer.launch({ headless: true });
+    timings.push(endBrowserTimer())
+
+    const endPageCreation = startTimer('newpage', 'Create New Page')
     const page = await browser.newPage()
-    const targetUrl = 'https://davidwells.io'
+    page.on('pageerror', console.error);
+    // page.on('console', console.log);
+    timings.push(endPageCreation())
 
-    // Goto page and then do stuff
-    await page.goto(targetUrl, {
-      waitUntil: ["domcontentloaded", "networkidle0"],
-    })
+    const endLoadPage = startTimer('load', 'Load page')
+    await page.goto('http://localhost:5326/en/pdf-export', { waitUntil: ["networkidle2"] })
+    timings.push(endLoadPage())
 
-    await page.waitForSelector('#phenomic')
+    const endLoadProject = startTimer('project', 'Load project')
+    result = await page.evaluate(loadProjectInPage, event.body)
+    if (result.error) {
+      timings.push(endLoadProject())
+      throw new Error(result.error)
+    }
+    timings.push(endLoadProject())
 
-    theTitle = await page.title();
+    const endLoadImages = startTimer('images', 'Allow images to load')
+    await page.evaluate(allowImagesToLoad)
+    timings.push(endLoadImages())
 
-    console.log('done on page', theTitle)
+    const endCreatePdf = startTimer('pdf', 'Create Pdf')
+    pdf = await page.pdf({ format: 'A4' })
+    timings.push(endCreatePdf())
 
   } catch (error) {
     console.log('error', error)
-    return callback(null, {
+    return {
       statusCode: 500,
-      body: JSON.stringify({
-        error: error,
-      }),
-    })
+      body: JSON.stringify({ error }),
+    }
+
   } finally {
-    // close browser
     if (browser !== null) {
       await browser.close()
     }
   }
 
-  return callback(null, {
+  return {
     statusCode: 200,
-    body: JSON.stringify({
-      title: theTitle,
-    }),
-  })
+    body: pdf.toString('base64'),
+    isBase64Encoded : true,
+    headers: {
+      'Server-Timing': timings.join(', '),
+      'Content-Type': 'application/pdf',
+    },
+  }
 }

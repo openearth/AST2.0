@@ -482,23 +482,30 @@ export const actions = {
     commit('appMenu/hideMenu', null, { root: true })
     return FileSaver.saveAs(blob, `${title || 'ast_project'}.json`)
   },
-  exportProject({ state, getters, rootGetters }, format) {
+  async exportProject({ state, getters, rootGetters }, format) {
     const { title } = state.settings.general
     let data
+    let type
     switch (format) {
       case 'csv':
         data = projectToCsv(getters.areas, Object.keys(getters.kpiValues), rootGetters['data/measures/measureById'])
+        type = 'text/csv'
         break;
       case 'geojson':
         data = projectToGeoJson(getters.areas)
+        type = 'application/json'
         break;
       case 'pdf':
-        this.$router.push(`/${rootState.i18n.locale}/pdf-export`)
+        data = await fetch('/.netlify/functions/export-to-pdf', {
+          method: 'POST',
+          body: JSON.stringify(state),
+        }).then(response => response.blob())
+        type = 'application/pdf'
+        break;
       default:
         return
     }
 
-    const type = format === 'csv' ? 'text/csv' : 'application/json';
     const blob = new Blob([data], { type })
     return FileSaver.saveAs(blob, `${title || 'ast_project'}.${format}`)
   },
