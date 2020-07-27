@@ -97,5 +97,8 @@
     "rimraf": "2.6.2",
     "storybook-readme": "3.3.0",
     "vue-svg-loader": "0.8.0"
+  },
+  "optionalDependencies": {
+    "puppeteer": "5.2.1"
   }
 }

@@ -14,7 +14,8 @@ import validateProject from '../lib/validate-project'
 import projectToGeoJson from '../lib/project-to-geojson'
 import projectToCsv from '../lib/project-to-csv'
 import delay from '../lib/delay'
-import log from '../lib/log';
+import log from '../lib/log'
+import exportToPdf from '../lib/export-to-pdf'
 
 const initialState = () => ({
   areas: [],
@@ -496,10 +497,11 @@ export const actions = {
         type = 'application/json'
         break;
       case 'pdf':
-        data = await fetch('/.netlify/functions/export-to-pdf', {
-          method: 'POST',
-          body: JSON.stringify(state),
-        }).then(response => response.blob())
+        // data = await fetch('/.netlify/functions/export-to-pdf', {
+        //   method: 'POST',
+        //   body: JSON.stringify(state),
+        // }).then(response => response.blob())
+        data = await exportToPdf({ locale: rootState.i18n.locale, project: state })
         type = 'application/pdf'
         break;
       default:
