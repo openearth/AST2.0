@@ -1,4 +1,4 @@
-const puppeteer = require('puppeteer')
+const chromium = require('chrome-aws-lambda');
 
 const delay = ms => new Promise(resolve => setTimeout(() => resolve(), ms))
 
@@ -47,7 +47,13 @@ exports.handler = async (event, context) => {
     const [, locale] = /^(?:\/)(\w+)/.exec(requestingPath)
 
     const endBrowserTimer = startTimer('launch', 'Launch Puppeteer')
-    browser = await puppeteer.launch({ headless: true });
+    browser = await chromium.puppeteer.launch({
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath,
+      headless: chromium.headless,
+      ignoreHTTPSErrors: true,
+    });
     timings.push(endBrowserTimer())
 
     const endPageCreation = startTimer('newpage', 'Create New Page')
