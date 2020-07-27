@@ -41,6 +41,11 @@ exports.handler = async (event, context) => {
   const log = message => console.log(new Date(Date.now() - start).getSeconds(), 's: ', message)
 
   try {
+    const origin = event.headers.origin
+    const referer = event.headers.referer
+    const requestingPath = referer.replace(origin, '')
+    const [, locale] = /^(?:\/)(\w+)/.exec(requestingPath)
+
     const endBrowserTimer = startTimer('launch', 'Launch Puppeteer')
     browser = await puppeteer.launch({ headless: true });
     timings.push(endBrowserTimer())
@@ -52,7 +57,7 @@ exports.handler = async (event, context) => {
     timings.push(endPageCreation())
 
     const endLoadPage = startTimer('load', 'Load page')
-    await page.goto('http://localhost:5326/en/pdf-export', { waitUntil: ["networkidle2"] })
+    await page.goto(`${origin}/${locale}/pdf-export`, { waitUntil: ["networkidle2"] })
     timings.push(endLoadPage())
 
     const endLoadProject = startTimer('project', 'Load project')
