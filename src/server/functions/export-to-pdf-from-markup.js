@@ -1,5 +1,9 @@
 const chromium = require('chrome-aws-lambda');
-// const puppeteer = require('puppeteer')
+let puppeteer
+
+if (process.env.NETLIFY_DEV) {
+  puppeteer = require('puppeteer')
+}
 
 const delay = ms => new Promise(resolve => setTimeout(() => resolve(), ms))
 
@@ -50,7 +54,9 @@ exports.handler = async (event, context) => {
       headless: chromium.headless,
       ignoreHTTPSErrors: true,
     });
-    // browser = await puppeteer.launch({ headless: true })
+    if (process.env.NETLIFY_DEV) {
+      browser = await puppeteer.launch({ headless: true })
+    }
     timings.push(endBrowserTimer())
 
     const endPageCreation = startTimer('newpage', 'Create New Page')
