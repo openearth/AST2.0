@@ -1,10 +1,4 @@
 const chromium = require('chrome-aws-lambda');
-let puppeteer
-
-if (process.env.NETLIFY_DEV) {
-  puppeteer = require('puppeteer')
-}
-
 const delay = ms => new Promise(resolve => setTimeout(() => resolve(), ms))
 
 async function loadProjectInPage(project) {
@@ -55,6 +49,7 @@ exports.handler = async (event, context) => {
       ignoreHTTPSErrors: true,
     });
     if (process.env.NETLIFY_DEV) {
+      const puppeteer = await import('puppeteer')
       browser = await puppeteer.launch({ headless: true })
     }
     timings.push(endBrowserTimer())
