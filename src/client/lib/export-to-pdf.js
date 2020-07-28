@@ -13,7 +13,8 @@ export default function exportToPdf({ locale, project }) {
     try {
       const iframe = document.createElement('iframe')
       iframe.src = `${location.origin}/${locale}/pdf-export`
-      iframe.addEventListener('load', async () => {
+      iframe.contentWindow.window.onNuxtReady(async () => {
+        console.log('nuxt ready')
         await iframe.contentWindow.addProject(JSON.stringify(project))
         console.groupEnd()
         setTimeout(() => {
@@ -23,6 +24,7 @@ export default function exportToPdf({ locale, project }) {
       document.body.appendChild(iframe)
     } catch (error) {
       console.error(error)
+      throw new Error(error)
     }
   }).then(async markup => {
     return fetch('/.netlify/functions/export-to-pdf-from-markup', {
