@@ -1,3 +1,5 @@
+import log from '../lib/log'
+
 if (process.browser) {
   window.addProject = async function (projectData, title) {
     const file = new File([projectData], title)
@@ -7,32 +9,31 @@ if (process.browser) {
 }
 
 export default function exportToPdf({ locale, project }) {
-  console.groupCollapsed('export iframe')
+  log.groupCollapsed('export iframe')
   return new Promise((resolve, reject) => {
     try {
       const iframe = document.createElement('iframe')
       iframe.src = `${location.origin}/${locale}/pdf-export`
       iframe.addEventListener('load', () => {
-        console.log('iframe loaded')
-        console.log($nuxt.$store)
+        log.info('iframe loaded')
         setTimeout(async () => {
           await iframe.contentWindow.addProject(JSON.stringify(project))
-          console.groupEnd()
+          log.groupEnd()
           setTimeout(() => {
             resolve(iframe.contentWindow.document.documentElement.outerHTML)
+            iframe.parentElement.removeChild(iframe)
           }, 0)
         }, 10)
       })
       document.body.appendChild(iframe)
     } catch (error) {
-      console.error(error)
+      log.error('', error)
       throw new Error(error)
     }
-  }).then(async markup => {
-    return fetch('/.netlify/functions/export-to-pdf-from-markup', {
-      method: 'POST',
-      body: markup,
-    })
   })
+  .then(markup => fetch('/.netlify/functions/export-to-pdf-from-markup', {
+    method: 'POST',
+    body: markup,
+  }))
   .then(response => response.blob())
 }
