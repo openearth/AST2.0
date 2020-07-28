@@ -501,7 +501,7 @@ export const actions = {
         //   method: 'POST',
         //   body: JSON.stringify(state),
         // }).then(response => response.blob())
-        data = await exportToPdf({ locale: rootState.i18n.locale, project: state })
+        data = await exportToPdf({ locale: rootState.i18n.locale, project: state, title: state.settings.general.title })
         type = 'application/pdf'
         break;
       default:

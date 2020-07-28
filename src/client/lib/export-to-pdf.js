@@ -8,7 +8,7 @@ if (process.browser) {
   }
 }
 
-export default function exportToPdf({ locale, project }) {
+export default function exportToPdf({ locale, project, title }) {
   log.groupStart.info('export iframe')
   return new Promise((resolve, reject) => {
     try {
@@ -17,7 +17,7 @@ export default function exportToPdf({ locale, project }) {
       iframe.addEventListener('load', () => {
         log.info('iframe loaded')
         setTimeout(async () => {
-          await iframe.contentWindow.window.addProject(JSON.stringify(project))
+          await iframe.contentWindow.window.addProject(JSON.stringify(project), title)
           log.groupEnd()
           setTimeout(() => {
             resolve(iframe.contentWindow.document.documentElement.outerHTML)
