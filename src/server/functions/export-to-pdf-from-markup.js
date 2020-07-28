@@ -50,7 +50,7 @@ exports.handler = async (event, context) => {
       headless: chromium.headless,
       ignoreHTTPSErrors: true,
     });
-    // browser = await puppeteer.launch({ headless: false, slomo: 2000 })
+    // browser = await puppeteer.launch({ headless: true })
     timings.push(endBrowserTimer())
 
     const endPageCreation = startTimer('newpage', 'Create New Page')
@@ -71,7 +71,7 @@ exports.handler = async (event, context) => {
     console.log('error', error)
     return {
       statusCode: 500,
-      body: JSON.stringify({ error }),
+      body: JSON.stringify({ error, message: error.message }),
     }
 
   } finally {

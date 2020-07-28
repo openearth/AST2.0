@@ -179,6 +179,11 @@ export default {
         event.preventDefault()
         document.querySelector('#open-project').click()
       }
+
+      if (event.key === 'e' && event.metaKey) {
+        event.preventDefault()
+        document.querySelector('#export-project').click()
+      }
     })
   },
 

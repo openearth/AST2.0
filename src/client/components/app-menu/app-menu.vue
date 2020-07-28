@@ -83,6 +83,7 @@
 
           <md-list-item>
             <md-button
+              id="export-project"
               :disabled="!hasAreas"
               class="app-menu__button"
               @click="$emit('exportProject')"
