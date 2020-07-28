@@ -41,16 +41,18 @@ exports.handler = async (event, context) => {
 
   try {
     const endBrowserTimer = startTimer('launch', 'Launch Puppeteer')
-    browser = await chromium.puppeteer.launch({
-      args: chromium.args,
-      defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath,
-      headless: chromium.headless,
-      ignoreHTTPSErrors: true,
-    });
+    if (!process.env.NETLIFY_DEV) {
+      browser = await chromium.puppeteer.launch({
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath,
+        headless: chromium.headless,
+        ignoreHTTPSErrors: true,
+      });
+    }
     if (process.env.NETLIFY_DEV) {
       const puppeteer = await import('puppeteer')
-      browser = await puppeteer.launch({ headless: true })
+      browser = await puppeteer.default.launch({ headless: true })
     }
     timings.push(endBrowserTimer())
 
@@ -65,7 +67,7 @@ exports.handler = async (event, context) => {
     timings.push(endLoadPage())
 
     const endCreatePdf = startTimer('pdf', 'Create Pdf')
-    pdf = await page.pdf({ format: 'A4' })
+    pdf = await page.pdf({ format: 'A4', landscape: true, margin: { top: '0.5cm', right: '0.5cm', bottom: '0.5cm', left: '0.5cm' } })
     timings.push(endCreatePdf())
 
   } catch (error) {
