@@ -32,12 +32,11 @@ function startTimer(id, description) {
 }
 
 exports.handler = async (event, context) => {
-  const start = Date.now()
+  const endTotalTimer = startTimer('total', 'Total Time')
   const timings = []
   let browser = null
   let result = null
   let pdf = null
-  const log = message => console.log(new Date(Date.now() - start).getSeconds(), 's: ', message)
 
   try {
     const endBrowserTimer = startTimer('launch', 'Launch Puppeteer')
@@ -79,10 +78,13 @@ exports.handler = async (event, context) => {
 
   } finally {
     if (browser !== null) {
+      const endClosingBrowser = startTimer('closebrowser', 'Close browser')
       await browser.close()
+      timings.push(endClosingBrowser())
     }
   }
 
+  timings.push(endTotalTimer())
   return {
     statusCode: 200,
     body: pdf.toString('base64'),
