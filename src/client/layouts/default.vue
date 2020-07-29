@@ -96,7 +96,7 @@
       </md-dialog-actions>
     </md-dialog>
 
-    <md-dialog :md-active="pdfExportShown && 1 === 2">
+    <md-dialog :md-active="pdfExportShown">
       <md-dialog-title>PDF EXPORT</md-dialog-title>
       <md-dialog-content>
         PDF is exporting

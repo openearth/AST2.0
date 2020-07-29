@@ -1,4 +1,3 @@
-import Vue from 'vue'
 import isObject from 'lodash/isObject'
 import getViewPath from '../lib/get-view-path'
 import isValidNumber from '../lib/is-valid-number'

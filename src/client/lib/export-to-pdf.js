@@ -1,11 +1,10 @@
 import log from '../lib/log'
-import { lowerFirst } from 'lodash'
 
 if (process.browser) {
   window.addProject = async function (projectData, title) {
     const file = new File([projectData], title)
     const event = { target: { files: [file] } }
-    await $nuxt.$store.dispatch('project/importProject', event)
+    await $nuxt.$store.dispatch('project/importProject', event) // eslint-disable-line no-undef
   }
 }
 
@@ -20,11 +19,11 @@ export default function exportToPdf({ locale, project, title }) {
             percentage: percentage * 100,
             message,
           },
-        }
-      )
+        },
+      ),
     )
   }
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     try {
       log.groupStart.info('Loading Iframe')
       const iframe = document.createElement('iframe')
@@ -46,7 +45,7 @@ export default function exportToPdf({ locale, project, title }) {
             })
             resolve(iframe.contentWindow.document.documentElement.outerHTML)
             dispatch('Removing iframe', 5/7)
-            // iframe.parentElement.removeChild(iframe)
+            iframe.parentElement.removeChild(iframe)
           })
         })
       })

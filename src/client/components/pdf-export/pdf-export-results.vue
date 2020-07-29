@@ -1,16 +1,18 @@
 <template>
   <article class="pdf-export-results">
-    <h2 class="md-title">Results</h2>
+    <h2 class="md-title">
+      Results
+    </h2>
     <div class="pdf-export-results__content">
       <kpi-table :show-table-co-benefits="false" class="pdf-export-results__table" />
-      <br >
+      <br>
       <kpi-table :show-table-climate-and-costs="false" class="pdf-export-results__table" />
     </div>
   </article>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters } from 'vuex';
 import KpiTable from '../kpi-table'
 
 export default {

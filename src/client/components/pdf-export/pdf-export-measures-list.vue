@@ -1,20 +1,26 @@
 <template>
   <article class="pdf-export-measures-list">
-    <h2 class="md-title">Measure list</h2>
+    <h2 class="md-title">
+      Measure list
+    </h2>
     <ul class="pdf-export-measures-list__list">
       <li
         v-for="{ measure } in measureCollection"
         :key="measure.measureId"
         :style="`border-color: ${measure.color.hex}`"
-        class="pdf-export-measures-list__item">
+        class="pdf-export-measures-list__item"
+      >
         <section>
-          <h3 class="pdf-export-measures-list__item-title md-subheading">{{ measure.title }}</h3>
+          <h3 class="pdf-export-measures-list__item-title md-subheading">
+            {{ measure.title }}
+          </h3>
           <img
             :src="`${measure.image.url}?w=75&h=75`"
             width="75px"
             height="75px"
             class="pdf-export-measures-list__image"
-            alt="">
+            alt=""
+          >
           <div class="md-body-1 pdf-export-measures-list__summary" v-html="measure.summary" />
         </section>
       </li>

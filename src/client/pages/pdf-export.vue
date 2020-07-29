@@ -1,6 +1,8 @@
 <template>
   <div class="pdf-export">
-    <h1 class="pdf-export__title md-headline">{{ title }}</h1>
+    <h1 class="pdf-export__title md-headline">
+      {{ title }}
+    </h1>
     <pdf-export-measures-list />
     <pdf-export-map />
     <pdf-export-results />

@@ -1,7 +1,8 @@
 <template>
   <md-tabs
     md-dynamic-height
-    class="kpi-table">
+    class="kpi-table"
+  >
     <md-tab
       v-for="table in tables"
       :id="table.title"

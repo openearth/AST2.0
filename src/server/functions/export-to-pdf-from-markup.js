@@ -1,25 +1,4 @@
 const chromium = require('chrome-aws-lambda');
-const delay = ms => new Promise(resolve => setTimeout(() => resolve(), ms))
-
-async function loadProjectInPage(project) {
-  try {
-    const projectFile = new File([project], 'project-name')
-    const event = { target: { files: [projectFile] } }
-    await $nuxt.$store.dispatch('project/importProject', event)
-    return {}
-  } catch (error) {
-    return { error: error.message }
-  }
-}
-
-async function allowImagesToLoad() {
-  const eventListeners = [...document.querySelectorAll('img')]
-    .map(image => new Promise(resolve => {
-      image.addEventListener('load', () => resolve())
-    }))
-
-  return Promise.all(eventListeners)
-}
 
 function startTimer(id, description) {
   const start = Date.now()
@@ -31,11 +10,10 @@ function startTimer(id, description) {
   }
 }
 
-exports.handler = async (event, context) => {
+exports.handler = async event => {
   const endTotalTimer = startTimer('total', 'Total Time')
   const timings = []
   let browser = null
-  let result = null
   let pdf = null
 
   try {

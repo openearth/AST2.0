@@ -201,7 +201,7 @@ export default {
       this.map.on('draw.selectionchange', event => this.$emit('selectionchange', event.features))
       this.map.on('drag', () => this.$emit('move', { center: this.map.getCenter(), zoom: this.map.getZoom() }))
       this.map.on('draw.modechange', event => this.$emit('modechange', event.mode))
-      this.map.on('draw.render', event => this.$emit('render'))
+      this.map.on('draw.render', () => this.$emit('render'))
 
       this.map.on('load', () => {
         this.allMapLayers.forEach(this.addWmsLayer)

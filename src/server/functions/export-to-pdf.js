@@ -1,12 +1,11 @@
 const chromium = require('chrome-aws-lambda');
 
-const delay = ms => new Promise(resolve => setTimeout(() => resolve(), ms))
 
 async function loadProjectInPage(project) {
   try {
     const projectFile = new File([project], 'project-name')
     const event = { target: { files: [projectFile] } }
-    await $nuxt.$store.dispatch('project/importProject', event)
+    await $nuxt.$store.dispatch('project/importProject', event) //eslint-disable-line no-undef
     return {}
   } catch (error) {
     return { error: error.message }
@@ -32,13 +31,11 @@ function startTimer(id, description) {
   }
 }
 
-exports.handler = async (event, context) => {
-  const start = Date.now()
+exports.handler = async event => {
   const timings = []
   let browser = null
   let result = null
   let pdf = null
-  const log = message => console.log(new Date(Date.now() - start).getSeconds(), 's: ', message)
 
   try {
     const origin = event.headers.origin
@@ -63,7 +60,7 @@ exports.handler = async (event, context) => {
     timings.push(endPageCreation())
 
     const endLoadPage = startTimer('load', 'Load page')
-    await page.goto(`${origin}/${locale}/pdf-export`, { waitUntil: ["networkidle2"] })
+    await page.goto(`${origin}/${locale}/pdf-export`, { waitUntil: ['networkidle2'] })
     timings.push(endLoadPage())
 
     const endLoadProject = startTimer('project', 'Load project')
