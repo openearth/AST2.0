@@ -46,7 +46,7 @@ export default function exportToPdf({ locale, project, title }) {
             })
             resolve(iframe.contentWindow.document.documentElement.outerHTML)
             dispatch('Removing iframe', 5/7)
-            iframe.parentElement.removeChild(iframe)
+            // iframe.parentElement.removeChild(iframe)
           })
         })
       })
