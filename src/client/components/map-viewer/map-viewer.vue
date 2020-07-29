@@ -3,6 +3,7 @@
     <map-box
       :add-only="addOnly"
       :interactive="interactive"
+      :animate="animate"
       :point="point"
       :line="line"
       :polygon="polygon"
@@ -16,10 +17,12 @@
       :map-layers="mapLayers"
       :layer-list="layerList"
       :mode="mode"
+      :fit-to-bounds="fitToBounds"
       class="map-viewer__map"
       @create="onCreate"
       @update="onUpdate"
       @delete="onDelete"
+      @render="onRender"
       @selectionchange="onSelectionchange"
       @move="onMove"
       @modechange="mode => setMode(mode)"
@@ -144,6 +147,14 @@ export default {
       type: String,
       default: '',
     },
+    fitToBounds: {
+      type: Array,
+      default: () => [],
+    },
+    animate: {
+      type: Boolean,
+      default: true,
+    },
   },
   computed: {
     legendLayers() {
@@ -162,6 +173,7 @@ export default {
     onCreate(event) { this.$emit('create', event) },
     onUpdate(event) { this.$emit('update', event) },
     onDelete(event) { this.$emit('delete', event) },
+    onRender(event) { this.$emit('render', event) },
     onSelectionchange(event) { this.$emit('selectionchange', event) },
     onMove(event) { this.$emit('move', event) },
     onClickDelete() { MapEventBus.$emit(DELETE) },

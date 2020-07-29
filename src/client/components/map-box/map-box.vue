@@ -3,7 +3,8 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions } from 'vuex'
+import get from 'lodash/get'
 import projectAreaStyles from './project-area-styles'
 import areaStyles from './area-styles'
 import getData from '~/lib/get-data'
@@ -90,6 +91,14 @@ export default {
       type: Array,
       default: () => [],
     },
+    fitToBounds: {
+      type: Array,
+      default: () => [],
+    },
+    animate: {
+      type: Boolean,
+      default: true,
+    },
   },
 
   data: () => ({
@@ -103,7 +112,7 @@ export default {
       return layers
     },
     hasProjectArea() {
-      return !!this.projectArea.properties
+      return !!get(this, 'projectArea.properties')
     },
     layerVisibility() {
       return this.allMapLayers.reduce((obj, layer) => {
@@ -142,6 +151,11 @@ export default {
     layerList() {
       [...this.layerList].reverse().forEach(this.addWmsLayer)
     },
+    fitToBounds() {
+      if (this.fitToBounds.length > 0) {
+        this.map.fitBounds(this.fitToBounds, { padding: 20, animate: this.animate })
+      }
+    },
   },
 
   async mounted() {
@@ -163,7 +177,9 @@ export default {
         zoom: this.mapZoom,
         center: [lng, lat],
         showZoom: false,
+        preserveDrawingBuffer: true,
       })
+      window.map = this.map
       this.draw = new MapboxDraw({
         displayControlsDefault: false,
         userProperties: true,
@@ -185,6 +201,7 @@ export default {
       this.map.on('draw.selectionchange', event => this.$emit('selectionchange', event.features))
       this.map.on('drag', () => this.$emit('move', { center: this.map.getCenter(), zoom: this.map.getZoom() }))
       this.map.on('draw.modechange', event => this.$emit('modechange', event.mode))
+      this.map.on('draw.render', event => this.$emit('render'))
 
       this.map.on('load', () => {
         this.allMapLayers.forEach(this.addWmsLayer)
@@ -195,6 +212,11 @@ export default {
         this.renderWmsLayersVisibility()
         this.renderWmsLayersOpacity()
         this.$emit('modechange', this.draw.getMode())
+        this.$nextTick(() => {
+          // We dispatch an custom event so that the iframe for the export-to-pdf
+          // functionality knows when mapbox has loaded
+          document.dispatchEvent(new CustomEvent('mapbox-loaded'))
+        })
       })
 
       MapEventBus.$on(UPDATE_FEATURE_PROPERTY, ({ featureId, key, value }) => {
@@ -213,9 +235,9 @@ export default {
 
       MapEventBus.$on(REPOSITION, ({ center, zoom, instant = false }) => {
         if (instant) {
-          this.$nextTick(() => this.map.jumpTo({ center, zoom }))
+          this.$nextTick(() => this.map.jumpTo({ center, zoom, animate: this.animate }))
         } else {
-          this.$nextTick(() => this.map.flyTo({ center, zoom }))
+          this.$nextTick(() => this.map.flyTo({ center, zoom, animate: this.animate }))
         }
       })
 
@@ -274,6 +296,7 @@ export default {
         }
     },
     clearMap() {
+      try {
       this.map.getLayer('projectArea-line') && this.map.removeLayer('projectArea-line')
       this.map.getSource('projectArea-line') && this.map.removeSource('projectArea-line')
       this.draw.deleteAll()
@@ -281,6 +304,9 @@ export default {
         this.map.getLayer(`${area.properties.name}-line`) && this.map.removeLayer(`${area.properties.name}-line`)
         this.map.getSource(`${area.properties.name}-line`) && this.map.removeSource(`${area.properties.name}-line`)
       })
+      } catch (err) {
+        console.log(err)
+      }
     },
     fillMap() {
       if (this.interactive === false || this.addOnly === true) {

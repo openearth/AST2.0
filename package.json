@@ -41,6 +41,7 @@
     "@nuxtjs/pwa": "2.5.0",
     "@nuxtjs/sitemap": "0.1.1",
     "@turf/area": "^6.0.1",
+    "@turf/bbox": "6.0.1",
     "@turf/length": "6.0.2",
     "chrome-aws-lambda": "3.1.1",
     "dotenv": "6.0.0",

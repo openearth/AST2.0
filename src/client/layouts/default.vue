@@ -46,6 +46,7 @@
           :map-layers="mapLayers"
           :layer-list="layerList"
           :mode="mode"
+          :animate="true"
           class="layout__map"
           @create="onCreateArea"
           @update="updateArea"
