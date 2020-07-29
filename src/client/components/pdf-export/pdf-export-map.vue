@@ -70,6 +70,9 @@ export default {
       this.mapboxHasLoaded = true
     },
     onMapRender() {
+      if (this.isReady === false) {
+        return
+      }
       this.$nextTick(() => {
         this.imageSrc = document.querySelector('.mapboxgl-canvas').toDataURL()
         this.$nextTick(() => {

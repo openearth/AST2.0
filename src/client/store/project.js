@@ -483,7 +483,7 @@ export const actions = {
     commit('appMenu/hideMenu', null, { root: true })
     return FileSaver.saveAs(blob, `${title || 'ast_project'}.json`)
   },
-  async exportProject({ state, getters, rootGetters }, format) {
+  async exportProject({ state, getters, rootState, rootGetters, commit }, format) {
     const { title } = state.settings.general
     let data
     let type
@@ -497,10 +497,7 @@ export const actions = {
         type = 'application/json'
         break;
       case 'pdf':
-        // data = await fetch('/.netlify/functions/export-to-pdf', {
-        //   method: 'POST',
-        //   body: JSON.stringify(state),
-        // }).then(response => response.blob())
+        commit('flow/showPdfExport', null, { root: true })
         data = await exportToPdf({ locale: rootState.i18n.locale, project: state, title: state.settings.general.title })
         type = 'application/pdf'
         break;
@@ -509,6 +506,7 @@ export const actions = {
     }
 
     const blob = new Blob([data], { type })
+    if (format === 'pdf') commit('flow/hidePdfExport', null, { root: true })
     return FileSaver.saveAs(blob, `${title || 'ast_project'}.${format}`)
   },
   clearState({ commit, dispatch, rootState }) {

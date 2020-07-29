@@ -1,4 +1,5 @@
 import log from '../lib/log'
+import { lowerFirst } from 'lodash'
 
 if (process.browser) {
   window.addProject = async function (projectData, title) {
@@ -9,6 +10,20 @@ if (process.browser) {
 }
 
 export default function exportToPdf({ locale, project, title }) {
+  const dispatch = (message, percentage) => {
+    log.info(message)
+    document.dispatchEvent(
+      new CustomEvent(
+        'pdf-export-progress',
+        {
+          detail: {
+            percentage: percentage * 100,
+            message,
+          },
+        }
+      )
+    )
+  }
   return new Promise((resolve, reject) => {
     try {
       log.groupStart.info('Loading Iframe')
@@ -19,18 +34,18 @@ export default function exportToPdf({ locale, project, title }) {
       iframe.addEventListener('load', () => {
         log.groupEnd()
         log.groupStart.info('Creating PDF')
-        log.info('Iframe loaded')
+        dispatch('Iframe loaded', 1/7)
         iframe.contentWindow.document.addEventListener('mapbox-loaded', async () => {
-          log.info('MapBox loaded')
+          dispatch('MapBox loaded', 2/7)
           await iframe.contentWindow.window.addProject(JSON.stringify(project), title)
-          log.info('Project added')
+          dispatch('Project added', 3/7)
           iframe.contentWindow.document.addEventListener('mapbox-image-created', async () => {
-            log.info('MapBox Image created')
+            dispatch('MapBox Image created', 4/7)
             ;[...iframe.contentWindow.document.querySelectorAll('script')].forEach(scriptElement => {
               scriptElement.parentNode.removeChild(scriptElement)
             })
             resolve(iframe.contentWindow.document.documentElement.outerHTML)
-            log.info('Removing iframe')
+            dispatch('Removing iframe', 5/7)
             iframe.parentElement.removeChild(iframe)
           })
         })
@@ -42,14 +57,14 @@ export default function exportToPdf({ locale, project, title }) {
     }
   })
   .then(markup => {
-    log.info('Sending markup to server')
+    dispatch('Sending markup to server', 6/7)
     return fetch('/.netlify/functions/export-to-pdf-from-markup', {
       method: 'POST',
       body: markup,
     })
   })
   .then(response => {
-    log.info('Received PDF response from server')
+    dispatch('Received PDF response from server', 7/7)
     log.groupEnd()
     return response.blob()
   })

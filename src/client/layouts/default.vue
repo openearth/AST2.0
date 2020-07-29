@@ -96,6 +96,17 @@
       </md-dialog-actions>
     </md-dialog>
 
+    <md-dialog :md-active="pdfExportShown">
+      <md-dialog-title>PDF EXPORT</md-dialog-title>
+      <md-dialog-content>
+        PDF is exporting
+        <md-progress-bar
+          :md-value="pdfProgress"
+          md-mode="determinate"
+        />
+      </md-dialog-content>
+    </md-dialog>
+
     <transition name="slide-up">
       <app-disclaimer
         v-if="!legalAccepted"
@@ -127,6 +138,7 @@ export default {
   data() {
     return {
       disclaimer: {},
+      pdfProgress: undefined,
     }
   },
   computed: {
@@ -143,6 +155,7 @@ export default {
       notifications: state => state.notifications.messages,
       mode: state => state.mode.state,
       exportShown: state => state.flow.export,
+      pdfExportShown: state => state.flow.pdfExport,
       inSetMeasureFlow: state => state.setMeasureFlow.inFlow,
       userIsRefreshing: state => state.user.isRefreshing,
     }),
@@ -161,6 +174,11 @@ export default {
     userIsRefreshing() {
       window.removeEventListener('beforeunload', this.beforeUnload)
     },
+    pdfExportShown(isShown) {
+      if (isShown === false) {
+        this.pdfProgress = undefined
+      }
+    },
   },
   async beforeMount() {
     const locale = this.$i18n.locale
@@ -174,6 +192,10 @@ export default {
     if (this.devMode === false) {
       window.addEventListener('beforeunload', this.beforeUnload)
     }
+
+    document.addEventListener('pdf-export-progress', event => {
+      this.pdfProgress = event.detail.percentage
+    })
 
     window.addEventListener('keydown', event => {
       if (event.key === 'o' && event.metaKey) {
@@ -200,6 +222,8 @@ export default {
       hideMenu: 'appMenu/hideMenu',
       showExport: 'flow/showExport',
       hideExport: 'flow/hideExport',
+      showPdfExport: 'flow/showPdfExport',
+      hidePdfExport: 'flow/hidePdfExport',
       removeNotification: 'notifications/remove',
     }),
     ...mapActions({

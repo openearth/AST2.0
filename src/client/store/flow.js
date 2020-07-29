@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import isObject from 'lodash/isObject'
 import getViewPath from '../lib/get-view-path'
 import isValidNumber from '../lib/is-valid-number'
@@ -12,6 +13,7 @@ import {
 export const state = () => ({
   fullPath: {},
   export: false,
+  pdfExport: false,
 })
 
 export const mutations = {
@@ -25,6 +27,14 @@ export const mutations = {
 
   hideExport(state) {
     state.export = false
+  },
+
+  showPdfExport(state) {
+    state.pdfExport = true
+  },
+
+  hidePdfExport(state) {
+    state.pdfExport = false
   },
 }
 
