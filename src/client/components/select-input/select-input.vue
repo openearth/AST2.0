@@ -45,6 +45,9 @@ export default {
     selectedValue(val) {
       this.$emit('change', val)
     },
+    value(val) {
+      this.selectedValue = val
+    },
   },
 }
 </script>
