@@ -88,6 +88,13 @@
               {{ setting.infoText }}
             </md-tooltip>
           </md-button>
+
+          <scenario-overview
+            v-if="setting.key === 'scenarioName'"
+            :value="projectAreaSettings[setting.key]"
+            class="project-area__scenario-overview"
+            @choose-scenario="value => updateProjectAreaSetting({ type: 'select', key: setting.key, value })"
+          />
         </md-list>
       </section>
     </form>
@@ -97,10 +104,11 @@
 <script>
 import { mapState, mapActions, mapGetters } from 'vuex'
 import { SelectInput } from '~/components'
+import ScenarioOverview from '../../components/scenario-overview'
 
 export default {
   middleware: ['access-level-project-area'],
-  components: { SelectInput },
+  components: { SelectInput, ScenarioOverview },
   data() {
     return {
       activeTooltipKey: '',
@@ -157,6 +165,7 @@ export default {
 .project-area__select {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   padding-right: 2px;
@@ -170,5 +179,10 @@ export default {
   position: absolute;
   top: -32px;
   right: 2px;
+}
+
+.project-area__scenario-overview {
+  flex-basis: 100%;
+  transform: translateY(calc(var(--spacing-half) * -1));
 }
 </style>
