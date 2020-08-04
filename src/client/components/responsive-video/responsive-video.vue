@@ -79,21 +79,19 @@ export default {
   },
   computed: {
     imageUrl() {
+      const sizeRegex = /\d+\.\w+$/
+      let preset = '/maxresdefault.jpg'
       switch (this.video.provider) {
         case 'vimeo':
-          const sizeRegex = /\d+\.\w+$/
           return this.video.thumbnailUrl.replace(sizeRegex, `${this.width}.jpg`)
-          break;
         case 'youtube':
-          let preset = '/maxresdefault.jpg'
           if (this.width < 320) {
             preset = '/mqdefault.jpg'
-          } else if (this.width < 480) {
+          }
+          else if (this.width < 480) {
             preset = '/hqdefault.jpg'
           }
-
           return this.video.thumbnailUrl.replace('/hqdefault.jpg', preset)
-          break;
         default:
           console.error(`unsupported video provider for cover image: ${this.video.provider}`);
           return ''
@@ -106,10 +104,8 @@ export default {
       switch (provider) {
         case 'vimeo':
           return `https://player.vimeo.com/video/${providerUid}?autoplay=1&muted=${binaryBoolean(mute)}&loop=${binaryBoolean(loop)}`
-          break;
         case 'youtube':
           return `https://www.youtube.com/embed/${providerUid}?autoplay=1&mute=${binaryBoolean(mute)}&loop=${binaryBoolean(loop)}&playlist=${providerUid}`
-          break;
         default:
           console.error(`unsupported video provider: ${provider}`);
           return ''

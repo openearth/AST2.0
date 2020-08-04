@@ -333,7 +333,7 @@ export const actions = {
           dispatch(
             'notifications/showError',
             { message: `Could not calculate data for ${feature.properties.name}!`, duration: 0 },
-            { root: true }
+            { root: true },
           )
         })
     })
@@ -431,13 +431,13 @@ export const actions = {
       const { projectArea } = state.settings
       getRankedMeasures(projectArea)
         .then(rankedMeasures =>
-          commit('data/measures/addMeasuresRanking', rankedMeasures, { root: true })
+          commit('data/measures/addMeasuresRanking', rankedMeasures, { root: true }),
         )
         .catch(({ message: title }) => {
           dispatch(
             'notifications/showError',
             { message: `Could not get ranking data for measure: ${title}!`, duration: 0 },
-            { root: true }
+            { root: true },
           )
         })
     }
@@ -637,9 +637,10 @@ export const getters = {
       let area;
       let length;
       let radius;
+      let width;
       switch (feature.geometry.type) {
         case 'LineString':
-          const width = feature.properties.areaWidth || feature.properties.defaultWidth
+          width = feature.properties.areaWidth || feature.properties.defaultWidth
           length = turfLength(feature.geometry) * 1000
           area = length * parseFloat(width)
           break;
@@ -657,7 +658,7 @@ export const getters = {
       return merge(
         {},
         feature,
-        { properties: { area, length, radius } }
+        { properties: { area, length, radius } },
       )
     })
   },

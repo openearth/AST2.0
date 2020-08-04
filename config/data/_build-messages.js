@@ -10,7 +10,7 @@ const targetFilename = 'messages.json'
 const toObject = ({ key, value }) => ({ [key]: value })
 const readFile = locale => readFileSync(path.join(dataDir, locale, sourceFilename), { encoding: 'utf8' })
 const writeFile = curry(
-  (locale, contents) => writeFileSync(path.join(dataDir, locale, targetFilename), contents, { encoding: 'utf8' })
+  (locale, contents) => writeFileSync(path.join(dataDir, locale, targetFilename), contents, { encoding: 'utf8' }),
 )
 
 const transformTranslations = locale =>
@@ -21,7 +21,7 @@ const transformTranslations = locale =>
     map(toObject),
     reduce(assign, {}),
     JSON.stringify,
-    writeFile(locale)
+    writeFile(locale),
   )(locale)
 
 map(transformTranslations, locales)

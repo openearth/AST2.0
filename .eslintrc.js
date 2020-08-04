@@ -2,20 +2,20 @@ module.exports = {
   root: true,
   env: {
     browser: true,
-    node: true
+    node: true,
   },
   parserOptions: {
-    parser: 'babel-eslint'
+    parser: 'babel-eslint',
   },
   extends: [
-
-    'plugin:vue/recommended'
+    'eslint:recommended',
+    'plugin:vue/recommended',
   ],
+  ignorePatterns: [ 'src/client/static/dato-plugins' ],
   // required to lint *.vue files
   plugins: [
-    'vue'
+    'vue',
   ],
-  // add your custom rules here
   rules: {
     'object-curly-spacing': [2, 'always'],
     'comma-dangle': [2, 'always-multiline'],
@@ -23,16 +23,19 @@ module.exports = {
       'warn',
       {
         'ignoreRestSiblings': true,
-        'argsIgnorePattern': '^_'
-      }
+        'argsIgnorePattern': '^_',
+      },
     ],
     'vue/max-attributes-per-line': [2, {
       "singleline": 2,
       "multiline": {
         "max": 1,
-        "allowFirstLine": false
-      }
+        "allowFirstLine": false,
+      },
     }],
-    'vue/no-v-html': 'off'
-  }
+    'vue/no-v-html': 'off',
+    'no-debugger': 'off',
+    'no-console': 'off',
+    'no-prototype-builtins': 'off',
+  },
 }

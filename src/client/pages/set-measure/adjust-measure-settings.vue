@@ -4,10 +4,6 @@
 
 <script>
 export default {
-    methods: {
-      cancel() {
-        console.log('cancel', cancel);
-      },
-    },
+
 }
 </script>

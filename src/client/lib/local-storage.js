@@ -1,5 +1,5 @@
 export const isSupported = (() => {
-  if (process.server || !'localStorage' in window) {
+  if (process.server || !('localStorage' in window)) {
     return false
   }
   try {

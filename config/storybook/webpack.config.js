@@ -1,11 +1,8 @@
 const path = require('path')
-const nuxtConfig = require('../../nuxt.config.js')
 
 const nuxtRootDir = path.resolve(`${__dirname}/../../src/client`)
 
 module.exports = (baseConfig, env, defaultConfig) => {
-  const isDev = (env === 'DEVELOPMENT')
-  const isClient = true
   const urlLoader = defaultConfig.module.rules.find((rule) => /file-loader/.test(rule.loader))
   urlLoader.test = /\.(ico|jpg|jpeg|png|gif|eot|otf|webp|ttf|woff|woff2)(\?.*)?$/
 

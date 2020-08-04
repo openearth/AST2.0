@@ -79,7 +79,7 @@ function importAll(r) {
  */
 function loadStories() {
   importAll(
-    require.context(`${__dirname}/../../src/client/`, true, /\.stories\.js$/)
+    require.context(`${__dirname}/../../src/client/`, true, /\.stories\.js$/),
   )
 }
 

@@ -10,7 +10,7 @@ export const plugins = [ (store) => {
         store.dispatch('data/workspaces/storeWorkspaceData', newValue)
         store.commit('data/workspaces/setUserWorkspace', newValue)
       }
-    }
+    },
   )
   store.watch(
     (state, getters) => getters['data/workspaces/activeWorkspace'],
@@ -24,7 +24,7 @@ export const plugins = [ (store) => {
               lat: startLocation.latitude,
               lng: startLocation.longitude,
             },
-          }
+          },
         )
         setTimeout(() => {
           MapEventBus.$emit(REPOSITION, {
@@ -37,7 +37,7 @@ export const plugins = [ (store) => {
           })
         }, 10)
       }
-    }
+    },
   )
   store.subscribe(({ type }, state) => {
     if (type === 'data/workspaces/setDomain') {

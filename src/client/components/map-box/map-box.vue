@@ -251,7 +251,7 @@ export default {
       MapEventBus.$on(REPAINT, payload =>
         payload.length
           ? this.repaintFeatures(payload)
-          : this.repaintFeature(payload)
+          : this.repaintFeature(payload),
       )
     }
   },
@@ -376,7 +376,7 @@ export default {
           log.error(
             `Could not load WMS Layer: ${title}`,
             err,
-            { layer: { type, id, url, tileSize, title, visible } }
+            { layer: { type, id, url, tileSize, title, visible } },
           )
         }
       }

@@ -78,7 +78,7 @@ export default {
           change: function (event) {
             vm.$emit('change', event.target ? event.target.value : event )
           },
-        }
+        },
       )
     },
     stringValue () {
