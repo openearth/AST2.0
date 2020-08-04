@@ -1,4 +1,5 @@
 import omit from 'lodash/omit'
+import turfBbox from '@turf/bbox'
 
 function prepareArea(area) {
   const properties = omit(area.properties, ['color', 'hidden', 'apiData'])
@@ -18,16 +19,41 @@ function prepareArea(area) {
   return { ...area, properties }
 }
 
+function prepareProjectArea(area) {
+  const properties = {
+    ...area.properties,
+    measureId: null,
+    measure: 'PROJECT',
+  }
+
+  return { ...area, properties }
+}
+
+function addBoundingBox(geoJson) {
+  const bbox = turfBbox(geoJson)
+  return { ...geoJson, bbox }
+}
+
 export default async function fetchRivmCoBenefits({ areas, projectArea } = {}) {
   const preparedAreas = areas
     .filter(area => !area.properties.hidden)
     .map(prepareArea)
 
-  const payload = {
+  const preparedProjectArea = prepareProjectArea(projectArea)
+
+  const geoJson = {
     type: 'FeatureCollection',
-    features: [projectArea, ...preparedAreas],
+    crs: {
+      'type': 'EPSG',
+      'properties': {
+        'code': 3857,
+      },
+    },
+    features: [preparedProjectArea, ...preparedAreas],
   }
-  console.info(payload);  // @TODO :: Remove after discussion with John Verberne
+
+  const payload = addBoundingBox(geoJson)
+  console.info(payload) // @TODO :: Remove after discussion with John Verberne
 
   const response = await fetch(process.env.API_GBP, {
     method: 'POST',
