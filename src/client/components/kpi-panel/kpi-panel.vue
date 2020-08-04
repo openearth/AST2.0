@@ -9,11 +9,14 @@
         :kpi-values="kpiValues"
         :kpi-percentage-values="kpiPercentageValues"
         :selected-areas="selectedAreas"
-        class="kpi-panel__kpi-group" />
+        class="kpi-panel__kpi-group"
+      />
     </div>
 
     <footer v-if="hasFooter" class="kpi-panel__footer">
-      <md-button class="md-raised" @click="togglePopup(true)">{{ $t('view_as_table') }}</md-button>
+      <md-button class="md-raised" @click="togglePopup(true)">
+        {{ $t('view_as_table') }}
+      </md-button>
       <app-popup
         v-if="openState"
         :title="$t('results')"
@@ -21,13 +24,12 @@
       >
         <kpi-table />
       </app-popup>
-
     </footer>
   </section>
 </template>
 
 <script>
-import { mapGetters, mapMutations } from "vuex"
+import { mapGetters, mapMutations } from 'vuex'
 import { KpiGroup, AppPopup } from '~/components'
 import KpiTable from '~/components/kpi-table'
 

@@ -2,7 +2,7 @@
   <article class="app-results-rivm">
     <p v-if="transformedData.length === 0" class="app-results-rivm__content">
       Nog geen data geladen.
-      <br >
+      <br>
       Klik op "Bereken groene baten".
     </p>
     <div v-if="transformedData.length > 0" class="app-results-rivm__content">
@@ -19,7 +19,8 @@
             <dt
               :key="`${definition.title}-term`"
               class="md-body-1"
-              v-html="definition.title" />
+              v-html="definition.title"
+            />
             <dd :key="`${definition.title}-definition`">
               <span>{{ definition.value }}</span>
               <span class="app-results-rivm__unit">{{ definition.unit }}</span>
@@ -35,7 +36,8 @@
         <md-button
           :disabled="isLoading"
           class="app-results-rivm__cta md-raised"
-          @click="handleFetchData">
+          @click="handleFetchData"
+        >
           Bereken groene baten
         </md-button>
         <md-progress-spinner
@@ -51,8 +53,6 @@
 </template>
 
 <script>
-import log from '../../lib/log'
-
 export default {
   props: {
     data: {

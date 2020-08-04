@@ -1,7 +1,9 @@
 <template>
   <aside class="app-results-panel">
     <header class="app-results-panel__header">
-      <h4 class="md-title app-results-panel__title">{{ $t('results') }}</h4>
+      <h4 class="md-title app-results-panel__title">
+        {{ $t('results') }}
+      </h4>
 
       <md-button
         v-for="button in nonEmptyButtonList"
@@ -13,13 +15,11 @@
       >
         <md-icon>{{ button.icon }}</md-icon>
       </md-button>
-
     </header>
 
     <div class="app-results-panel__content">
       <slot :active="activePanel" />
     </div>
-
   </aside>
 </template>
 
