@@ -1,9 +1,7 @@
 <template>
   <article class="app-results-rivm">
     <p v-if="transformedData.length === 0" class="app-results-rivm__content">
-      Nog geen data geladen.
-      <br>
-      Klik op "Bereken groene baten".
+      {{ $t('green_benefits_no_data') }}
     </p>
     <div v-if="transformedData.length > 0" class="app-results-rivm__content">
       <section
@@ -12,7 +10,9 @@
         class="app-results-rivm__data-section"
       >
         <header>
-          <h5 class="app-results-rivm__section-title md-body-2" v-html="section.title" />
+          <h5 class="app-results-rivm__section-title md-body-2">
+            {{ section.title }}
+          </h5>
         </header>
         <dl class="app-results-rivm__definition-list">
           <template v-for="definition in section.definitions">
@@ -21,9 +21,15 @@
               class="md-body-1"
               v-html="definition.title"
             />
-            <dd :key="`${definition.title}-definition`">
+            <dd
+              :key="`${definition.title}-definition`"
+              class="app-results-rivm__value"
+            >
               <span>{{ definition.value }}</span>
-              <span class="app-results-rivm__unit">{{ definition.unit }}</span>
+              <span
+                v-if="!isNil(definition.unit)"
+                class="app-results-rivm__unit"
+              >{{ definition.unit }}</span>
             </dd>
           </template>
         </dl>
@@ -31,14 +37,14 @@
     </div>
 
     <footer class="app-results-rivm__footer">
-      <small>Laatste berekening: {{ receivedAt }}</small>
+      <small>{{ $t('last_calculation') }}: {{ receivedAt }}</small>
       <div class="app-results-rivm__footer-cta-wrapper">
         <md-button
           :disabled="isLoading"
           class="app-results-rivm__cta md-raised"
           @click="handleFetchData"
         >
-          Bereken groene baten
+          {{ $t('calculate_green_benefits') }}
         </md-button>
         <md-progress-spinner
           v-if="isLoading"
@@ -53,6 +59,8 @@
 </template>
 
 <script>
+import isNil from '@/lib/isNil'
+
 export default {
   props: {
     data: {
@@ -60,44 +68,50 @@ export default {
       default: () => {},
     },
   },
-  data() {
-    return {
-      isLoading: false,
-    }
-  },
+  data: () => ({
+    isLoading: false,
+  }),
   computed: {
     receivedAt() {
       try {
         const date = new Date(this.data.receivedAt)
         return date.toLocaleString()
-      } catch (error) {
+      }
+      catch (error) {
         return ''
       }
     },
     transformedData(){
       try {
-      return this.data.entries
-        .map(item => {
-          const id = item.code
-          const title = item.name.replace(/\[.+\]/, '').trim()
-          const value = item.tablevalue
-          const unit = item.units.replace(/euros?/i, '€').replace(/jaar|year/i, 'jr')
-          const section = item.model
+        return this.data.entries
+          // .map(x => {
+          //   console.log(x)
+          //   return x
+          // })
+          .map(({ name, tablevalue, units, model }) => {
+            const title = name
+              // .replace(/\[.+\]/, '').trim()
+            const value = tablevalue
+            const unit = units === '-' ? null : units
+              // .replace(/euros?/i, '€')
+              // .replace(/jaar|year/i, 'jr')
+              // .replace(/-/i, '')
+            const section = model
 
-          return { id, title, value, unit, section }
-        })
-        .reduce((collection, item) => {
-          let section = collection.find(section => section.title === item.section)
-          if (!section) {
-            section = { title: item.section, definitions: [] }
-            collection.push(section)
-          }
-
-          section.definitions.push(item)
-
-          return collection
-        }, [])
-      } catch (error) {
+            return { title, value, unit, section }
+          })
+          // Group items by section (model in API data)
+          .reduce((collection, item) => {
+            let section = collection.find(section => section.title === item.section)
+            if (!section) {
+              section = { title: item.section, definitions: [] }
+              collection.push(section)
+            }
+            section.definitions.push(item)
+            return collection
+          }, [])
+      }
+      catch (error) {
         return []
       }
     },
@@ -111,6 +125,9 @@ export default {
     handleFetchData() {
       this.isLoading = true
       this.$emit('fetch-data')
+    },
+    isNil(x) {
+      return isNil(x)
     },
   },
 }
@@ -175,6 +192,10 @@ export default {
 
 .app-results-rivm__definition-list > * {
   margin-bottom: var(--spacing-default)
+}
+
+.app-results-rivm__value {
+  text-align: right;
 }
 
 .app-results-rivm__unit::before {
