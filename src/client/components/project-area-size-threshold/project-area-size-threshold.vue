@@ -3,7 +3,7 @@ import { mapActions, mapMutations } from 'vuex'
 
 export default {
   props: {
-    isBelowTreshold: {
+    isBelowThreshold: {
       type: Boolean,
       required: true,
     },
@@ -14,8 +14,8 @@ export default {
     }
   },
   watch: {
-    isBelowTreshold(belowTreshold) {
-      if (belowTreshold) {
+    isBelowThreshold(belowThreshold) {
+      if (belowThreshold) {
         if (this.notificationId) {
           this.notificationId = undefined
           this.removeError(this.notificationId)

@@ -33,14 +33,14 @@ export const getters = {
   acceptedLegal(state, getters, rootState) {
     return rootState.project.legalAccepted
   },
-  projectAreaSizeIsBelowTreshold(state, getters, rootState) {
+  projectAreaSizeIsBelowThreshold(state, getters, rootState) {
     const area = get(rootState, 'project.settings.area.properties.area', 0)
-    const treshold = 100000
+    const threshold = 100000
 
-    return area < treshold
+    return area < threshold
   },
   createdProjectArea(state, getters, rootState) {
-    return !!rootState.project.settings.area.properties && getters.projectAreaSizeIsBelowTreshold
+    return !!rootState.project.settings.area.properties && getters.projectAreaSizeIsBelowThreshold
   },
   filledInRequiredProjectAreaSettings(state, getters, rootState) {
     const projectArea = rootState.project.settings.projectArea

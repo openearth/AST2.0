@@ -109,20 +109,20 @@
     <!-- portal for general popup -->
     <portal-target name="popup-portal" />
 
-    <project-area-size-treshold :is-below-treshold="projectAreaSizeIsBelowTreshold" />
+    <project-area-size-threshold :is-below-threshold="projectAreaSizeIsBelowThreshold" />
   </div>
 </template>
 
 <script>
 import { mapState, mapMutations, mapGetters, mapActions } from 'vuex';
 import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea } from '../components'
-import ProjectAreaSizeTreshold from '../components/project-area-size-treshold'
+import ProjectAreaSizeThreshold from '../components/project-area-size-threshold'
 import getData from '~/lib/get-data'
 import EventBus, { CLICK } from '~/lib/event-bus';
 import log from '~/lib/log'
 
 export default {
-  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea, ProjectAreaSizeTreshold },
+  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea, ProjectAreaSizeThreshold },
   data() {
     return {
       disclaimer: {},
@@ -146,7 +146,7 @@ export default {
       userIsRefreshing: state => state.user.isRefreshing,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers', 'customLayers', 'mapLayers', 'layers']),
-    ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings', 'projectAreaSizeIsBelowTreshold']),
+    ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings', 'projectAreaSizeIsBelowThreshold']),
     ...mapGetters({ selectedAreas:  'selectedAreas/features' }),
     ...mapGetters('map', ['isProject', 'point', 'line', 'polygon', 'addOnly', 'interactive', 'search']),
     ...mapGetters('user', ['isLoggedIn']),
