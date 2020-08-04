@@ -3,12 +3,13 @@ export const state = () => ({
 })
 
 export const mutations = {
-  add(state, { message, duration, type, id }) {
+  add(state, { message, duration, type, id, closable = true }) {
     state.messages.push({
       id,
       message,
       duration,
       type,
+      closable,
     })
   },
 
@@ -20,9 +21,9 @@ export const mutations = {
 }
 
 export const actions = {
-  showNotification({ commit }, { message, duration, type }) {
+  showNotification({ commit }, { message, duration, type, closable }) {
     const id = Date.now().toString()
-    commit('add', { message, duration, type, id })
+    commit('add', { message, duration, type, id, closable })
 
     if (duration > 0) {
       setTimeout(() => { commit('remove', id) }, duration)
@@ -30,11 +31,11 @@ export const actions = {
     return id
   },
 
-  async showWarning({ dispatch }, { message, duration = 4000 }) {
-    return await dispatch('showNotification', { message, duration, type: 'warning' })
+  async showWarning({ dispatch }, { message, closable, duration = 4000 }) {
+    return await dispatch('showNotification', { message, duration, closable, type: 'warning' })
   },
 
-  async showError({ dispatch }, { message, duration = 4000 }) {
-    return await dispatch('showNotification', { message, duration, type: 'error' })
+  async showError({ dispatch }, { message, closable, duration = 4000 }) {
+    return await dispatch('showNotification', { message, duration, closable, type: 'error' })
   },
 }
