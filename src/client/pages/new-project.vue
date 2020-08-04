@@ -6,12 +6,12 @@
 
     <div class="new-project__content">
       <hint-text
-        v-if="!createdProjectArea"
+        v-if="!createdProjectArea && !settings.area.properties"
         :icon="'crop_square'"
         :text="$t('empty_project_area')"
         class="new-project__hint-text"
       />
-      <div v-else>
+      <div v-if="settings.area.properties && settings.area.properties.area">
         <p class="md-body-2">
           {{ $t('area_size') }}:
         </p>
