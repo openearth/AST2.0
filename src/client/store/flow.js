@@ -1,3 +1,4 @@
+import get from 'lodash/get'
 import isObject from 'lodash/isObject'
 import getViewPath from '../lib/get-view-path'
 import isValidNumber from '../lib/is-valid-number'
@@ -32,8 +33,14 @@ export const getters = {
   acceptedLegal(state, getters, rootState) {
     return rootState.project.legalAccepted
   },
+  projectAreaSizeIsBelowTreshold(state, getters, rootState) {
+    const area = get(rootState, 'project.settings.area.properties.area', 0)
+    const treshold = 100000
+
+    return area < treshold
+  },
   createdProjectArea(state, getters, rootState) {
-    return !!rootState.project.settings.area.properties
+    return !!rootState.project.settings.area.properties && getters.projectAreaSizeIsBelowTreshold
   },
   filledInRequiredProjectAreaSettings(state, getters, rootState) {
     const projectArea = rootState.project.settings.projectArea
