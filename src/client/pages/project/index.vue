@@ -63,9 +63,9 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions, mapMutations } from "vuex"
+import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
 import { HintText } from '~/components'
-import MapEventBus, { REDRAW } from "../../lib/map-event-bus";
+import MapEventBus, { REDRAW } from '../../lib/map-event-bus';
 
 export default {
   middleware: ['access-level-settings'],

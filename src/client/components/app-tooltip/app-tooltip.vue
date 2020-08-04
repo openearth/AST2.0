@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import EventBus, { CLICK } from "~/lib/event-bus";
+import EventBus, { CLICK } from '~/lib/event-bus';
 
 export default {
   props: {

@@ -112,10 +112,10 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapGetters, mapActions } from "vuex";
+import { mapState, mapMutations, mapGetters, mapActions } from 'vuex';
 import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea } from '../components'
 import getData from '~/lib/get-data'
-import EventBus, { CLICK } from "~/lib/event-bus";
+import EventBus, { CLICK } from '~/lib/event-bus';
 import log from '~/lib/log'
 
 export default {
@@ -243,7 +243,7 @@ export default {
       EventBus.$emit(CLICK, event)
     },
     beforeUnload(e) {
-      const message = "You may have unsaved changes"
+      const message = 'You may have unsaved changes'
       e.returnValue = message
       return message
     },

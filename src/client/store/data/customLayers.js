@@ -1,5 +1,5 @@
 import randomColor from '../../lib/random-color';
-import { getApiData } from "../../lib/get-api-data";
+import { getApiData } from '../../lib/get-api-data';
 export const state = () => []
 
 export const mutations = {
@@ -21,7 +21,7 @@ export const actions = {
 
   addCustomTilesToLayers({ commit, dispatch }, customLayers) {
     const newLayers = customLayers.map(source => {
-      const id = source.id ? source.id : source.name.split(" ")[0]
+      const id = source.id ? source.id : source.name.split(' ')[0]
       const mapLayer = {
         id: id,
         title: source.name,

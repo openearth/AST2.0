@@ -42,8 +42,8 @@
 
 <script>
 import startCase from 'lodash/startCase'
-import { mapGetters } from "vuex";
-import { LEVEL_PROJECT_AREA } from "../../lib/flow-levels";
+import { mapGetters } from 'vuex';
+import { LEVEL_PROJECT_AREA } from '../../lib/flow-levels';
 import FullscreenButton from '../fullscreen-button'
 import LogIn from '../log-in'
 

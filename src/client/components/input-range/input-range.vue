@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import NumericInput from "../numeric-input";
+import NumericInput from '../numeric-input';
 
 export default {
   components: { NumericInput },
@@ -50,11 +50,11 @@ export default {
     },
     min: {
       type: String,
-      default: "0",
+      default: '0',
     },
     max: {
       type: String,
-      default: "1",
+      default: '1',
     },
     numericEnabled: {
       type: Boolean,

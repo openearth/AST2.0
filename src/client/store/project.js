@@ -7,14 +7,14 @@ import get from 'lodash/get'
 import round from 'lodash/round'
 import unset from 'lodash/unset'
 import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT, REPAINT, DELETE_LAYER } from '../lib/map-event-bus'
-import { getApiDataForFeature, getRankedMeasures } from "../lib/get-api-data";
+import { getApiDataForFeature, getRankedMeasures } from '../lib/get-api-data';
 import FileSaver from 'file-saver'
 import getLoadedFileContents from '../lib/get-loaded-file-contents'
 import validateProject from '../lib/validate-project'
 import projectToGeoJson from '../lib/project-to-geojson'
 import projectToCsv from '../lib/project-to-csv'
 import delay from '../lib/delay'
-import log from "../lib/log";
+import log from '../lib/log';
 
 const initialState = () => ({
   areas: [],
@@ -322,7 +322,7 @@ export const actions = {
     MapEventBus.$emit(RELOAD_LAYERS)
   },
   async fetchAreaApiData({ state, commit, dispatch }, features) {
-    features.forEach(async (feature) => {
+    features.forEach(async feature => {
       const projectArea = state.settings.area.properties.area
       const { scenarioName } = state.settings.projectArea
 
@@ -553,8 +553,8 @@ export const getters = {
         }, {})
 
       return {
-        "title": rootState.i18n.messages.climate_and_costs,
-        "header": [
+        'title': rootState.i18n.messages.climate_and_costs,
+        'header': [
           rootState.i18n.messages.measure,
           rootState.i18n.messages.surface,
           ...kpiKeys.map(kpiTitleByKey),
@@ -607,8 +607,8 @@ export const getters = {
         }, {})
 
       return {
-        "title": rootState.i18n.messages.co_benefits,
-        "header": [
+        'title': rootState.i18n.messages.co_benefits,
+        'header': [
           rootState.i18n.messages.measure,
           rootState.i18n.messages.surface,
           ...kpiKeys.map(kpiTitleByKey),
@@ -767,7 +767,7 @@ export const getters = {
         opacity,
       }))
   },
-  customLayers: (state) => {
+  customLayers: state => {
     return state.map.customLayers
   },
   mapLayers: (state, getters, rootState, rootGetters) => {
@@ -787,7 +787,7 @@ export const getters = {
         opacity,
       }))
   },
-  settingsProjectArea: (state) => {
+  settingsProjectArea: state => {
     return state.settings.projectArea
   },
 }

@@ -26,7 +26,7 @@ export default {
   props: {
       title: {
           type: String,
-          default: "Results",
+          default: 'Results',
       },
   },
   methods: {

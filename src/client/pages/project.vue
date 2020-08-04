@@ -9,8 +9,8 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions } from "vuex"
-import MapEventBus, { REDRAW } from "../lib/map-event-bus"
+import { mapState, mapGetters, mapActions } from 'vuex'
+import MapEventBus, { REDRAW } from '../lib/map-event-bus'
 import getViewPath from '../lib/get-view-path'
 
 export default {

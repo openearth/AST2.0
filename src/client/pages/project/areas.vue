@@ -134,8 +134,8 @@
 </template>
 
 <script>
-import { mapGetters, mapActions, mapMutations, mapState } from "vuex";
-import MapEventBus, { REDRAW, MODE, DELETE } from "../../lib/map-event-bus";
+import { mapGetters, mapActions, mapMutations, mapState } from 'vuex';
+import MapEventBus, { REDRAW, MODE, DELETE } from '../../lib/map-event-bus';
 import InputRange from '../../components/input-range'
 import TextInput from '../../components/text-input'
 import AppTooltip from '~/components/app-tooltip'

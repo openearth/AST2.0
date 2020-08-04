@@ -32,8 +32,8 @@
 </template>
 
 <script>
-  import { mapState, mapMutations } from "vuex";
-  import { numericLayout, textLayout } from "../../assets/custom-keyboard-options";
+  import { mapState, mapMutations } from 'vuex';
+  import { numericLayout, textLayout } from '../../assets/custom-keyboard-options';
   import NumericInput from '../numeric-input'
 
   export default {

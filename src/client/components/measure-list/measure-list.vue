@@ -131,8 +131,8 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import { MeasureCard } from "..";
+import { mapGetters } from 'vuex';
+import { MeasureCard } from '..';
 import TextInput from '../text-input'
 
 const SYSTEM_SUITABILITY = 'system-suitability'

@@ -2,7 +2,7 @@ import  MapEventBus, { REPOSITION } from '../lib/map-event-bus';
 
 export const state = () => ({})
 
-export const plugins = [ (store) => {
+export const plugins = [ store => {
   store.watch(
     (state, getters) => getters['user/workspace'],
     newValue => {

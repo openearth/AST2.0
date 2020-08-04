@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions } from 'vuex';
 import projectAreaStyles from './project-area-styles'
 import areaStyles from './area-styles'
 import getData from '~/lib/get-data'
@@ -207,7 +207,7 @@ export default {
         this.map.resize()
       })
 
-      MapEventBus.$on(SEARCH, (value) => {
+      MapEventBus.$on(SEARCH, value => {
         this.geoCoder.setInput(value).query(value)
       })
 
@@ -224,7 +224,7 @@ export default {
         this.$nextTick(this.fillMap)
       })
 
-      MapEventBus.$on(MODE, (mode) => {
+      MapEventBus.$on(MODE, mode => {
         if (mode !== 'direct_select') {
           this.draw.changeMode(mode)
         }
@@ -244,7 +244,7 @@ export default {
       MapEventBus.$on(ZOOM_IN, () => this.map.zoomIn())
       MapEventBus.$on(ZOOM_OUT, () => this.map.zoomOut())
 
-      MapEventBus.$on(SELECT, (id) => {
+      MapEventBus.$on(SELECT, id => {
         this.selectFeature(id)
       })
 

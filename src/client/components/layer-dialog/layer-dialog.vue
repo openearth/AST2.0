@@ -143,7 +143,7 @@ export default {
   computed: {
     placeholder() {
       const option = this.options.find(option => option.name === this.serverType)
-      return get('placeholder', option) || ""
+      return get('placeholder', option) || ''
     },
     doubleLayer() {
       const customLayersIds = this.customLayers.map(layer => layer.id)

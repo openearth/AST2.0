@@ -12,9 +12,9 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from "vuex"
+import { mapState, mapGetters } from 'vuex'
 import { MeasureList } from '~/components'
-import MapEventBus, { REDRAW } from "~/lib/map-event-bus";
+import MapEventBus, { REDRAW } from '~/lib/map-event-bus';
 
 export default {
   components: { MeasureList },

@@ -7,7 +7,7 @@ import {
   LEVEL_PROJECT_AREA,
   LEVEL_PROJECT_AREA_SETTINGS,
   LEVEL_SETTINGS,
-} from "../lib/flow-levels";
+} from '../lib/flow-levels';
 
 export const state = () => ({
   fullPath: {},

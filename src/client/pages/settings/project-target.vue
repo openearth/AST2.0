@@ -55,8 +55,8 @@
 </template>
 
 <script>
-import { NumericInput } from "../../components";
-import { mapState, mapMutations } from "vuex";
+import { NumericInput } from '../../components';
+import { mapState, mapMutations } from 'vuex';
 export default {
   middleware: ['access-level-project-area-settings'],
   components: { NumericInput },

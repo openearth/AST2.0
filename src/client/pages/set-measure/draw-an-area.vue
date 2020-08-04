@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { mapGetters, mapState, mapMutations } from "vuex"
+import { mapGetters, mapState, mapMutations } from 'vuex'
 import { MeasureCard } from '~/components'
 
 export default {

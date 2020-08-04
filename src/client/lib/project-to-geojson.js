@@ -1,6 +1,6 @@
 export default function projectToGeoJson(features) {
   const obj = {
-    type: "FeatureCollection",
+    type: 'FeatureCollection',
     features: features.map(feature => {
       const { type } = feature.geometry
       const { apiData, ...rest } = feature.properties

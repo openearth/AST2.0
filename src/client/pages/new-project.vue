@@ -32,8 +32,8 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from "vuex";
-import MapEventBus, { REDRAW } from "../lib/map-event-bus"
+import { mapState, mapGetters } from 'vuex';
+import MapEventBus, { REDRAW } from '../lib/map-event-bus'
 import { HintText } from '~/components'
 
 export default {

@@ -63,11 +63,11 @@
 </template>
 
 <script>
-import MapEventBus, { DELETE, ZOOM_IN, ZOOM_OUT, SEARCH } from "../../lib/map-event-bus";
-import MapBox from "../map-box";
-import LayerLegend from "../layer-legend";
-import MapControls from "../map-controls";
-import { mapMutations, mapActions } from "vuex";
+import MapEventBus, { DELETE, ZOOM_IN, ZOOM_OUT, SEARCH } from '../../lib/map-event-bus';
+import MapBox from '../map-box';
+import LayerLegend from '../layer-legend';
+import MapControls from '../map-controls';
+import { mapMutations, mapActions } from 'vuex';
 
 export default {
   components: { MapBox, MapControls, LayerLegend },

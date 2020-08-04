@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from "vuex"
+import { mapGetters, mapMutations } from 'vuex'
 import { KpiGroup, AppPopup } from '~/components'
 import KpiTable from '~/components/kpi-table'
 

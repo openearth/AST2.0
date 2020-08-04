@@ -99,8 +99,8 @@
 
 <script>
 import SearchInput from '../search-input'
-import LayerList from "../layer-list";
-import EventBus, { CLICK } from "~/lib/event-bus";
+import LayerList from '../layer-list';
+import EventBus, { CLICK } from '~/lib/event-bus';
 
 export default {
   components: { SearchInput, LayerList },

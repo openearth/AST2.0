@@ -41,7 +41,7 @@
 
 <script>
 import  MapEventBus, { SEARCH_SUGGESTIONS, REPOSITION } from '../../lib/map-event-bus';
-import TextInput from "~/components/text-input";
+import TextInput from '~/components/text-input';
 
 export default {
   components: { TextInput },
@@ -58,7 +58,7 @@ export default {
     }
   },
   mounted() {
-    MapEventBus.$on(SEARCH_SUGGESTIONS, (items) => {
+    MapEventBus.$on(SEARCH_SUGGESTIONS, items => {
       console.log({ items })
       this.suggestions = items
     })

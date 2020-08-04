@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import { mapMutations } from 'vuex';
 import isValidNumber from '../../lib/is-valid-number'
 
 export default {

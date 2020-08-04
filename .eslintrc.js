@@ -27,15 +27,17 @@ module.exports = {
       },
     ],
     'vue/max-attributes-per-line': [2, {
-      "singleline": 2,
-      "multiline": {
-        "max": 1,
-        "allowFirstLine": false,
+      'singleline': 2,
+      'multiline': {
+        'max': 1,
+        'allowFirstLine': false,
       },
     }],
     'vue/no-v-html': 'off',
     'no-debugger': 'off',
     'no-console': 'off',
     'no-prototype-builtins': 'off',
+    'quotes': [ 'warn', 'single' ],
+    'arrow-parens': ['warn', 'as-needed'],
   },
 }

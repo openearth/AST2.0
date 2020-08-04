@@ -19,7 +19,7 @@
 
 <script>
 import netlifyIdentity from 'netlify-identity-widget'
-import { mapGetters, mapMutations } from "vuex";
+import { mapGetters, mapMutations } from 'vuex';
 import delay from '../../lib/delay'
 
 export default {

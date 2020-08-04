@@ -16,7 +16,7 @@ export const actions = {
 }
 
 export const getters = {
-  displayValue: (state, getters, rootState, rootGetters) => (key) => {
+  displayValue: (state, getters, rootState, rootGetters) => key => {
     switch(key) {
       case 'currency':
         return rootGetters['data/workspaces/activeWorkspace'].currencySymbol
