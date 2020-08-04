@@ -43,7 +43,7 @@ export default {
     },
   },
   methods: {
-    toggle(event) {
+    toggle() {
       this.active = !this.active
     },
   },

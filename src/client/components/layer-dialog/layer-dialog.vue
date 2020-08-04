@@ -12,12 +12,15 @@
             <md-option
               v-for="option in options"
               :key="option.value"
-              :value="option.value">{{ option.name }}</md-option>
+              :value="option.value"
+            >
+              {{ option.name }}
+            </md-option>
           </md-select>
         </md-field>
         <md-field v-if="serverType !== ''">
           <label>{{ $t('server_url') }}</label>
-          <md-input v-model="serverUrl" :placeholder="placeholder"/>
+          <md-input v-model="serverUrl" :placeholder="placeholder" />
           <span v-if="exampleUrl" class="md-helper-text">{{ $t('example_url') }}: {{ exampleUrl }}</span>
         </md-field>
       </form>
@@ -37,7 +40,7 @@
             :model="doubleLayer[index] ? checked : false"
             :disabled="doubleLayer[index] || layerError[index]"
           />
-          <md-checkbox v-else v-model="layer.checked"/>
+          <md-checkbox v-else v-model="layer.checked" />
 
           <p class="md-list-item-text layer-dialog__layer-label">
             <span
@@ -56,7 +59,6 @@
               <em>{{ layerError[index] ? layer.errors : '' }}</em>
             </span>
           </p>
-
         </md-list-item>
       </md-list>
     </md-dialog-content>
@@ -67,21 +69,24 @@
       <md-button
         v-if="state !== 'settings'"
         class="md-primary"
-        @click="state = 'settings'">
+        @click="state = 'settings'"
+      >
         {{ $t('back') }}
       </md-button>
       <md-button
         v-if="state === 'settings'"
         :disabled="serverType === '' || serverUrl === ''"
         class="md-primary"
-        @click="retrieveLayers()">
+        @click="retrieveLayers()"
+      >
         {{ $t('retrieve_layers') }}
       </md-button>
       <md-button
         v-if="state === 'layers'"
         :disabled="checkedLayers.length === 0"
         class="md-primary"
-        @click="addLayers(); $emit('update:showLayerDialog', false)">
+        @click="addLayers(); $emit('update:showLayerDialog', false)"
+      >
         {{ $t('add_layers') }}
       </md-button>
     </md-dialog-actions>

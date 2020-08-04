@@ -1,20 +1,24 @@
 <template>
   <section :class="{ 'kpi-panel__has-footer': hasFooter }" class="kpi-panel">
     <div class="kpi-panel__header">
-      <h4 class="md-title">{{ $t('results') }}</h4>
+      <h4 class="md-title">
+        {{ $t('results') }}
+      </h4>
 
       <div>
         <md-button
           :class="{'md-primary': displayType === 'numbers'}"
           class="md-icon-button"
-          @click="displayType = 'numbers'">
+          @click="displayType = 'numbers'"
+        >
           <md-icon>format_list_numbered</md-icon>
         </md-button>
 
         <md-button
           :class="{'md-primary': displayType === 'bars'}"
           class="md-icon-button"
-          @click="displayType = 'bars'">
+          @click="displayType = 'bars'"
+        >
           <md-icon>insert_chart</md-icon>
         </md-button>
       </div>
@@ -28,11 +32,14 @@
         :kpi-values="kpiValues"
         :kpi-percentage-values="kpiPercentageValues"
         :selected-areas="selectedAreas"
-        class="kpi-panel__kpi-group" />
+        class="kpi-panel__kpi-group"
+      />
     </div>
 
     <footer v-if="hasFooter" class="kpi-panel__footer">
-      <md-button class="md-raised" @click="togglePopup(true)">{{ $t('view_as_table') }}</md-button>
+      <md-button class="md-raised" @click="togglePopup(true)">
+        {{ $t('view_as_table') }}
+      </md-button>
       <app-popup
         v-if="openState"
         :title="$t('results')"
@@ -40,7 +47,6 @@
       >
         <kpi-table />
       </app-popup>
-
     </footer>
   </section>
 </template>

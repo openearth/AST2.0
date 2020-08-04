@@ -9,7 +9,8 @@ export const mutations = {
 }
 
 export const actions = {
-  async getCustomMapLayers({ commit, dispatch }, parameters) {
+  // @REFACTOR :: Why is an action used as a API getter function?
+  async getCustomMapLayers(ctx, parameters) {
     const body = {
       url: parameters.serverUrl,
       type: parameters.serverType,
@@ -18,7 +19,7 @@ export const actions = {
     return data
   },
 
-  addCustomTilesToLayers({ state, commit, dispatch }, customLayers) {
+  addCustomTilesToLayers({ commit, dispatch }, customLayers) {
     const newLayers = customLayers.map(source => {
       const id = source.id ? source.id : source.name.split(" ")[0]
       const mapLayer = {

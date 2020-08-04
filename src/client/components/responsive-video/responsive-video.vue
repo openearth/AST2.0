@@ -1,10 +1,11 @@
 <template>
   <div class="responsive-video">
     <figure>
-      <fixed-ratio 
-        :width="video.width" 
-        :height="video.height" 
-        class="responsive-video__canvas">
+      <fixed-ratio
+        :width="video.width"
+        :height="video.height"
+        class="responsive-video__canvas"
+      >
         <lazy-load>
           <div
             :style="{ backgroundImage: `url(${imageUrl})` }"
@@ -19,21 +20,24 @@
           webkitallowfullscreen
           mozallowfullscreen
           allowfullscreen
-          allow="autoplay"/>
+          allow="autoplay"
+        />
         <a
           v-if="!isPlaying"
           :href="video.url"
           class="responsive-video__button"
-          @click.prevent="play">
+          @click.prevent="play"
+        >
           <span class="a11y-sr-only">{{ $t('play_video') }}</span>
-          <img class="responsive-video__icon" src="/images/play.svg" >
+          <img class="responsive-video__icon" src="/images/play.svg">
         </a>
       </fixed-ratio>
       <figcaption v-if="video.title">
-        <a 
-          :href="video.url" 
-          target="_blank" 
-          rel="noopener" >
+        <a
+          :href="video.url"
+          target="_blank"
+          rel="noopener"
+        >
           {{ video.title }}
         </a>
       </figcaption>
@@ -44,7 +48,6 @@
 <script>
 import FixedRatio from '../fixed-ratio/fixed-ratio'
 import LazyLoad from '../lazy-load/lazy-load'
-import imageUrl from '../../lib/image-url'
 
 const binaryBoolean = value => (value) ? 1 : 0
 

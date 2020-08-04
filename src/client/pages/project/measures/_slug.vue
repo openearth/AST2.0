@@ -63,7 +63,7 @@ export default {
     ...mapActions({ setAreaMeasure: 'project/setAreaMeasure' }),
     onChoose(measure) {
       this.setAreaMeasure({ features: this.selectedFeatures, measure })
-      this.$router.push(`/${this.$i18n.locale}/project/areas/`).catch(err => {})
+      this.$router.push(`/${this.$i18n.locale}/project/areas/`).catch(() => {})
     },
     back() {
       this.$router.back()

@@ -43,26 +43,27 @@
       @search="onSearch"
       @layer-opacity-change="setLayerOpacity"
       @legend-visibility-change="setLegendVisibility"
-      @layer-visibility-change="setLayerVisibility"/>
+      @layer-visibility-change="setLayerVisibility"
+    />
 
     <map-controls
       :zoom-in="interactive"
       :zoom-out="interactive"
       class="map-viewer__controls--zoom"
       @zoom-in="zoomIn"
-      @zoom-out="zoomOut"/>
+      @zoom-out="zoomOut"
+    />
 
     <layer-legend
       v-if="interactive && layers"
       :layers="legendLayers"
-      class="map-viewer__layer-legend"/>
-
-
+      class="map-viewer__layer-legend"
+    />
   </div>
 </template>
 
 <script>
-import MapEventBus, { MODE, TRASH, DELETE, ZOOM_IN, ZOOM_OUT, SEARCH } from "../../lib/map-event-bus";
+import MapEventBus, { DELETE, ZOOM_IN, ZOOM_OUT, SEARCH } from "../../lib/map-event-bus";
 import MapBox from "../map-box";
 import LayerLegend from "../layer-legend";
 import MapControls from "../map-controls";

@@ -6,7 +6,6 @@ import {
   LEVEL_LEGAL,
   LEVEL_PROJECT_AREA,
   LEVEL_PROJECT_AREA_SETTINGS,
-  LEVEL_PROJECT_SETTINGS,
   LEVEL_SETTINGS,
 } from "../lib/flow-levels";
 

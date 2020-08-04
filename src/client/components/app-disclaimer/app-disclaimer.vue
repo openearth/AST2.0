@@ -6,7 +6,6 @@
     aria-describedby="disclaimer-content"
   >
     <div class="app-disclaimer__content">
-
       <header>
         <h3 id="disclaimer-title" class="title">
           {{ disclaimer.title }}
@@ -28,7 +27,6 @@
           {{ $t('agree') }}
         </md-button>
       </footer>
-
     </div>
   </article>
 </template>

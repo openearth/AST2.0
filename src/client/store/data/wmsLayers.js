@@ -1,6 +1,3 @@
-import getData from '../../lib/get-data'
-import randomColor from '../../lib/random-color';
-
 // This state is not used directly. wmsLayers are loaded from the workspace.
 // This file exists to let the `constructed` have a place to live.
 // The `state` const need to be exported in order for the getter to be available

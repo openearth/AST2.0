@@ -1,10 +1,18 @@
 <template>
   <md-button class="md-primary md-icon-button" @click="handleClick">
-    <md-icon v-if="isLoggedIn">person</md-icon>
-    <md-icon v-else>person_outline</md-icon>
+    <md-icon v-if="isLoggedIn">
+      person
+    </md-icon>
+    <md-icon v-else>
+      person_outline
+    </md-icon>
     <md-tooltip md-direction="bottom">
-      <template v-if="isLoggedIn">{{ $t('logout') }}</template>
-      <template v-else>{{ $t('login') }}</template>
+      <template v-if="isLoggedIn">
+        {{ $t('logout') }}
+      </template>
+      <template v-else>
+        {{ $t('login') }}
+      </template>
     </md-tooltip>
   </md-button>
 </template>

@@ -44,9 +44,7 @@ export default {
       return this.layers.filter(layer => layer.showLegend)
     },
     shownLayers() {
-      return !!this.layers
-        .filter(layer => layer.showLegend)
-        .length
+      return !!this.layersThatShouldShowLegend.length
     },
   },
 }

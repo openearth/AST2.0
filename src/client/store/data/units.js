@@ -9,7 +9,7 @@ export const mutations = {
 }
 
 export const actions = {
-  async getUnits({ commit, dispatch }) {
+  async getUnits({ commit }) {
     const data = await getData({ slug: 'units' })
     data.units.forEach(unit => commit('addUnit', unit))
   },

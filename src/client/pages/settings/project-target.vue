@@ -1,11 +1,13 @@
 <template>
   <div>
-    <h2 class="project-target__title md-subheading">{{ $t('goals_and_key_progress_indicators') }}</h2>
+    <h2 class="project-target__title md-subheading">
+      {{ $t('goals_and_key_progress_indicators') }}
+    </h2>
     <md-table
       v-for="(group, index) in kpiGroups"
       :key="index"
-      class="project-target__table">
-
+      class="project-target__table"
+    >
       <md-table-toolbar class="project-target__title-toolbar">
         <span class="md-subheading">{{ group.title }}</span>
       </md-table-toolbar>
@@ -18,7 +20,8 @@
       <md-table-row
         v-for="kpi in group.kpis"
         :key="kpi.key"
-        class="project-target__table-row">
+        class="project-target__table-row"
+      >
         <md-table-cell width="40%">
           <md-checkbox
             :value="!targets[group.key][kpi.key].include"
@@ -53,7 +56,7 @@
 
 <script>
 import { NumericInput } from "../../components";
-import { mapState, mapMutations, mapGetters } from "vuex";
+import { mapState, mapMutations } from "vuex";
 export default {
   middleware: ['access-level-project-area-settings'],
   components: { NumericInput },

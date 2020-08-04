@@ -23,8 +23,8 @@
             :key="index"
           >
             <md-table-cell
-              v-for="(value, index) in row"
-              :key="index"
+              v-for="(value, rowIndex) in row"
+              :key="rowIndex"
             >
               {{ value }}
             </md-table-cell>

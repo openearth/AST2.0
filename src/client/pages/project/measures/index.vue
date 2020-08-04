@@ -46,7 +46,7 @@ export default {
     onChooseMeasure(measureId) {
       const measure = this.measureById(measureId)
       this.$store.dispatch('project/setAreaMeasure', { features: this.selectedFeatures, measure })
-      this.$router.push(`/${this.$i18n.locale}/project/areas/`).catch(err => {})
+      this.$router.push(`/${this.$i18n.locale}/project/areas/`).catch(() => {})
     },
   },
 }

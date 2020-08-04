@@ -8,7 +8,7 @@
       :is="compInner"
       class="fixed-ratio__content"
     >
-      <slot/>
+      <slot />
     </div>
   </div>
 </template>

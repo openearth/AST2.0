@@ -9,9 +9,12 @@
         v-if="!createdProjectArea"
         :icon="'crop_square'"
         :text="$t('empty_project_area')"
-        class="new-project__hint-text"/>
+        class="new-project__hint-text"
+      />
       <div v-else>
-        <p class="md-body-2">{{ $t('area_size') }}:</p>
+        <p class="md-body-2">
+          {{ $t('area_size') }}:
+        </p>
         <span v-if="settings.area.properties" class="md-subheading">{{ areaSize }}m<sup>2</sup></span>
       </div>
     </div>
@@ -20,7 +23,10 @@
       <md-button
         :to="`/${locale}/settings/project-area/`"
         :disabled="!createdProjectArea"
-        class="md-raised md-primary">{{ $t('next') }}</md-button>
+        class="md-raised md-primary"
+      >
+        {{ $t('next') }}
+      </md-button>
     </div>
   </md-drawer>
 </template>

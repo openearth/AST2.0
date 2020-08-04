@@ -11,7 +11,7 @@ export const mutations = {
 }
 
 export const actions = {
-  async getScenarios({ commit, dispatch }, locale) {
+  async getScenarios({ commit }, locale) {
     const data = await getData({ locale, slug: 'scenarios' })
     data.scenarios.forEach(scenario => commit('addScenario', scenario))
   },

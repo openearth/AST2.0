@@ -1,5 +1,5 @@
 <template>
-  <div ref="map" class="map"/>
+  <div ref="map" class="map" />
 </template>
 
 <script>
@@ -19,7 +19,6 @@ import MapEventBus, {
   SELECT,
   SEARCH,
   SEARCH_SUGGESTIONS,
-  FLY_TO,
   REPAINT,
   DELETE_LAYER,
 } from '../../lib/map-event-bus'
@@ -121,13 +120,13 @@ export default {
   },
 
   watch: {
-    layerVisibility(newValue) {
+    layerVisibility() {
       this.renderWmsLayersVisibility()
     },
-    layerOpacity(newValue) {
+    layerOpacity() {
       this.renderWmsLayersOpacity()
     },
-    mode(mode) {
+    mode() {
       this.clearMap()
       this.$nextTick(this.fillMap)
     },
@@ -146,7 +145,6 @@ export default {
   },
 
   async mounted() {
-    const mapZoom = this.mapZoom
     const { lat, lng } = this.mapCenter
     const [mapboxgl, MapboxDraw, MapboxGeocoder, mapboxBaseStyle] = await Promise.all([import('mapbox-gl'), import('@mapbox/mapbox-gl-draw'), import('@mapbox/mapbox-gl-geocoder'), getData({ folder: 'mapbox-base-layer', slug: 'style' })])
     const defaultStyles = [...new MapboxDraw().options.styles]
@@ -185,7 +183,7 @@ export default {
       this.map.on('draw.update', event => this.$emit('update', event.features))
       this.map.on('draw.delete', event => this.$emit('delete', event.features))
       this.map.on('draw.selectionchange', event => this.$emit('selectionchange', event.features))
-      this.map.on('drag', event => this.$emit('move', { center: this.map.getCenter(), zoom: this.map.getZoom() }))
+      this.map.on('drag', () => this.$emit('move', { center: this.map.getCenter(), zoom: this.map.getZoom() }))
       this.map.on('draw.modechange', event => this.$emit('modechange', event.mode))
 
       this.map.on('load', () => {
@@ -201,7 +199,7 @@ export default {
 
       MapEventBus.$on(UPDATE_FEATURE_PROPERTY, ({ featureId, key, value }) => {
         if (this.draw.get(featureId) !== undefined) {
-          const updatedFeature = this.draw.setFeatureProperty(featureId, key, value).get(featureId)
+          this.draw.setFeatureProperty(featureId, key, value).get(featureId)  // @REFACTOR :: Can this getter be removed?
         }
       })
 
@@ -312,14 +310,6 @@ export default {
           'line-width': id === 'projectArea' ? 5 : 3,
         },
       }
-      const fillDetails = {
-        id: `${properties.name || id}-fill`,
-        type: 'fill',
-        paint: {
-          'fill-color': color || '#088',
-          'fill-opacity': id === 'projectArea' ? 0 : 0.1,
-        },
-      }
       const baseObj = {
         'source': {
           'type': 'geojson',
@@ -347,10 +337,8 @@ export default {
     addWmsLayer({ layerType: type, id, url, tilesize: tileSize, title, visible }) {
       if (!this.map) return
 
-      let layers;
       try {
-        const style = this.map.getStyle()
-        layers = style.layers
+        this.map.getStyle().layers
       } catch (err) {
         log.warning(`Map styles are not loaded yet. Ignore adding layer ${title}`, err)
         return
