@@ -2,7 +2,6 @@ query ($locale: SiteLocale, $first: IntType, $skip: IntType = 0) {
   scenarios: allScenarios(locale: $locale, first: $first, skip: $skip) {
     title
     value
-    includeInAllWorkspaces,
     example {
       ... on TextSectionRecord {
         text,
