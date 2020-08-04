@@ -8,8 +8,7 @@ module.exports = {
     parser: 'babel-eslint'
   },
   extends: [
-    // https://github.com/vuejs/eslint-plugin-vue#priority-a-essential-error-prevention
-    // consider switching to `plugin:vue/strongly-recommended` or `plugin:vue/recommended` for stricter rules.
+
     'plugin:vue/recommended'
   ],
   // required to lint *.vue files
@@ -20,6 +19,13 @@ module.exports = {
   rules: {
     'object-curly-spacing': [2, 'always'],
     'comma-dangle': [2, 'always-multiline'],
+    'no-unused-vars': [
+      'warn',
+      {
+        'ignoreRestSiblings': true,
+        'argsIgnorePattern': '^_'
+      }
+    ],
     'vue/max-attributes-per-line': [2, {
       "singleline": 2,
       "multiline": {

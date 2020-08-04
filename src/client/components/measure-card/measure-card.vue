@@ -2,7 +2,9 @@
   <md-card :style="`border-left-color: ${measure.color.hex}`" class="measure-card">
     <md-card-header>
       <md-card-header-text>
-        <div class="md-subheading measure-card__title">{{ measure.title }}</div>
+        <div class="md-subheading measure-card__title">
+          {{ measure.title }}
+        </div>
         <div class="md-caption measure-card__tags">
           <md-chip v-if="measure.systemSuitability" class="md-body-2">
             {{ measure.systemSuitability.toFixed(1) }}
@@ -10,7 +12,8 @@
           <md-chip
             v-for="(score, index) in scoresWithImageProxy"
             :key="index"
-            class="measure-card__tag">
+            class="measure-card__tag"
+          >
             <md-icon :md-src="score.icon.url" class="measure-card__icon" />
           </md-chip>
           <md-chip v-if="measure.featured === true" class="measure-card__tag">
@@ -25,12 +28,15 @@
         <img
           :src="measure.image.url"
           class="md-image measure-card__img"
-          alt="">
+          alt=""
+        >
       </md-card-media>
     </md-card-header>
 
     <md-card-actions v-if="interactive">
-      <md-button :to="`/${$i18n.locale}/project/measures/${measure.slug}`" class="md-dense">{{ $t('learn_more') }}</md-button>
+      <md-button :to="`/${$i18n.locale}/project/measures/${measure.slug}`" class="md-dense">
+        {{ $t('learn_more') }}
+      </md-button>
       <md-button
         :disabled="measure.measureId === '0'"
         class="md-raised md-primary md-dense"
@@ -43,10 +49,7 @@
 </template>
 
 <script>
-import ResponsiveImage from '~/components/responsive-image'
-
 export default {
-  components: { ResponsiveImage },
   props: {
     measure: {
       type: Object,

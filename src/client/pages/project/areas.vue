@@ -8,7 +8,8 @@
       <li
         v-for="feature in selectedFeatures"
         :key="feature.id"
-        class="areas__item">
+        class="areas__item"
+      >
         <md-card>
           <div :style="`border-left-color: ${appliedMeasure ? appliedMeasure.color.hex : 'transparent'}`" class="areas__item-content">
             <md-card-header>
@@ -16,11 +17,16 @@
                 <img
                   v-if="appliedMeasure"
                   :src="appliedMeasure.image.url"
-                  alt="Avatar">
+                  alt="Avatar"
+                >
               </md-avatar>
 
-              <div class="md-title">{{ feature.properties.name }}</div>
-              <div class="md-subhead areas__subhead">{{ appliedMeasure ? appliedMeasure.title : '&nbsp;' }}</div>
+              <div class="md-title">
+                {{ feature.properties.name }}
+              </div>
+              <div class="md-subhead areas__subhead">
+                {{ appliedMeasure ? appliedMeasure.title : '&nbsp;' }}
+              </div>
             </md-card-header>
 
             <md-card-content class="areass__card-content">
@@ -33,7 +39,9 @@
               <span class="md-subheading">{{ $t('measure') }}</span>
               <div class="areas__choose-wrapper">
                 <div class="areas__choose-content">
-                  <p v-if="appliedMeasure">{{ appliedMeasure.title }}</p>
+                  <p v-if="appliedMeasure">
+                    {{ appliedMeasure.title }}
+                  </p>
                   <md-button
                     :to="`/${locale}/project/measures`"
                     class="md-primary md-raised areas__choose-button"
@@ -42,7 +50,7 @@
                   </md-button>
                 </div>
                 <div v-if="appliedMeasure" class="areas__choose-icon">
-                  <img :src="appliedMeasure.image.url" >
+                  <img :src="appliedMeasure.image.url">
                 </div>
               </div>
 
@@ -111,11 +119,12 @@
                   />
                 </template>
               </input-range>
-
             </md-card-content>
 
             <md-card-actions>
-              <md-button @click="onDone">{{ $t('done') }}</md-button>
+              <md-button @click="onDone">
+                {{ $t('done') }}
+              </md-button>
             </md-card-actions>
           </div>
         </md-card>
@@ -129,12 +138,11 @@ import { mapGetters, mapActions, mapMutations, mapState } from "vuex";
 import MapEventBus, { REDRAW, MODE, DELETE } from "../../lib/map-event-bus";
 import InputRange from '../../components/input-range'
 import TextInput from '../../components/text-input'
-import HintText from '~/components/hint-text'
 import AppTooltip from '~/components/app-tooltip'
 
 export default {
   middleware: ['access-level-settings'],
-  components: { InputRange, TextInput, HintText, AppTooltip },
+  components: { InputRange, TextInput, AppTooltip },
   data() {
     return {
       visibleAreas: [],
@@ -162,11 +170,11 @@ export default {
     ...mapActions({ updateAreaProperties: 'project/updateAreaProperties' }),
     ...mapMutations({ updateAreaProperty: 'project/updateAreaProperty' }),
     onDelete() {
-      this.$router.push(`/${this.locale}/project/`).catch(err => {})
+      this.$router.push(`/${this.locale}/project/`).catch(() => {})
       MapEventBus.$emit(MODE, 'simple_select')
     },
     onDone() {
-      this.$router.push(`/${this.locale}/project/`).catch(err => {})
+      this.$router.push(`/${this.locale}/project/`).catch(() => {})
       MapEventBus.$emit(MODE, 'simple_select')
     },
     getDefaultValueProperty(key, property, defaultValues) {

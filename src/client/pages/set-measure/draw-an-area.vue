@@ -4,16 +4,17 @@
       :measure="measure"
       :scores="[]"
       :interactive="false"
-      class="measure-list__card"/>
+      class="measure-list__card"
+    />
   </div>
 </template>
 
 <script>
 import { mapGetters, mapState, mapMutations } from "vuex"
-import { AppPanel, MeasureStepper, MeasureCard } from '~/components'
+import { MeasureCard } from '~/components'
 
 export default {
-    components: { AppPanel, MeasureStepper, MeasureCard },
+    components: { MeasureCard },
 
     computed: {
       ...mapGetters('data/measures', ['measureById']),

@@ -6,11 +6,11 @@
 </template>
 
 <script>
-import { AppPanel, MeasureStepper, MeasureList } from '~/components'
+import { MeasureList } from '~/components'
 import { mapGetters, mapActions } from "vuex"
 
 export default {
-    components: { AppPanel, MeasureStepper, MeasureList },
+    components: { MeasureList },
     computed: {
     ...mapGetters('data/measures', ['workspaceMeasures']),
     },

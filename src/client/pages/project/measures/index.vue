@@ -12,12 +12,12 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions } from "vuex"
-import { MeasureCard, SearchInput, MeasureList } from '~/components'
+import { mapState, mapGetters } from "vuex"
+import { MeasureList } from '~/components'
 import MapEventBus, { REDRAW } from "~/lib/map-event-bus";
 
 export default {
-  components: { MeasureCard, SearchInput, MeasureList },
+  components: { MeasureList },
   data() {
     return {
       isAlphabeticallyOrdered: false,

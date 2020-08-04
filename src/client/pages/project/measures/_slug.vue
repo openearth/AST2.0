@@ -16,33 +16,41 @@
       </div>
 
       <div>
-        <h2 class="md-title measure__title">{{ measure.title }}</h2>
+        <h2 class="md-title measure__title">
+          {{ measure.title }}
+        </h2>
         <md-chip
           v-for="tag in measure.climateEffectTags"
           :key="tag.key"
-          class="measure__tag">{{ tag.title }}</md-chip>
+          class="measure__tag"
+        >
+          {{ tag.title }}
+        </md-chip>
       </div>
     </header>
 
     <rich-text :text="measure.summary" />
 
-    <image-carousel :images="measure.images"/>
+    <image-carousel :images="measure.images" />
 
     <rich-text :text="measure.content" />
 
     <a
       :href="measure.externalLinkUrl"
       class="measure__external-link"
-      target="_blank">{{ measure.externalLinkLabel }}</a>
+      target="_blank"
+    >
+      {{ measure.externalLinkLabel }}
+    </a>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex"
-import { RichText, FixedRatio, ImageCarousel, BackButton } from '~/components'
+import { RichText, ImageCarousel, BackButton } from '~/components'
 
 export default {
-  components: { RichText, FixedRatio, ImageCarousel, BackButton },
+  components: { RichText, ImageCarousel, BackButton },
   asyncData ({ params }) {
     return { slug: params.slug }
   },
