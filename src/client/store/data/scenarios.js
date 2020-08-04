@@ -4,9 +4,9 @@ export const state = () => []
 
 export const mutations = {
   addScenario(state, { includeInAllWorkspaces, ...scenario }) {
-    if (includeInAllWorkspaces) {
+    // if (includeInAllWorkspaces) {
       state.push(scenario)
-    }
+    // }
   },
 }
 

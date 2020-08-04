@@ -30,7 +30,7 @@ export default {
       },
   },
   mounted() {
-    document.addEventListener('keydown', this.handleEsc,)
+    document.addEventListener('keydown', this.handleEsc)
   },
   destroyed() {
     document.removeEventListener('keydown', this.handleEsc)

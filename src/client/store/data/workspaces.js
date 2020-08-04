@@ -70,19 +70,24 @@ export const actions = {
 }
 
 export const getters = {
-  activeWorkspace(state, getters, rootState) {
+  activeWorkspace(state) {
     const activeDomain = state._domain;
     const activeUser = state._user;
     const activeName = activeUser || activeDomain;
     const workspace = state[activeName]
     let scenarioName
-    if (workspace && rootState.data.scenarios) {
-      const options = (workspace.scenarios || []).length ? workspace.scenarios : rootState.data.scenarios
+    if (workspace) {
+      const options = (workspace.scenarios || []).length ? workspace.scenarios : []
       scenarioName = {
         defaultValue: options[0],
         options,
       }
     }
     return workspace ? { ...workspace, scenarioName  } : workspace
+  },
+  scenariosInActiveWorkspace(state, getters, rootState) {
+    return getters.activeWorkspace.scenarios
+      .filter(({ value }) => Boolean(rootState.data.scenarios.find(scenario => scenario.value === value)))
+      .map(({ value }) => rootState.data.scenarios.find(scenario => scenario.value === value))
   },
 }

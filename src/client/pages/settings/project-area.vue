@@ -92,6 +92,7 @@
           <scenario-overview
             v-if="setting.key === 'scenarioName'"
             :value="projectAreaSettings[setting.key]"
+            :scenarios="scenariosInActiveWorkspace"
             class="project-area__scenario-overview"
             @choose-scenario="value => updateProjectAreaSetting({ type: 'select', key: setting.key, value })"
           />
@@ -102,6 +103,7 @@
 </template>
 
 <script>
+import get from 'lodash/get'
 import { mapState, mapActions, mapGetters } from 'vuex'
 import { SelectInput } from '~/components'
 import ScenarioOverview from '../../components/scenario-overview'
@@ -123,8 +125,13 @@ export default {
     ...mapGetters({
       projectAreaSettings: 'project/settingsProjectArea',
       areaSettings: 'data/areaSettings/overriddenAreaSettings',
+      workspaces: 'data/workspaces',
+      scenariosInActiveWorkspace: 'data/workspaces/scenariosInActiveWorkspace',
     }),
     area() { return this.projectArea.properties && Math.round(this.projectArea.properties.area) },
+    showScenarioExamplesInSettings() {
+      return get(this, 'workspaces.activeWorkspace.showScenarioExamplesInSettings')
+    },
   },
   methods: {
     ...mapActions({
