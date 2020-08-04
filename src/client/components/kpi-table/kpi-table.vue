@@ -23,8 +23,8 @@
             :key="index"
           >
             <md-table-cell
-              v-for="(value, index) in row"
-              :key="index"
+              v-for="(value, rowIndex) in row"
+              :key="rowIndex"
             >
               {{ value }}
             </md-table-cell>
@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters } from 'vuex';
 
 export default {
   computed: {

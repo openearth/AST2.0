@@ -8,14 +8,14 @@ import round from 'lodash/round'
 import unset from 'lodash/unset'
 import flatten from 'lodash/flatten'
 import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT, REPAINT, DELETE_LAYER } from '../lib/map-event-bus'
-import { getApiDataForFeature, getRankedMeasures } from "../lib/get-api-data";
+import { getApiDataForFeature, getRankedMeasures } from '../lib/get-api-data';
 import FileSaver from 'file-saver'
 import getLoadedFileContents from '../lib/get-loaded-file-contents'
 import validateProject from '../lib/validate-project'
 import projectToGeoJson from '../lib/project-to-geojson'
 import projectToCsv from '../lib/project-to-csv'
 import delay from '../lib/delay'
-import log from "../lib/log";
+import log from '../lib/log';
 import fetchCoBenefitsFromRivm from '../lib/fetch-rivm-co-benefits'
 import { pick } from 'lodash'
 
@@ -154,7 +154,7 @@ export const mutations = {
     state.map.customLayers = state.map.customLayers.filter(layer => layer.id !== id)
     MapEventBus.$emit(DELETE_LAYER, id)
   },
-  toggleProjectAreaNestedSetting(state, { key, option, value }) {
+  toggleProjectAreaNestedSetting(state, { key, option }) {
     state.settings.projectArea[key][option] = !state.settings.projectArea[key][option]
   },
   acceptLegal(state) {
@@ -206,7 +206,7 @@ export const actions = {
   },
   createArea({ state, commit, dispatch }, features) {
     const promises = features.map(feature => {
-      return new Promise((resolve, reject) => {
+      return new Promise(resolve => {
         const area = turfArea(feature.geometry)
 
         if (!state.settings.area.id) {
@@ -246,7 +246,7 @@ export const actions = {
       dispatch('fetchAreaApiData', getters.areas.filter(area => area.id === feature.id))
     })
   },
-  updateAreaProperties({ state, commit, dispatch, getters }, { features, properties }) {
+  updateAreaProperties({ commit, dispatch, getters }, { features, properties }) {
     features.forEach(feature => {
       commit('updateAreaProperty', { id: feature.id, properties })
       const updatedFeature = getters.areas.filter(area => area.id === feature.id)
@@ -328,18 +328,18 @@ export const actions = {
     MapEventBus.$emit(RELOAD_LAYERS)
   },
   async fetchAreaApiData({ state, commit, dispatch }, features) {
-    features.forEach(async (feature) => {
+    features.forEach(async feature => {
       const projectArea = state.settings.area.properties.area
       const { scenarioName } = state.settings.projectArea
 
       getApiDataForFeature(feature, projectArea, scenarioName)
         .then(apiData => commit('updateAreaProperty', { id: feature.id, properties: { apiData } }))
-        .catch(error => {
+        .catch(() => {
           dispatch('removeAreaMeasure', [feature])
           dispatch(
             'notifications/showError',
             { message: `Could not calculate data for ${feature.properties.name}!`, duration: 0 },
-            { root: true }
+            { root: true },
           )
         })
     })
@@ -355,7 +355,7 @@ export const actions = {
       commit('deleteArea', id)
     })
   },
-  bootstrapSettingsProjectArea({ state, commit }, settings) {
+  bootstrapSettingsProjectArea({ commit }, settings) {
     settings.forEach(setting => {
       let value = null
 
@@ -373,7 +373,7 @@ export const actions = {
       commit('setProjectAreaSetting', { key: setting.key, value })
     })
   },
-  bootstrapSettingsTargets({ state, commit }, targets) {
+  bootstrapSettingsTargets({ commit }, targets) {
     targets.forEach(({ key, kpis }) => {
       const getDefaultValue = value => value !== null ? String(value) : '0'
       const value = kpis.reduce((obj, kpi) => ({
@@ -386,12 +386,12 @@ export const actions = {
       commit('setTargets', { key, value })
     })
   },
-  bootstrapWmsLayers({ state, commit }, layers) {
+  bootstrapWmsLayers({ commit }, layers) {
     layers.forEach(layer => {
       commit('setWmsLayer', { id: layer.id, visible: false, showLegend: false, opacity: 1 })
     })
   },
-  bootstrapCustomLayers({ state, commit }, layers) {
+  bootstrapCustomLayers({ commit }, layers) {
     layers.forEach(layer => {
       commit('setCustomLayer', {
         ...layer,
@@ -401,17 +401,17 @@ export const actions = {
       })
     })
   },
-  bootstrapMapLayers({ state, commit }, layers) {
+  bootstrapMapLayers({ commit }, layers) {
     layers.forEach(layer => {
       commit('setMapLayers', { id: layer.id, visible: false, showLegend: false, opacity: 1 })
     })
   },
-  bootstrapLayers({ state, commit }, layers) {
+  bootstrapLayers({ commit }, layers) {
     layers.forEach(layer => {
       commit('setLayer', { id: layer.id, visible: false, showLegend: false, opacity: 1 })
     })
   },
-  async updateProjectAreaSetting({ state, commit, rootGetters, getters, dispatch }, payload ) {
+  async updateProjectAreaSetting({ commit, getters, dispatch }, payload ) {
     const { type } = payload
 
     if (type === 'checkbox') {
@@ -437,18 +437,18 @@ export const actions = {
       const { projectArea } = state.settings
       getRankedMeasures(projectArea)
         .then(rankedMeasures =>
-          commit('data/measures/addMeasuresRanking', rankedMeasures, { root: true })
+          commit('data/measures/addMeasuresRanking', rankedMeasures, { root: true }),
         )
         .catch(({ message: title }) => {
           dispatch(
             'notifications/showError',
             { message: `Could not get ranking data for measure: ${title}!`, duration: 0 },
-            { root: true }
+            { root: true },
           )
         })
     }
   },
-  async importProject({ state, commit, dispatch, rootGetters, rootState }, event) {
+  async importProject({ commit, dispatch, rootGetters, rootState }, event) {
 
     // Workspaces can have custom scenario names. We need to augment the
     // rootState.data object, which contains the scenarioNames, with the scenarios
@@ -488,7 +488,7 @@ export const actions = {
     commit('appMenu/hideMenu', null, { root: true })
     return FileSaver.saveAs(blob, `${title || 'ast_project'}.json`)
   },
-  exportProject({ state, getters, rootState, rootGetters }, format) {
+  exportProject({ state, getters, rootGetters }, format) {
     const { title } = state.settings.general
     const data = format === 'csv'
       ? projectToCsv(getters.areas, Object.keys(getters.kpiValues), rootGetters['data/measures/measureById'])
@@ -508,9 +508,8 @@ export const actions = {
     dispatch('bootstrapSettingsProjectArea', areaSettings)
     dispatch('bootstrapSettingsTargets', kpiGroups)
   },
-  applyDefaultValuesToAreaSettings({ state, dispatch, rootState, rootGetters }) {
+  applyDefaultValuesToAreaSettings({ dispatch, rootState, rootGetters }) {
     const activeWorkspace = rootGetters['data/workspaces/activeWorkspace']
-    const filledInSettings = rootGetters['flow/fillesInSettings']
     const areaSettings = rootState.data.areaSettings
     const foo = areaSettings.map(item => {
       const { defaultValue, ...itemRest } = item
@@ -549,7 +548,6 @@ export const actions = {
 export const getters = {
   tableClimateAndCosts: (state, getters, rootState, rootGetters) => {
     if (state.areas.length) {
-      const measureIds = getters.areas.map(area => get(area, 'properties.measure'))
       const measureById = rootGetters['data/measures/measureById']
       const kpiKeys = ['storageCapacity', 'returnTime', 'groundwater_recharge', 'evapotranspiration', 'tempReduction', 'coolSpot', 'constructionCost', 'maintenanceCost']
       const kpiKeysTitleMap = rootGetters['data/kpiGroups/kpiKeysTitleMap']
@@ -577,8 +575,8 @@ export const getters = {
         }, {})
 
       return {
-        "title": rootState.i18n.messages.climate_and_costs,
-        "header": [
+        'title': rootState.i18n.messages.climate_and_costs,
+        'header': [
           rootState.i18n.messages.measure,
           rootState.i18n.messages.surface,
           ...kpiKeys.map(kpiTitleByKey),
@@ -604,7 +602,6 @@ export const getters = {
 
   tableCoBenefits: (state, getters, rootState, rootGetters) => {
     if (state.areas.length) {
-      const measureIds = getters.areas.map(area => get(area, 'properties.measure'))
       const measureById = rootGetters['data/measures/measureById']
       const kpiKeys = ['filteringUnit', 'captureUnit', 'settlingUnit']
       const kpiKeysTitleMap = rootGetters['data/kpiGroups/kpiKeysTitleMap']
@@ -632,8 +629,8 @@ export const getters = {
         }, {})
 
       return {
-        "title": rootState.i18n.messages.co_benefits,
-        "header": [
+        'title': rootState.i18n.messages.co_benefits,
+        'header': [
           rootState.i18n.messages.measure,
           rootState.i18n.messages.surface,
           ...kpiKeys.map(kpiTitleByKey),
@@ -657,14 +654,15 @@ export const getters = {
     }
   },
 
-  areas: (state) => {
+  areas: state => {
     return state.areas.map(feature => {
       let area;
       let length;
       let radius;
+      let width;
       switch (feature.geometry.type) {
         case 'LineString':
-          const width = feature.properties.areaWidth || feature.properties.defaultWidth
+          width = feature.properties.areaWidth || feature.properties.defaultWidth
           length = turfLength(feature.geometry) * 1000
           area = length * parseFloat(width)
           break;
@@ -682,7 +680,7 @@ export const getters = {
       return merge(
         {},
         feature,
-        { properties: { area, length, radius } }
+        { properties: { area, length, radius } },
       )
     })
   },
@@ -760,9 +758,8 @@ export const getters = {
       return kpiKeys.reduce((obj, key) => ({ ...obj, [key]: 0 }), {})
     }
   },
-  kpiTargetValues: (state, getters) => {
+  kpiTargetValues: state => {
     const targets = state.settings.targets
-    const filteredKeys = getters.kpiValues
     return Object.keys(targets)
       .map(group =>
         Object.keys(targets[group])
@@ -792,7 +789,7 @@ export const getters = {
         opacity,
       }))
   },
-  customLayers: (state) => {
+  customLayers: state => {
     return state.map.customLayers
   },
   mapLayers: (state, getters, rootState, rootGetters) => {
@@ -812,7 +809,7 @@ export const getters = {
         opacity,
       }))
   },
-  settingsProjectArea: (state) => {
+  settingsProjectArea: state => {
     return state.settings.projectArea
   },
 }

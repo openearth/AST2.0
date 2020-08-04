@@ -16,7 +16,7 @@ function executeFetch(token, variables, query) {
         'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify({ query, variables }),
-    }
+    },
   )
     .then(res => {
       if (res.errors) {
@@ -33,7 +33,7 @@ function getPaginatedData(token, variables, query) {
 
     if (allKey) {
       const { count } = response.data[allKey]
-      const [_, originalKey] = allKey.match(keyRegex).map(camelCase)
+      const [, originalKey] = allKey.match(keyRegex).map(camelCase)
       const itemsInResponse = response.data[originalKey]
       const remainingAmount = count - itemsInResponse.length
       const totalRemainingRequests = Math.ceil(remainingAmount / itemsInResponse.length)
@@ -46,7 +46,7 @@ function getPaginatedData(token, variables, query) {
         .then(responses =>
           responses.forEach(res => {
             response.data[originalKey] = [...response.data[originalKey], ...res.data[originalKey]]
-          })
+          }),
         )
 
       delete response.data[allKey]

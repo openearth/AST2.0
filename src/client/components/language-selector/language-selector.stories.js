@@ -5,7 +5,7 @@ import { withReadme } from 'storybook-readme'
 import readme from './readme.md'
 import LanguageSelector from './'
 
-export const mockLocales = (locales) => {
+export const mockLocales = locales => {
   return locales.map(locale => ({
     code: locale,
     iso: locale,

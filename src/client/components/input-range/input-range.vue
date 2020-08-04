@@ -6,7 +6,7 @@
       class="input-range__label"
     >
       {{ label }}
-      <slot name="info"/>
+      <slot name="info" />
     </label>
     <div class="input-range__value-wrapper">
       <input
@@ -17,7 +17,8 @@
         :name="label"
         class="input-range__range"
         type="range"
-        v-on="inputListeners">
+        v-on="inputListeners"
+      >
       <numeric-input
         v-if="numericEnabled"
         :label="label"
@@ -34,9 +35,7 @@
 </template>
 
 <script>
-import padEnd from 'lodash/padEnd'
-import padStart from 'lodash/padStart'
-import NumericInput from "../numeric-input";
+import NumericInput from '../numeric-input';
 
 export default {
   components: { NumericInput },
@@ -51,11 +50,11 @@ export default {
     },
     min: {
       type: String,
-      default: "0",
+      default: '0',
     },
     max: {
       type: String,
-      default: "1",
+      default: '1',
     },
     numericEnabled: {
       type: Boolean,
@@ -79,7 +78,7 @@ export default {
           change: function (event) {
             vm.$emit('change', event.target ? event.target.value : event )
           },
-        }
+        },
       )
     },
     stringValue () {

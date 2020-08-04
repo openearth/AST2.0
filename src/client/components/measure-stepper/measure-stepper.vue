@@ -5,7 +5,8 @@
     md-sync-route
     md-dynamic-height
     md-alternative
-    class="measure-stepper">
+    class="measure-stepper"
+  >
     <md-step
       v-for="(step, index) in steps"
       :id="stepId(index)"
@@ -13,8 +14,9 @@
       :md-done="isDone(index)"
       :md-label="$t(step.label)"
       exact
-      @click="$emit('to-step', step)">
-      <slot/>
+      @click="$emit('to-step', step)"
+    >
+      <slot />
     </md-step>
   </md-steppers>
 </template>

@@ -1,4 +1,4 @@
-const propertiesSchema = (kpiGroups) => ({
+const propertiesSchema = kpiGroups => ({
   type: 'object',
   properties: {
     area: { type: ['number', 'string', 'null'] },
@@ -33,33 +33,33 @@ const propertiesSchema = (kpiGroups) => ({
   },
 })
 
-export default (kpiGroups) => ({
-  $id: "/area-feature",
-  type: "object",
+export default kpiGroups => ({
+  $id: '/area-feature',
+  type: 'object',
   additionalProperties: false,
   properties: {
-    id: { type: "string" },
-    type: { type: "string", enum: ['Feature'] },
+    id: { type: 'string' },
+    type: { type: 'string', enum: ['Feature'] },
     properties: propertiesSchema(kpiGroups),
     geometry: {
-      type: "object",
+      type: 'object',
       additionalProperties: false,
       required: [
-        "coordinates",
-        "type",
+        'coordinates',
+        'type',
       ],
       properties: {
         coordinates: {
-          type: ["array", "number"],
+          type: ['array', 'number'],
           items: {
-            type: ["array", "number"],
+            type: ['array', 'number'],
             items: {
-              type: ["array", "number"],
-              items: { type: "number" },
+              type: ['array', 'number'],
+              items: { type: 'number' },
             },
           },
         },
-        type: { type: "string", enum: ['Polygon', 'LineString', 'Point'] },
+        type: { type: 'string', enum: ['Polygon', 'LineString', 'Point'] },
       },
     },
   },

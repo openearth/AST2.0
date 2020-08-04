@@ -43,17 +43,17 @@ const methods = {
   error: log(
     'Error:',
     'background: #F44336; color: #fff; border-radius: 3px 0 0 3px;',
-    'background: #263238; color: #eeffff; border-radius: 0 3px 3px 0; font-weight: 400;'
+    'background: #263238; color: #eeffff; border-radius: 0 3px 3px 0; font-weight: 400;',
   ),
   warning: log(
     'Warning:',
     'background: #c6a700; color: #fff; border-radius: 3px 0 0 3px;',
-    'background: #263238; color: #eeffff; border-radius: 0 3px 3px 0; font-weight: 400;'
+    'background: #263238; color: #eeffff; border-radius: 0 3px 3px 0; font-weight: 400;',
   ),
   info: log(
     'Info:',
     'background: #0069c0; color: #fff; border-radius: 3px 0 0 3px;',
-    'background: #263238; color: #eeffff; border-radius: 0 3px 3px 0; font-weight: 400;'
+    'background: #263238; color: #eeffff; border-radius: 0 3px 3px 0; font-weight: 400;',
   ),
 }
 

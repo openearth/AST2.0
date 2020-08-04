@@ -8,7 +8,7 @@
       :is="compInner"
       class="fixed-ratio__content"
     >
-      <slot/>
+      <slot />
     </div>
   </div>
 </template>
@@ -18,8 +18,8 @@ export default {
   props: {
     height: { type: Number, required: true },
     width:  { type: Number, required: true },
-    compOuter: { type: String, default: "div" },
-    compInner: { type: String, default: "div" },
+    compOuter: { type: String, default: 'div' },
+    compInner: { type: String, default: 'div' },
   },
   computed: {
     ratio() {

@@ -2,7 +2,9 @@
   <md-drawer md-permanent="clipped" class="legal">
     <back-button />
     <div class="new-project__content">
-      <h1 class="md-title">{{ legal.title }}</h1>
+      <h1 class="md-title">
+        {{ legal.title }}
+      </h1>
       <rich-text :text="legal.content" />
     </div>
   </md-drawer>
@@ -15,7 +17,7 @@ import getData from '~/lib/get-data'
 export default {
   middleware: ['state-is-inactive'],
   components: { RichText, BackButton },
-  async asyncData({ params, store }) {
+  async asyncData({ store }) {
     const { locale } = store.state.i18n
     const { legal } = await getData({ locale, slug: 'legal' })
     return { legal }

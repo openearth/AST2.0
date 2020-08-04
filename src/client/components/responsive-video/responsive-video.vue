@@ -1,10 +1,11 @@
 <template>
   <div class="responsive-video">
     <figure>
-      <fixed-ratio 
-        :width="video.width" 
-        :height="video.height" 
-        class="responsive-video__canvas">
+      <fixed-ratio
+        :width="video.width"
+        :height="video.height"
+        class="responsive-video__canvas"
+      >
         <lazy-load>
           <div
             :style="{ backgroundImage: `url(${imageUrl})` }"
@@ -19,21 +20,24 @@
           webkitallowfullscreen
           mozallowfullscreen
           allowfullscreen
-          allow="autoplay"/>
+          allow="autoplay"
+        />
         <a
           v-if="!isPlaying"
           :href="video.url"
           class="responsive-video__button"
-          @click.prevent="play">
+          @click.prevent="play"
+        >
           <span class="a11y-sr-only">{{ $t('play_video') }}</span>
-          <img class="responsive-video__icon" src="/images/play.svg" >
+          <img class="responsive-video__icon" src="/images/play.svg">
         </a>
       </fixed-ratio>
       <figcaption v-if="video.title">
-        <a 
-          :href="video.url" 
-          target="_blank" 
-          rel="noopener" >
+        <a
+          :href="video.url"
+          target="_blank"
+          rel="noopener"
+        >
           {{ video.title }}
         </a>
       </figcaption>
@@ -44,7 +48,6 @@
 <script>
 import FixedRatio from '../fixed-ratio/fixed-ratio'
 import LazyLoad from '../lazy-load/lazy-load'
-import imageUrl from '../../lib/image-url'
 
 const binaryBoolean = value => (value) ? 1 : 0
 
@@ -76,21 +79,19 @@ export default {
   },
   computed: {
     imageUrl() {
+      const sizeRegex = /\d+\.\w+$/
+      let preset = '/maxresdefault.jpg'
       switch (this.video.provider) {
         case 'vimeo':
-          const sizeRegex = /\d+\.\w+$/
           return this.video.thumbnailUrl.replace(sizeRegex, `${this.width}.jpg`)
-          break;
         case 'youtube':
-          let preset = '/maxresdefault.jpg'
           if (this.width < 320) {
             preset = '/mqdefault.jpg'
-          } else if (this.width < 480) {
+          }
+          else if (this.width < 480) {
             preset = '/hqdefault.jpg'
           }
-
           return this.video.thumbnailUrl.replace('/hqdefault.jpg', preset)
-          break;
         default:
           console.error(`unsupported video provider for cover image: ${this.video.provider}`);
           return ''
@@ -103,10 +104,8 @@ export default {
       switch (provider) {
         case 'vimeo':
           return `https://player.vimeo.com/video/${providerUid}?autoplay=1&muted=${binaryBoolean(mute)}&loop=${binaryBoolean(loop)}`
-          break;
         case 'youtube':
           return `https://www.youtube.com/embed/${providerUid}?autoplay=1&mute=${binaryBoolean(mute)}&loop=${binaryBoolean(loop)}&playlist=${providerUid}`
-          break;
         default:
           console.error(`unsupported video provider: ${provider}`);
           return ''

@@ -1,5 +1,5 @@
 import log from '../lib/log'
-import validateProject from "../lib/validate-project";
+import validateProject from '../lib/validate-project';
 
 export default function ({ store }) {
   const { data, project } = store.state

@@ -1,7 +1,7 @@
 <template>
   <portal to="popup-portal">
     <article class="app-popup">
-      <span class="app-popup__hitarea" @click="closeHandler"/>
+      <span class="app-popup__hitarea" @click="closeHandler" />
       <div class="app-popup__inner">
         <header class="app-popup__header">
           <h3 class="md-headline app-popup__title">
@@ -26,7 +26,7 @@ export default {
   props: {
       title: {
           type: String,
-          default: "Results",
+          default: 'Results',
       },
   },
   methods: {
