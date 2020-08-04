@@ -15,19 +15,21 @@
     <div
       v-if="forceKeyboard"
       class="numeric-input__click-highjack"
-      @click="onFocus" />
+      @click="onFocus"
+    />
 
     <md-button
       v-if="!forceKeyboard"
       class="md-icon-button md-dense"
-      @click="onFocus">
+      @click="onFocus"
+    >
       <md-icon>keyboard</md-icon>
     </md-button>
   </md-field>
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import { mapMutations } from 'vuex';
 import isValidNumber from '../../lib/is-valid-number'
 
 export default {

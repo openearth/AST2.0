@@ -3,13 +3,16 @@
     <li
       v-for="layer in layerList"
       :key="layer.id"
-      class="md-list-item">
+      class="md-list-item"
+    >
       <div
         :class="{ 'md-active': expanded === layer.id }"
         class="md-list-item-expand md-list-item-container"
       >
         <template v-if="layer.errors">
-          <p v-for="(error, index) in layer.errors" :key="index">{{ $t('layer_has_errors') }}</p>
+          <p v-for="(error, index) in layer.errors" :key="index">
+            {{ $t('layer_has_errors') }}
+          </p>
         </template>
         <div class="md-list-item-content">
           <md-avatar v-if="layer.imageUrl" class="layer-list__avatar">
@@ -35,17 +38,21 @@
           />
           <md-button
             class="md-icon-button md-list-action"
-            @click="setExpanded(layer.id)">
+            @click="setExpanded(layer.id)"
+          >
             <md-icon
               :style="{
                 transform: expanded === layer.id ? 'rotate(180deg)' : 'rotate(0)'
               }"
-            >keyboard_arrow_down</md-icon>
+            >
+              keyboard_arrow_down
+            </md-icon>
           </md-button>
         </div>
         <div
           :style="{height: expanded === layer.id ? 'auto' : '0px'}"
-          class="md-list-expand">
+          class="md-list-expand"
+        >
           <md-list>
             <md-list-item class="md-inset">
               <input-range
@@ -62,7 +69,8 @@
               legend
               <md-switch
                 :value="!layer.showLegend"
-                @change="value => $emit('legend-visibility-change', { id: layer.id, value: !!value })"/>
+                @change="value => $emit('legend-visibility-change', { id: layer.id, value: !!value })"
+              />
             </md-list-item>
             <md-list-item v-if="layer.deleteLayer" class="md-inset">
               <md-button
@@ -91,7 +99,7 @@
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import { mapMutations } from 'vuex';
 import { debounce } from 'lodash';
 import { LayerDialog, InputRange } from '~/components'
 

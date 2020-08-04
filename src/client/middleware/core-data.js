@@ -1,5 +1,3 @@
-import getData from "../lib/get-data";
-
 const ItemsWithoutUnderscore = x => !/_/.test(x)
 
 export default async function ({ store }) {

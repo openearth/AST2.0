@@ -12,11 +12,11 @@ export default [
     ],
     'paint': {
       'fill-color': {
-      	'type': 'identity',
+        'type': 'identity',
         'property': 'user_color',
       },
       'fill-outline-color': {
-      	'type': 'identity',
+        'type': 'identity',
         'property': 'user_color',
       },
       'fill-opacity': 0.1,
@@ -37,7 +37,7 @@ export default [
     },
     'paint': {
       'line-color': {
-      	'type': 'identity',
+        'type': 'identity',
         'property': 'user_color',
       },
       'line-width': 4,
@@ -58,7 +58,7 @@ export default [
     },
     'paint': {
       'line-color': {
-      	'type': 'identity',
+        'type': 'identity',
         'property': 'user_color',
       },
       'line-dasharray': [0.2, 2],
@@ -80,7 +80,7 @@ export default [
     },
     'paint': {
       'line-color': {
-      	'type': 'identity',
+        'type': 'identity',
         'property': 'user_color',
       },
       'line-width': 2,
@@ -101,7 +101,7 @@ export default [
     },
     'paint': {
       'line-color': {
-      	'type': 'identity',
+        'type': 'identity',
         'property': 'user_color',
       },
       'line-dasharray': [0.2, 2],
@@ -122,7 +122,7 @@ export default [
     'paint': {
       'circle-radius': 5,
       'circle-color': {
-      	'type': 'identity',
+        'type': 'identity',
         'property': 'user_color',
       },
     },
@@ -139,7 +139,7 @@ export default [
     'paint': {
       'circle-radius': 5,
       'circle-color': {
-      	'type': 'identity',
+        'type': 'identity',
         'property': 'user_color',
       },
     },

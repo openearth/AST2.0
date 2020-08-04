@@ -4,7 +4,8 @@
       :title="title"
       :legal-accepted="legalAccepted"
       :project-title="projectTitle"
-      @onShowNavigation="showMenu"/>
+      @onShowNavigation="showMenu"
+    />
     <app-menu
       :show-navigation="showNavigation"
       :title="title"
@@ -16,12 +17,13 @@
       @saveProject="saveProject"
       @importProject="onFileInput"
       @newProject="onNewProject"
-      @exportProject="() => {showExport(); hideMenu();}"/>
+      @exportProject="() => {showExport(); hideMenu();}"
+    />
 
     <div class="layout__content">
       <div v-if="mode === 'modal'" class="layout__page-wrapper">
         <md-content class="md-elevation-6">
-          <nuxt class="layout__page"/>
+          <nuxt class="layout__page" />
         </md-content>
       </div>
       <nuxt v-else />
@@ -49,34 +51,44 @@
           @update="updateArea"
           @delete="deleteArea"
           @selectionchange="selectionChange"
-          @move="setMapPosition"/>
+          @move="setMapPosition"
+        />
         <kpi-panel
           v-if="filledInSettings"
           :kpis="filteredKpiGroups"
           :kpi-values="filteredKpiValues"
           :kpi-percentage-values="filteredKpiPercentageValues"
-          :selected-areas="selectedAreas && selectedAreas[0]"/>
+          :selected-areas="selectedAreas && selectedAreas[0]"
+        />
       </md-content>
     </div>
 
-    <virtual-keyboard class="layout__virtual-keyboard"/>
+    <virtual-keyboard class="layout__virtual-keyboard" />
 
     <md-dialog :md-active="exportShown">
       <md-dialog-title>{{ $t('export_project') }}</md-dialog-title>
 
       <md-dialog-content>
-        <p class="md-body">{{ $t('export_description') }}</p>
+        <p class="md-body">
+          {{ $t('export_description') }}
+        </p>
         <md-field>
           <label for="movie">{{ $t('format') }}</label>
           <md-select @input="value => { hideExport(); exportProject(value) }">
-            <md-option value="csv">{{ $t('csv') }}</md-option>
-            <md-option value="geojson">{{ $t('geojson') }}</md-option>
+            <md-option value="csv">
+              {{ $t('csv') }}
+            </md-option>
+            <md-option value="geojson">
+              {{ $t('geojson') }}
+            </md-option>
           </md-select>
         </md-field>
       </md-dialog-content>
 
       <md-dialog-actions>
-        <md-button class="md-primary" @click="hideExport">Close</md-button>
+        <md-button class="md-primary" @click="hideExport">
+          Close
+        </md-button>
       </md-dialog-actions>
     </md-dialog>
 
@@ -85,7 +97,8 @@
         v-if="!legalAccepted"
         :disclaimer="disclaimer"
         class="layout__disclaimer"
-        @accepted="acceptLegal"/>
+        @accepted="acceptLegal"
+      />
     </transition>
 
     <notification-area
@@ -99,11 +112,10 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapGetters, mapActions } from "vuex";
+import { mapState, mapMutations, mapGetters, mapActions } from 'vuex';
 import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea } from '../components'
-import { mapFields } from 'vuex-map-fields';
 import getData from '~/lib/get-data'
-import EventBus, { CLICK } from "~/lib/event-bus";
+import EventBus, { CLICK } from '~/lib/event-bus';
 import log from '~/lib/log'
 
 export default {
@@ -113,15 +125,6 @@ export default {
       disclaimer: {},
     }
   },
-  head() {
-    return {
-      meta: [
-        { hid: 'description', name: 'description', content: this.$i18n.t('app_description') },
-      ],
-      title: this.title,
-    }
-  },
-
   computed: {
     ...mapState({
       devMode: state => state.devMode,
@@ -226,7 +229,7 @@ export default {
       }
 
       this.hideMenu()
-      this.$router.push(`/${this.$i18n.locale}/new-project`).catch(err => {})
+      this.$router.push(`/${this.$i18n.locale}/new-project`).catch(() => {})
     },
     onCreateArea(features) {
       this.createArea(features)
@@ -240,10 +243,18 @@ export default {
       EventBus.$emit(CLICK, event)
     },
     beforeUnload(e) {
-      const message = "You may have unsaved changes"
+      const message = 'You may have unsaved changes'
       e.returnValue = message
       return message
     },
+  },
+  head() {
+    return {
+      meta: [
+        { hid: 'description', name: 'description', content: this.$i18n.t('app_description') },
+      ],
+      title: this.title,
+    }
   },
 }
 </script>

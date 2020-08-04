@@ -9,14 +9,14 @@ export const mutations = {
 }
 
 export const actions = {
-  async getUnits({ commit, dispatch }) {
+  async getUnits({ commit }) {
     const data = await getData({ slug: 'units' })
     data.units.forEach(unit => commit('addUnit', unit))
   },
 }
 
 export const getters = {
-  displayValue: (state, getters, rootState, rootGetters) => (key) => {
+  displayValue: (state, getters, rootState, rootGetters) => key => {
     switch(key) {
       case 'currency':
         return rootGetters['data/workspaces/activeWorkspace'].currencySymbol

@@ -1,7 +1,6 @@
 require('dotenv-safe').config() // load env variables from .env file into process.env
 
 const rev = require('fs').readFileSync('.git/HEAD').toString();
-let branch;
 let commit;
 if (rev.indexOf(':') === -1) {
   commit = rev.substring(0, 7).trim();

@@ -1,4 +1,4 @@
-import MapEventBus, { MODE } from "../lib/map-event-bus";
+import MapEventBus, { MODE } from '../lib/map-event-bus';
 
 export const state = () => ({
   mode: '',

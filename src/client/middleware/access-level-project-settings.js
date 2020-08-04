@@ -1,5 +1,5 @@
-import hasFlowLevel from "../lib/has-flow-level";
-import { LEVEL_PROJECT_SETTINGS } from "../lib/flow-levels";
+import hasFlowLevel from '../lib/has-flow-level';
+import { LEVEL_PROJECT_SETTINGS } from '../lib/flow-levels';
 
 export default function ({ redirect, store }) {
   const hasLevelInStore = hasFlowLevel(store)

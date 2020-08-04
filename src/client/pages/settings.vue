@@ -2,22 +2,26 @@
   <md-drawer md-permanent="clipped" class="settings-view">
     <md-tabs md-sync-route class="settings-view__tabs">
       <template slot="md-tab" slot-scope="{ tab }">
-        <div :class="{'settings-view__tab-error': tab.data.error}">{{ tab.label }}</div>
+        <div :class="{'settings-view__tab-error': tab.data.error}">
+          {{ tab.label }}
+        </div>
       </template>
 
       <md-tab
         id="tab-project-area"
         :to="`/${locale}/settings/project-area/`"
-        :md-label="$t('project_area')"/>
+        :md-label="$t('project_area')"
+      />
       <md-tab
         id="tab-project-target"
         :md-disabled="!filledInRequiredProjectAreaSettings"
         :md-template-data="{ error: !filledInTargets }"
         :to="`/${locale}/settings/project-target/`"
-        :md-label="$t('project_target')"/>
+        :md-label="$t('project_target')"
+      />
     </md-tabs>
 
-    <nuxt-child class="settings-view__content"/>
+    <nuxt-child class="settings-view__content" />
 
     <div class="settings-view__action-wrapper">
       <transition name="slide-up">
@@ -27,23 +31,29 @@
           :to="`/${locale}/settings/${nextTabKey}/`"
           :disabled="nextTabDisabled"
           :class="{'md-primary': !filledInRequiredProjectAreaSettings}"
-          class="md-raised">{{ $t('next') }}</md-button>
+          class="md-raised"
+        >
+          {{ $t('next') }}
+        </md-button>
       </transition>
       <transition name="slide-up">
         <md-button
           v-if="filledInRequiredProjectAreaSettings"
-          :disabled="!filledInSettings"
           :key="2"
+          :disabled="!filledInSettings"
           :to="`/${locale}/project`"
-          class="md-primary md-raised">{{ $t('done') }}</md-button>
+          class="md-primary md-raised"
+        >
+          {{ $t('done') }}
+        </md-button>
       </transition>
     </div>
   </md-drawer>
 </template>
 
 <script>
-import { mapState, mapGetters } from "vuex";
-import MapEventBus, { REDRAW } from "../lib/map-event-bus"
+import { mapState, mapGetters } from 'vuex';
+import MapEventBus, { REDRAW } from '../lib/map-event-bus'
 
 export default {
   middleware: ['settings-root', 'state-is-inactive'],

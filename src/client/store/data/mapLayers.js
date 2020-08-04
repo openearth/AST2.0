@@ -1,5 +1,3 @@
-import Vue from 'vue'
-import getData from '../../lib/get-data'
 import randomColor from '../../lib/random-color';
 
 // This state is not used directly. mapLayers are loaded from the workspace.

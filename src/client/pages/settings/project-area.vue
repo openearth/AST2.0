@@ -2,9 +2,12 @@
   <div class="project-area">
     <md-toolbar
       md-elevation="0"
-      class="md-transparent project-area__area-size">
+      class="md-transparent project-area__area-size"
+    >
       <span class="md-subheading">{{ $t('area_size') }}: <strong>{{ area }}m<sup>2</sup></strong></span>
-      <md-button :to="`/${locale}/new-project`" class="md-primary">{{ $t('change_area') }}</md-button>
+      <md-button :to="`/${locale}/new-project`" class="md-primary">
+        {{ $t('change_area') }}
+      </md-button>
     </md-toolbar>
 
     <form class="project-area__form">
@@ -17,10 +20,12 @@
 
         <md-list
           v-if="!setting.isSelect"
-          class="project-area__options">
+          class="project-area__options"
+        >
           <md-list-item
             v-for="option in setting.options"
-            :key="option.value">
+            :key="option.value"
+          >
             <md-checkbox
               v-if="setting.multiple && !setting.isSelect"
               :value="!projectAreaSettings[setting.key][option.value]"
@@ -46,7 +51,8 @@
           <md-button
             v-if="setting.infoText"
             class="md-icon-button info-button"
-            @click="setActiveTooltip(setting.key)">
+            @click="setActiveTooltip(setting.key)"
+          >
             <md-icon>info</md-icon>
             <md-tooltip :md-active="activeTooltipKey === setting.key" md-direction="top">
               {{ setting.infoText }}
@@ -56,13 +62,14 @@
 
         <md-list
           v-else
-          class="project-area__select">
+          class="project-area__select"
+        >
           <div style="max-width: 90%; flex-grow: 1;">
             <md-list-item>
               <select-input
+                :id="setting.key"
                 :options="setting.options"
                 :value="projectAreaSettings[setting.key]"
-                :id="setting.key"
                 @change="value => updateProjectAreaSetting({
                   type: 'select',
                   key: setting.key,
@@ -74,7 +81,8 @@
           <md-button
             v-if="setting.infoText"
             class="md-icon-button"
-            @click="setActiveTooltip(setting.key)">
+            @click="setActiveTooltip(setting.key)"
+          >
             <md-icon>info</md-icon>
             <md-tooltip :md-active="activeTooltipKey === setting.key" md-direction="top">
               {{ setting.infoText }}
@@ -87,7 +95,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import { mapState, mapActions, mapGetters } from 'vuex'
 import { SelectInput } from '~/components'
 

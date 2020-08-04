@@ -2,19 +2,19 @@ import  MapEventBus, { REPOSITION } from '../lib/map-event-bus';
 
 export const state = () => ({})
 
-export const plugins = [ (store) => {
+export const plugins = [ store => {
   store.watch(
     (state, getters) => getters['user/workspace'],
-    (newValue, oldValue) => {
+    newValue => {
       if (newValue) {
         store.dispatch('data/workspaces/storeWorkspaceData', newValue)
         store.commit('data/workspaces/setUserWorkspace', newValue)
       }
-    }
+    },
   )
   store.watch(
     (state, getters) => getters['data/workspaces/activeWorkspace'],
-    (newValue, oldValue) => {
+    newValue => {
       const { zoomLevel, startLocation } = newValue
       store.dispatch('project/applyDefaultValuesToAreaSettings')
       if (zoomLevel && startLocation) {
@@ -24,7 +24,7 @@ export const plugins = [ (store) => {
               lat: startLocation.latitude,
               lng: startLocation.longitude,
             },
-          }
+          },
         )
         setTimeout(() => {
           MapEventBus.$emit(REPOSITION, {
@@ -37,9 +37,9 @@ export const plugins = [ (store) => {
           })
         }, 10)
       }
-    }
+    },
   )
-  store.subscribe(({ type, payload }, state) => {
+  store.subscribe(({ type }, state) => {
     if (type === 'data/workspaces/setDomain') {
       const domain = state.data.workspaces._domain
       const locale = state.i18n.locale

@@ -6,7 +6,6 @@ const head = require('./config/nuxt/head')
 const loading = require('./config/nuxt/loading')
 const modules = require('./config/nuxt/modules')
 const plugins = require('./config/nuxt/plugins')
-const proxy = require('./config/nuxt/proxy')
 const router = require('./config/nuxt/router')
 const mode = require('./config/nuxt/mode')
 
@@ -19,7 +18,6 @@ module.exports = {
   loading,
   modules,
   plugins,
-  // proxy,
   router,
   srcDir: 'src/client/',
   mode,
