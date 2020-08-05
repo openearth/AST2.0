@@ -18,3 +18,5 @@ token can be found in the cms > .../admin/access_tokens
 for each pull request a staging environment is created via netlify<br>
 url to environment can be found in the git > pull requests<br>
 example: `netlify/staging-ast-2-0/deploy-preview — Deploy preview ready!  Details`
+
+Happy coding!
