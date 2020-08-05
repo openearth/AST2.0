@@ -35,7 +35,7 @@ export const getters = {
   },
   projectAreaSizeIsBelowThreshold(state, getters, rootState) {
     const area = get(rootState, 'project.settings.area.properties.area', 0)
-    const threshold = 100000
+    const threshold = 10000000
 
     return area < threshold
   },
