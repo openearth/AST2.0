@@ -1,9 +1,9 @@
 <template>
   <article class="pdf-export-results">
     <h2 class="md-title">
-      Results
+      Resultaten - Detail
     </h2>
-    <div class="pdf-export-results__content">
+    <div ref="content" class="pdf-export-results__content">
       <kpi-table :show-table-co-benefits="false" class="pdf-export-results__table" />
       <br>
       <kpi-table :show-table-climate-and-costs="false" class="pdf-export-results__table" />
@@ -20,6 +20,17 @@ export default {
   computed: {
     ...mapGetters('project', ['tableClimateAndCosts', 'tableCoBenefits']),
   },
+  mounted() {
+    this.$nextTick(() => {
+      const contentElement = this.$refs.content
+      const tableElement = this.$refs.content.querySelector('table')
+      const innerContentElement = this.$refs.content.querySelector('.md-table')
+      const scale = contentElement.clientWidth / tableElement.clientWidth
+      tableElement.style.transformOrigin = 'top left'
+      tableElement.style.transform = `scale(${scale}) translateX(-${scale}%)`
+      innerContentElement.style.height = `${innerContentElement.clientHeight * scale}px`
+    })
+  },
 }
 </script>
 
@@ -27,14 +38,6 @@ export default {
 .pdf-export-results {
   width: 100%;
   font-size: 10pt;
-  page-break-before: always;
-}
-
-.pdf-export-results__content * {
-  font-size: 8pt;
-}
-
-.pdf-export-results__table:not(:first-child) {
   page-break-before: always;
 }
 </style>

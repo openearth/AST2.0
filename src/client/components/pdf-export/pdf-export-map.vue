@@ -1,5 +1,5 @@
 <template>
-  <div class="pdf-export-map">
+  <article class="pdf-export-map">
     <map-viewer
       v-if="imageSrc === undefined"
       :project-area="projectArea"
@@ -17,7 +17,7 @@
       :src="imageSrc"
       class="pdf-export-map__image"
     >
-  </div>
+  </article>
 </template>
 
 <script>
@@ -73,12 +73,12 @@ export default {
       if (this.isReady === false) {
         return
       }
-      this.$nextTick(() => {
+      setTimeout(() => {
         this.imageSrc = document.querySelector('.mapboxgl-canvas').toDataURL()
         this.$nextTick(() => {
           document.dispatchEvent(new CustomEvent('mapbox-image-created'))
         })
-      })
+      }, 2500)
     },
   },
 }
@@ -86,22 +86,22 @@ export default {
 
 <style>
 .pdf-export-map {
-  page-break-before: always;
-  width: 287mm; /* A4 paper size minus 0.5cm margin */
-  height: 190mm; /* A4 paper size minus 0.5cm margin */
+  width: 64vh;
+  height: 50vw !important;
 }
 
 .pdf-export-map__map {
   z-index: 100;
-  width: calc(100vw - 1cm);
-  height: calc(100vh - 1cm);
+  width: 297cm;
+  height: 210cm;
   position: absolute;
   top: 0;
   left: 0;
 }
 
 .pdf-export-map__image {
-  width: calc(100% - 1cm);
-  height: calc(100% - 1cm);
+  width: 64vh;
+  height: 50vw !important;
+  object-fit: cover;
 }
 </style>

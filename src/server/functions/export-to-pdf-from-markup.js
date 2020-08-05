@@ -44,7 +44,7 @@ exports.handler = async event => {
     timings.push(endLoadPage())
 
     const endCreatePdf = startTimer('pdf', 'Create Pdf')
-    pdf = await page.pdf({ format: 'A4', landscape: true, margin: { top: '0.5cm', right: '0.5cm', bottom: '0.5cm', left: '0.5cm' } })
+    pdf = await page.pdf({ format: 'A4', margin: { top: '1cm', bottom: '1cm' }  })
     timings.push(endCreatePdf())
 
   } catch (error) {

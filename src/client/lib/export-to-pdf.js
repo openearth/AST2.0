@@ -28,8 +28,8 @@ export default function exportToPdf({ locale, project, title }) {
       log.groupStart.info('Loading Iframe')
       const iframe = document.createElement('iframe')
       iframe.src = `${location.origin}/${locale}/pdf-export`
-      iframe.style.width = '297mm'
-      iframe.style.height = '210mm'
+      iframe.style.width = '210mm'
+      iframe.style.height = '297mm'
       iframe.addEventListener('load', () => {
         log.groupEnd()
         log.groupStart.info('Creating PDF')
