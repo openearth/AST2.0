@@ -39,7 +39,7 @@
       </md-button>
       <md-button
         :disabled="measure.measureId === '0'"
-        class="md-raised md-primary md-dense"
+        class="measure-card__choose-btn md-raised md-dense"
         @click="chooseMeasure"
       >
         {{ $t('choose') }}
@@ -135,5 +135,9 @@ export default {
 
 .measure-card__icon svg {
   max-width: 20px;
+}
+
+.measure-card__choose-btn {
+  background-color: var(--action-color) !important;
 }
 </style>

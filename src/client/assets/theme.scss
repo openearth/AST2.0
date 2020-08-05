@@ -1,7 +1,13 @@
 @import "~vue-material/dist/theme/engine"; // Import the theme engine
 
 @include md-register-theme("default", (
-  primary: #008fc5, // The primary color of your application
+  primary: #0EBBF0,
+  accent: #00CC96, // The primary color of your application
 ));
 
 @import "~vue-material/dist/theme/all"; // Apply the theme
+
+// CTA's should be yellow according to the huisstijl document.
+.md-button.md-theme-default.md-raised:not([disabled]).md-primary {
+  background-color: #FFD814;
+}
