@@ -19,6 +19,9 @@
         </md-tabs>
         <section class="scenario-overview__tab-content">
           <div class="scenario-overview__tab-content-wrapper">
+            <h3 class="scenario-overview__tab-content-title md-headline">
+              {{ activeScenario.title }}
+            </h3>
             <div
               v-for="(item, index) in activeScenario.example"
               :key="index"
@@ -131,5 +134,15 @@ export default {
 .scenario-overview__choose-btn {
   align-self: flex-end;
   flex-grow: 0;
+}
+
+.scenario-overview__tab-content-title {
+  padding-bottom: var(--spacing-half);
+}
+
+.scenario-overview__content .md-tabs-navigation .md-button-content {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>
