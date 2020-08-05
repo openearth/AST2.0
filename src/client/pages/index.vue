@@ -105,10 +105,6 @@ export default {
   z-index: 0;
 }
 
-.page-index__action-btn {
-  background-color: var(--action-color) !important;
-}
-
 .page-index__input-file {
   position: absolute;
   width: 100%;
