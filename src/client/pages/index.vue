@@ -11,7 +11,7 @@
       <md-button
         :to="`/${locale}/new-project/`"
         :disabled="!acceptedLegal"
-        class="md-raised md-primary"
+        class="page-index__action-btn md-raised"
       >
         {{ $t('start_new_project') }}
       </md-button>
@@ -19,7 +19,7 @@
       <div class="page-index__import-button-wrapper">
         <md-button
           :disabled="!acceptedLegal"
-          class="md-raised md-primary"
+          class="page-index__action-btn md-raised"
         >
           {{ $t('import_exisiting_project') }}
         </md-button>
@@ -103,6 +103,10 @@ export default {
 .page-index__import-button-wrapper > * {
   flex: 1;
   z-index: 0;
+}
+
+.page-index__action-btn {
+  background-color: var(--action-color) !important;
 }
 
 .page-index__input-file {
