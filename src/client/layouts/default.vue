@@ -201,6 +201,8 @@ export default {
         document.querySelector('#open-project').click()
       }
     })
+
+    console.log(this.activeWorkspace)
   },
 
   beforeDestroy() {

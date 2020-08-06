@@ -53,7 +53,6 @@ export default async function fetchRivmCoBenefits({ areas, projectArea } = {}) {
   }
 
   const payload = addBoundingBox(geoJson)
-  console.info(payload) // @TODO :: Remove after discussion with John Verberne
 
   const response = await fetch(process.env.API_GBP, {
     method: 'POST',
