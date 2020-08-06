@@ -113,7 +113,7 @@
 
 <script>
 import { mapState, mapMutations, mapGetters, mapActions } from 'vuex';
-import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea } from '../components'
+import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea } from '@/components'
 import getData from '~/lib/get-data'
 import EventBus, { CLICK } from '~/lib/event-bus';
 import log from '~/lib/log'
