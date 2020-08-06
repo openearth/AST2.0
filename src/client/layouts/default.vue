@@ -13,11 +13,11 @@
       :created-project-area="createdProjectArea"
       :filled-in-required-settings="filledInRequiredProjectAreaSettings"
       :has-areas="!!areas.length"
-      @onCloseNavigation="hideMenu"
-      @saveProject="saveProject"
-      @importProject="onFileInput"
-      @newProject="onNewProject"
-      @exportProject="() => {showExport(); hideMenu();}"
+      @on-close-navigation="hideMenu"
+      @save-project="saveProject"
+      @import-project="onFileInput"
+      @new-project="onNewProject"
+      @export-project="() => {showExport(); hideMenu();}"
     />
 
     <div class="layout__content">
@@ -113,7 +113,7 @@
 
 <script>
 import { mapState, mapMutations, mapGetters, mapActions } from 'vuex';
-import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea } from '../components'
+import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea } from '@/components'
 import getData from '~/lib/get-data'
 import EventBus, { CLICK } from '~/lib/event-bus';
 import log from '~/lib/log'
