@@ -37,7 +37,6 @@
       :custom-layers="customLayers"
       :map-layers="mapLayers"
       :layer-list="layerList"
-      :heatstress-layers="heatstressLayers"
       :current-mode="currentMode"
       class="map-viewer__controls--draw"
       @setMode="setMode"

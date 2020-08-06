@@ -145,10 +145,10 @@ export const mutations = {
     state.map.wmsLayers.push(layer)
   },
   setHeatstressLayers(state, layer) {
-    if (state.map.heatstressLayers === undefined) {
-      Vue.set(state.map, 'heatstressLayers', [])
-    }
     state.map.heatstressLayers.push(layer)
+  },
+  clearHeatstressLayers(state) {
+    state.map.heatstressLayers = []
   },
   setMapLayers(state, layer) {
     if (state.map.mapLayers === undefined) {
@@ -230,6 +230,9 @@ export const mutations = {
     while (state.areas.length) {
       state.areas.pop()
     }
+  },
+  setRivmCoBenefits(state, data) {
+    Vue.set(state, 'rivmCoBenefits', Object.freeze(data))
   },
 }
 
@@ -421,34 +424,81 @@ export const actions = {
       commit('deleteArea', id)
     })
   },
-  fetchRivmCoBenefits({ state, commit, getters }, request) {
-    console.log(getters.areas)
-
-    getApiData('heatstress/reduction', {
-      data: {
-        type: 'FeatureCollection',
-        features: getters.areas,
-      },
+  fetchHeatstressData({ state, commit, getters }, request) {
+    commit('clearHeatstressLayers')
+    let features = cloneDeep(getters.areas)
+    features.forEach(feat => {
+      //TODO: This should either be solved when adding measures or in the API
+      if (!feat.properties.areaWidth) {
+        feat.properties.areaWidth = feat.properties.defaultWidth
+      }
+      if (!feat.properties.areaDepth) {
+        feat.properties.areaDepth = feat.properties.defaultDepth
+      }
+      if (!feat.properties.areaRadius) {
+        feat.properties.areaRadius = feat.properties.defaultRadius
+      }
     })
-      .then(apiData => {
-        console.log('fetching heatstress reduction', apiData)
-        const tileSize = 1024
-        apiData.forEach(layer => {
-          commit('setHeatstressLayer', {
-            id: layer.layer,
-            title: layer.layer,
-            url: `${layer.url}?service=getMap&layers=${layer.layer}&request=GetMap&transparent=True&version=1.1.1&bbox=${bbox}&srs=EPSG:3857&crs=EPSG:3857&format=image/png&&width=${tilesize}&height=${tilesize}`,
-            visible: false,
-            showLegend: false,
-            opacity: 1,
-            type: 'raster',
-            tilesize: tileSize,
-          })
-        })
-      })
-      .catch(error => {
-        console.log('error fetching heatstress reduction')
-      })
+    features.push(state.settings.area)
+
+    // Mocking for first testing purposes and not overloading the geoserver!
+    const exampleResp = {
+      PETnew: {
+        layerName: 'TEMP:PET_new_1596722438828184',
+        baseUrl: 'http://tl-tc117.xtr.deltares.nl:8080/geoserver/ows?',
+      },
+      PETdiff: {
+        layerName: 'TEMP:PET_diff_1596722438123941',
+        baseUrl: 'http://tl-tc117.xtr.deltares.nl:8080/geoserver/ows?',
+      },
+      oldStats: { min: 0.0, max: 128.0, mean: 30.267477272727273 },
+      newStats: { min: 0.0, max: 128.0, mean: 30.267477272727 },
+    }
+    const tileSize = 1024
+    const layers = ['PETdiff', 'PETnew']
+    layers.forEach(name => {
+      const layer = exampleResp[name]
+      // TODO: creating this layer should be in API?
+      const heatstressLayer = {
+        id: name,
+        title: layer.layerName,
+        url: `${layer.baseUrl}?service=getMap&layers=${layer.layerName}&request=GetMap&transparent=True&version=1.1.1&bbox={bbox-epsg-3857}&srs=EPSG:3857&crs=EPSG:3857&format=image/png&width=${tileSize}&height=${tileSize}`,
+        visible: false,
+        showLegend: false,
+        opacity: 1,
+        layerType: 'raster',
+        tilesize: tileSize,
+      }
+      commit('setHeatstressLayers', heatstressLayer)
+    })
+    // getApiData('heatstress/reduction', {
+    //   data: {
+    //     type: 'FeatureCollection',
+    //     features: features,
+    //   },
+    // })
+    //   .then(apiData => {
+    //     const tileSize = 1024
+    //     const layers = ['PETdiff', 'PETnew']
+    //     layers.forEach(name => {
+    //       const layer = apiData[name]
+    //       // TODO: creating this layer should be in API?
+    //       const heatstressLayer = {
+    //         id: name,
+    //         title: layer.layerName,
+    //         url: `${layer.baseUrl}?service=getMap&layers=${layer.layerName}&request=GetMap&transparent=True&version=1.1.1&bbox={bbox-epsg-3857}&srs=EPSG:3857&crs=EPSG:3857&format=image/png&width=${tileSize}&height=${tileSize}`,
+    //         visible: false,
+    //         showLegend: false,
+    //         opacity: 1,
+    //         type: 'raster',
+    //         tilesize: tileSize,
+    //       }
+    //       commit('setHeatstressLayers', heatstressLayer)
+    //     })
+    //   })
+    //   .catch(error => {
+    //     console.log('error fetching heatstress reduction')
+    //   })
   },
   bootstrapSettingsProjectArea({ state, commit }, settings) {
     settings.forEach(setting => {
@@ -671,6 +721,22 @@ export const actions = {
     })
 
     dispatch('bootstrapSettingsProjectArea', foo)
+  },
+  async fetchRivmCoBenefits({ state, commit }) {
+    // We clone to get rid of the Vue Observer properties
+    const areas = cloneDeep(state.areas)
+    const projectArea = cloneDeep(state.settings.area)
+
+    try {
+      const data = await fetchCoBenefitsFromRivm({ areas, projectArea })
+      const receivedAt = Date.now()
+      const entries = flatten(
+        (data.assessmentResults || []).map(item => get(item, 'entries', []))
+      )
+      commit('setRivmCoBenefits', { receivedAt, entries })
+    } catch (error) {
+      console.error(error)
+    }
   },
 }
 

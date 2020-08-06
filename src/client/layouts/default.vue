@@ -61,7 +61,9 @@
         />
         <app-results-panel
           v-if="filledInSettings"
+          :heatstress-layers="heatstressLayers"
           :buttons="[
+            { id: 'heatstress', icon: 'wb_sunny' },
             activeWorkspace.showRivmCoBenefits && {
               id: 'rivm',
               icon: 'local_florist',
@@ -85,6 +87,11 @@
               v-if="scope.active === 'rivm'"
               :data="rivmCoBenefits"
               @fetch-data="fetchRivmCoBenefits"
+            />
+            <app-results-heatstress
+              v-if="scope.active === 'heatstress'"
+              :heatstress-layers="heatstressLayers"
+              @fetch-data="fetchHeatstressData"
             />
           </template>
         </app-results-panel>
@@ -151,6 +158,7 @@ import {
 } from '../components'
 import AppResultsPanel from '../components/app-results-panel'
 import AppResultsRivm from '../components/app-results-rivm'
+import AppResultsHeatstress from '../components/app-results-heatstress'
 import { mapFields } from 'vuex-map-fields'
 import getData from '~/lib/get-data'
 import EventBus, { CLICK } from '~/lib/event-bus'
@@ -167,6 +175,7 @@ export default {
     NotificationArea,
     AppResultsPanel,
     AppResultsRivm,
+    AppResultsHeatstress,
   },
   data() {
     return {
@@ -298,6 +307,7 @@ export default {
       exportProject: 'project/exportProject',
       connectMeasureToArea: 'setMeasureFlow/connectMeasureToArea',
       fetchRivmCoBenefits: 'project/fetchRivmCoBenefits',
+      fetchHeatstressData: 'project/fetchHeatstressData',
     }),
     async onFileInput(event) {
       this.importProject(event)

@@ -152,9 +152,9 @@ export default {
     layerList() {
       ;[...this.layerList].reverse().forEach(this.addWmsLayer)
     },
-    // heatstressLayers() {
-    //   ;[...this.heatstressLayers.reverse().forEach(this.addWmsLayer)]
-    // },
+    heatstressLayers() {
+      ;[...this.heatstressLayers].reverse().forEach(this.addWmsLayer)
+    },
   },
 
   async mounted() {
