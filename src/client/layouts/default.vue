@@ -4,7 +4,8 @@
       :title="title"
       :legal-accepted="legalAccepted"
       :project-title="projectTitle"
-      @onShowNavigation="showMenu"/>
+      @onShowNavigation="showMenu"
+    />
     <app-menu
       :show-navigation="showNavigation"
       :title="title"
@@ -16,12 +17,18 @@
       @saveProject="saveProject"
       @importProject="onFileInput"
       @newProject="onNewProject"
-      @exportProject="() => {showExport(); hideMenu();}"/>
+      @exportProject="
+        () => {
+          showExport()
+          hideMenu()
+        }
+      "
+    />
 
     <div class="layout__content">
       <div v-if="mode === 'modal'" class="layout__page-wrapper">
         <md-content class="md-elevation-6">
-          <nuxt class="layout__page"/>
+          <nuxt class="layout__page" />
         </md-content>
       </div>
       <nuxt v-else />
@@ -43,19 +50,25 @@
           :custom-layers="customLayers"
           :map-layers="mapLayers"
           :layer-list="layerList"
+          :heatstress-layers="heatstressLayers"
           :mode="mode"
           class="layout__map"
           @create="onCreateArea"
           @update="updateArea"
           @delete="deleteArea"
           @selectionchange="selectionChange"
-          @move="setMapPosition"/>
+          @move="setMapPosition"
+        />
         <app-results-panel
           v-if="filledInSettings"
           :buttons="[
-            (activeWorkspace.showRivmCoBenefits && { id: 'rivm', icon: 'local_florist', color: '--nature-green-color' }),
+            activeWorkspace.showRivmCoBenefits && {
+              id: 'rivm',
+              icon: 'local_florist',
+              color: '--nature-green-color',
+            },
             { id: 'numbers', icon: 'format_list_numbered' },
-            { id: 'bars', icon: 'insert_chart' }
+            { id: 'bars', icon: 'insert_chart' },
           ]"
           default-active="numbers"
         >
@@ -78,7 +91,7 @@
       </md-content>
     </div>
 
-    <virtual-keyboard class="layout__virtual-keyboard"/>
+    <virtual-keyboard class="layout__virtual-keyboard" />
 
     <md-dialog :md-active="exportShown">
       <md-dialog-title>{{ $t('export_project') }}</md-dialog-title>
@@ -87,7 +100,14 @@
         <p class="md-body">{{ $t('export_description') }}</p>
         <md-field>
           <label for="movie">{{ $t('format') }}</label>
-          <md-select @input="value => { hideExport(); exportProject(value) }">
+          <md-select
+            @input="
+              value => {
+                hideExport()
+                exportProject(value)
+              }
+            "
+          >
             <md-option value="csv">{{ $t('csv') }}</md-option>
             <md-option value="geojson">{{ $t('geojson') }}</md-option>
           </md-select>
@@ -104,7 +124,8 @@
         v-if="!legalAccepted"
         :disclaimer="disclaimer"
         class="layout__disclaimer"
-        @accepted="acceptLegal"/>
+        @accepted="acceptLegal"
+      />
     </transition>
 
     <notification-area
@@ -118,17 +139,35 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapGetters, mapActions } from "vuex";
-import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea } from '../components'
+import { mapState, mapMutations, mapGetters, mapActions } from 'vuex'
+import {
+  AppDisclaimer,
+  AppHeader,
+  MapViewer,
+  KpiPanel,
+  VirtualKeyboard,
+  AppMenu,
+  NotificationArea,
+} from '../components'
 import AppResultsPanel from '../components/app-results-panel'
 import AppResultsRivm from '../components/app-results-rivm'
-import { mapFields } from 'vuex-map-fields';
+import { mapFields } from 'vuex-map-fields'
 import getData from '~/lib/get-data'
-import EventBus, { CLICK } from "~/lib/event-bus";
+import EventBus, { CLICK } from '~/lib/event-bus'
 import log from '~/lib/log'
 
 export default {
-  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea, AppResultsPanel, AppResultsRivm },
+  components: {
+    AppDisclaimer,
+    AppHeader,
+    MapViewer,
+    KpiPanel,
+    VirtualKeyboard,
+    AppMenu,
+    NotificationArea,
+    AppResultsPanel,
+    AppResultsRivm,
+  },
   data() {
     return {
       disclaimer: {},
@@ -137,7 +176,11 @@ export default {
   head() {
     return {
       meta: [
-        { hid: 'description', name: 'description', content: this.$i18n.t('app_description') },
+        {
+          hid: 'description',
+          name: 'description',
+          content: this.$i18n.t('app_description'),
+        },
       ],
       title: this.title,
     }
@@ -161,15 +204,44 @@ export default {
       userIsRefreshing: state => state.user.isRefreshing,
       rivmCoBenefits: state => state.project.rivmCoBenefits,
     }),
-    ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers', 'customLayers', 'mapLayers', 'layers']),
-    ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings']),
-    ...mapGetters({ selectedAreas:  'selectedAreas/features' }),
-    ...mapGetters('map', ['isProject', 'point', 'line', 'polygon', 'addOnly', 'interactive', 'search']),
+    ...mapGetters('project', [
+      'filteredKpiValues',
+      'filteredKpiPercentageValues',
+      'filteredKpiGroups',
+      'areas',
+      'wmsLayers',
+      'customLayers',
+      'mapLayers',
+      'layers',
+      'heatstressLayers',
+    ]),
+    ...mapGetters('flow', [
+      'acceptedLegal',
+      'createdProjectArea',
+      'filledInRequiredProjectAreaSettings',
+      'currentFilledInLevel',
+      'filledInSettings',
+    ]),
+    ...mapGetters({ selectedAreas: 'selectedAreas/features' }),
+    ...mapGetters('map', [
+      'isProject',
+      'point',
+      'line',
+      'polygon',
+      'addOnly',
+      'interactive',
+      'search',
+    ]),
     ...mapGetters('user', ['isLoggedIn']),
     ...mapGetters('data/appConfig', ['title']),
     ...mapGetters('data/workspaces', ['activeWorkspace']),
     layerList() {
-      return [...this.customLayers, ...this.layers, ...this.mapLayers, ...this.wmsLayers]
+      return [
+        ...this.customLayers,
+        ...this.layers,
+        ...this.mapLayers,
+        ...this.wmsLayers,
+      ]
     },
   },
 
@@ -180,7 +252,7 @@ export default {
   },
   async beforeMount() {
     const locale = this.$i18n.locale
-    const data =  await getData({ locale, slug: 'legal' })
+    const data = await getData({ locale, slug: 'legal' })
     this.disclaimer = { ...data.legal.disclaimer }
   },
 
@@ -232,7 +304,7 @@ export default {
         .then(() => this.$router.push(this.currentFilledInLevel.uri))
         .catch(error => {
           if (error.name !== 'NavigationDuplicated') {
-            log.error('Could not load file', error);
+            log.error('Could not load file', error)
             this.showError({ message: this.$i18n.t('could_not_load_file') })
           }
         })
@@ -253,18 +325,17 @@ export default {
       this.$router.push(`/${this.$i18n.locale}/new-project`).catch(err => {})
     },
     onCreateArea(features) {
-      this.createArea(features)
-        .then(() => {
-          if (this.inSetMeasureFlow) {
-            this.connectMeasureToArea(features)
-          }
-        })
+      this.createArea(features).then(() => {
+        if (this.inSetMeasureFlow) {
+          this.connectMeasureToArea(features)
+        }
+      })
     },
     dispatchClickEvent(event) {
       EventBus.$emit(CLICK, event)
     },
     beforeUnload(e) {
-      const message = "You may have unsaved changes"
+      const message = 'You may have unsaved changes'
       e.returnValue = message
       return message
     },

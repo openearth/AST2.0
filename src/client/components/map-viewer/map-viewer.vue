@@ -15,6 +15,7 @@
       :custom-layers="customLayers"
       :map-layers="mapLayers"
       :layer-list="layerList"
+      :heatstress-layers="heatstressLayers"
       :mode="mode"
       class="map-viewer__map"
       @create="onCreate"
@@ -36,6 +37,7 @@
       :custom-layers="customLayers"
       :map-layers="mapLayers"
       :layer-list="layerList"
+      :heatstress-layers="heatstressLayers"
       :current-mode="currentMode"
       class="map-viewer__controls--draw"
       @setMode="setMode"
@@ -43,30 +45,38 @@
       @search="onSearch"
       @layer-opacity-change="setLayerOpacity"
       @legend-visibility-change="setLegendVisibility"
-      @layer-visibility-change="setLayerVisibility"/>
+      @layer-visibility-change="setLayerVisibility"
+    />
 
     <map-controls
       :zoom-in="interactive"
       :zoom-out="interactive"
       class="map-viewer__controls--zoom"
       @zoom-in="zoomIn"
-      @zoom-out="zoomOut"/>
+      @zoom-out="zoomOut"
+    />
 
     <layer-legend
       v-if="interactive && layers"
       :layers="legendLayers"
-      class="map-viewer__layer-legend"/>
-
-
+      class="map-viewer__layer-legend"
+    />
   </div>
 </template>
 
 <script>
-import MapEventBus, { MODE, TRASH, DELETE, ZOOM_IN, ZOOM_OUT, SEARCH } from "../../lib/map-event-bus";
-import MapBox from "../map-box";
-import LayerLegend from "../layer-legend";
-import MapControls from "../map-controls";
-import { mapMutations, mapActions } from "vuex";
+import MapEventBus, {
+  MODE,
+  TRASH,
+  DELETE,
+  ZOOM_IN,
+  ZOOM_OUT,
+  SEARCH,
+} from '../../lib/map-event-bus'
+import MapBox from '../map-box'
+import LayerLegend from '../layer-legend'
+import MapControls from '../map-controls'
+import { mapMutations, mapActions } from 'vuex'
 
 export default {
   components: { MapBox, MapControls, LayerLegend },
@@ -139,6 +149,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    heatstressLayers: {
+      type: Array,
+      default: () => [],
+    },
     mode: {
       type: String,
       default: '',
@@ -156,17 +170,35 @@ export default {
     ...mapMutations({
       setLayerOpacity: 'project/setLayerOpacity',
       setLayerVisibility: 'project/setLayerVisibility',
-      setLegendVisibility:'project/setLegendVisibility',
+      setLegendVisibility: 'project/setLegendVisibility',
     }),
-    onCreate(event) { this.$emit('create', event) },
-    onUpdate(event) { this.$emit('update', event) },
-    onDelete(event) { this.$emit('delete', event) },
-    onSelectionchange(event) { this.$emit('selectionchange', event) },
-    onMove(event) { this.$emit('move', event) },
-    onClickDelete() { MapEventBus.$emit(DELETE) },
-    zoomIn() { MapEventBus.$emit(ZOOM_IN) },
-    zoomOut() { MapEventBus.$emit(ZOOM_OUT) },
-    onSearch(event) { MapEventBus.$emit(SEARCH, event) },
+    onCreate(event) {
+      this.$emit('create', event)
+    },
+    onUpdate(event) {
+      this.$emit('update', event)
+    },
+    onDelete(event) {
+      this.$emit('delete', event)
+    },
+    onSelectionchange(event) {
+      this.$emit('selectionchange', event)
+    },
+    onMove(event) {
+      this.$emit('move', event)
+    },
+    onClickDelete() {
+      MapEventBus.$emit(DELETE)
+    },
+    zoomIn() {
+      MapEventBus.$emit(ZOOM_IN)
+    },
+    zoomOut() {
+      MapEventBus.$emit(ZOOM_OUT)
+    },
+    onSearch(event) {
+      MapEventBus.$emit(SEARCH, event)
+    },
   },
 }
 </script>
@@ -213,6 +245,5 @@ export default {
 
 .mapboxgl-ctrl-top-right {
   display: none;
-
 }
 </style>
