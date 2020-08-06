@@ -6,18 +6,26 @@ import merge from 'lodash/merge'
 import get from 'lodash/get'
 import round from 'lodash/round'
 import unset from 'lodash/unset'
-import flatten from 'lodash/flatten'
-import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT, REPAINT, DELETE_LAYER } from '../lib/map-event-bus'
-import { getApiDataForFeature, getRankedMeasures } from "../lib/get-api-data";
+import MapEventBus, {
+  UPDATE_FEATURE_PROPERTY,
+  REPOSITION,
+  RELOAD_LAYERS,
+  SELECT,
+  REPAINT,
+  DELETE_LAYER,
+} from '../lib/map-event-bus'
+import {
+  getApiDataForFeature,
+  getRankedMeasures,
+  getApiData,
+} from '../lib/get-api-data'
 import FileSaver from 'file-saver'
 import getLoadedFileContents from '../lib/get-loaded-file-contents'
 import validateProject from '../lib/validate-project'
 import projectToGeoJson from '../lib/project-to-geojson'
 import projectToCsv from '../lib/project-to-csv'
 import delay from '../lib/delay'
-import log from "../lib/log";
-import fetchCoBenefitsFromRivm from '../lib/fetch-rivm-co-benefits'
-import { pick } from 'lodash'
+import log from '../lib/log'
 
 const initialState = () => ({
   areas: [],
@@ -30,6 +38,7 @@ const initialState = () => ({
     customLayers: [],
     mapLayers: [],
     wmsLayers: [],
+    heatstressLayers: [],
     layers: [],
     zoom: 16.5,
   },
@@ -44,7 +53,7 @@ const initialState = () => ({
   },
 })
 
-export const state = () => (initialState())
+export const state = () => initialState()
 
 export const mutations = {
   import(state, file) {
@@ -72,10 +81,10 @@ export const mutations = {
     state.settings.userViewedProjectSettings = true
   },
   addProjectArea(state, value) {
-    return state.settings.area = value
+    return (state.settings.area = value)
   },
   updateProjectArea(state, value) {
-    return state.settings.area = value
+    return (state.settings.area = value)
   },
   updateProjectAreaProperty(state, properties) {
     const areaToUpdate = state.settings.area
@@ -90,29 +99,29 @@ export const mutations = {
     })
   },
   deleteProjectArea(state) {
-    return state.settings.area = {}
+    return (state.settings.area = {})
   },
   addArea(state, value) {
     state.areas.push(value)
   },
   updateArea(state, value) {
-    const updatedArea = (state.areas.find(area => area.id === value.id))
+    const updatedArea = state.areas.find(area => area.id === value.id)
     Object.assign(updatedArea, value)
   },
   updateAreaProperty(state, { id, properties }) {
-    const areaToUpdate = (state.areas.find(area => area.id === id))
+    const areaToUpdate = state.areas.find(area => area.id === id)
     const newProperties = { ...areaToUpdate.properties, ...properties }
-      Vue.set(areaToUpdate, 'properties', newProperties)
-      Object.keys(properties).forEach(key => {
-        MapEventBus.$emit(UPDATE_FEATURE_PROPERTY, {
-          featureId: id,
-          key,
-          value: properties[key],
-        })
+    Vue.set(areaToUpdate, 'properties', newProperties)
+    Object.keys(properties).forEach(key => {
+      MapEventBus.$emit(UPDATE_FEATURE_PROPERTY, {
+        featureId: id,
+        key,
+        value: properties[key],
       })
+    })
   },
   removeAreaProperties(state, { id, propertyPaths = [] }) {
-    const areaToUpdate = (state.areas.find(area => area.id === id))
+    const areaToUpdate = state.areas.find(area => area.id === id)
     const properties = { ...areaToUpdate.properties }
     propertyPaths.forEach(path => unset(properties, path))
     Vue.set(areaToUpdate, 'properties', properties)
@@ -127,10 +136,19 @@ export const mutations = {
     state.settings.targets[key] = value
   },
   setTarget(state, { group, key, value }) {
-    state.settings.targets[group][key] = { ...state.settings.targets[group][key], ...value }
+    state.settings.targets[group][key] = {
+      ...state.settings.targets[group][key],
+      ...value,
+    }
   },
   setWmsLayer(state, layer) {
     state.map.wmsLayers.push(layer)
+  },
+  setHeatstressLayers(state, layer) {
+    if (state.map.heatstressLayers === undefined) {
+      Vue.set(state.map, 'heatstressLayers', [])
+    }
+    state.map.heatstressLayers.push(layer)
   },
   setMapLayers(state, layer) {
     if (state.map.mapLayers === undefined) {
@@ -151,17 +169,26 @@ export const mutations = {
     state.map.layers.push(layer)
   },
   deleteCustomLayer(state, id) {
-    state.map.customLayers = state.map.customLayers.filter(layer => layer.id !== id)
+    state.map.customLayers = state.map.customLayers.filter(
+      layer => layer.id !== id
+    )
     MapEventBus.$emit(DELETE_LAYER, id)
   },
   toggleProjectAreaNestedSetting(state, { key, option, value }) {
-    state.settings.projectArea[key][option] = !state.settings.projectArea[key][option]
+    state.settings.projectArea[key][option] = !state.settings.projectArea[key][
+      option
+    ]
   },
   acceptLegal(state) {
     state.legalAccepted = true
   },
   setLayerOpacity(state, { id, value }) {
-    const layers = [ ...state.map.wmsLayers,  ...state.map.mapLayers, ...state.map.customLayers, ...state.map.layers ]
+    const layers = [
+      ...state.map.wmsLayers,
+      ...state.map.mapLayers,
+      ...state.map.customLayers,
+      ...state.map.layers,
+    ]
     layers.forEach(layer => {
       if (id === layer.id) {
         layer.opacity = value
@@ -169,7 +196,12 @@ export const mutations = {
     })
   },
   setLayerVisibility(state, { id, value }) {
-    const layers = [ ...state.map.wmsLayers,  ...state.map.mapLayers, ...state.map.customLayers, ...state.map.layers ]
+    const layers = [
+      ...state.map.wmsLayers,
+      ...state.map.mapLayers,
+      ...state.map.customLayers,
+      ...state.map.layers,
+    ]
     layers.forEach(layer => {
       if (id === layer.id) {
         layer.visible = value
@@ -178,7 +210,12 @@ export const mutations = {
     })
   },
   setLegendVisibility(state, { id, value }) {
-    const layers = [ ...state.map.wmsLayers,  ...state.map.mapLayers, ...state.map.customLayers, ...state.map.layers ]
+    const layers = [
+      ...state.map.wmsLayers,
+      ...state.map.mapLayers,
+      ...state.map.customLayers,
+      ...state.map.layers,
+    ]
     layers.forEach(layer => {
       if (id === layer.id && layer.legendUrl) {
         layer.showLegend = value
@@ -193,9 +230,6 @@ export const mutations = {
     while (state.areas.length) {
       state.areas.pop()
     }
-  },
-  setRivmCoBenefits(state, data) {
-    Vue.set(state, 'rivmCoBenefits', data)
   },
 }
 
@@ -220,7 +254,10 @@ export const actions = {
 
         const areaNumber = state.areas.length
         dispatch('fetchAreaApiData', [feature])
-        commit('updateAreaProperty', { id: feature.id, properties: { name: `Area-${areaNumber}`, hidden: false } })
+        commit('updateAreaProperty', {
+          id: feature.id,
+          properties: { name: `Area-${areaNumber}`, hidden: false },
+        })
 
         setTimeout(() => {
           MapEventBus.$emit(SELECT, feature.id)
@@ -243,15 +280,23 @@ export const actions = {
       }
 
       commit('updateArea', feature)
-      dispatch('fetchAreaApiData', getters.areas.filter(area => area.id === feature.id))
+      dispatch(
+        'fetchAreaApiData',
+        getters.areas.filter(area => area.id === feature.id)
+      )
     })
   },
-  updateAreaProperties({ state, commit, dispatch, getters }, { features, properties }) {
+  updateAreaProperties(
+    { state, commit, dispatch, getters },
+    { features, properties }
+  ) {
     features.forEach(feature => {
       commit('updateAreaProperty', { id: feature.id, properties })
-      const updatedFeature = getters.areas.filter(area => area.id === feature.id)
+      const updatedFeature = getters.areas.filter(
+        area => area.id === feature.id
+      )
 
-      if (properties.measure || properties.hasOwnProperty('hidden') ) {
+      if (properties.measure || properties.hasOwnProperty('hidden')) {
         MapEventBus.$emit(REPAINT, updatedFeature)
       }
 
@@ -259,8 +304,10 @@ export const actions = {
     })
   },
   setAreaMeasure({ dispatch }, { features, measure }) {
-    const getDefaultValueProperty = property =>  key => {
-      const values = measure.defaultValues.find(values => values.key.toLowerCase() === key)
+    const getDefaultValueProperty = property => key => {
+      const values = measure.defaultValues.find(
+        values => values.key.toLowerCase() === key
+      )
       return values[property]
     }
 
@@ -297,17 +344,28 @@ export const actions = {
         defaultDepth: getDefaultValue('depth'),
         defaultWidth: getDefaultValue('width'),
         defaultRadius: getDefaultValue('radius'),
-        areaInflow: featureProps.hasOwnProperty('areaInflow') ? cappedInflow(featureProps.areaInflow) : null,
-        areaDepth: featureProps.hasOwnProperty('areaDepth') ? cappedDepth(featureProps.areaDepth) : null,
-        areaWidth: featureProps.hasOwnProperty('areaWidth') ? cappedWidth(featureProps.areaWidth) : null,
-        areaRadius: featureProps.hasOwnProperty('areaRadius') ? cappedRadius(featureProps.areaRadius) : null,
+        areaInflow: featureProps.hasOwnProperty('areaInflow')
+          ? cappedInflow(featureProps.areaInflow)
+          : null,
+        areaDepth: featureProps.hasOwnProperty('areaDepth')
+          ? cappedDepth(featureProps.areaDepth)
+          : null,
+        areaWidth: featureProps.hasOwnProperty('areaWidth')
+          ? cappedWidth(featureProps.areaWidth)
+          : null,
+        areaRadius: featureProps.hasOwnProperty('areaRadius')
+          ? cappedRadius(featureProps.areaRadius)
+          : null,
       }
       dispatch('updateAreaProperties', { features: [feature], properties })
     })
   },
   removeAreaMeasure({ commit }, features) {
     features.forEach(feature => {
-      commit('updateAreaProperty', { id: feature.id, properties: { apiData: {} } })
+      commit('updateAreaProperty', {
+        id: feature.id,
+        properties: { apiData: {} },
+      })
       commit('removeAreaProperties', {
         id: feature.id,
         propertyPaths: [
@@ -328,17 +386,25 @@ export const actions = {
     MapEventBus.$emit(RELOAD_LAYERS)
   },
   async fetchAreaApiData({ state, commit, dispatch }, features) {
-    features.forEach(async (feature) => {
+    features.forEach(async feature => {
       const projectArea = state.settings.area.properties.area
       const { scenarioName } = state.settings.projectArea
 
       getApiDataForFeature(feature, projectArea, scenarioName)
-        .then(apiData => commit('updateAreaProperty', { id: feature.id, properties: { apiData } }))
+        .then(apiData =>
+          commit('updateAreaProperty', {
+            id: feature.id,
+            properties: { apiData },
+          })
+        )
         .catch(error => {
           dispatch('removeAreaMeasure', [feature])
           dispatch(
             'notifications/showError',
-            { message: `Could not calculate data for ${feature.properties.name}!`, duration: 0 },
+            {
+              message: `Could not calculate data for ${feature.properties.name}!`,
+              duration: 0,
+            },
             { root: true }
           )
         })
@@ -355,15 +421,49 @@ export const actions = {
       commit('deleteArea', id)
     })
   },
+  fetchRivmCoBenefits({ state, commit, getters }, request) {
+    console.log(getters.areas)
+
+    getApiData('heatstress/reduction', {
+      data: {
+        type: 'FeatureCollection',
+        features: getters.areas,
+      },
+    })
+      .then(apiData => {
+        console.log('fetching heatstress reduction', apiData)
+        const tileSize = 1024
+        apiData.forEach(layer => {
+          commit('setHeatstressLayer', {
+            id: layer.layer,
+            title: layer.layer,
+            url: `${layer.url}?service=getMap&layers=${layer.layer}&request=GetMap&transparent=True&version=1.1.1&bbox=${bbox}&srs=EPSG:3857&crs=EPSG:3857&format=image/png&&width=${tilesize}&height=${tilesize}`,
+            visible: false,
+            showLegend: false,
+            opacity: 1,
+            type: 'raster',
+            tilesize: tileSize,
+          })
+        })
+      })
+      .catch(error => {
+        console.log('error fetching heatstress reduction')
+      })
+  },
   bootstrapSettingsProjectArea({ state, commit }, settings) {
     settings.forEach(setting => {
       let value = null
 
       if (setting.multiple) {
-        value = setting.options.reduce((obj, option) => ({
+        value = setting.options.reduce(
+          (obj, option) => ({
             ...obj,
-            [option.value]: option.value === (setting.defaultValue && setting.defaultValue.value),
-          }), {})
+            [option.value]:
+              option.value ===
+              (setting.defaultValue && setting.defaultValue.value),
+          }),
+          {}
+        )
       }
 
       if (setting.isSelect) {
@@ -375,20 +475,28 @@ export const actions = {
   },
   bootstrapSettingsTargets({ state, commit }, targets) {
     targets.forEach(({ key, kpis }) => {
-      const getDefaultValue = value => value !== null ? String(value) : '0'
-      const value = kpis.reduce((obj, kpi) => ({
-        ...obj,
-        [kpi.key]: {
-          include: true,
-          value: getDefaultValue(kpi.defaultTargetValue),
-        },
-      }), {})
+      const getDefaultValue = value => (value !== null ? String(value) : '0')
+      const value = kpis.reduce(
+        (obj, kpi) => ({
+          ...obj,
+          [kpi.key]: {
+            include: true,
+            value: getDefaultValue(kpi.defaultTargetValue),
+          },
+        }),
+        {}
+      )
       commit('setTargets', { key, value })
     })
   },
   bootstrapWmsLayers({ state, commit }, layers) {
     layers.forEach(layer => {
-      commit('setWmsLayer', { id: layer.id, visible: false, showLegend: false, opacity: 1 })
+      commit('setWmsLayer', {
+        id: layer.id,
+        visible: false,
+        showLegend: false,
+        opacity: 1,
+      })
     })
   },
   bootstrapCustomLayers({ state, commit }, layers) {
@@ -403,15 +511,28 @@ export const actions = {
   },
   bootstrapMapLayers({ state, commit }, layers) {
     layers.forEach(layer => {
-      commit('setMapLayers', { id: layer.id, visible: false, showLegend: false, opacity: 1 })
+      commit('setMapLayers', {
+        id: layer.id,
+        visible: false,
+        showLegend: false,
+        opacity: 1,
+      })
     })
   },
   bootstrapLayers({ state, commit }, layers) {
     layers.forEach(layer => {
-      commit('setLayer', { id: layer.id, visible: false, showLegend: false, opacity: 1 })
+      commit('setLayer', {
+        id: layer.id,
+        visible: false,
+        showLegend: false,
+        opacity: 1,
+      })
     })
   },
-  async updateProjectAreaSetting({ state, commit, rootGetters, getters, dispatch }, payload ) {
+  async updateProjectAreaSetting(
+    { state, commit, rootGetters, getters, dispatch },
+    payload
+  ) {
     const { type } = payload
 
     if (type === 'checkbox') {
@@ -419,7 +540,7 @@ export const actions = {
       commit('toggleProjectAreaNestedSetting', { key, option, value })
     }
 
-    if ((type === 'radio') || (type === 'select')) {
+    if (type === 'radio' || type === 'select') {
       const { key, value } = payload
       commit('setProjectAreaSetting', { key, value })
     }
@@ -431,32 +552,42 @@ export const actions = {
     dispatch('updateMeasuresRanking')
   },
   async updateMeasuresRanking({ state, commit, rootGetters, dispatch }) {
-    const filledInRequiredProjectAreaSettings = rootGetters['flow/filledInRequiredProjectAreaSettings']
+    const filledInRequiredProjectAreaSettings =
+      rootGetters['flow/filledInRequiredProjectAreaSettings']
 
     if (filledInRequiredProjectAreaSettings) {
       const { projectArea } = state.settings
       getRankedMeasures(projectArea)
         .then(rankedMeasures =>
-          commit('data/measures/addMeasuresRanking', rankedMeasures, { root: true })
+          commit('data/measures/addMeasuresRanking', rankedMeasures, {
+            root: true,
+          })
         )
         .catch(({ message: title }) => {
           dispatch(
             'notifications/showError',
-            { message: `Could not get ranking data for measure: ${title}!`, duration: 0 },
+            {
+              message: `Could not get ranking data for measure: ${title}!`,
+              duration: 0,
+            },
             { root: true }
           )
         })
     }
   },
-  async importProject({ state, commit, dispatch, rootGetters, rootState }, event) {
-
+  async importProject(
+    { state, commit, dispatch, rootGetters, rootState },
+    event
+  ) {
     // Workspaces can have custom scenario names. We need to augment the
     // rootState.data object, which contains the scenarioNames, with the scenarios
     // from the activeWorkspace
     const rootData = cloneDeep(rootState.data)
     const activeWorkspace = rootGetters['data/workspaces/activeWorkspace']
     const workspaceScenarios = cloneDeep(activeWorkspace.scenarios) || []
-    const scenarioNames = get(rootData, 'areaSettings').find(({ key }) => key == 'scenarioName')
+    const scenarioNames = get(rootData, 'areaSettings').find(
+      ({ key }) => key == 'scenarioName'
+    )
     scenarioNames.options = [...scenarioNames.options, ...workspaceScenarios]
     const loadedProject = await getLoadedFileContents(event)
 
@@ -484,16 +615,23 @@ export const actions = {
   },
   saveProject({ state, commit }) {
     const { title } = state.settings.general
-    const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' })
+    const blob = new Blob([JSON.stringify(state, null, 2)], {
+      type: 'application/json',
+    })
     commit('appMenu/hideMenu', null, { root: true })
     return FileSaver.saveAs(blob, `${title || 'ast_project'}.json`)
   },
   exportProject({ state, getters, rootState, rootGetters }, format) {
     const { title } = state.settings.general
-    const data = format === 'csv'
-      ? projectToCsv(getters.areas, Object.keys(getters.kpiValues), rootGetters['data/measures/measureById'])
-      : projectToGeoJson(getters.areas)
-    const type = format === 'csv' ? 'text/csv' : 'application/json';
+    const data =
+      format === 'csv'
+        ? projectToCsv(
+            getters.areas,
+            Object.keys(getters.kpiValues),
+            rootGetters['data/measures/measureById']
+          )
+        : projectToGeoJson(getters.areas)
+    const type = format === 'csv' ? 'text/csv' : 'application/json'
     const blob = new Blob([data], { type })
     return FileSaver.saveAs(blob, `${title || 'ast_project'}.${format}`)
   },
@@ -508,7 +646,12 @@ export const actions = {
     dispatch('bootstrapSettingsProjectArea', areaSettings)
     dispatch('bootstrapSettingsTargets', kpiGroups)
   },
-  applyDefaultValuesToAreaSettings({ state, dispatch, rootState, rootGetters }) {
+  applyDefaultValuesToAreaSettings({
+    state,
+    dispatch,
+    rootState,
+    rootGetters,
+  }) {
     const activeWorkspace = rootGetters['data/workspaces/activeWorkspace']
     const filledInSettings = rootGetters['flow/fillesInSettings']
     const areaSettings = rootState.data.areaSettings
@@ -516,9 +659,10 @@ export const actions = {
       const { defaultValue, ...itemRest } = item
       const { key } = itemRest
 
-      const overriddenDefaultValue = activeWorkspace[key] && activeWorkspace[key].defaultValue
-        ? activeWorkspace[key].defaultValue
-        : defaultValue
+      const overriddenDefaultValue =
+        activeWorkspace[key] && activeWorkspace[key].defaultValue
+          ? activeWorkspace[key].defaultValue
+          : defaultValue
 
       return {
         ...itemRest,
@@ -528,38 +672,44 @@ export const actions = {
 
     dispatch('bootstrapSettingsProjectArea', foo)
   },
-  async fetchRivmCoBenefits({ state, commit }) {
-
-    // We clone to get rid of the Vue Observer properties
-    const areas = cloneDeep(state.areas)
-    const projectArea = cloneDeep(state.settings.area)
-
-    const data = await fetchCoBenefitsFromRivm({ areas, projectArea })
-    const receivedAt = Date.now()
-    const flattenedEntries = flatten((data.assessmentResults || []).map(item => get(item, 'entries', [])))
-    const entries = flattenedEntries.map(entry => pick(entry, ['code', 'model', 'name', 'units', 'tablevalue']))
-    commit('setRivmCoBenefits', { receivedAt, entries })
-  },
 }
 
 export const getters = {
   tableClimateAndCosts: (state, getters, rootState, rootGetters) => {
     if (state.areas.length) {
-      const measureIds = getters.areas.map(area => get(area, 'properties.measure'))
+      const measureIds = getters.areas.map(area =>
+        get(area, 'properties.measure')
+      )
       const measureById = rootGetters['data/measures/measureById']
-      const kpiKeys = ['storageCapacity', 'returnTime', 'groundwater_recharge', 'evapotranspiration', 'tempReduction', 'coolSpot', 'constructionCost', 'maintenanceCost']
+      const kpiKeys = [
+        'storageCapacity',
+        'returnTime',
+        'groundwater_recharge',
+        'evapotranspiration',
+        'tempReduction',
+        'coolSpot',
+        'constructionCost',
+        'maintenanceCost',
+      ]
       const kpiKeysTitleMap = rootGetters['data/kpiGroups/kpiKeysTitleMap']
       const kpiKeysUnitMap = rootGetters['data/kpiGroups/kpiKeysUnitMap']
-      const kpiKeysDecimalScaleMap = rootGetters['data/kpiGroups/kpiKeysDecimalScaleMap']
+      const kpiKeysDecimalScaleMap =
+        rootGetters['data/kpiGroups/kpiKeysDecimalScaleMap']
 
-      const toDecimalPricision = (value, precision = 2) => round(value, precision)
+      const toDecimalPricision = (value, precision = 2) =>
+        round(value, precision)
       const measueTitleForId = id => get(measureById(id), 'title')
-      const kpiTitleByKey = key => `${kpiKeysTitleMap[key]}${kpiKeysUnitMap[key] ? ` (${kpiKeysUnitMap[key]})` : ''}`
+      const kpiTitleByKey = key =>
+        `${kpiKeysTitleMap[key]}${
+          kpiKeysUnitMap[key] ? ` (${kpiKeysUnitMap[key]})` : ''
+        }`
 
       const measureValueMap = getters.areas
         .filter(area => area.properties.hasOwnProperty('measure'))
         .map(area => {
-          const values = kpiKeys.map(key => get(area, `properties.apiData[${key}]`))
+          const values = kpiKeys.map(key =>
+            get(area, `properties.apiData[${key}]`)
+          )
           return [area.properties.measure, area.properties.area, ...values]
         })
         .reduce((obj, row) => {
@@ -567,83 +717,28 @@ export const getters = {
           if (obj[measureId] === undefined) {
             obj[measureId] = values
           } else {
-            values.forEach((value, index) => obj[measureId][index] += value)
+            values.forEach((value, index) => (obj[measureId][index] += value))
           }
           return obj
         }, {})
 
       return {
-        "title": rootState.i18n.messages.climate_and_costs,
-        "header": [
+        title: rootState.i18n.messages.climate_and_costs,
+        header: [
           rootState.i18n.messages.measure,
           rootState.i18n.messages.surface,
           ...kpiKeys.map(kpiTitleByKey),
         ],
-        rows: Object.entries(measureValueMap)
-          .map(([id, values]) => {
-            const [surface, ...kpiValues] = values
-            return [
-              measueTitleForId(id),
-              toDecimalPricision(surface, 2),
-              ...kpiValues.map((val, index) => {
-                const kpiKey = kpiKeys[index]
-                const decimalScale = kpiKeysDecimalScaleMap && kpiKeysDecimalScaleMap[kpiKey]
-                const scale = decimalScale ? decimalScale : 0;
-                const value = toDecimalPricision(val, scale)
-                return isNaN(value) ? '-' : value
-              }),
-            ]
-          }),
-      }
-    }
-  },
-
-  tableCoBenefits: (state, getters, rootState, rootGetters) => {
-    if (state.areas.length) {
-      const measureIds = getters.areas.map(area => get(area, 'properties.measure'))
-      const measureById = rootGetters['data/measures/measureById']
-      const kpiKeys = ['filteringUnit', 'captureUnit', 'settlingUnit']
-      const kpiKeysTitleMap = rootGetters['data/kpiGroups/kpiKeysTitleMap']
-      const kpiKeysUnitMap = rootGetters['data/kpiGroups/kpiKeysUnitMap']
-      const kpiKeysDecimalScaleMap = rootGetters['data/kpiGroups/kpiKeysDecimalScaleMap']
-
-      const toDecimalPricision = (value, precision = 2) => round(value, precision)
-      const measueTitleForId = id => get(measureById(id), 'title')
-      const kpiTitleByKey = key => `${kpiKeysTitleMap[key]}${kpiKeysUnitMap[key] ? ` (${kpiKeysUnitMap[key]})` : ''}`
-
-      const measureValueMap = getters.areas
-        .filter(area => area.properties.hasOwnProperty('measure'))
-        .map(area => {
-          const values = kpiKeys.map(key => get(area, `properties.apiData[${key}]`))
-          return [area.properties.measure, area.properties.area, ...values]
-        })
-        .reduce((obj, row) => {
-          const [measureId, ...values] = row
-          if (obj[measureId] === undefined) {
-            obj[measureId] = values
-          } else {
-            values.forEach((value, index) => obj[measureId][index] += value)
-          }
-          return obj
-        }, {})
-
-      return {
-        "title": rootState.i18n.messages.co_benefits,
-        "header": [
-          rootState.i18n.messages.measure,
-          rootState.i18n.messages.surface,
-          ...kpiKeys.map(kpiTitleByKey),
-        ],
-        rows: Object.entries(measureValueMap)
-        .map(([id, values]) => {
+        rows: Object.entries(measureValueMap).map(([id, values]) => {
           const [surface, ...kpiValues] = values
           return [
             measueTitleForId(id),
             toDecimalPricision(surface, 2),
             ...kpiValues.map((val, index) => {
               const kpiKey = kpiKeys[index]
-              const decimalScale = kpiKeysDecimalScaleMap && kpiKeysDecimalScaleMap[kpiKey]
-              const scale = decimalScale ? decimalScale : 0;
+              const decimalScale =
+                kpiKeysDecimalScaleMap && kpiKeysDecimalScaleMap[kpiKey]
+              const scale = decimalScale ? decimalScale : 0
               const value = toDecimalPricision(val, scale)
               return isNaN(value) ? '-' : value
             }),
@@ -653,33 +748,95 @@ export const getters = {
     }
   },
 
-  areas: (state) => {
+  tableCoBenefits: (state, getters, rootState, rootGetters) => {
+    if (state.areas.length) {
+      const measureIds = getters.areas.map(area =>
+        get(area, 'properties.measure')
+      )
+      const measureById = rootGetters['data/measures/measureById']
+      const kpiKeys = ['filteringUnit', 'captureUnit', 'settlingUnit']
+      const kpiKeysTitleMap = rootGetters['data/kpiGroups/kpiKeysTitleMap']
+      const kpiKeysUnitMap = rootGetters['data/kpiGroups/kpiKeysUnitMap']
+      const kpiKeysDecimalScaleMap =
+        rootGetters['data/kpiGroups/kpiKeysDecimalScaleMap']
+
+      const toDecimalPricision = (value, precision = 2) =>
+        round(value, precision)
+      const measueTitleForId = id => get(measureById(id), 'title')
+      const kpiTitleByKey = key =>
+        `${kpiKeysTitleMap[key]}${
+          kpiKeysUnitMap[key] ? ` (${kpiKeysUnitMap[key]})` : ''
+        }`
+
+      const measureValueMap = getters.areas
+        .filter(area => area.properties.hasOwnProperty('measure'))
+        .map(area => {
+          const values = kpiKeys.map(key =>
+            get(area, `properties.apiData[${key}]`)
+          )
+          return [area.properties.measure, area.properties.area, ...values]
+        })
+        .reduce((obj, row) => {
+          const [measureId, ...values] = row
+          if (obj[measureId] === undefined) {
+            obj[measureId] = values
+          } else {
+            values.forEach((value, index) => (obj[measureId][index] += value))
+          }
+          return obj
+        }, {})
+
+      return {
+        title: rootState.i18n.messages.co_benefits,
+        header: [
+          rootState.i18n.messages.measure,
+          rootState.i18n.messages.surface,
+          ...kpiKeys.map(kpiTitleByKey),
+        ],
+        rows: Object.entries(measureValueMap).map(([id, values]) => {
+          const [surface, ...kpiValues] = values
+          return [
+            measueTitleForId(id),
+            toDecimalPricision(surface, 2),
+            ...kpiValues.map((val, index) => {
+              const kpiKey = kpiKeys[index]
+              const decimalScale =
+                kpiKeysDecimalScaleMap && kpiKeysDecimalScaleMap[kpiKey]
+              const scale = decimalScale ? decimalScale : 0
+              const value = toDecimalPricision(val, scale)
+              return isNaN(value) ? '-' : value
+            }),
+          ]
+        }),
+      }
+    }
+  },
+
+  areas: state => {
     return state.areas.map(feature => {
-      let area;
-      let length;
-      let radius;
+      let area
+      let length
+      let radius
       switch (feature.geometry.type) {
         case 'LineString':
-          const width = feature.properties.areaWidth || feature.properties.defaultWidth
+          const width =
+            feature.properties.areaWidth || feature.properties.defaultWidth
           length = turfLength(feature.geometry) * 1000
           area = length * parseFloat(width)
-          break;
+          break
         case 'Point':
-          radius = feature.properties.areaRadius || feature.properties.defaultRadius
+          radius =
+            feature.properties.areaRadius || feature.properties.defaultRadius
           area = Math.PI * (radius * radius)
-          break;
+          break
         case 'Polygon':
           area = turfArea(feature.geometry)
-          break;
+          break
         default:
           area = 0
       }
 
-      return merge(
-        {},
-        feature,
-        { properties: { area, length, radius } }
-      )
+      return merge({}, feature, { properties: { area, length, radius } })
     })
   },
   areasByMeasure: (state, getters, rootState, rootGetters) => {
@@ -696,30 +853,39 @@ export const getters = {
         }
 
         obj[measureId].areas.push(area)
-        obj[measureId].someAreasAreShown = obj[measureId].areas.some(area => !area.properties.hidden)
+        obj[measureId].someAreasAreShown = obj[measureId].areas.some(
+          area => !area.properties.hidden
+        )
       }
 
       return obj
     }, {})
   },
   measureCollection: (state, getters) => {
-    return Object.keys(getters.areasByMeasure).map(key => getters.areasByMeasure[key])
+    return Object.keys(getters.areasByMeasure).map(
+      key => getters.areasByMeasure[key]
+    )
   },
   filteredKpiGroups: (state, getters, rootState) => {
     const filteredKpiKeys = getters.filteredKpiKeys
     return rootState.data.kpiGroups
       .map(group => {
-        const kpis = group.kpis
-          .filter(kpi => filteredKpiKeys.indexOf(kpi.key) !== -1)
+        const kpis = group.kpis.filter(
+          kpi => filteredKpiKeys.indexOf(kpi.key) !== -1
+        )
         return { ...group, kpis }
       })
-    .filter(group => group.kpis.length)
+      .filter(group => group.kpis.length)
   },
   filteredKpiKeys: state => {
     const groups = state.settings.targets
     const groupsKeys = Object.keys(state.settings.targets)
-    const flatKpiObj = groupsKeys.map(key => groups[key]).reduce((obj, group) => ({ ...obj, ...group }), {})
-    const filteredKpiObj = Object.keys(flatKpiObj).filter(key => flatKpiObj[key].include)
+    const flatKpiObj = groupsKeys
+      .map(key => groups[key])
+      .reduce((obj, group) => ({ ...obj, ...group }), {})
+    const filteredKpiObj = Object.keys(flatKpiObj).filter(
+      key => flatKpiObj[key].include
+    )
     return filteredKpiObj
   },
   filteredKpiValues: (state, getters) => {
@@ -746,7 +912,9 @@ export const getters = {
         .reduce((obj, item) => {
           if (item) {
             kpiKeys.forEach(key => {
-              if (!obj[key]) { obj[key] = 0 }
+              if (!obj[key]) {
+                obj[key] = 0
+              }
               obj[key] = obj[key] + (item[key] || 0)
             })
           }
@@ -761,8 +929,14 @@ export const getters = {
     const filteredKeys = getters.kpiValues
     return Object.keys(targets)
       .map(group =>
-        Object.keys(targets[group])
-          .reduce((obj, key) => ({ ...obj, [key]: parseFloat(targets[group][key].value, 10) || 0 }), {}))
+        Object.keys(targets[group]).reduce(
+          (obj, key) => ({
+            ...obj,
+            [key]: parseFloat(targets[group][key].value, 10) || 0,
+          }),
+          {}
+        )
+      )
       .reduce((obj, item) => ({ ...obj, ...item }), {})
   },
   kpiPercentageValues: (state, getters) => {
@@ -778,37 +952,50 @@ export const getters = {
     }, {})
   },
   wmsLayers: (state, getters, rootState, rootGetters) => {
-    const { wmsLayers: rootWmsLayers = [] } = rootGetters['data/workspaces/activeWorkspace'] || {}
+    const { wmsLayers: rootWmsLayers = [] } =
+      rootGetters['data/workspaces/activeWorkspace'] || {}
     return state.map.wmsLayers
-      .filter(layer => rootWmsLayers.some(rootLayer => rootLayer.id === layer.id))
+      .filter(layer =>
+        rootWmsLayers.some(rootLayer => rootLayer.id === layer.id)
+      )
       .map(({ id, visible, opacity, showLegend }) => ({
-        ...rootGetters['data/wmsLayers/constructed'].find(layer => layer.id === id),
+        ...rootGetters['data/wmsLayers/constructed'].find(
+          layer => layer.id === id
+        ),
         visible,
         showLegend,
         opacity,
       }))
   },
-  customLayers: (state) => {
+  heatstressLayers: state => {
+    return state.map.heatstressLayers
+  },
+  customLayers: state => {
     return state.map.customLayers
   },
   mapLayers: (state, getters, rootState, rootGetters) => {
     return rootGetters['data/mapLayers/constructed'].map(layer => {
-      const storerdSettings = state.map.mapLayers.find(({ id }) => id === layer.id)
+      const storerdSettings = state.map.mapLayers.find(
+        ({ id }) => id === layer.id
+      )
       return { ...layer, ...storerdSettings }
     })
   },
   layers: (state, getters, rootState, rootGetters) => {
-    const { layers: rootLayers = [] } = rootGetters['data/workspaces/activeWorkspace'] || {}
+    const { layers: rootLayers = [] } =
+      rootGetters['data/workspaces/activeWorkspace'] || {}
     return state.map.layers
       .filter(layer => rootLayers.some(rootLayer => rootLayer.id === layer.id))
       .map(({ id, visible, opacity, showLegend }) => ({
-        ...rootGetters['data/layers/constructed'].find(layer => layer.id === id),
+        ...rootGetters['data/layers/constructed'].find(
+          layer => layer.id === id
+        ),
         visible,
         showLegend,
         opacity,
       }))
   },
-  settingsProjectArea: (state) => {
+  settingsProjectArea: state => {
     return state.settings.projectArea
   },
 }
