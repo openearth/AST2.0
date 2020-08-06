@@ -55,11 +55,7 @@
         />
         <app-results-panel
           v-if="filledInSettings"
-          :buttons="[
-            (activeWorkspace.showRivmCoBenefits && { id: 'rivm', icon: 'local_florist', color: '--nature-green-color' }),
-            { id: 'numbers', icon: 'format_list_numbered' },
-            { id: 'bars', icon: 'insert_chart' }
-          ]"
+          :buttons="sidePanelTabButtons"
           default-active="numbers"
         >
           <template slot-scope="scope">
@@ -175,6 +171,17 @@ export default {
     layerList() {
       return [...this.customLayers, ...this.layers, ...this.mapLayers, ...this.wmsLayers]
     },
+    sidePanelTabButtons() {
+      return [
+        (
+          // @TODO :: Re-add this check when Peter finds out why it isn't showing in deploy previews
+          // this.activeWorkspace.showRivmCoBenefits &&
+          { id: 'rivm', icon: 'local_florist', color: '--nature-green-color' }
+        ),
+        { id: 'numbers', icon: 'format_list_numbered' },
+        { id: 'bars', icon: 'insert_chart' },
+      ]
+    },
   },
 
   watch: {
@@ -201,11 +208,6 @@ export default {
         document.querySelector('#open-project').click()
       }
     })
-
-    setTimeout(() => {
-      // bump deploy
-      console.log(this.activeWorkspace)
-    }, 3000)
   },
 
   beforeDestroy() {
