@@ -6,7 +6,7 @@
     <div v-if="transformedData.length > 0" class="app-results-rivm__content">
       <section
         v-for="section in transformedData"
-        :key="section.title"
+        :key="section.model"
         class="app-results-rivm__data-section"
       >
         <header>
@@ -17,12 +17,12 @@
         <dl class="app-results-rivm__definition-list">
           <template v-for="definition in section.definitions">
             <dt
-              :key="`${definition.title}-term`"
+              :key="`${ definition.code }-term`"
               class="md-body-1"
-              v-html="definition.title"
+              v-html="definition.text"
             />
             <dd
-              :key="`${definition.title}-definition`"
+              :key="`${ definition.code }-definition`"
               class="app-results-rivm__value"
             >
               <span>{{ definition.value }}</span>
@@ -88,27 +88,23 @@ export default {
           //   console.log(x)
           //   return x
           // })
-          .map(({ name, tablevalue, units, model }) => {
-            const title = name
-              // .replace(/\[.+\]/, '').trim()
-            const value = tablevalue
-            const unit = units === '-' ? null : units
-              // .replace(/euros?/i, '€')
-              // .replace(/jaar|year/i, 'jr')
-              // .replace(/-/i, '')
-            const section = model
-
-            return { title, value, unit, section }
-          })
-          // Group items by section (model in API data)
-          .reduce((collection, item) => {
-            let section = collection.find(section => section.title === item.section)
+          .map(({ code, name, tablevalue, units, model, modelDescription }) => ({
+            code,
+            text: name,
+            value: tablevalue,
+            unit: units,
+            model,
+            modelDescription,
+          }))
+          // Group items by model
+          .reduce((sections, item) => {
+            let section = sections.find(({ model }) => model === item.model)
             if (!section) {
-              section = { title: item.section, definitions: [] }
-              collection.push(section)
+              section = { model: item.model, title: item.modelDescription, definitions: [] }
+              sections.push(section)
             }
             section.definitions.push(item)
-            return collection
+            return sections
           }, [])
       }
       catch (error) {

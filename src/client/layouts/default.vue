@@ -202,7 +202,9 @@ export default {
       }
     })
 
-    console.log(this.activeWorkspace)
+    setTimeout(() => {
+      console.log(this.activeWorkspace)
+    }, 3000)
   },
 
   beforeDestroy() {

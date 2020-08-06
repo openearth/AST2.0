@@ -17,7 +17,6 @@ import projectToCsv from '../lib/project-to-csv'
 import delay from '../lib/delay'
 import log from '../lib/log';
 import fetchCoBenefitsFromRivm from '../lib/fetch-rivm-co-benefits'
-import { pick } from 'lodash'
 
 const initialState = () => ({
   areas: [],
@@ -535,8 +534,7 @@ export const actions = {
     try {
       const data = await fetchCoBenefitsFromRivm({ areas, projectArea })
       const receivedAt = Date.now()
-      const flattenedEntries = flatten((data.assessmentResults || []).map(item => get(item, 'entries', [])))
-      const entries = flattenedEntries.map(entry => pick(entry, ['code', 'model', 'name', 'units', 'tablevalue']))
+      const entries = flatten((data.assessmentResults || []).map(item => get(item, 'entries', [])))
       commit('setRivmCoBenefits', { receivedAt, entries })
     }
     catch(error) {
