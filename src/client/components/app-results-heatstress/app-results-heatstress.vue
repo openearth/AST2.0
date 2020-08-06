@@ -18,15 +18,7 @@
           :key="layer.id"
           class="md-list-item"
         >
-          <div
-            :class="{ 'md-active': expanded === layer.id }"
-            class="md-list-item-expand md-list-item-container"
-          >
-            <template v-if="layer.errors">
-              <p v-for="(error, index) in layer.errors" :key="index">
-                {{ $t('layer_has_errors') }}
-              </p>
-            </template>
+          <div class="md-list-item-expand md-list-item-container">
             <div class="md-list-item-content">
               <span
                 class="md-list-item-text app-results-heatstress-layers__title"
@@ -36,7 +28,7 @@
                 :value="!layer.visible"
                 @change="
                   value =>
-                    $emit('visibility-change', { id: layer.id, value: !!value })
+                    switchHeatstressLayer({ id: layer.id, value: !!value })
                 "
               />
             </div>
@@ -67,6 +59,7 @@
 
 <script>
 import log from '../../lib/log'
+import { mapActions } from 'vuex'
 
 export default {
   props: {
@@ -86,6 +79,16 @@ export default {
     },
   },
   methods: {
+    ...mapActions({ updateHeatstressLayers: 'project/updateHeatstressLayers' }),
+    switchHeatstressLayer(evt) {
+      console.log(evt)
+      const heatstressLayer = this.heatstressLayers.find(
+        layer => layer.id === evt.id
+      )
+      heatstressLayer.visible = evt.value
+      consoel.log(heatstressLayer)
+      this.updateHeatstressLayers(heatstressLayer)
+    },
     handleFetchData() {
       this.isLoading = true
       this.$emit('fetch-data')

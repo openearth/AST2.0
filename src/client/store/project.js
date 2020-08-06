@@ -150,6 +150,12 @@ export const mutations = {
   clearHeatstressLayers(state) {
     state.map.heatstressLayers = []
   },
+  updateHeatstressLayers(state, value) {
+    const layers = state.map.heatstressLayers.find(
+      layer => layer.id === value.id
+    )
+    Object.assign(layers, value)
+  },
   setMapLayers(state, layer) {
     if (state.map.mapLayers === undefined) {
       Vue.set(state.map, 'mapLayers', [])
