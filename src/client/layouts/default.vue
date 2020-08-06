@@ -13,11 +13,11 @@
       :created-project-area="createdProjectArea"
       :filled-in-required-settings="filledInRequiredProjectAreaSettings"
       :has-areas="!!areas.length"
-      @onCloseNavigation="hideMenu"
-      @saveProject="saveProject"
-      @importProject="onFileInput"
-      @newProject="onNewProject"
-      @exportProject="() => {showExport(); hideMenu();}"
+      @on-close-navigation="hideMenu"
+      @save-project="saveProject"
+      @import-project="onFileInput"
+      @new-project="onNewProject"
+      @export-project="() => {showExport(); hideMenu();}"
     />
 
     <div class="layout__content">
