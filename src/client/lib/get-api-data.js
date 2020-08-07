@@ -6,10 +6,9 @@ async function handleApiResponse(response) {
     return response.json()
   }
 
-  const error =
-    response.status >= 500
-      ? { result: { name: 'Internal Server Error', code: response.status } }
-      : await response.json()
+  const error = response.status >= 500
+    ? { result: { name: 'Internal Server Error', code: response.status } }
+    : await response.json()
 
   log.groupStart.error(`API Request failed. Status code: ${response.status}`)
   log.info('The Error', error.result)
@@ -35,12 +34,7 @@ export function getApiData(uri, body) {
   return getRealApiData(uri, body)
 }
 
-export async function getApiDataForFeature(
-  feature,
-  projectArea,
-  scenarioName,
-  currentReturnTime = 1
-) {
+export async function getApiDataForFeature(feature, projectArea, scenarioName, currentReturnTime = 1) {
   const {
     measure,
     area,
@@ -60,51 +54,17 @@ export async function getApiDataForFeature(
 
   if (measureId) {
     return Promise.all([
-      getRealApiData('heatstress/cost', { scenarioName, area, id }),
-      getRealApiData('heatstress/temperature', {
-        scenarioName,
-        area,
-        id,
-        projectArea,
-      }),
-      getRealApiData('heatstress/waterquality', {
-        scenarioName,
-        area,
-        id,
-        projectArea,
-      }),
-      getRealApiData('pluvflood', {
-        scenarioName,
-        area,
-        id,
-        returnTime,
-        inflow,
-        depth,
-        projectArea,
-      }),
-      getRealApiData('groundwater_recharge', {
-        scenarioName,
-        area,
-        id,
-        returnTime,
-        inflow,
-        depth,
-        projectArea,
-      }),
-      getRealApiData('evapotranspiration', {
-        scenarioName,
-        area,
-        id,
-        returnTime,
-        inflow,
-        depth,
-        projectArea,
-      }),
+        getRealApiData('heatstress/cost', { scenarioName, area, id }),
+        getRealApiData('heatstress/temperature', { scenarioName, area, id, projectArea }),
+        getRealApiData('heatstress/waterquality', { scenarioName, area, id, projectArea }),
+        getRealApiData('pluvflood', { scenarioName, area, id, returnTime, inflow, depth, projectArea }),
+        getRealApiData('groundwater_recharge', { scenarioName, area, id, returnTime, inflow, depth, projectArea }),
+        getRealApiData('evapotranspiration', { scenarioName, area, id, returnTime, inflow, depth, projectArea }),
 
-      Promise.resolve({ data: { storageCapacity: measureArea * depth } }),
-    ]).then(apiData =>
-      apiData.reduce((obj, res) => ({ ...obj, ...res.data, ...res.result }), {})
-    )
+        Promise.resolve({ data: { storageCapacity: measureArea * depth } }),
+      ])
+      .then(apiData => apiData.reduce((obj, res) => ({ ...obj, ...res.data, ...res.result }), {}))
+
   } else {
     return Promise.resolve({})
   }
@@ -113,7 +73,8 @@ export async function getApiDataForFeature(
 export async function getRankedMeasures(projectArea) {
   const requestBody = formatRequestBody(projectArea)
 
-  return getRealApiData('selection', requestBody).then(({ result }) => result)
+  return getRealApiData('selection', requestBody)
+    .then(({ result }) => result)
 }
 
 function formatRequestBody(projectArea) {

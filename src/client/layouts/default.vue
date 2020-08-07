@@ -4,8 +4,7 @@
       :title="title"
       :legal-accepted="legalAccepted"
       :project-title="projectTitle"
-      @onShowNavigation="showMenu"
-    />
+      @onShowNavigation="showMenu"/>
     <app-menu
       :show-navigation="showNavigation"
       :title="title"
@@ -17,18 +16,12 @@
       @saveProject="saveProject"
       @importProject="onFileInput"
       @newProject="onNewProject"
-      @exportProject="
-        () => {
-          showExport()
-          hideMenu()
-        }
-      "
-    />
+      @exportProject="() => {showExport(); hideMenu();}"/>
 
     <div class="layout__content">
       <div v-if="mode === 'modal'" class="layout__page-wrapper">
         <md-content class="md-elevation-6">
-          <nuxt class="layout__page" />
+          <nuxt class="layout__page"/>
         </md-content>
       </div>
       <nuxt v-else />
@@ -57,18 +50,13 @@
           @update="updateArea"
           @delete="deleteArea"
           @selectionchange="selectionChange"
-          @move="setMapPosition"
-        />
+          @move="setMapPosition"/>
         <app-results-panel
           v-if="filledInSettings"
           :heatstress-layers="heatstressLayers"
           :buttons="[
             { id: 'heatstress', icon: 'wb_sunny' },
-            activeWorkspace.showRivmCoBenefits && {
-              id: 'rivm',
-              icon: 'local_florist',
-              color: '--nature-green-color',
-            },
+            (activeWorkspace.showRivmCoBenefits && { id: 'rivm', icon: 'local_florist', color: '--nature-green-color' }),
             { id: 'numbers', icon: 'format_list_numbered' },
             { id: 'bars', icon: 'insert_chart' },
           ]"
@@ -98,7 +86,7 @@
       </md-content>
     </div>
 
-    <virtual-keyboard class="layout__virtual-keyboard" />
+    <virtual-keyboard class="layout__virtual-keyboard"/>
 
     <md-dialog :md-active="exportShown">
       <md-dialog-title>{{ $t('export_project') }}</md-dialog-title>
@@ -107,14 +95,7 @@
         <p class="md-body">{{ $t('export_description') }}</p>
         <md-field>
           <label for="movie">{{ $t('format') }}</label>
-          <md-select
-            @input="
-              value => {
-                hideExport()
-                exportProject(value)
-              }
-            "
-          >
+          <md-select @input="value => { hideExport(); exportProject(value) }">
             <md-option value="csv">{{ $t('csv') }}</md-option>
             <md-option value="geojson">{{ $t('geojson') }}</md-option>
           </md-select>
@@ -131,8 +112,7 @@
         v-if="!legalAccepted"
         :disclaimer="disclaimer"
         class="layout__disclaimer"
-        @accepted="acceptLegal"
-      />
+        @accepted="acceptLegal"/>
     </transition>
 
     <notification-area
@@ -147,15 +127,13 @@
 
 <script>
 import { mapState, mapMutations, mapGetters, mapActions } from 'vuex'
-import {
-  AppDisclaimer,
-  AppHeader,
-  MapViewer,
-  KpiPanel,
-  VirtualKeyboard,
-  AppMenu,
-  NotificationArea,
-} from '../components'
+import AppDisclaimer from '../components/app-disclaimer'
+import AppHeader from '../components/app-header'
+import MapViewer from '../components/map-viewer'
+import KpiPanel from '../components/kpi-panel'
+import VirtualKeyboard from '../components/virtual-keyboard'
+import AppMenu from '../components/app-menu'
+import NotificationArea from '../components/notification-area'
 import AppResultsPanel from '../components/app-results-panel'
 import AppResultsRivm from '../components/app-results-rivm'
 import AppResultsHeatstress from '../components/app-results-heatstress'
@@ -185,11 +163,7 @@ export default {
   head() {
     return {
       meta: [
-        {
-          hid: 'description',
-          name: 'description',
-          content: this.$i18n.t('app_description'),
-        },
+        { hid: 'description', name: 'description', content: this.$i18n.t('app_description') },
       ],
       title: this.title,
     }
@@ -213,44 +187,15 @@ export default {
       userIsRefreshing: state => state.user.isRefreshing,
       rivmCoBenefits: state => state.project.rivmCoBenefits,
     }),
-    ...mapGetters('project', [
-      'filteredKpiValues',
-      'filteredKpiPercentageValues',
-      'filteredKpiGroups',
-      'areas',
-      'wmsLayers',
-      'customLayers',
-      'mapLayers',
-      'layers',
-      'heatstressLayers',
-    ]),
-    ...mapGetters('flow', [
-      'acceptedLegal',
-      'createdProjectArea',
-      'filledInRequiredProjectAreaSettings',
-      'currentFilledInLevel',
-      'filledInSettings',
-    ]),
-    ...mapGetters({ selectedAreas: 'selectedAreas/features' }),
-    ...mapGetters('map', [
-      'isProject',
-      'point',
-      'line',
-      'polygon',
-      'addOnly',
-      'interactive',
-      'search',
-    ]),
+    ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers', 'customLayers', 'heatstressLayers', 'mapLayers', 'layers']),
+    ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings']),
+    ...mapGetters({ selectedAreas:  'selectedAreas/features' }),
+    ...mapGetters('map', ['isProject', 'point', 'line', 'polygon', 'addOnly', 'interactive', 'search']),
     ...mapGetters('user', ['isLoggedIn']),
     ...mapGetters('data/appConfig', ['title']),
     ...mapGetters('data/workspaces', ['activeWorkspace']),
     layerList() {
-      return [
-        ...this.customLayers,
-        ...this.layers,
-        ...this.mapLayers,
-        ...this.wmsLayers,
-      ]
+      return [...this.customLayers, ...this.layers, ...this.mapLayers, ...this.wmsLayers]
     },
   },
 
@@ -345,7 +290,7 @@ export default {
       EventBus.$emit(CLICK, event)
     },
     beforeUnload(e) {
-      const message = 'You may have unsaved changes'
+      const message = "You may have unsaved changes"
       e.returnValue = message
       return message
     },

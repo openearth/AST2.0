@@ -12,12 +12,15 @@
       v-if="heatstressLayers.length > 0"
       class="app-results-heatstress__content"
     >
-      <md-list ref="list">
-        <li
-          v-for="layer in heatstressLayers"
-          :key="layer.id"
-          class="md-list-item"
-        >
+      <md-list>
+        <span class="md-list-item-text">Heatstress</span>
+        <md-button class="md-icon-button info-button">
+          <md-icon>info</md-icon>
+          <md-tooltip md-direction="top">
+            Behulpzame tekst
+          </md-tooltip>
+        </md-button>
+        <md-list-item v-for="layer in heatstressLayers" :key="layer.id">
           <div class="md-list-item-expand md-list-item-container">
             <div class="md-list-item-content">
               <span
@@ -33,7 +36,7 @@
               />
             </div>
           </div>
-        </li>
+        </md-list-item>
       </md-list>
     </div>
     <footer class="app-results-heatstress__footer">

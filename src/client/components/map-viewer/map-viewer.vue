@@ -64,14 +64,7 @@
 </template>
 
 <script>
-import MapEventBus, {
-  MODE,
-  TRASH,
-  DELETE,
-  ZOOM_IN,
-  ZOOM_OUT,
-  SEARCH,
-} from '../../lib/map-event-bus'
+import MapEventBus, { MODE, TRASH, DELETE, ZOOM_IN, ZOOM_OUT, SEARCH } from "../../lib/map-event-bus";
 import MapBox from '../map-box'
 import LayerLegend from '../layer-legend'
 import MapControls from '../map-controls'
