@@ -178,7 +178,7 @@ export default {
         (
           // @TODO :: Re-add this check when Peter finds out why it isn't showing in deploy previews
           // this.activeWorkspace.showRivmCoBenefits &&
-          { id: 'rivm', icon: 'local_florist', color: '--nature-green-color' }
+          { id: 'rivm', icon: 'eco', color: '--nature-green-color' }
         ),
       ]
     },
