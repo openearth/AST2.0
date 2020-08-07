@@ -19,17 +19,15 @@
             <dt
               :key="`${ definition.code }-term`"
               class="md-body-1"
-              v-html="definition.text"
-            />
+            >
+              <span v-html="definition.text" />
+              <span> ({{ definition.unit }}):</span>
+            </dt>
             <dd
               :key="`${ definition.code }-definition`"
               class="app-results-rivm__value"
             >
-              <span>{{ definition.value }}</span>
-              <span
-                v-if="!isNil(definition.unit)"
-                class="app-results-rivm__unit"
-              >{{ definition.unit }}</span>
+              {{ definition.value }}
             </dd>
           </template>
         </dl>
@@ -59,8 +57,6 @@
 </template>
 
 <script>
-import isNil from '@/lib/isNil'
-
 export default {
   props: {
     data: {
@@ -90,7 +86,7 @@ export default {
           // })
           .map(({ code, name, tablevalue, units, model, modelDescription }) => ({
             code,
-            text: name,
+            text: name.trim(),
             value: tablevalue,
             unit: units,
             model,
@@ -121,9 +117,6 @@ export default {
     handleFetchData() {
       this.isLoading = true
       this.$emit('fetch-data')
-    },
-    isNil(x) {
-      return isNil(x)
     },
   },
 }
@@ -192,12 +185,5 @@ export default {
 
 .app-results-rivm__value {
   text-align: right;
-}
-
-.app-results-rivm__unit::before {
-  content: ' ['
-}
-.app-results-rivm__unit::after {
-  content: ']'
 }
 </style>

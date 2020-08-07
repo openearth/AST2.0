@@ -173,13 +173,13 @@ export default {
     },
     sidePanelTabButtons() {
       return [
+        { id: 'numbers', icon: 'format_list_numbered' },
+        { id: 'bars', icon: 'insert_chart' },
         (
           // @TODO :: Re-add this check when Peter finds out why it isn't showing in deploy previews
           // this.activeWorkspace.showRivmCoBenefits &&
           { id: 'rivm', icon: 'local_florist', color: '--nature-green-color' }
         ),
-        { id: 'numbers', icon: 'format_list_numbered' },
-        { id: 'bars', icon: 'insert_chart' },
       ]
     },
   },
