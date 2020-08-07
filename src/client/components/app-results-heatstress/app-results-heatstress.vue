@@ -59,7 +59,8 @@
 
 <script>
 import log from '../../lib/log'
-import { mapActions } from 'vuex'
+import { mapMutations } from 'vuex'
+import cloneDeep from 'lodash/cloneDeep'
 
 export default {
   props: {
@@ -79,14 +80,13 @@ export default {
     },
   },
   methods: {
-    ...mapActions({ updateHeatstressLayers: 'project/updateHeatstressLayers' }),
+    ...mapMutations({
+      updateHeatstressLayers: 'project/updateHeatstressLayers',
+    }),
     switchHeatstressLayer(evt) {
-      console.log(evt)
-      const heatstressLayer = this.heatstressLayers.find(
-        layer => layer.id === evt.id
-      )
+      const layers = cloneDeep(this.heatstressLayers)
+      const heatstressLayer = layers.find(layer => layer.id === evt.id)
       heatstressLayer.visible = evt.value
-      consoel.log(heatstressLayer)
       this.updateHeatstressLayers(heatstressLayer)
     },
     handleFetchData() {

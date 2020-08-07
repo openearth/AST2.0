@@ -449,26 +449,38 @@ export const actions = {
 
     // Mocking for first testing purposes and not overloading the geoserver!
     const exampleResp = {
-      PETnew: {
-        layerName: 'TEMP:PET_new_1596722438828184',
-        baseUrl: 'http://tl-tc117.xtr.deltares.nl:8080/geoserver/ows?',
+      layers: [
+        {
+          id: 'PETdiff',
+          baseUrl:
+            'https://tl-ng045.xtr.deltares.nl/geoserver/TEMP/wms?service=WMS&',
+          layerName: 'TEMP:PET_diff_1596779462894376',
+        },
+        {
+          id: 'PETnew',
+          baseUrl:
+            'https://tl-ng045.xtr.deltares.nl/geoserver/TEMP/wms?service=WMS&',
+          layerName: 'TEMP:PET_new_1596779463554827',
+        },
+      ],
+      newStats: {
+        max: 128.0,
+        mean: 30.267477272727,
+        min: 0.0,
       },
-      PETdiff: {
-        layerName: 'TEMP:PET_diff_1596722438123941',
-        baseUrl: 'http://tl-tc117.xtr.deltares.nl:8080/geoserver/ows?',
+      oldStats: {
+        max: 128.0,
+        mean: 30.267477272727273,
+        min: 0.0,
       },
-      oldStats: { min: 0.0, max: 128.0, mean: 30.267477272727273 },
-      newStats: { min: 0.0, max: 128.0, mean: 30.267477272727 },
     }
+
     const tileSize = 1024
-    const layers = ['PETdiff', 'PETnew']
-    layers.forEach(name => {
-      const layer = exampleResp[name]
-      // TODO: creating this layer should be in API?
+    exampleResp.layers.forEach(layer => {
       const heatstressLayer = {
-        id: name,
+        id: layer.id,
         title: layer.layerName,
-        url: `${layer.baseUrl}?service=getMap&layers=${layer.layerName}&request=GetMap&transparent=True&version=1.1.1&bbox={bbox-epsg-3857}&srs=EPSG:3857&crs=EPSG:3857&format=image/png&width=${tileSize}&height=${tileSize}`,
+        url: `${layer.baseUrl}layers=${layer.layerName}&request=GetMap&transparent=True&version=1.1.1&bbox={bbox-epsg-3857}&srs=EPSG:3857&crs=EPSG:3857&format=image/png&width=${tileSize}&height=${tileSize}`,
         visible: false,
         showLegend: false,
         opacity: 1,
@@ -496,7 +508,7 @@ export const actions = {
     //         visible: false,
     //         showLegend: false,
     //         opacity: 1,
-    //         type: 'raster',
+    //         layerType: 'raster',
     //         tilesize: tileSize,
     //       }
     //       commit('setHeatstressLayers', heatstressLayer)

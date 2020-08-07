@@ -152,8 +152,37 @@ export default {
     layerList() {
       ;[...this.layerList].reverse().forEach(this.addWmsLayer)
     },
-    heatstressLayers() {
-      ;[...this.heatstressLayers].reverse().forEach(this.addWmsLayer)
+    heatstressLayers: {
+      deep: true,
+      handler(newLayers, oldLayers) {
+        ;[...newLayers].reverse().forEach(newLayer => {
+          // Find the old layer with the same ID
+          const oldLayer = oldLayers.find(
+            oldLayer => oldLayer.id === newLayer.id
+          )
+
+          if (!oldLayer) {
+            this.addWmsLayer(newLayer)
+            return
+          }
+          if (oldLayer.title === newLayer.title) {
+            // If the oldLayer with the same id as the newLayer, check for visibility changes
+            if (newLayer.visible === true) {
+              this.showWmsLayer(newLayer.id)
+            } else {
+              this.hideWmsLayer(newLayer.id)
+            }
+          } else {
+            // if not, the layer itself might have updated
+            layer = this.map.getLayer(`wms-layer-${id}`)
+            if (layer) {
+              // if there is already an old layer with this id, remove it first
+              this.removeLayer(`wms-layer-${oldLayer.id}`)
+              this.addWmsLayer(newLayer)
+            }
+          }
+        })
+      },
     },
   },
 
