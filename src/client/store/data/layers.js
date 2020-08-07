@@ -1,4 +1,3 @@
-import getData from '../../lib/get-data'
 import randomColor from '../../lib/random-color';
 
 function WMSLayer(layer) {

@@ -2,18 +2,20 @@
   <carousel
     :per-page="1"
     :navigation-enabled="true"
-    class="image-carousel">
+    class="image-carousel"
+  >
     <slide
       v-for="(image, index) in images"
       :key="index"
       :data-index="index"
-      :data-name="`image-${index}`">
+      :data-name="`image-${index}`"
+    >
       <fixed-ratio
         :height="2"
         :width="3"
         comp-inner="figure"
       >
-        <img :src="image.image.url" class="md-image" >
+        <img :src="image.image.url" class="md-image">
       </fixed-ratio>
       <p
         v-if="image.image.copyright || image.image.author || image.source"

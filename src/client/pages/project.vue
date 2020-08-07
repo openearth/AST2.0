@@ -2,19 +2,18 @@
   <md-drawer
     :class="{[`view-project__${drawerWidth}`]: true}"
     class="view-project"
-    md-permanent="clipped">
+    md-permanent="clipped"
+  >
     <nuxt-child />
   </md-drawer>
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions } from "vuex"
-import { MeasureCard, SearchInput } from '~/components'
-import MapEventBus, { REDRAW } from "../lib/map-event-bus"
+import { mapState, mapGetters, mapActions } from 'vuex'
+import MapEventBus, { REDRAW } from '../lib/map-event-bus'
 import getViewPath from '../lib/get-view-path'
 
 export default {
-  components: { MeasureCard, SearchInput },
   middleware: ['state-is-default'],
   data() {
     return {

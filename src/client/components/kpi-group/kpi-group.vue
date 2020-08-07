@@ -1,11 +1,14 @@
 <template>
   <md-list class="kpi-group">
-    <h2 class="kpi-group__title md-body-2">{{ kpiGroup.title }}</h2>
+    <h2 class="kpi-group__title md-body-2">
+      {{ kpiGroup.title }}
+    </h2>
 
     <md-list-item
       v-for="kpi in kpiGroup.kpis"
       :key="kpi.key"
-      class="kpi-group__kpi">
+      class="kpi-group__kpi"
+    >
       <span class="md-body-1 kpi-group__kpi-title">
         {{ kpi.title }}:
       </span>

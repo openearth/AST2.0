@@ -4,7 +4,8 @@
       <md-button
         :class="{'md-primary': showSearch}"
         class="md-icon-button md-raised"
-        @click="showSearch = !showSearch">
+        @click="showSearch = !showSearch"
+      >
         <md-icon>search</md-icon>
       </md-button>
       <search-input
@@ -21,7 +22,8 @@
       <md-button
         :class="{'md-primary': currentMode === 'draw_polygon'}"
         class="md-icon-button md-raised"
-        @click="$emit('setMode', 'draw_polygon')">
+        @click="$emit('setMode', 'draw_polygon')"
+      >
         <md-icon>crop_square</md-icon>
       </md-button>
     </li>
@@ -30,7 +32,8 @@
       <md-button
         :class="{'md-primary': currentMode === 'draw_line_string'}"
         class="md-icon-button md-raised"
-        @click="$emit('setMode', 'draw_line_string')">
+        @click="$emit('setMode', 'draw_line_string')"
+      >
         <md-icon>timeline</md-icon>
       </md-button>
     </li>
@@ -39,7 +42,8 @@
       <md-button
         :class="{'md-primary': currentMode === 'draw_point'}"
         class="md-icon-button md-raised"
-        @click="$emit('setMode', 'draw_point')">
+        @click="$emit('setMode', 'draw_point')"
+      >
         <md-icon>location_on</md-icon>
       </md-button>
     </li>
@@ -47,7 +51,8 @@
     <li v-if="trash" class="map-controls__item map-controls__item--trash">
       <md-button
         class="md-icon-button md-raised"
-        @click="$emit('trash')">
+        @click="$emit('trash')"
+      >
         <md-icon>delete</md-icon>
       </md-button>
     </li>
@@ -67,14 +72,16 @@
           class="map-controls__layer-list"
           @opacity-change="event => $emit('layer-opacity-change', event)"
           @visibility-change="event => $emit('layer-visibility-change', event)"
-          @legend-visibility-change="event => $emit('legend-visibility-change', event)"/>
+          @legend-visibility-change="event => $emit('legend-visibility-change', event)"
+        />
       </transition>
     </li>
 
     <li v-if="zoomIn" class="map-controls__item map-controls__item--zoom-in">
       <md-button
         class="md-icon-button md-raised"
-        @click="$emit('zoom-in')">
+        @click="$emit('zoom-in')"
+      >
         <md-icon>add</md-icon>
       </md-button>
     </li>
@@ -82,18 +89,18 @@
     <li v-if="zoomOut" class="map-controls__item map-controls__item--zoom-out">
       <md-button
         class="md-icon-button md-raised"
-        @click="$emit('zoom-out')">
+        @click="$emit('zoom-out')"
+      >
         <md-icon>remove</md-icon>
       </md-button>
     </li>
-
   </ul>
 </template>
 
 <script>
 import SearchInput from '../search-input'
-import LayerList from "../layer-list";
-import EventBus, { CLICK } from "~/lib/event-bus";
+import LayerList from '../layer-list';
+import EventBus, { CLICK } from '~/lib/event-bus';
 
 export default {
   components: { SearchInput, LayerList },

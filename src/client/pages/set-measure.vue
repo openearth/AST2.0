@@ -4,19 +4,21 @@
       :steps="steps"
       :current="activeStep.id"
       :wide="activeStep.isWide"
-      @to-step="toStep"/>
+      @to-step="toStep"
+    />
     <nuxt-child />
     <md-button
       slot="footer"
       class="md-raised"
-      @click="resetFlow">
+      @click="resetFlow"
+    >
       Cancel
     </md-button>
   </app-panel>
 </template>
 
 <script>
-import { mapGetters, mapState, mapMutations, mapActions } from 'vuex'
+import { mapGetters, mapState, mapActions } from 'vuex'
 import { AppPanel, MeasureStepper } from '~/components'
 
 export default {

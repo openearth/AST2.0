@@ -1,6 +1,3 @@
-const keys = ['default', 'satellite']
-const labels = ['Default', 'Satellite']
-
 export default {
   $id: '/map-schema',
   type: 'object',

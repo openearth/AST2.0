@@ -6,19 +6,24 @@
       :md-duration="Infinity"
       :md-active="true"
       md-position="center"
-      md-persistent>
+      md-persistent
+    >
       <span>
         <md-icon
           v-if="notification.type === 'warning'"
           class="md-primary"
-          style="color: #FFEB3B;">warning</md-icon>
+          style="color: #FFEB3B;"
+        >warning</md-icon>
         <md-icon
           v-if="notification.type === 'error'"
           class="md-primary"
-          style="color: #F44336;">error</md-icon>
+          style="color: #F44336;"
+        >error</md-icon>
         {{ notification.message }}
       </span>
-      <md-button class="md-primary" @click="$emit('remove-notification', notification.id)">Close</md-button>
+      <md-button class="md-primary" @click="$emit('remove-notification', notification.id)">
+        Close
+      </md-button>
     </md-snackbar>
   </div>
 </template>

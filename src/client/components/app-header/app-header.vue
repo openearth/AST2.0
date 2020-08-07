@@ -11,7 +11,8 @@
           'md-title': !hasTitle
         }"
       >
-        {{ title }}</h1>
+        {{ title }}
+      </h1>
     </section>
 
     <small
@@ -29,7 +30,8 @@
         v-if="currentFilledInLevel.level >= LEVEL_PROJECT_AREA"
         :key="2"
         :to="`/${this.$i18n.locale}/settings/project-area/`"
-        class="md-primary md-icon-button">
+        class="md-primary md-icon-button"
+      >
         <md-icon>settings</md-icon>
       </md-button>
       <fullscreen-button />
@@ -40,8 +42,8 @@
 
 <script>
 import startCase from 'lodash/startCase'
-import { mapGetters } from "vuex";
-import { LEVEL_PROJECT_AREA } from "../../lib/flow-levels";
+import { mapGetters } from 'vuex';
+import { LEVEL_PROJECT_AREA } from '../../lib/flow-levels';
 import FullscreenButton from '../fullscreen-button'
 import LogIn from '../log-in'
 

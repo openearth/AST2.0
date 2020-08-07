@@ -25,7 +25,7 @@ function scrollBehavior (to, from, savedPosition) {
   if (to.matched.length < 2) {
     // scroll to the top of the page
     position = { x: 0, y: 0 }
-  } else if (to.matched.some((r) => r.components.default.options.scrollToTop)) {
+  } else if (to.matched.some(r => r.components.default.options.scrollToTop)) {
     // if one of the children has scrollToTop option set to true
     position = { x: 0, y: 0 }
   }

@@ -1,10 +1,11 @@
 <template>
   <figure class="responsive-image">
-    <div :style="`max-width:${image.width}px;`" class="responsive-image__sizer" >
+    <div :style="`max-width:${image.width}px;`" class="responsive-image__sizer">
       <fixed-ratio
         :width="image.width"
         :height="image.height"
-        class="responsive-image__canvas">
+        class="responsive-image__canvas"
+      >
         <lazy-load>
           <picture v-if="width" class="responsive-image__picture">
             <!--[if IE 9]><video style="display: none;"><![endif]-->
@@ -14,7 +15,8 @@
             <img
               :alt="image.alt"
               :src="imageUrl({ w: width })"
-              class="responsive-image__img" >
+              class="responsive-image__img"
+            >
           </picture>
         </lazy-load>
         <no-script>
@@ -22,7 +24,8 @@
             <img
               :alt="image.alt"
               :src="imageUrl({ w: 500 })"
-              class="responsive-image__img" >
+              class="responsive-image__img"
+            >
           </picture>
         </no-script>
       </fixed-ratio>

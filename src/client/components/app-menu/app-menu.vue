@@ -3,7 +3,6 @@
     <md-drawer :md-active="showNavigation">
       <md-toolbar class="md-transparent app-menu__header" md-elevation="0">
         <h3
-          v-if="title"
           class="md-body-2"
           role="heading"
           aria-level="2"
@@ -11,7 +10,7 @@
           {{ title }}
         </h3>
 
-        <md-button class="md-icon-button" @click="() => $emit('onCloseNavigation')">
+        <md-button class="md-icon-button" @click="$emit('on-close-navigation')">
           <md-icon>clear</md-icon>
         </md-button>
       </md-toolbar>
@@ -23,7 +22,8 @@
             <md-button
               :disabled="!acceptedLegal"
               class="app-menu__button"
-              @click="$emit('newProject')">
+              @click="$emit('new-project')"
+            >
               <md-icon>add</md-icon>
               <span class="md-body-1">
                 {{ $t('new_project') }}
@@ -35,7 +35,8 @@
             <md-button
               :to="`/${$i18n.locale}/`"
               :disabled="!acceptedLegal"
-              class="app-menu__button app-menu__open-folder-button">
+              class="app-menu__button app-menu__open-folder-button"
+            >
               <md-icon>folder_open</md-icon>
               <span class="md-body-1">
                 {{ $t('open_project') }}
@@ -48,7 +49,8 @@
               class="app-menu__input-file"
               type="file"
               accept="application/json"
-              @change="event => $emit('importProject', event)">
+              @change="event => $emit('import-project', event)"
+            >
           </md-list-item>
           <md-divider />
 
@@ -56,7 +58,8 @@
             <md-button
               :to="`/${$i18n.locale}/settings/project-area/`"
               :disabled="!createdProjectArea"
-              class="app-menu__button">
+              class="app-menu__button"
+            >
               <md-icon>settings</md-icon>
               <span class="md-body-1">
                 {{ $t('project_settings') }}
@@ -68,7 +71,8 @@
             <md-button
               :disabled="!createdProjectArea"
               class="app-menu__button"
-              @click="$emit('saveProject')">
+              @click="$emit('save-project')"
+            >
               <md-icon>save</md-icon>
               <span class="md-body-1">
                 {{ $t('save_project') }}
@@ -80,7 +84,8 @@
             <md-button
               :disabled="!hasAreas"
               class="app-menu__button"
-              @click="$emit('exportProject')">
+              @click="$emit('export-project')"
+            >
               <md-icon>publish</md-icon>
               <span class="md-body-1">
                 {{ $t('export_project') }}
@@ -92,7 +97,8 @@
           <md-list-item>
             <md-button
               :to="`/${$i18n.locale}/about/`"
-              class="app-menu__button">
+              class="app-menu__button"
+            >
               <md-icon>info</md-icon>
               <span class="md-body-1">
                 {{ $t('about') }}
@@ -103,7 +109,8 @@
           <md-list-item>
             <md-button
               :to="`/${$i18n.locale}/documentation/`"
-              class="app-menu__button">
+              class="app-menu__button"
+            >
               <md-icon>help</md-icon>
               <span class="md-body-1">
                 {{ $t('documentation') }}
@@ -114,7 +121,8 @@
           <md-list-item>
             <md-button
               :to="`/${$i18n.locale}/legal/`"
-              class="app-menu__button">
+              class="app-menu__button"
+            >
               <md-icon>list_alt</md-icon>
               <span class="md-body-1">
                 {{ $t('legal') }}
@@ -123,7 +131,6 @@
           </md-list-item>
         </md-list>
       </nav>
-
     </md-drawer>
   </aside>
 </template>

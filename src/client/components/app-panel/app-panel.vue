@@ -1,11 +1,11 @@
 <template>
   <aside :class="{ 'app-panel__wide': wide }" class="app-panel">
     <section class="app-panel__content">
-      <slot/>
+      <slot />
     </section>
-    <span class="spacer"/>
+    <span class="spacer" />
     <footer class="app-panel__footer">
-      <slot name="footer"/>
+      <slot name="footer" />
     </footer>
   </aside>
 </template>

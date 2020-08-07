@@ -1,15 +1,14 @@
+/* eslint-disable no-useless-escape */
 const { promisify } = require('util')
 const path = require('path')
 const readFile = promisify(require('fs').readFile)
 const readFileSync = require('fs').readFileSync
 const readDir = require('fs').readdirSync
 const writeFile = require('fs').writeFileSync
-const glob = promisify(require('glob'))
 const mkdirp = promisify(require('mkdirp'))
 const map = require('lodash/fp/map')
 const identity = require('lodash/fp/identity')
 const flatten = require('lodash/flatten')
-const uniq = require('lodash/uniq')
 const get = require('lodash/fp/get')
 const set = require('lodash/fp/set')
 const kebabCase = require('lodash/fp/kebabCase')
@@ -23,7 +22,6 @@ const availableLocales = ['en', 'nl', 'zh_CN']
 
 const dataFolder = path.resolve(__dirname, '../../src/client/static/data')
 
-const tap = input => { console.log(input); return input; }
 const isQueryFile = file => /.graphql/.test(file) && !/^_/.test(file)
 const resolveTo = dir => file => path.resolve(dir, file)
 const readFileFromPath = path => readFile(path, { encoding: 'utf8' })
@@ -35,14 +33,14 @@ const queryFilePaths = readDir(__dirname)
   .filter(isQueryFile)
   .map(resolveTo(__dirname))
   .reduce((obj, file) => {
-    const [,fileName, localesStr] = /([\w-]+)(?:\.)([\w\.]+)*(?:\.)*graphql$/.exec(file)
+    const [, , localesStr] = /([\w-]+)(?:\.)([\w\.]+)*(?:\.)*graphql$/.exec(file)
     const locales = !localesStr
       ? ['none']
       : flatten(
           localesStr
             .split('.')
             .filter(identity)
-            .map(locale => locale === 'all' ? availableLocales : locale)
+            .map(locale => locale === 'all' ? availableLocales : locale),
         )
 
     locales.forEach(locale => {

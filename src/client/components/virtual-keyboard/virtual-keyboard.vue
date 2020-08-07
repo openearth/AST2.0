@@ -4,18 +4,20 @@
       <div class="virtual-keyboard__wrapper">
         <md-field
           v-if="inputElementRef.dataset.type !== 'number'"
-          class="virtual-keyboard__input md-theme-default md-focused">
+          class="virtual-keyboard__input md-theme-default md-focused"
+        >
           <label>{{ label }}</label>
           <md-input :value="value" />
-          <div class="virtual-keyboard__input-overlay"/>
+          <div class="virtual-keyboard__input-overlay" />
         </md-field>
         <div class="virtual-keyboard__input">
           <numeric-input
             v-if="inputElementRef.dataset.type === 'number'"
             :label="label"
             :value="value"
-            class="md-focused"/>
-          <div class="virtual-keyboard__input-overlay"/>
+            class="md-focused"
+          />
+          <div class="virtual-keyboard__input-overlay" />
         </div>
         <vue-touch-keyboard
           :layout="layout"
@@ -30,8 +32,8 @@
 </template>
 
 <script>
-  import { mapState, mapMutations } from "vuex";
-  import { numericLayout, textLayout } from "../../assets/custom-keyboard-options";
+  import { mapState, mapMutations } from 'vuex';
+  import { numericLayout, textLayout } from '../../assets/custom-keyboard-options';
   import NumericInput from '../numeric-input'
 
   export default {
@@ -71,12 +73,12 @@
         setFocusedInput: 'focusedInput/setFocusedInput',
         removeFocusedInput: 'focusedInput/removeFocusedInput',
       }),
-      accept(text) {
+      accept() {
         this.removeFocusedInput()
         this.hide()
       },
 
-      show(e) {
+      show() {
         if (!this.visible)
           this.visible = true
       },

@@ -1,6 +1,8 @@
 <template>
   <div class="hint-text">
-    <md-icon v-if="icon" class="hint-text__icon">{{ icon }}</md-icon>
+    <md-icon v-if="icon" class="hint-text__icon">
+      {{ icon }}
+    </md-icon>
     <span class="md-caption">{{ text }}</span>
   </div>
 </template>
