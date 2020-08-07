@@ -28,7 +28,7 @@
       </div>
       <nuxt v-else />
       <md-content class="layout__map-wrapper">
-        <map-viewer
+        <!-- <map-viewer
           :project-area="projectArea"
           :is-project="isProject"
           :areas="areas"
@@ -52,7 +52,7 @@
           @delete="deleteArea"
           @selectionchange="selectionChange"
           @move="setMapPosition"
-        />
+        /> -->
         <kpi-panel
           v-if="filledInSettings"
           :kpis="filteredKpiGroups"
@@ -119,7 +119,10 @@ import EventBus, { CLICK } from '~/lib/event-bus';
 import log from '~/lib/log'
 
 export default {
-  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea },
+  components: { AppDisclaimer, AppHeader,
+
+    // MapViewer,
+    KpiPanel, VirtualKeyboard, AppMenu, NotificationArea },
   data() {
     return {
       disclaimer: {},
