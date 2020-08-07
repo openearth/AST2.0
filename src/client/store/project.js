@@ -371,42 +371,25 @@ export const actions = {
   fetchHeatstressData({ state, commit, getters }) {
     commit('clearHeatstressLayers')
     let features = cloneDeep(getters.areas)
+    // If the properties are not set use the defaults
+    features.forEach(area => {
+      area.properties.areaInflow = area.properties.areaInflow ||  area.properties.defaultInflow
+      area.properties.areaDepth = area.properties.areaDepth ||  area.properties.defaultDepth
+      area.properties.areaWidth = area.properties.areaWidth ||  area.properties.defaultWidth
+      area.properties.areaRadius = area.properties.areaRadius ||  area.properties.defaultRadius
+    })
     features.push(state.settings.area)
 
     // Mocking for first testing purposes and not overloading the geoserver!
-    // const exampleResp = {
-    //   layers: [
-    //     {
-    //       id: 'PETdiff',
-    //       baseUrl:
-    //         'https://tl-ng045.xtr.deltares.nl/geoserver/TEMP/wms?service=WMS&',
-    //       layerName: 'TEMP:PET_diff_1596779462894376',
-    //     },
-    //     {
-    //       id: 'PETnew',
-    //       baseUrl:
-    //         'https://tl-ng045.xtr.deltares.nl/geoserver/TEMP/wms?service=WMS&',
-    //       layerName: 'TEMP:PET_new_1596779463554827',
-    //     },
-    //   ],
-    //   newStats: {
-    //     max: 128.0,
-    //     mean: 30.267477272727,
-    //     min: 0.0,
-    //   },
-    //   oldStats: {
-    //     max: 128.0,
-    //     mean: 30.267477272727273,
-    //     min: 0.0,
-    //   },
-    // }
+    // const exampleResp ={ 'layers':[{ 'baseUrl':'https://tl-ng045.xtr.deltares.nl/geoserver/TEMP/ows?','id':'pet_new','layerName':'PET_new_1596803020709036','tileSize':'','title':'PET new' },
+    // { 'baseUrl':'https://tl-ng045.xtr.deltares.nl/geoserver/ows?','id':'pet_diff','layerName':'TEMP:PET_diff_1596803020709036','tileSize':'','title':'PET differences' },{ 'baseUrl':'https://tl-ng045.xtr.deltares.nl/geoserver/ows?','id':'pet_original','layerName':'TEMP:PET_original_1596803020709036','tileSize':'','title':'PET original' }],'newStats':{ 'max':128.0,'mean':30.267477272727,'min':0.0 },'oldStats':{ 'max':128.0,'mean':30.267477272727273,'min':0.0 } }
     //
-    // const tileSize = 1024
+    // const tileSize = 512
     // exampleResp.layers.forEach(layer => {
     //   const heatstressLayer = {
     //     id: layer.id,
-    //     title: layer.layerName,
-    //     url: `${layer.baseUrl}layers=${layer.layerName}&request=GetMap&transparent=True&version=1.1.1&bbox={bbox-epsg-3857}&srs=EPSG:3857&crs=EPSG:3857&format=image/png&width=${tileSize}&height=${tileSize}`,
+    //     title: layer.title,
+    //     url: `${layer.baseUrl}service=WMS&layers=${layer.layerName}&request=GetMap&transparent=True&version=1.1.1&bbox={bbox-epsg-3857}&srs=EPSG:3857&crs=EPSG:3857&format=image/png&width=${tileSize}&height=${tileSize}`,
     //     visible: false,
     //     showLegend: false,
     //     opacity: 1,
@@ -425,12 +408,12 @@ export const actions = {
     })
       .then(apiData => {
         console.log('apidata check', apiData)
-        const tileSize = 1024
+        const tileSize = 512
         apiData.layers.forEach(layer => {
           const heatstressLayer = {
             id: layer.id,
-            title: layer.layerName,
-            url: `${layer.baseUrl}layers=${layer.layerName}&request=GetMap&transparent=True&version=1.1.1&bbox={bbox-epsg-3857}&srs=EPSG:3857&crs=EPSG:3857&format=image/png&width=${tileSize}&height=${tileSize}`,
+            title: layer.title,
+            url: `${layer.baseUrl}service=WMS&layers=${layer.layerName}&request=GetMap&transparent=True&version=1.1.1&bbox={bbox-epsg-3857}&srs=EPSG:3857&crs=EPSG:3857&format=image/png&width=${tileSize}&height=${tileSize}`,
             visible: false,
             showLegend: false,
             opacity: 1,
@@ -438,6 +421,9 @@ export const actions = {
             tilesize: tileSize,
           }
           commit('setHeatstressLayers', heatstressLayer)
+        //   commit('setHeatstressResults', {
+        //     layers: heatstressLayers,
+        //     heatstressResults)
         })
       })
       .catch(error => {

@@ -1,28 +1,5 @@
 <template>
   <section :class="{ 'kpi-panel__has-footer': hasFooter }" class="kpi-panel">
-    <div class="kpi-panel__header">
-      <h4 class="md-title">
-        {{ $t('results') }}
-      </h4>
-
-      <div>
-        <md-button
-          :class="{'md-primary': displayType === 'numbers'}"
-          class="md-icon-button"
-          @click="displayType = 'numbers'"
-        >
-          <md-icon>format_list_numbered</md-icon>
-        </md-button>
-
-        <md-button
-          :class="{'md-primary': displayType === 'bars'}"
-          class="md-icon-button"
-          @click="displayType = 'bars'"
-        >
-          <md-icon>insert_chart</md-icon>
-        </md-button>
-      </div>
-    </div>
     <div class="kpi-panel__content">
       <kpi-group
         v-for="kpiGroup in kpis"
