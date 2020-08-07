@@ -140,24 +140,24 @@ export default {
       this.$nextTick(this.fillMap)
     },
     wmsLayers() {
-      ;[...this.wmsLayers].reverse().forEach(this.addWmsLayer)
+      [...this.wmsLayers].reverse().forEach(this.addWmsLayer)
     },
     customLayers() {
-      ;[...this.customLayers].reverse().forEach(this.addWmsLayer)
+      [...this.customLayers].reverse().forEach(this.addWmsLayer)
     },
     mapLayers() {
-      ;[...this.mapLayers].reverse().forEach(this.addWmsLayer)
+      [...this.mapLayers].reverse().forEach(this.addWmsLayer)
     },
     layerList() {
-      ;[...this.layerList].reverse().forEach(this.addWmsLayer)
+      [...this.layerList].reverse().forEach(this.addWmsLayer)
     },
     heatstressLayers: {
       deep: true,
       handler(newLayers, oldLayers) {
-        ;[...newLayers].reverse().forEach(newLayer => {
+        [...newLayers].reverse().forEach(newLayer => {
           // Find the old layer with the same ID
           const oldLayer = oldLayers.find(
-            oldLayer => oldLayer.id === newLayer.id
+            oldLayer => oldLayer.id === newLayer.id,
           )
 
           if (!oldLayer) {
@@ -173,7 +173,7 @@ export default {
             }
           } else {
             // if not, the layer itself might have updated
-            layer = this.map.getLayer(`wms-layer-${id}`)
+            const layer = this.map.getLayer(`wms-layer-${newLayer.id}`)
             if (layer) {
               // if there is already an old layer with this id, remove it first
               this.removeLayer(`wms-layer-${oldLayer.id}`)
@@ -413,7 +413,7 @@ export default {
       } catch (err) {
         log.warning(
           `Map styles are not loaded yet. Ignore adding layer ${title}`,
-          err
+          err,
         )
         return
       }

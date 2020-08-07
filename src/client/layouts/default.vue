@@ -53,7 +53,8 @@
           @update="updateArea"
           @delete="deleteArea"
           @selectionchange="selectionChange"
-          @move="setMapPosition"/>
+          @move="setMapPosition"
+        />
         <app-results-panel
           v-if="filledInSettings"
           :heatstress-layers="heatstressLayers"
@@ -149,7 +150,6 @@ import NotificationArea from '../components/notification-area'
 import AppResultsPanel from '../components/app-results-panel'
 import AppResultsRivm from '../components/app-results-rivm'
 import AppResultsHeatstress from '../components/app-results-heatstress'
-import { mapFields } from 'vuex-map-fields'
 import getData from '~/lib/get-data'
 import EventBus, { CLICK } from '~/lib/event-bus'
 import log from '~/lib/log'

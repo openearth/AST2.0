@@ -8,7 +8,7 @@ import round from 'lodash/round'
 import unset from 'lodash/unset'
 import flatten from 'lodash/flatten'
 import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT, REPAINT, DELETE_LAYER } from '../lib/map-event-bus'
-import { getApiDataForFeature, getRankedMeasures } from '../lib/get-api-data';
+import { getApiData, getApiDataForFeature, getRankedMeasures } from '../lib/get-api-data';
 import FileSaver from 'file-saver'
 import getLoadedFileContents from '../lib/get-loaded-file-contents'
 import validateProject from '../lib/validate-project'
@@ -444,7 +444,7 @@ export const actions = {
         console.log('error fetching heatstress reduction', error)
       })
   },
-  bootstrapSettingsProjectArea({ state, commit }, settings) {
+  bootstrapSettingsProjectArea({ commit }, settings) {
     settings.forEach(setting => {
       let value = null
 
@@ -844,8 +844,9 @@ export const getters = {
   kpiTargetValues: state => {
     const targets = state.settings.targets
     return Object.keys(targets)
-    Object.keys(targets[group])
-      .reduce((obj, key) => ({ ...obj, [key]: parseFloat(targets[group][key].value, 10) || 0 }), {})
+      .map(group =>
+        Object.keys(targets[group])
+          .reduce((obj, key) => ({ ...obj, [key]: parseFloat(targets[group][key].value, 10) || 0 }), {}))
       .reduce((obj, item) => ({ ...obj, ...item }), {})
   },
   kpiPercentageValues: (state, getters) => {

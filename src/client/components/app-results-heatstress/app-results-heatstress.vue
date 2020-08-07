@@ -25,8 +25,7 @@
             <div class="md-list-item-content">
               <span
                 class="md-list-item-text app-results-heatstress-layers__title"
-              >{{ layer.title }}</span
-              >
+              >{{ layer.title }}</span>
               <md-switch
                 :value="!layer.visible"
                 @change="
@@ -61,7 +60,6 @@
 </template>
 
 <script>
-import log from '../../lib/log'
 import { mapMutations } from 'vuex'
 import cloneDeep from 'lodash/cloneDeep'
 
