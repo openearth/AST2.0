@@ -45,7 +45,11 @@
             </div>
           </section>
         </div>
-        <md-button class="scenario-overview__choose-btn md-raised md-primary" @click="choose">
+        <md-button
+          class="scenario-overview__choose-btn md-raised md-primary"
+          :disabled="activeScenario === nonChosenScenario"
+          @click="choose"
+        >
           {{ $t('choose') }} {{ activeTabLabel }}
         </md-button>
       </div>
@@ -74,6 +78,7 @@ export default {
     return {
       showPopup: false,
       activeTab: undefined,
+      nonChosenScenario: { title: '', example: [] },
     }
   },
   computed: {
@@ -81,10 +86,10 @@ export default {
       return this.value
     },
     activeScenario() {
-      return this.scenarios.find(option => option.value === this.activeTab)
+      return this.scenarios.find(option => option.value === this.activeTab) || this.nonChosenScenario
     },
     activeTabLabel() {
-      const activeOption = this.activeScenario || {}
+      const activeOption = this.activeScenario
       return activeOption.title || ''
     },
   },
@@ -142,15 +147,6 @@ export default {
 .scenario-overview__tab-content {
   max-height: 100%;
   overflow: scroll;
-}
-
-.scenario-overview__tab-content-wrapper {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-}
-
-.scenario-overview__tab-content--text {
-  grid-column: 1 / -1;
 }
 
 .scenario-overview__choose-btn {
