@@ -168,4 +168,8 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.scenario-overview__tab-content--text .rich-text {
+  max-width: initial;
+}
 </style>
