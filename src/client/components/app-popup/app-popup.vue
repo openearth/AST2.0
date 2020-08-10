@@ -29,9 +29,20 @@ export default {
           default: 'Results',
       },
   },
+  mounted() {
+    document.addEventListener('keydown', this.handleEsc)
+  },
+  destroyed() {
+    document.removeEventListener('keydown', this.handleEsc)
+  },
   methods: {
     closeHandler() {
       this.$emit('closePopup');
+    },
+    handleEsc(event) {
+      if(event.key === 'Escape') {
+        this.closeHandler()
+      }
     },
   },
 }

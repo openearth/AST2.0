@@ -3,6 +3,7 @@ query ($locale: SiteLocale, $id: ItemId){
     name,
     currencySymbol,
     excludeAllMeasures,
+    showScenarioExamplesInSettings,
     applicationTitle,
     measureOverrides,
     scenarioName,
