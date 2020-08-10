@@ -8,11 +8,11 @@
 @import "~vue-material/dist/theme/all"; // Apply the theme
 
 // CTA's should be yellow according to the huisstijl document.
-.md-button.md-theme-default.md-raised:not([disabled]).md-primary {
-  background-color: #00cc96;
-  color: black;
-}
+// .md-button.md-theme-default.md-raised:not([disabled]).md-primary {
+//   background-color: #0EBBF0;
+//   color: black;
+// }
 
-.md-button.md-theme-default.md-raised:not([disabled]).md-primary .md-icon-font {
-  color: black;
-}
+// .md-button.md-theme-default.md-raised:not([disabled]).md-primary .md-icon-font {
+//   color: black;
+// }

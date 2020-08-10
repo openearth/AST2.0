@@ -63,12 +63,12 @@
       </md-list>
     </md-dialog-content>
     <md-dialog-actions>
-      <md-button class="md-primary" @click="onCancel">
+      <md-button class="md-accent" @click="onCancel">
         {{ $t('cancel') }}
       </md-button>
       <md-button
         v-if="state !== 'settings'"
-        class="md-primary"
+        class="md-accent"
         @click="state = 'settings'"
       >
         {{ $t('back') }}
@@ -76,7 +76,7 @@
       <md-button
         v-if="state === 'settings'"
         :disabled="serverType === '' || serverUrl === ''"
-        class="md-primary"
+        class="md-accent"
         @click="retrieveLayers()"
       >
         {{ $t('retrieve_layers') }}
@@ -84,7 +84,7 @@
       <md-button
         v-if="state === 'layers'"
         :disabled="checkedLayers.length === 0"
-        class="md-primary"
+        class="md-accent"
         @click="addLayers(); $emit('update:showLayerDialog', false)"
       >
         {{ $t('add_layers') }}

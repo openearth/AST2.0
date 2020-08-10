@@ -5,7 +5,7 @@
       class="md-transparent project-area__area-size"
     >
       <span class="md-subheading">{{ $t('area_size') }}: <strong>{{ area }}m<sup>2</sup></strong></span>
-      <md-button :to="`/${locale}/new-project`" class="md-primary">
+      <md-button :to="`/${locale}/new-project`" class="md-accent">
         {{ $t('change_area') }}
       </md-button>
     </md-toolbar>

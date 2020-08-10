@@ -13,7 +13,7 @@
 
         <div class="md-toolbar-section-end">
           <md-button
-            :class="{'md-primary': sortFeatured === true}"
+            :class="{'md-accent': sortFeatured === true}"
             class="md-icon-button"
             @click="sortFeatured = !sortFeatured"
           >
@@ -28,7 +28,7 @@
           <div class="measure-list__filter-seperator" />
 
           <md-button
-            :class="{'md-primary': sortType === ALPHA}"
+            :class="{'md-accent': sortType === ALPHA}"
             class="md-icon-button"
             @click="sortType = ALPHA"
           >
@@ -69,7 +69,7 @@
             </svg>
           </md-button>
           <md-button
-            :class="{'md-primary': sortType === SYSTEM_SUITABILITY}"
+            :class="{'md-accent': sortType === SYSTEM_SUITABILITY}"
             class="md-icon-button"
             @click="sortType = SYSTEM_SUITABILITY"
           >
