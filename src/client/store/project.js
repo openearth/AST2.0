@@ -538,7 +538,7 @@ export const actions = {
       commit('setRivmCoBenefits', { receivedAt, entries })
     }
     catch(error) {
-      console.error(error);
+      console.error('in projec action', error);
     }
   },
 }

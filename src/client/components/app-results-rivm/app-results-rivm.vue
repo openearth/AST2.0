@@ -80,10 +80,6 @@ export default {
     transformedData(){
       try {
         return this.data.entries
-          // .map(x => {
-          //   console.log(x)
-          //   return x
-          // })
           .map(({ code, name, tablevalue, units, model, modelDescription }) => ({
             code,
             text: name.trim(),
