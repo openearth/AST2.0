@@ -8,39 +8,43 @@
       :title="$t('scenario_examples')"
       @closePopup="showPopup = false"
     >
-      <div class="scenario-overview__content">
-        <md-tabs :md-active-tab="initialTab" @md-changed="newActiveTab => activeTab = newActiveTab">
-          <md-tab
-            v-for="scenario in scenarios"
-            :id="scenario.value"
-            :key="scenario.value"
-            :md-label="scenario.title"
-          />
-        </md-tabs>
-        <section class="scenario-overview__tab-content">
-          <div class="scenario-overview__tab-content-wrapper">
-            <h3 class="scenario-overview__tab-content-title md-headline">
-              {{ activeScenario.title }}
-            </h3>
-            <div
-              v-for="(item, index) in activeScenario.example"
-              :key="index"
-              :class="{
-                'scenario-overview__tab-content--text': Boolean(item.text),
-                'scenario-overview__tab-content--image': Boolean(item.image),
-              }"
-            >
-              <rich-text
-                v-if="item.text"
-                :text="item.text"
-              />
-              <responsive-image
-                v-if="item.image"
-                :image="{...item.image, title: item.title}"
-              />
+      <div class="scenario-overview__popup">
+        <div class="scenario-overview__content">
+          <ul class="scenario-overview__tabs">
+            <li v-for="scenario in scenarios" :key="scenario.value">
+              <md-button
+                :class="{'md-primary': activeTab == scenario.value}"
+                @click="activeTab = scenario.value"
+              >
+                {{ scenario.title }}
+              </md-button>
+            </li>
+          </ul>
+          <section class="scenario-overview__tab-content">
+            <div class="scenario-overview__tab-content-wrapper">
+              <h3 class="scenario-overview__tab-content-title md-headline">
+                {{ activeScenario.title }}
+              </h3>
+              <div
+                v-for="(item, index) in activeScenario.example"
+                :key="index"
+                :class="{
+                  'scenario-overview__tab-content--text': Boolean(item.text),
+                  'scenario-overview__tab-content--image': Boolean(item.image),
+                }"
+              >
+                <rich-text
+                  v-if="item.text"
+                  :text="item.text"
+                />
+                <responsive-image
+                  v-if="item.image"
+                  :image="{...item.image, title: item.title}"
+                />
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
         <md-button class="scenario-overview__choose-btn md-raised md-primary" @click="choose">
           {{ $t('choose') }} {{ activeTabLabel }}
         </md-button>
@@ -107,19 +111,37 @@ export default {
   justify-content: flex-end;
 }
 
-.scenario-overview__content {
+.scenario-overview__popup {
   display: flex;
   flex-direction: column;
   padding: var(--spacing-default);
   height: 80vh;
 }
 
-.scenario-overview__content > *:not(:first-child):not(:last-child) {
+.scenario-overview__popup > *:not(:last-child) {
   flex: 1;
 }
 
+.scenario-overview__content {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--spacing-default);
+  overflow: hidden;
+}
+
+.scenario-overview__tabs {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  position: sticky;
+  top: 0;
+  height: 100%;
+  overflow-y: scroll;
+}
+
 .scenario-overview__tab-content {
-  padding: var(--spacing-default) 0;
+  max-height: 100%;
+  overflow: scroll;
 }
 
 .scenario-overview__tab-content-wrapper {
@@ -134,13 +156,14 @@ export default {
 .scenario-overview__choose-btn {
   align-self: flex-end;
   flex-grow: 0;
+  flex-shrink: 0;
 }
 
 .scenario-overview__tab-content-title {
   padding-bottom: var(--spacing-half);
 }
 
-.scenario-overview__content .md-tabs-navigation .md-button-content {
+.scenario-overview__popup .md-tabs-navigation .md-button-content {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
