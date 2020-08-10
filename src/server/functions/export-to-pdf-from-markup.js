@@ -65,11 +65,11 @@ exports.handler = async event => {
   timings.push(endTotalTimer())
   return {
     statusCode: 200,
-    body: pdf.toString('base64'),
-    isBase64Encoded : true,
+    body: JSON.stringify({ pdf: pdf.toString('base64') }),
+    isBase64Encoded : false,
     headers: {
       'Server-Timing': timings.join(', '),
-      'Content-Type': 'application/pdf',
+      'Content-Type': 'application/json',
     },
   }
 }

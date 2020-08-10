@@ -1,4 +1,5 @@
 import log from '../lib/log'
+import b63ToBlob from '../lib/b64-to-blob';
 
 if (process.browser) {
   window.addProject = async function (projectData, title) {
@@ -58,20 +59,21 @@ export default function exportToPdf({ locale, project, title }) {
   .then(markup => {
     dispatch('Sending markup to server', 6/7)
     return fetch('/.netlify/functions/export-to-pdf-from-markup', {
-      method: 'POST',
-      body: markup,
-    }).then(res => {
-      if (res.ok) {
-        return res
-      } else {
-        throw new Error(`Failed to receive PDF response from server (${res.status}). ${res.statusText}`)
-      }
-    })
+        method: 'POST',
+        body: markup,
+      })
+      .then(async res => {
+        if (res.ok) {
+          return await res.json()
+        } else {
+          throw new Error(`Failed to receive PDF response from server (${res.status}). ${res.statusText}`)
+        }
+      })
   })
-  .then(response => {
+  .then(({ pdf }) => {
     dispatch('Received PDF response from server', 7/7)
     log.groupEnd()
-    return response.blob()
+    return b63ToBlob(pdf, 'application/pdf')
   })
   .catch(error => {
     log.groupEnd()
