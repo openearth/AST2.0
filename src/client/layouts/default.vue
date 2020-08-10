@@ -175,11 +175,7 @@ export default {
       return [
         { id: 'numbers', icon: 'format_list_numbered' },
         { id: 'bars', icon: 'insert_chart' },
-        (
-          // @TODO :: Re-add this check when Peter finds out why it isn't showing in deploy previews
-          // this.activeWorkspace.showRivmCoBenefits &&
-          { id: 'rivm', icon: 'eco', color: '--nature-green-color' }
-        ),
+        ( this.activeWorkspace.showRivmCoBenefits && { id: 'rivm', icon: 'eco', color: '--nature-green-color' } ),
       ]
     },
   },
