@@ -1,7 +1,7 @@
 <template>
   <article class="pdf-export-results">
     <h2 class="md-title">
-      Resultaten - Detail
+      {{ $t('results') }} - {{ $t('detail') }}
     </h2>
     <div ref="content" class="pdf-export-results__content">
       <kpi-table :show-table-co-benefits="false" class="pdf-export-results__table" />

@@ -1,10 +1,10 @@
 <template>
   <article class="pdf-export-projectarea-settings">
     <h2 class="md-title">
-      Projectgebied kenmerken
+      {{ $t('pdf_projectarea_characteristics') }}
     </h2>
     <p class="pdf-export-projectarea-settings__intro">
-      Voor dit project zijn de volgende projectgebied instellingen gebruikt:
+      {{ $t('pdf_used_projectarea_settings') }}
     </p>
 
     <dl class="pdf-export-projectarea-settings__description-list">

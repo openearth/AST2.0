@@ -1,7 +1,7 @@
 <template>
   <article class="pdf-export-measures-list">
     <h2 class="md-title">
-      Beschrijving van toegepaste maatregelen
+      {{ $t('pdf_measure_description') }}
     </h2>
     <ul class="pdf-export-measures-list__list">
       <li

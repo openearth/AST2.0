@@ -1,7 +1,7 @@
 <template>
   <article class="pdf-export-result-summary">
     <h2 class="md-title">
-      Resultaten - samenvatting
+      {{ $t('results') }} - {{ $t('summary') }}
     </h2>
     <template>
       <kpi-group

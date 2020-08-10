@@ -1,9 +1,9 @@
 <template>
   <div class="pdf-export">
     <h1 class="pdf-export__title md-headline">
-      Resultaten {{ appConfig && appConfig.title }} - {{ title }}
+      {{ $t('results') }} {{ appConfig && appConfig.title }} - {{ title }}
     </h1>
-    <p>Dummy text over de tool</p>
+    <p>{{ $t('pdf_tool_description') }}</p>
     <pdf-export-map />
     <template v-if="currentFilledInLevel.level >= 5">
       <pdf-export-result-summary />
