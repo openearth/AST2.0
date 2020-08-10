@@ -54,17 +54,11 @@ export default async function fetchRivmCoBenefits({ areas, projectArea } = {}) {
 
   const payload = addBoundingBox(geoJson)
 
-  try {
-    const response = await fetch(process.env.API_GBP, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    return response.json();
-  }
-  catch(error) {
-    // @TODO :: Try successful !== true, errors array, etc. when backend is up
-    console.log('in fetch rivm', error)
-    return error;
-  }
+  const response = await fetch(process.env.API_GBP, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+
+  return response.json();
 }

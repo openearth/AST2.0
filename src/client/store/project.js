@@ -526,7 +526,7 @@ export const actions = {
 
     dispatch('bootstrapSettingsProjectArea', foo)
   },
-  async fetchRivmCoBenefits({ state, commit }) {
+  async fetchRivmCoBenefits({ state, commit, dispatch }) {
     // We clone to get rid of the Vue Observer properties
     const areas = cloneDeep(state.areas)
     const projectArea = cloneDeep(state.settings.area)
@@ -538,7 +538,12 @@ export const actions = {
       commit('setRivmCoBenefits', { receivedAt, entries })
     }
     catch(error) {
-      console.error('in projec action', error);
+      log.error('Problem fetching RIVM data', error)
+      dispatch(
+        'notifications/showError',
+        { message: 'There was a problem fetching your green benefits data' },
+        { root: true },
+      )
     }
   },
 }
