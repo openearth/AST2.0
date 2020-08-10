@@ -4,7 +4,7 @@ import kebabCase from 'lodash/kebabCase'
 import unset from 'lodash/unset'
 
 console.log('node env', process.env.NODE_ENV)
-console.log('process', process.env.CONTEXT)
+console.log('context', process.env.CONTEXT)
 const isLocalOrPreview = process.env.NODE_ENV === 'development' || process.env.CONTEXT === 'deploy-preview'
 console.log('isLocalOrPreview', isLocalOrPreview)
 const defaultDomain = isLocalOrPreview ? 'toolboxks-nl' : 'kbstoolbox-nl'
