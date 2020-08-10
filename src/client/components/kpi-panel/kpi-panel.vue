@@ -7,7 +7,7 @@
 
       <div>
         <md-button
-          :class="{'md-primary': displayType === 'numbers'}"
+          :class="{'md-accent': displayType === 'numbers'}"
           class="md-icon-button"
           @click="displayType = 'numbers'"
         >
@@ -15,7 +15,7 @@
         </md-button>
 
         <md-button
-          :class="{'md-primary': displayType === 'bars'}"
+          :class="{'md-accent': displayType === 'bars'}"
           class="md-icon-button"
           @click="displayType = 'bars'"
         >
