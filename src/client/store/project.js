@@ -530,10 +530,11 @@ export const actions = {
     // We clone to get rid of the Vue Observer properties
     const areas = cloneDeep(state.areas)
     const projectArea = cloneDeep(state.settings.area)
+    const receivedAt = Date.now()
 
     try {
       const data = await fetchCoBenefitsFromRivm({ areas, projectArea })
-      const receivedAt = Date.now()
+
       const entries = flatten((data.assessmentResults || []).map(item => get(item, 'entries', [])))
       commit('setRivmCoBenefits', { receivedAt, entries })
     }
@@ -544,6 +545,7 @@ export const actions = {
         { message: 'There was a problem fetching your green benefits data' },
         { root: true },
       )
+      commit('setRivmCoBenefits', { receivedAt })
     }
   },
 }
