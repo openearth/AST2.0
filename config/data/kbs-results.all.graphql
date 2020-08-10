@@ -1,0 +1,7 @@
+query ($locale: SiteLocale) {
+  kbsResult(locale: $locale) {
+    greenBenefitsCtaText
+    greenBenefitsNoDataLoadedYet
+    greenBenefitsCalculatingResults
+  }
+}

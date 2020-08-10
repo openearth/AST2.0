@@ -1,9 +1,19 @@
 <template>
   <article class="app-results-rivm">
-    <p v-if="transformedData.length === 0" class="app-results-rivm__content">
-      {{ $t('green_benefits_no_data') }}
-    </p>
-    <div v-if="transformedData.length > 0" class="app-results-rivm__content">
+    <div
+      v-if="transformedData.length === 0 && !isLoading"
+      class="app-results-rivm__content"
+      v-html="datoContent.greenBenefitsNoDataLoadedYet"
+    />
+    <div
+      v-else-if="transformedData.length === 0 && isLoading"
+      class="app-results-rivm__content"
+      v-html="datoContent.greenBenefitsCalculatingResults"
+    />
+    <div
+      v-else
+      class="app-results-rivm__content"
+    >
       <section
         v-for="section in transformedData"
         :key="section.model"
@@ -42,7 +52,7 @@
           class="app-results-rivm__cta md-raised"
           @click="handleFetchData"
         >
-          {{ $t('calculate_green_benefits') }}
+          {{ datoContent.greenBenefitsCtaText }}
         </md-button>
         <md-progress-spinner
           v-if="isLoading"
@@ -57,6 +67,8 @@
 </template>
 
 <script>
+import getData from '~/lib/get-data'
+
 export default {
   props: {
     data: {
@@ -66,6 +78,7 @@ export default {
   },
   data: () => ({
     isLoading: false,
+    datoContent: {},
   }),
   computed: {
     receivedAt() {
@@ -108,6 +121,11 @@ export default {
     receivedAt() {
       this.isLoading = false
     },
+  },
+  async created() {
+    const { locale } = this.$store.state.i18n
+    const { kbsResult } = await getData({ locale, slug: 'kbs-results' })
+    this.datoContent = kbsResult
   },
   methods: {
     handleFetchData() {
