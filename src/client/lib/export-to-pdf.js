@@ -60,6 +60,12 @@ export default function exportToPdf({ locale, project, title }) {
     return fetch('/.netlify/functions/export-to-pdf-from-markup', {
       method: 'POST',
       body: markup,
+    }).then(res => {
+      if (res.ok) {
+        return res
+      } else {
+        throw new Error(`Failed to receive PDF response from server (${res.status}). ${res.statusText}`)
+      }
     })
   })
   .then(response => {
@@ -69,6 +75,6 @@ export default function exportToPdf({ locale, project, title }) {
   })
   .catch(error => {
     log.groupEnd()
-    log.error(error)
+    log.error(error.message, error)
   })
 }

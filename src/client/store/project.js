@@ -483,7 +483,7 @@ export const actions = {
     commit('appMenu/hideMenu', null, { root: true })
     return FileSaver.saveAs(blob, `${title || 'ast_project'}.json`)
   },
-  async exportProject({ state, getters, rootState, rootGetters, commit }, format) {
+  async exportProject({ state, getters, rootState, rootGetters, commit, dispatch }, format) {
     const { title } = state.settings.general
     let data
     let type
@@ -507,7 +507,15 @@ export const actions = {
 
     const blob = new Blob([data], { type })
     if (format === 'pdf') commit('flow/hidePdfExport', null, { root: true })
-    return FileSaver.saveAs(blob, `${title || 'ast_project'}.${format}`)
+    if (data) {
+      return FileSaver.saveAs(blob, `${title || 'ast_project'}.${format}`)
+    } else {
+      dispatch(
+        'notifications/showError',
+        { message: 'Could not save data' },
+        { root: true },
+      )
+    }
   },
   clearState({ commit, dispatch, rootState }) {
     const areaSettings = rootState.data.areaSettings
