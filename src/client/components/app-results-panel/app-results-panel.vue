@@ -9,7 +9,7 @@
         v-for="button in nonEmptyButtonList"
         :key="button.id"
         :class="{[`app-results-panel__button--active`]: activePanel === button.id}"
-        :style="`--button-color: var(${button.color || '--md-theme-default-primary'})`"
+        :style="`--button-color: var(${button.color || '--md-theme-default-accent'})`"
         class="md-icon-button"
         @click="setActivePanel(button.id)"
       >

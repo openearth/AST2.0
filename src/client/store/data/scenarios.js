@@ -3,10 +3,8 @@ import getData from '../../lib/get-data'
 export const state = () => []
 
 export const mutations = {
-  addScenario(state, { includeInAllWorkspaces, ...scenario }) {
-    if (includeInAllWorkspaces) {
-      state.push(scenario)
-    }
+  addScenario(state, scenario) {
+    state.push(scenario)
   },
 }
 

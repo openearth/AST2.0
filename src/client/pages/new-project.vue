@@ -23,7 +23,7 @@
       <md-button
         :to="`/${locale}/settings/project-area/`"
         :disabled="!createdProjectArea"
-        class="md-raised md-primary"
+        class="md-raised md-accent"
       >
         {{ $t('next') }}
       </md-button>

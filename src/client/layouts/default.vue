@@ -100,7 +100,7 @@
       </md-dialog-content>
 
       <md-dialog-actions>
-        <md-button class="md-primary" @click="hideExport">
+        <md-button class="md-accent" @click="hideExport">
           Close
         </md-button>
       </md-dialog-actions>
