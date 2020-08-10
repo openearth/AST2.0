@@ -131,6 +131,10 @@ export default {
   margin-left: 0;
 }
 
+.page-index__action-btn {
+  background-color: var(--success-color) !important;
+}
+
 @supports (display: grid) {
   .page-index__actions {
     display: grid;
