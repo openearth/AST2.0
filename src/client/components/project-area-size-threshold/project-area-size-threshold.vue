@@ -22,7 +22,7 @@ export default {
         }
       } else {
         if (this.notificationId === undefined) {
-          this.notificationId = this.showError({ message: 'The project area is to large', closable: false, duration: 0 })
+          this.notificationId = this.showError({ message: this.$i18n.t('project_area_to_large'), closable: false, duration: 0 })
         }
       }
     },
