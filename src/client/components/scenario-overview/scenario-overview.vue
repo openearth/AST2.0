@@ -13,7 +13,7 @@
           <ul class="scenario-overview__tabs">
             <li v-for="scenario in scenarios" :key="scenario.value">
               <md-button
-                :class="{'md-primary': activeTab == scenario.value}"
+                :class="{'md-accent': activeTab == scenario.value}"
                 @click="activeTab = scenario.value"
               >
                 {{ scenario.title }}
@@ -46,7 +46,7 @@
           </section>
         </div>
         <md-button
-          class="scenario-overview__choose-btn md-raised md-primary"
+          class="scenario-overview__choose-btn md-raised md-accent"
           :disabled="activeScenario === nonChosenScenario"
           @click="choose"
         >

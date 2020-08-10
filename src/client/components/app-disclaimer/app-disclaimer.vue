@@ -23,7 +23,7 @@
         <span class="md-body-1 app-disclaimer__copyright">
           {{ disclaimer.footer }}
         </span>
-        <md-button class="md-raised md-primary" @click="$emit('accepted')">
+        <md-button class="md-raised md-accent" @click="$emit('accepted')">
           {{ $t('agree') }}
         </md-button>
       </footer>

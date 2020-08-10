@@ -39,7 +39,7 @@
       </md-button>
       <md-button
         :disabled="measure.measureId === '0'"
-        class="md-raised md-primary md-dense"
+        class="md-accent md-raised md-dense"
         @click="chooseMeasure"
       >
         {{ $t('choose') }}
