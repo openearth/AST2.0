@@ -11,17 +11,17 @@
       <span>
         <md-icon
           v-if="notification.type === 'warning'"
-          class="md-primary"
+          class="md-accent"
           style="color: #FFEB3B;"
         >warning</md-icon>
         <md-icon
           v-if="notification.type === 'error'"
-          class="md-primary"
+          class="md-accent"
           style="color: #F44336;"
         >error</md-icon>
         {{ notification.message }}
       </span>
-      <md-button class="md-primary" @click="$emit('remove-notification', notification.id)">
+      <md-button class="md-accent" @click="$emit('remove-notification', notification.id)">
         Close
       </md-button>
     </md-snackbar>

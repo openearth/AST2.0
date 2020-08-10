@@ -25,4 +25,5 @@ module.exports = {
   API_BASE: process.env.API_BASE,
   API_GBP: process.env.API_GBP,
   GIT_COMMIT: commit,
+  CONTEXT: process.env.CONTEXT,
 }

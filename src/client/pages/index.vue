@@ -11,7 +11,7 @@
       <md-button
         :to="`/${locale}/new-project/`"
         :disabled="!acceptedLegal"
-        class="md-raised md-primary"
+        class="md-accent md-raised"
       >
         {{ $t('start_new_project') }}
       </md-button>
@@ -19,7 +19,7 @@
       <div class="page-index__import-button-wrapper">
         <md-button
           :disabled="!acceptedLegal"
-          class="md-raised md-primary"
+          class="md-accent md-raised"
         >
           {{ $t('import_exisiting_project') }}
         </md-button>
@@ -129,6 +129,10 @@ export default {
   width: 100%;
   margin-right: 0;
   margin-left: 0;
+}
+
+.page-index__action-btn {
+  background-color: var(--success-color) !important;
 }
 
 @supports (display: grid) {

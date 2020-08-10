@@ -60,7 +60,5 @@ export default async function fetchRivmCoBenefits({ areas, projectArea } = {}) {
     body: JSON.stringify(payload),
   });
 
-  // @TODO :: Try successful !== true, errors, etc.
-
   return response.json();
 }
