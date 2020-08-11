@@ -14,6 +14,6 @@ export default {
     settings: { $ref: '/settings-schema' },
     map: { $ref: '/map-schema' },
     rivmCoBenefits: { type: 'object' },
-    heatstressResults: { type: 'array' },
+    heatstressResults: { type: 'object' },
   },
 }
