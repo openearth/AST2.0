@@ -136,6 +136,9 @@ export const mutations = {
   setHeatstressLayers(state, layer) {
     state.map.heatstressLayers.push(layer)
   },
+  setHeatstressResults(state, data) {
+    Vue.set(state, 'heatstressResults', Object.freeze(data))
+  },
   clearHeatstressLayers(state) {
     state.map.heatstressLayers = []
   },
@@ -380,26 +383,6 @@ export const actions = {
     })
     features.push(state.settings.area)
 
-    // Mocking for first testing purposes and not overloading the geoserver!
-    // const exampleResp ={ 'layers':[{ 'baseUrl':'https://tl-ng045.xtr.deltares.nl/geoserver/TEMP/ows?','id':'pet_new','layerName':'PET_new_1596803020709036','tileSize':'','title':'PET new' },
-    // { 'baseUrl':'https://tl-ng045.xtr.deltares.nl/geoserver/ows?','id':'pet_diff','layerName':'TEMP:PET_diff_1596803020709036','tileSize':'','title':'PET differences' },{ 'baseUrl':'https://tl-ng045.xtr.deltares.nl/geoserver/ows?','id':'pet_original','layerName':'TEMP:PET_original_1596803020709036','tileSize':'','title':'PET original' }],'newStats':{ 'max':128.0,'mean':30.267477272727,'min':0.0 },'oldStats':{ 'max':128.0,'mean':30.267477272727273,'min':0.0 } }
-    //
-    // const tileSize = 512
-    // exampleResp.layers.forEach(layer => {
-    //   const heatstressLayer = {
-    //     id: layer.id,
-    //     title: layer.title,
-    //     url: `${layer.baseUrl}service=WMS&layers=${layer.layerName}&request=GetMap&transparent=True&version=1.1.1&bbox={bbox-epsg-3857}&srs=EPSG:3857&crs=EPSG:3857&format=image/png&width=${tileSize}&height=${tileSize}`,
-    //     visible: false,
-    //     showLegend: false,
-    //     opacity: 1,
-    //     layerType: 'raster',
-    //     tilesize: tileSize,
-    //   }
-    //   commit('setHeatstressLayers', heatstressLayer)
-    // })
-
-    // TODO: uncomment this
     getApiData('heatstress/reduction', {
       data: {
         type: 'FeatureCollection',
@@ -407,13 +390,16 @@ export const actions = {
       },
     })
       .then(apiData => {
-        console.log('apidata check', apiData)
-        const tileSize = 512
+        const tileSize = 256
+        const heatstressResults = {}
+        heatstressResults.newTemp = apiData.newStats.mean
+        heatstressResults.diffTemp = apiData.newStats.mean - apiData.oldStats.mean
+        commit('setHeatstressResults', heatstressResults)
         apiData.layers.forEach(layer => {
           const heatstressLayer = {
             id: layer.id,
             title: layer.title,
-            url: `${layer.baseUrl}service=WMS&layers=${layer.layerName}&request=GetMap&transparent=True&version=1.1.1&bbox={bbox-epsg-3857}&srs=EPSG:3857&crs=EPSG:3857&format=image/png&width=${tileSize}&height=${tileSize}`,
+            url: `${layer.baseUrl}bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.1.1&request=GetMap&srs=EPSG:3857&transparent=true&width=${tileSize}&height=${tileSize}&layers=${layer.layerName}`,
             visible: false,
             showLegend: false,
             opacity: 1,
@@ -421,9 +407,6 @@ export const actions = {
             tilesize: tileSize,
           }
           commit('setHeatstressLayers', heatstressLayer)
-        //   commit('setHeatstressResults', {
-        //     layers: heatstressLayers,
-        //     heatstressResults)
         })
       })
       .catch(error => {
