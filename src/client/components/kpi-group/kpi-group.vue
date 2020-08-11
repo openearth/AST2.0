@@ -57,10 +57,7 @@ export default {
     },
   },
   methods: {
-    kpiByKey(key) {
-      const isFactor = key === 'returnTime'
-      return this.kpiValues[key] + (isFactor ? 1 : 0)
-    },
+    kpiByKey(key) { return this.kpiValues[key] },
     percentageKpiByKey(key) { return this.kpiPercentageValues[key] },
     unit(...args) {
       return this.$store.getters['data/units/displayValue'](...args)
