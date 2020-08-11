@@ -53,13 +53,27 @@
           @selectionchange="selectionChange"
           @move="setMapPosition"
         />
-        <kpi-panel
+        <app-results-panel
           v-if="filledInSettings"
-          :kpis="filteredKpiGroups"
-          :kpi-values="filteredKpiValues"
-          :kpi-percentage-values="filteredKpiPercentageValues"
-          :selected-areas="selectedAreas && selectedAreas[0]"
-        />
+          :buttons="sidePanelTabButtons"
+          default-active="numbers"
+        >
+          <template slot-scope="scope">
+            <kpi-panel
+              v-if="scope.active === 'bars' || scope.active === 'numbers'"
+              :display-type="scope.active"
+              :kpis="filteredKpiGroups"
+              :kpi-values="filteredKpiValues"
+              :kpi-percentage-values="filteredKpiPercentageValues"
+              :selected-areas="selectedAreas && selectedAreas[0]"
+            />
+            <app-results-rivm
+              v-if="scope.active === 'rivm'"
+              :data="rivmCoBenefits"
+              @fetch-data="fetchRivmCoBenefits"
+            />
+          </template>
+        </app-results-panel>
       </md-content>
     </div>
 
@@ -114,17 +128,21 @@
 <script>
 import { mapState, mapMutations, mapGetters, mapActions } from 'vuex';
 import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea } from '@/components'
+import AppResultsPanel from '@/components/app-results-panel'
+import AppResultsRivm from '@/components/app-results-rivm'
 import getData from '~/lib/get-data'
 import EventBus, { CLICK } from '~/lib/event-bus';
 import log from '~/lib/log'
 
 export default {
-  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea },
+  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea, AppResultsPanel, AppResultsRivm },
+
   data() {
     return {
       disclaimer: {},
     }
   },
+
   computed: {
     ...mapState({
       devMode: state => state.devMode,
@@ -141,6 +159,7 @@ export default {
       exportShown: state => state.flow.export,
       inSetMeasureFlow: state => state.setMeasureFlow.inFlow,
       userIsRefreshing: state => state.user.isRefreshing,
+      rivmCoBenefits: state => state.project.rivmCoBenefits,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers', 'customLayers', 'mapLayers', 'layers']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings']),
@@ -148,8 +167,16 @@ export default {
     ...mapGetters('map', ['isProject', 'point', 'line', 'polygon', 'addOnly', 'interactive', 'search']),
     ...mapGetters('user', ['isLoggedIn']),
     ...mapGetters('data/appConfig', ['title']),
+    ...mapGetters('data/workspaces', ['activeWorkspace']),
     layerList() {
       return [...this.customLayers, ...this.layers, ...this.mapLayers, ...this.wmsLayers]
+    },
+    sidePanelTabButtons() {
+      return [
+        { id: 'numbers', icon: 'format_list_numbered' },
+        { id: 'bars', icon: 'insert_chart' },
+        ( this.activeWorkspace.showRivmCoBenefits && { id: 'rivm', icon: 'eco', color: '--nature-green-color' } ),
+      ]
     },
   },
 
@@ -205,6 +232,7 @@ export default {
       clearState: 'project/clearState',
       exportProject: 'project/exportProject',
       connectMeasureToArea: 'setMeasureFlow/connectMeasureToArea',
+      fetchRivmCoBenefits: 'project/fetchRivmCoBenefits',
     }),
     async onFileInput(event) {
       this.importProject(event)
@@ -248,6 +276,7 @@ export default {
       return message
     },
   },
+
   head() {
     return {
       meta: [

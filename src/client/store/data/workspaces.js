@@ -3,9 +3,8 @@ import getData from '../../lib/get-data'
 import kebabCase from 'lodash/kebabCase'
 import unset from 'lodash/unset'
 
-const defaultDomain = process.env.NODE_ENV === 'development'
-  ? 'toolboxks-nl'
-  : 'kbstoolbox-nl'
+const isLocalOrPreview = process.env.NODE_ENV === 'development' || process.env.CONTEXT === 'deploy-preview'
+const defaultDomain = isLocalOrPreview ? 'toolboxks-nl' : 'kbstoolbox-nl'
 
 export const state = () => ({
   _domain: undefined,
