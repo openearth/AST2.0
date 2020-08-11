@@ -17,7 +17,6 @@ import projectToCsv from '../lib/project-to-csv'
 import delay from '../lib/delay'
 import log from '../lib/log';
 import fetchCoBenefitsFromRivm from '../lib/fetch-rivm-co-benefits'
-import { pick } from 'lodash'
 
 const initialState = () => ({
   areas: [],
@@ -595,17 +594,27 @@ export const actions = {
 
     dispatch('bootstrapSettingsProjectArea', foo)
   },
-  async fetchRivmCoBenefits({ state, commit }) {
-
+  async fetchRivmCoBenefits({ state, commit, dispatch }) {
     // We clone to get rid of the Vue Observer properties
     const areas = cloneDeep(state.areas)
     const projectArea = cloneDeep(state.settings.area)
-
-    const data = await fetchCoBenefitsFromRivm({ areas, projectArea })
     const receivedAt = Date.now()
-    const flattenedEntries = flatten((data.assessmentResults || []).map(item => get(item, 'entries', [])))
-    const entries = flattenedEntries.map(entry => pick(entry, ['code', 'model', 'name', 'units', 'tablevalue']))
-    commit('setRivmCoBenefits', { receivedAt, entries })
+
+    try {
+      const data = await fetchCoBenefitsFromRivm({ areas, projectArea })
+
+      const entries = flatten((data.assessmentResults || []).map(item => get(item, 'entries', [])))
+      commit('setRivmCoBenefits', { receivedAt, entries })
+    }
+    catch(error) {
+      log.error('Problem fetching RIVM data', error)
+      dispatch(
+        'notifications/showError',
+        { message: 'There was a problem fetching your green benefits data' },
+        { root: true },
+      )
+      commit('setRivmCoBenefits', { receivedAt })
+    }
   },
 }
 

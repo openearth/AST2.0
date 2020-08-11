@@ -57,12 +57,7 @@
         />
         <app-results-panel
           v-if="filledInSettings"
-          :buttons="[
-            { id: 'heatstress', icon: 'wb_sunny' },
-            (activeWorkspace.showRivmCoBenefits && { id: 'rivm', icon: 'local_florist', color: '--nature-green-color' }),
-            { id: 'numbers', icon: 'format_list_numbered' },
-            { id: 'bars', icon: 'insert_chart' },
-          ]"
+          :buttons="sidePanelTabButtons"
           default-active="numbers"
         >
           <template slot-scope="scope">
@@ -114,7 +109,7 @@
       </md-dialog-content>
 
       <md-dialog-actions>
-        <md-button class="md-primary" @click="hideExport">
+        <md-button class="md-accent" @click="hideExport">
           Close
         </md-button>
       </md-dialog-actions>
@@ -173,6 +168,7 @@ export default {
       disclaimer: {},
     }
   },
+
   computed: {
     ...mapState({
       devMode: state => state.devMode,
@@ -201,6 +197,14 @@ export default {
     ...mapGetters('data/workspaces', ['activeWorkspace']),
     layerList() {
       return [...this.customLayers, ...this.layers, ...this.mapLayers, ...this.wmsLayers]
+    },
+    sidePanelTabButtons() {
+      return [
+        { id: 'numbers', icon: 'format_list_numbered' },
+        { id: 'bars', icon: 'insert_chart' },
+        ( this.activeWorkspace.showRivmCoBenefits && { id: 'rivm', icon: 'eco', color: '--nature-green-color' } ),
+        { id: 'heatstress', icon: 'wb_sunny' },
+      ]
     },
   },
 
@@ -300,6 +304,7 @@ export default {
       return message
     },
   },
+
   head() {
     return {
       meta: [

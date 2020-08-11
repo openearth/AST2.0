@@ -23,5 +23,7 @@ module.exports = {
   branch: process.env.BRANCH,
   MAPBOX_ACCESS_TOKEN: process.env.MAPBOX_ACCESS_TOKEN,
   API_BASE: process.env.API_BASE,
+  API_GBP: process.env.API_GBP,
   GIT_COMMIT: commit,
+  CONTEXT: process.env.CONTEXT,
 }

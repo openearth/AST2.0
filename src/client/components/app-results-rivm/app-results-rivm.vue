@@ -1,29 +1,33 @@
 <template>
   <article class="app-results-rivm">
     <p v-if="transformedData.length === 0" class="app-results-rivm__content">
-      Nog geen data geladen.
-      <br>
-      Klik op "Bereken groene baten".
+      {{ $t('green_benefits_no_data') }}
     </p>
     <div v-if="transformedData.length > 0" class="app-results-rivm__content">
       <section
         v-for="section in transformedData"
-        :key="section.title"
+        :key="section.model"
         class="app-results-rivm__data-section"
       >
         <header>
-          <h5 class="app-results-rivm__section-title md-body-2" v-html="section.title" />
+          <h5 class="app-results-rivm__section-title md-body-2">
+            {{ section.title }}
+          </h5>
         </header>
         <dl class="app-results-rivm__definition-list">
           <template v-for="definition in section.definitions">
             <dt
-              :key="`${definition.title}-term`"
+              :key="`${ definition.code }-term`"
               class="md-body-1"
-              v-html="definition.title"
-            />
-            <dd :key="`${definition.title}-definition`">
-              <span>{{ definition.value }}</span>
-              <span class="app-results-rivm__unit">{{ definition.unit }}</span>
+            >
+              <span v-html="definition.text" />
+              <span> ({{ definition.unit }}):</span>
+            </dt>
+            <dd
+              :key="`${ definition.code }-definition`"
+              class="app-results-rivm__value"
+            >
+              {{ definition.value }}
             </dd>
           </template>
         </dl>
@@ -31,14 +35,14 @@
     </div>
 
     <footer class="app-results-rivm__footer">
-      <small>Laatste berekening: {{ receivedAt }}</small>
+      <small>{{ $t('last_calculation') }}: {{ receivedAt }}</small>
       <div class="app-results-rivm__footer-cta-wrapper">
         <md-button
           :disabled="isLoading"
           class="app-results-rivm__cta md-raised"
           @click="handleFetchData"
         >
-          Bereken groene baten
+          {{ $t('calculate_green_benefits') }}
         </md-button>
         <md-progress-spinner
           v-if="isLoading"
@@ -60,44 +64,42 @@ export default {
       default: () => {},
     },
   },
-  data() {
-    return {
-      isLoading: false,
-    }
-  },
+  data: () => ({
+    isLoading: false,
+  }),
   computed: {
     receivedAt() {
       try {
         const date = new Date(this.data.receivedAt)
         return date.toLocaleString()
-      } catch (error) {
+      }
+      catch (error) {
         return ''
       }
     },
     transformedData(){
       try {
-      return this.data.entries
-        .map(item => {
-          const id = item.code
-          const title = item.name.replace(/\[.+\]/, '').trim()
-          const value = item.tablevalue
-          const unit = item.units.replace(/euros?/i, '€').replace(/jaar|year/i, 'jr')
-          const section = item.model
-
-          return { id, title, value, unit, section }
-        })
-        .reduce((collection, item) => {
-          let section = collection.find(section => section.title === item.section)
-          if (!section) {
-            section = { title: item.section, definitions: [] }
-            collection.push(section)
-          }
-
-          section.definitions.push(item)
-
-          return collection
-        }, [])
-      } catch (error) {
+        return this.data.entries
+          .map(({ code, name, tablevalue, units, model, modelDescription }) => ({
+            code,
+            text: name.trim(),
+            value: tablevalue,
+            unit: units,
+            model,
+            modelDescription,
+          }))
+          // Group items by model
+          .reduce((sections, item) => {
+            let section = sections.find(({ model }) => model === item.model)
+            if (!section) {
+              section = { model: item.model, title: item.modelDescription, definitions: [] }
+              sections.push(section)
+            }
+            section.definitions.push(item)
+            return sections
+          }, [])
+      }
+      catch (error) {
         return []
       }
     },
@@ -177,10 +179,7 @@ export default {
   margin-bottom: var(--spacing-default)
 }
 
-.app-results-rivm__unit::before {
-  content: ' ['
-}
-.app-results-rivm__unit::after {
-  content: ']'
+.app-results-rivm__value {
+  text-align: right;
 }
 </style>
