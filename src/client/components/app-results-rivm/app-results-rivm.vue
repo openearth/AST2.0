@@ -1,9 +1,19 @@
 <template>
   <article class="app-results-rivm">
-    <p v-if="transformedData.length === 0" class="app-results-rivm__content">
-      {{ $t('green_benefits_no_data') }}
-    </p>
-    <div v-if="transformedData.length > 0" class="app-results-rivm__content">
+    <div
+      v-if="transformedData.length === 0 && !isLoading"
+      class="app-results-rivm__content"
+      v-html="datoContent.greenBenefitsNoDataLoadedYet"
+    />
+    <div
+      v-else-if="transformedData.length === 0 && isLoading"
+      class="app-results-rivm__content"
+      v-html="datoContent.greenBenefitsCalculatingResults"
+    />
+    <div
+      v-else
+      class="app-results-rivm__content"
+    >
       <section
         v-for="section in transformedData"
         :key="section.model"
@@ -42,7 +52,7 @@
           class="app-results-rivm__cta md-raised"
           @click="handleFetchData"
         >
-          {{ $t('calculate_green_benefits') }}
+          {{ datoContent.greenBenefitsCtaText }}
         </md-button>
         <md-progress-spinner
           v-if="isLoading"
@@ -61,7 +71,11 @@ export default {
   props: {
     data: {
       type: Object,
-      default: () => {},
+      default: () => ({}),
+    },
+    datoContent: {
+      type: Object,
+      default: () => ({}),
     },
   },
   data: () => ({
@@ -70,7 +84,9 @@ export default {
   computed: {
     receivedAt() {
       try {
-        const date = new Date(this.data.receivedAt)
+        const { receivedAt } = this.data
+        if(!receivedAt) throw 'date undefined'
+        const date = new Date(receivedAt)
         return date.toLocaleString()
       }
       catch (error) {

@@ -1,0 +1,14 @@
+query ($locale: SiteLocale) {
+  kbsResult(locale: $locale) {
+    greenBenefitsCtaText
+    greenBenefitsNoDataLoadedYet
+    greenBenefitsCalculatingResults
+    heatstressTitle
+    heatstressDescription
+    heatstressNewTemperature
+    heatstressTemperatureDifference
+    heatstressCalculateButton
+    heatstressSelectMeasures
+    heatstressTooltip
+  }
+}
