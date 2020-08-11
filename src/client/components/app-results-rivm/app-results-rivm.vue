@@ -67,23 +67,26 @@
 </template>
 
 <script>
-import getData from '~/lib/get-data'
-
 export default {
   props: {
     data: {
       type: Object,
-      default: () => {},
+      default: () => ({}),
+    },
+    datoContent: {
+      type: Object,
+      default: () => ({}),
     },
   },
   data: () => ({
     isLoading: false,
-    datoContent: {},
   }),
   computed: {
     receivedAt() {
       try {
-        const date = new Date(this.data.receivedAt)
+        const { receivedAt } = this.data
+        if(!receivedAt) throw 'date undefined'
+        const date = new Date(receivedAt)
         return date.toLocaleString()
       }
       catch (error) {
@@ -121,11 +124,6 @@ export default {
     receivedAt() {
       this.isLoading = false
     },
-  },
-  async created() {
-    const { locale } = this.$store.state.i18n
-    const { kbsResult } = await getData({ locale, slug: 'kbs-results' })
-    this.datoContent = kbsResult
   },
   methods: {
     handleFetchData() {

@@ -70,6 +70,7 @@
             <app-results-rivm
               v-if="scope.active === 'rivm'"
               :data="rivmCoBenefits"
+              :dato-content="kbsResultContent"
               @fetch-data="fetchRivmCoBenefits"
             />
           </template>
@@ -140,6 +141,7 @@ export default {
   data() {
     return {
       disclaimer: {},
+      kbsResultContent: {},
     }
   },
 
@@ -189,6 +191,8 @@ export default {
     const locale = this.$i18n.locale
     const data =  await getData({ locale, slug: 'legal' })
     this.disclaimer = { ...data.legal.disclaimer }
+    const { kbsResult } = await getData({ locale, slug: 'kbs-results' })
+    this.kbsResultContent = kbsResult
   },
 
   mounted() {
