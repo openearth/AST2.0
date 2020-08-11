@@ -3,5 +3,12 @@ query ($locale: SiteLocale) {
     greenBenefitsCtaText
     greenBenefitsNoDataLoadedYet
     greenBenefitsCalculatingResults
+    heatstressTitle
+    heatstressDescription
+    heatstressNewTemperature
+    heatstressTemperatureDifference
+    heatstressCalculateButton
+    heatstressSelectMeasures
+    heatstressTooltip
   }
 }
