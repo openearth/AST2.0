@@ -79,26 +79,5 @@ export default {
         },
       },
     },
-
-    // Leave in for backwards compatibility reasons
-    heatstressLayers: {
-      type: 'array',
-      items: {
-        type: 'object',
-        additionalProperties: false,
-        required: ['id', 'showLegend', 'visible', 'opacity'],
-        properties: {
-          id: { type: 'string' },
-          layerType: { type: 'string' },
-          tilesize: { type: 'number' },
-          title: { type: 'string' },
-          layerName: { type: 'string' },
-          url: { type: 'string' },
-          visible: { type: 'boolean' },
-          showLegend: { type: 'boolean' },
-          opacity: { type: 'number' },
-        },
-      },
-    },
   },
 }

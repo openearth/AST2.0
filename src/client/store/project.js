@@ -29,7 +29,6 @@ const initialState = () => ({
     customLayers: [],
     mapLayers: [],
     wmsLayers: [],
-    heatstressLayers: [],
     layers: [],
     zoom: 16.5,
   },
@@ -550,7 +549,7 @@ export const actions = {
     let savedState = cloneDeep(state)
     // Reset heatstresslayers while exporting, because the layers in the geoserver
     // are removed every day.
-    savedState.map.heatstressLayers = []
+    delete savedState.map.heatstressLayers
     const blob = new Blob([JSON.stringify(savedState, null, 2)], { type: 'application/json' })
     commit('appMenu/hideMenu', null, { root: true })
     return FileSaver.saveAs(blob, `${title || 'ast_project'}.json`)
