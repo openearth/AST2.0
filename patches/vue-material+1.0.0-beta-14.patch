@@ -1,8 +1,8 @@
 diff --git a/node_modules/vue-material/dist/components/index.js b/node_modules/vue-material/dist/components/index.js
-index 5489634..8a6f086 100644
+index 5489634..5d51a0f 100644
 --- a/node_modules/vue-material/dist/components/index.js
 +++ b/node_modules/vue-material/dist/components/index.js
-@@ -3,4 +3,26 @@
+@@ -3,4 +3,24 @@
   * Made with <3 by marcosmoura 2020
   * Released under the MIT License.
   */
@@ -19,14 +19,12 @@ index 5489634..8a6f086 100644
 +},calculateStepperPos:function(){if(!this.mdVertical){var e=this.$el.querySelector(".md-stepper:nth-child("+(this.activeStepIndex+1)+")");this.contentStyles={height:e.offsetHeight+"px"}}},onActiveStepIndex:function(){var e,t=this.getItemsAndKeys(),n=(t.items,t.keys);if(this.hasActiveStep()||this.activeStepIndex)for(this.MdSteppers.activeStep=n[this.activeStepIndex],e=0;e<this.activeStepIndex;e++)this.setStepperAsDone(n[e]);else this.MdSteppers.activeStep=n[0]}},created:function(){this.calculateStepperPos=(0,l.default)(this.calculateStepperPos,300),this.MdSteppers.activeStep=this.mdActiveStep,this.MdSteppers.isLinear=this.mdLinear,this.MdSteppers.isVertical=this.mdVertical},mounted:function(){var e=this;this.$nextTick().then((function(){return e.mdSyncRoute?e.onActiveStepIndex():e.setActiveStepByIndex(0),e.$nextTick()})).then((function(){e.setActiveButtonEl(),e.calculateStepperPos(),window.setTimeout((function(){e.noTransition=!1,e.setupObservers()}),100)}))},
 +beforeDestroy:function(){
 +  if ('ResizeObserver' in window) {
-+    console.log(this.resizeObserver)
 +    this.resizeObserver.disconnect()
 +  }
 +  else {
 +    window.removeEventListener('resize', this.calculateStepperPos)
 +  }
 +  if(this.mdResizeObserver) {
-+    console.log(this.mdResizeObserver)
 +    this.mdResizeObserver.disconnect()
 +  }
 +}
