@@ -748,7 +748,7 @@ export const getters = {
     const kpiKeys = rootgetters['data/kpiGroups/kpiKeys']
 
     if (areas.length) {
-      return areas
+      const { returnTime, ...kpiValues } = areas
         .map(area => area.properties.apiData)
         .reduce((obj, item) => {
           if (item) {
@@ -759,6 +759,7 @@ export const getters = {
           }
           return obj
         }, {})
+      return { ...kpiValues, returnTime: returnTime + 1 }
     } else {
       return kpiKeys.reduce((obj, key) => ({ ...obj, [key]: 0 }), {})
     }
