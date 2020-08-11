@@ -390,14 +390,16 @@ export const actions = {
       .then(apiData => {
         const tileSize = 512
         const heatstressResults = {}
-        heatstressResults.heatstress_new_temperature = apiData.newStats.mean
-        heatstressResults.heatstress_temperature_difference = apiData.newStats.mean - apiData.oldStats.mean
+        heatstressResults.heatstressNewTemperature = apiData.newStats.mean
+        heatstressResults.heatstressTemperatureDifference = apiData.newStats.mean - apiData.oldStats.mean
         commit('setHeatstressResults', heatstressResults)
         apiData.layers.forEach(layer => {
+          const baseUrlLegend = layer.baseUrl.replace('ows', 'wms')
           const heatstressLayer = {
             id: layer.layerName,
             title: layer.title,
             url: `${layer.baseUrl}bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.3.0&request=GetMap&crs=EPSG:3857&srs=EPSG:28992&transparent=True&width=${tileSize}&height=${tileSize}&layers=${layer.layerName}`,
+            legendUrl: `${baseUrlLegend}request=GetLegendGraphic&version=1.1.1&format=image/png&layer=${layer.layerName}`,
             visible: false,
             showLegend: false,
             opacity: 1,
@@ -813,7 +815,7 @@ export const getters = {
     const kpiKeys = rootgetters['data/kpiGroups/kpiKeys']
 
     if (areas.length) {
-      const { returnTime, ...kpiValues } = areas
+      return areas
         .map(area => area.properties.apiData)
         .reduce((obj, item) => {
           if (item) {
@@ -824,7 +826,6 @@ export const getters = {
           }
           return obj
         }, {})
-      return { ...kpiValues, returnTime: returnTime + 1 }
     } else {
       return kpiKeys.reduce((obj, key) => ({ ...obj, [key]: 0 }), {})
     }

@@ -1,6 +1,5 @@
 <template>
   <article class="app-results-heatstress">
-    test
     <p
       class="app-results-heatstress__description"
       v-html="datoContent.heatstressDescription"
@@ -42,7 +41,7 @@
           </md-button>
         </md-list-item>
         <md-list-item v-for="layer in heatstressLayers" :key="layer.id">
-          <div class="md-list-item-expand md-list-item-container">
+          <div class="md-list-item-container">
             <div class="md-list-item-content">
               <span
                 class="md-list-item-text app-results-heatstress-layers__title"
@@ -71,14 +70,14 @@
               :style="{height: expanded === layer.id ? 'auto' : '0px'}"
               class="md-list-expand"
             >
-              <md-list>
-                <md-list-item class="md-inset">
-                  <img
-                    :src="layer.legendUrl"
-                    alt=""
-                  >
-                </md-list-item>
-              </md-list>
+            <md-list>
+              <md-list-item class="md-inset">
+                <img
+                  :src="layer.legendUrl"
+                  alt=""
+                >
+              </md-list-item>
+            </md-list>
             </div>
           </div>
         </md-list-item>
