@@ -542,7 +542,11 @@ export const actions = {
   },
   saveProject({ state, commit }) {
     const { title } = state.settings.general
-    const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' })
+    let savedState = cloneDeep(state)
+    // Reset heatstresslayers while exporting, because the layers in the geoserver
+    // are removed every day.
+    savedState.map.heatstressLayers = []
+    const blob = new Blob([JSON.stringify(savedState, null, 2)], { type: 'application/json' })
     commit('appMenu/hideMenu', null, { root: true })
     return FileSaver.saveAs(blob, `${title || 'ast_project'}.json`)
   },
