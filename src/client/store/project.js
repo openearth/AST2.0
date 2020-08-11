@@ -29,6 +29,7 @@ const initialState = () => ({
     customLayers: [],
     mapLayers: [],
     wmsLayers: [],
+    heatstressLayers: [],
     layers: [],
     zoom: 16.5,
   },

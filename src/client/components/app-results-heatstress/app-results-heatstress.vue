@@ -55,7 +55,7 @@
               />
               <md-button
                 class="md-icon-button md-list-action"
-                @click="setExpanded(layer.id)"
+                @click.stop="setExpanded(layer.id)"
               >
                 <md-icon
                   :style="{
@@ -84,7 +84,9 @@
       </md-list>
     </div>
     <footer class="app-results-heatstress__footer">
-      <small v-if="!hasAreas">{{ datoContent.heatstressSelectMeasures }}</small>
+      <div>
+        <small v-if="!hasAreas">{{ datoContent.heatstressSelectMeasures }}</small>
+      </div>
       <div class="app-results-heatstress__footer-cta-wrapper">
         <md-button
           :disabled="isLoading || !hasAreas"
