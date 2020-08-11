@@ -99,6 +99,11 @@ export default {
   left: 0;
 }
 
+.pdf-export-map .map-viewer__map {
+  width: 64vh !important;
+  height: 50vw !important;
+}
+
 .pdf-export-map__image {
   width: 64vh;
   height: 50vw !important;
