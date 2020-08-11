@@ -166,7 +166,7 @@ export default {
             oldLayer => oldLayer.id === newLayer.id,
           )
 
-          if (oldLayer.title === newLayer.title) {
+          if (oldLayer.layerName === newLayer.layerName) {
             // If the oldLayer with the same id as the newLayer, check for visibility changes
             if (newLayer.visible === true) {
               this.showWmsLayer(newLayer.id)
@@ -174,12 +174,9 @@ export default {
               this.hideWmsLayer(newLayer.id)
             }
           } else {
-            // if not, the layer itself might have updated
-            if (layer) {
-              // if there is already an old layer with this id, remove it first
-              this.removeLayer(`wms-layer-${oldLayer.id}`)
-              this.addWmsLayer(newLayer)
-            }
+            // if there is already an old layer with this id, remove it first
+            this.removeLayer(`wms-layer-${oldLayer.id}`)
+            this.addWmsLayer(newLayer)
           }
         })
       },
