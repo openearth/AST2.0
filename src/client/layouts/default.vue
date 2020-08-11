@@ -123,6 +123,8 @@
 
     <!-- portal for general popup -->
     <portal-target name="popup-portal" />
+
+    <project-area-size-threshold :is-below-threshold="projectAreaSizeIsBelowThreshold" />
   </div>
 </template>
 
@@ -136,8 +138,7 @@ import EventBus, { CLICK } from '~/lib/event-bus';
 import log from '~/lib/log'
 
 export default {
-  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea, AppResultsPanel, AppResultsRivm },
-
+  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea, ProjectAreaSizeThreshold, AppResultsPanel, AppResultsRivm },
   data() {
     return {
       disclaimer: {},
@@ -164,7 +165,7 @@ export default {
       rivmCoBenefits: state => state.project.rivmCoBenefits,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers', 'customLayers', 'mapLayers', 'layers']),
-    ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings']),
+    ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings', 'projectAreaSizeIsBelowThreshold']),
     ...mapGetters({ selectedAreas:  'selectedAreas/features' }),
     ...mapGetters('map', ['isProject', 'point', 'line', 'polygon', 'addOnly', 'interactive', 'search']),
     ...mapGetters('user', ['isLoggedIn']),

@@ -21,7 +21,11 @@
         >error</md-icon>
         {{ notification.message }}
       </span>
-      <md-button class="md-accent" @click="$emit('remove-notification', notification.id)">
+      <md-button
+        v-if="notification.closable"
+        class="md-accent"
+        @click="$emit('remove-notification', notification.id)"
+      >
         Close
       </md-button>
     </md-snackbar>
