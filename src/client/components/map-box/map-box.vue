@@ -104,12 +104,7 @@ export default {
 
   computed: {
     allMapLayers() {
-      const layers = [
-        ...this.wmsLayers,
-        ...this.customLayers,
-        ...this.mapLayers,
-        ...this.layerList,
-      ]
+      const layers = [ ...this.wmsLayers, ...this.customLayers, ...this.mapLayers, ...this.layerList ]
       return layers
     },
     hasProjectArea() {
@@ -188,23 +183,11 @@ export default {
 
   async mounted() {
     const { lat, lng } = this.mapCenter
-    const [
-      mapboxgl,
-      MapboxDraw,
-      MapboxGeocoder,
-      mapboxBaseStyle,
-    ] = await Promise.all([
-      import('mapbox-gl'),
-      import('@mapbox/mapbox-gl-draw'),
-      import('@mapbox/mapbox-gl-geocoder'),
-      getData({ folder: 'mapbox-base-layer', slug: 'style' }),
-    ])
+    const [mapboxgl, MapboxDraw, MapboxGeocoder, mapboxBaseStyle] = await Promise.all([import('mapbox-gl'), import('@mapbox/mapbox-gl-draw'),
+      import('@mapbox/mapbox-gl-geocoder'), getData({ folder: 'mapbox-base-layer', slug: 'style' })])
     const defaultStyles = [...new MapboxDraw().options.styles]
       .filter(style => /\.hot$/.test(style.id))
-      .map(({ source, ...style }) => ({
-        ...style,
-        id: style.id.replace('.hot', ''),
-      }))
+      .map(({ source, ...style }) => ({ ...style, id: style.id.replace('.hot', '') }))
       .map(style => {
         style.filter.push(['!has', 'user_measure'])
         return style
@@ -225,10 +208,7 @@ export default {
         styles: [...defaultStyles, ...projectAreaStyles, ...areaStyles],
       })
 
-      this.geoCoder = new MapboxGeocoder({
-        accessToken: mapboxgl.accessToken,
-        flyTo: false,
-      })
+      this.geoCoder = new MapboxGeocoder({ accessToken: mapboxgl.accessToken, flyTo: false })
       this.geoCoder.on('results', ({ features }) => {
         MapEventBus.$emit(SEARCH_SUGGESTIONS, features)
       })
@@ -332,29 +312,23 @@ export default {
       }
     },
     clearMap() {
-      this.map.getLayer('projectArea-line') &&
-        this.map.removeLayer('projectArea-line')
-      this.map.getSource('projectArea-line') &&
-        this.map.removeSource('projectArea-line')
+      this.map.getLayer('projectArea-line') && this.map.removeLayer('projectArea-line')
+      this.map.getSource('projectArea-line') && this.map.removeSource('projectArea-line')
       this.draw.deleteAll()
       this.areas.forEach(area => {
-        this.map.getLayer(`${area.properties.name}-line`) &&
-          this.map.removeLayer(`${area.properties.name}-line`)
-        this.map.getSource(`${area.properties.name}-line`) &&
-          this.map.removeSource(`${area.properties.name}-line`)
+        this.map.getLayer(`${area.properties.name}-line`) && this.map.removeLayer(`${area.properties.name}-line`)
+        this.map.getSource(`${area.properties.name}-line`) && this.map.removeSource(`${area.properties.name}-line`)
       })
     },
     fillMap() {
       if (this.interactive === false || this.addOnly === true) {
-        this.hasProjectArea &&
-          this.addGeojsonLayer({ ...this.projectArea, id: 'projectArea' })
+        this.hasProjectArea && this.addGeojsonLayer({ ...this.projectArea, id: 'projectArea' })
         this.areas.forEach(area => this.addGeojsonLayer(area))
         return
       }
 
       if (this.isProject) {
-        this.hasProjectArea &&
-          this.addGeojsonLayer({ ...this.projectArea, id: 'projectArea' })
+        this.hasProjectArea && this.addGeojsonLayer({ ...this.projectArea, id: 'projectArea' })
         this.areas.forEach(area => this.draw.add(area))
       } else {
         this.areas.forEach(area => this.addGeojsonLayer(area))
@@ -400,14 +374,7 @@ export default {
         this.map.removeSource(`wms-layer-${id}`)
       }
     },
-    addWmsLayer({
-      layerType: type,
-      id,
-      url,
-      tilesize: tileSize,
-      title,
-      visible,
-    }) {
+    addWmsLayer({ layerType: type, id, url, tilesize: tileSize, title, visible }) {
       if (!this.map) return
 
       try {
@@ -465,7 +432,9 @@ export default {
       if (this.draw.get(feature.id)) {
         const selectedIds = this.draw.getSelectedIds()
 
-        this.draw.delete(feature.id).add(feature)
+        this.draw
+          .delete(feature.id)
+          .add(feature)
 
         if (selectedIds.indexOf(feature.id) !== -1) {
           this.selectFeature(feature.id)
