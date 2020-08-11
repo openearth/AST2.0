@@ -1,10 +1,10 @@
 <template>
   <article class="app-results-heatstress">
+    test
     <p
       class="app-results-heatstress__description"
-    >
-      {{ $t('heatstress_description') }}
-    </p>
+      v-html="datoContent.heatstressDescription"
+    />
     <div
       class="app-results-heatstress__content"
     >
@@ -12,7 +12,7 @@
         v-if="heatstressLayers.length > 0"
       >
         <h2 class="app-results-heatstress__title md-body-2">
-          {{ $t('heatstress_title') }}
+          {{ datoContent.heatstressTitle }}
         </h2>
 
         <md-list-item
@@ -21,7 +21,7 @@
           class="app-results-heatstress__list"
         >
           <span class="md-body-1 app-results-heatstress__title">
-            {{ $t(key) }} ({{ unit('temperature') }}):
+            {{ datoContent[key] }} ({{ unit('temperature') }}):
           </span>
           <p class="app-results-heatstress__value">
             {{ roundValue(result) }}
@@ -37,7 +37,7 @@
           <md-button class="md-icon-button info-button">
             <md-icon>info</md-icon>
             <md-tooltip md-direction="top">
-              {{ $t('heatstress_tooltip') }}
+              {{ datoContent.heatstressTooltip }}
             </md-tooltip>
           </md-button>
         </md-list-item>
@@ -54,20 +54,45 @@
                     switchHeatstressLayer({ id: layer.id, value: !!value })
                 "
               />
+              <md-button
+                class="md-icon-button md-list-action"
+                @click="setExpanded(layer.id)"
+              >
+                <md-icon
+                  :style="{
+                    transform: expanded === layer.id ? 'rotate(180deg)' : 'rotate(0)'
+                  }"
+                >
+                  keyboard_arrow_down
+                </md-icon>
+              </md-button>
+            </div>
+            <div
+              :style="{height: expanded === layer.id ? 'auto' : '0px'}"
+              class="md-list-expand"
+            >
+              <md-list>
+                <md-list-item class="md-inset">
+                  <img
+                    :src="layer.legendUrl"
+                    alt=""
+                  >
+                </md-list-item>
+              </md-list>
             </div>
           </div>
         </md-list-item>
       </md-list>
     </div>
     <footer class="app-results-heatstress__footer">
-      <small>{{ $t('heatstress_select_measures') }}</small>
+      <small v-if="!hasAreas">{{ datoContent.heatstressSelectMeasures }}</small>
       <div class="app-results-heatstress__footer-cta-wrapper">
         <md-button
           :disabled="isLoading || !hasAreas"
           class="app-results-heatstress__cta md-raised"
           @click="handleFetchData"
         >
-          {{ $t('heatstress_calculate_button') }}
+          {{ datoContent.heatstressCalculateButton }}
         </md-button>
         <md-progress-spinner
           v-if="isLoading"
@@ -100,10 +125,15 @@ export default {
       type: Array,
       default: () => [],
     },
+    datoContent: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   data() {
     return {
       isLoading: false,
+      expanded: '',
     }
   },
   computed: {
@@ -123,6 +153,9 @@ export default {
     ...mapMutations({
       updateHeatstressLayers: 'project/updateHeatstressLayers',
     }),
+    setExpanded(id) {
+      this.expanded = this.expanded !== id ? id : ''
+    },
     switchHeatstressLayer(evt) {
       const layers = cloneDeep(this.heatstressLayers)
       const heatstressLayer = layers.find(layer => layer.id === evt.id)
