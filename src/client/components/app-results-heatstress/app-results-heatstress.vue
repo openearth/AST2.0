@@ -1,33 +1,36 @@
 <template>
   <article class="app-results-heatstress">
     <p
-      class="app-results-heatstress__content"
+      class="app-results-heatstress__description"
     >
       {{ $t('heatstress_description') }}
     </p>
     <div
-      v-if="heatstressLayers.length > 0"
       class="app-results-heatstress__content"
     >
-      <md-list>
-        <h2 class="kpi-group__title md-body-2">
+      <md-list
+      v-if="heatstressLayers.length > 0"
+>
+        <h2 class="app-results-heatstress__title md-body-2">
           {{ $t('heatstress_title') }}
         </h2>
 
         <md-list-item
           v-for="(result, key) in heatstressResults"
           :key="key"
-          class="kpi-group__kpi"
+          class="app-results-heatstress__list"
         >
-          <span class="md-body-1 kpi-group__kpi-title">
+          <span class="md-body-1 app-results-heatstress__title">
             {{ $t(key) }}:
           </span>
-          <p class="kpi-group__kpi-value">
+          <p class="app-results-heatstress__value">
             {{ roundValue(result) }} {{ unit('temperature') }}
           </p>
         </md-list-item>
       </md-list>
       <md-list
+      v-if="heatstressLayers.length > 0"
+
         class="app-results-heatstress__information"
       >
         <md-list-item>
@@ -57,13 +60,14 @@
       </md-list>
     </div>
     <footer class="app-results-heatstress__footer">
+      <small>{{ $t('heatstress_select_measures') }}</small>
       <div class="app-results-heatstress__footer-cta-wrapper">
         <md-button
           :disabled="isLoading || !hasAreas"
           class="app-results-heatstress__cta md-raised"
           @click="handleFetchData"
         >
-          Bereken hittestress lagen
+          {{ $t('heatstress_calculate_button') }}
         </md-button>
         <md-progress-spinner
           v-if="isLoading"
@@ -144,5 +148,53 @@ export default {
 </script>
 
 <style>
+.app-results-heatstress {
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
 
+.app-results-heatstress__description {
+  flex-shrink: 1;
+}
+
+.app-results-heatstress__content  {
+  flex: 1;
+}
+
+.app-results-heatstress__title {
+  margin-bottom: var(--spacing-half);
+}
+
+.app-results-heatstress__list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  position: relative;
+  margin-bottom: var(--spacing-half);
+  padding: 0;
+  min-height: 30px; /* overwrites material ui min-height */
+}
+
+.app-results-heatstress__value {
+  margin-bottom: var(--spacing-half);
+}
+
+.app-results-heatstress__footer {
+  display: grid;
+  grid-template-columns: auto min-content;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  margin-left: calc(-1 * var(--spacing-default));
+  width: calc(100% + (var(--spacing-default) * 2));
+  padding: var(--spacing-half);
+  border-top: 1px solid var(--border-color);
+  background-color: var(--background-color);
+}
+
+.app-results-heatstress__footer-cta-wrapper {
+  position: relative;
+}
 </style>
