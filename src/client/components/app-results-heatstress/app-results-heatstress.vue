@@ -21,10 +21,10 @@
           class="app-results-heatstress__list"
         >
           <span class="md-body-1 app-results-heatstress__title">
-            {{ $t(key) }}:
+            {{ $t(key) }} ({{ unit('temperature') }}):
           </span>
           <p class="app-results-heatstress__value">
-            {{ roundValue(result) }} {{ unit('temperature') }}
+            {{ roundValue(result) }}
           </p>
         </md-list-item>
       </md-list>

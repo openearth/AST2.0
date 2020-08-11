@@ -51,7 +51,6 @@ export default async function fetchRivmCoBenefits({ areas, projectArea } = {}) {
     },
     features: [preparedProjectArea, ...preparedAreas],
   }
-  console.log(payload)
 
   const payload = addBoundingBox(geoJson)
 
