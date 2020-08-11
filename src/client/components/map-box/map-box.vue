@@ -328,14 +328,28 @@ export default {
         ? projectAreaStyles[0].paint['fill-color']
         : properties.color
 
-      const lineDetails = {
-        id: `${properties.name || id}-line`,
-        type: 'line',
-        paint: {
-          'line-color': color || '#088',
-          'line-width': id === 'projectArea' ? 5 : 3,
-        },
-      }
+      const lineDetails = geometry.type === 'Polygon' || geometry.type === 'LineString'
+        ? {
+            id: `${properties.name || ''}-${id}-line`,
+            type: 'line',
+            paint: {
+              'line-color': color || '#088',
+              'line-width': id === 'projectArea' ? 5 : 3,
+            },
+          }
+        : {}
+
+      const pointDetails = geometry.type === 'Point'
+        ? {
+            id: `${properties.name || ''}-${id}-point`,
+            type: 'circle',
+            paint: {
+              'circle-radius': 5,
+              'circle-color': color || '#088',
+            },
+          }
+        : {}
+
       const baseObj = {
         'source': {
           'type': 'geojson',
@@ -349,10 +363,13 @@ export default {
         },
         'layout': {},
       }
-      const line = Object.assign({}, baseObj, lineDetails)
+      const line = Object.assign({}, baseObj, lineDetails, pointDetails)
       // const fill = Object.assign({}, baseObj, fillDetails)
       // this.map.addLayer(fill)
-      this.map.addLayer(line)
+      const layer = this.map.getLayer(line.id)
+      if (!layer) {
+        this.map.addLayer(line)
+      }
     },
     removeWmsLayer(id) {
       const layer = this.map.getLayer(`wms-layer-${id}`)
