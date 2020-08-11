@@ -383,35 +383,61 @@ export const actions = {
     })
     features.push(state.settings.area)
 
-    getApiData('heatstress/reduction', {
-      data: {
-        type: 'FeatureCollection',
-        features: features,
-      },
+
+    // Mocking for first testing purposes and not overloading the geoserver!
+    console.log(getApiData)
+    const apiData ={ 'diffStats':{ 'max':0.0,'mean':-2.7355895326763857e-13,'min':0.0 },'layers':[{ 'baseUrl':'https://tl-ng045.xtr.deltares.nl/geoserver/ows?','id':'pet_new','layerName':'TEMP:PET_new_1597063519870614','title':'PET new' },{ 'baseUrl':'https://tl-ng045.xtr.deltares.nl/geoserver/ows?','id':'pet_diff','layerName':'TEMP:PET_diff_1597063519870614','title':'PET differences' },{ 'baseUrl':'https://tl-ng045.xtr.deltares.nl/geoserver/ows?','id':'pet_original','layerName':'TEMP:PET_original_1597063519870614','title':'PET original' }],'newStats':{ 'max':128.0,'mean':30.267477272727,'min':0.0 },'oldStats':{ 'max':128.0,'mean':30.267477272727273,'min':0.0 } }
+    const tileSize = 256
+
+    const heatstressResults = {}
+    heatstressResults.newTemp = apiData.newStats.mean
+    heatstressResults.diffTemp = apiData.newStats.mean - apiData.oldStats.mean
+    commit('setHeatstressResults', heatstressResults)
+    apiData.layers.forEach(layer => {
+      const heatstressLayer = {
+        id: layer.id,
+        title: layer.title,
+        url: `${layer.baseUrl}bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.1.1&request=GetMap&srs=EPSG:3857&transparent=true&width=${tileSize}&height=${tileSize}&layers=${layer.layerName}`,
+        visible: false,
+        showLegend: false,
+        opacity: 1,
+        layerType: 'raster',
+        tilesize: tileSize,
+      }
+      commit('setHeatstressLayers', heatstressLayer)
     })
-      .then(apiData => {
-        const tileSize = 256
-        const heatstressResults = {}
-        heatstressResults.newTemp = apiData.newStats.mean
-        heatstressResults.diffTemp = apiData.newStats.mean - apiData.oldStats.mean
-        commit('setHeatstressResults', heatstressResults)
-        apiData.layers.forEach(layer => {
-          const heatstressLayer = {
-            id: layer.id,
-            title: layer.title,
-            url: `${layer.baseUrl}bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.1.1&request=GetMap&srs=EPSG:3857&transparent=true&width=${tileSize}&height=${tileSize}&layers=${layer.layerName}`,
-            visible: false,
-            showLegend: false,
-            opacity: 1,
-            layerType: 'raster',
-            tilesize: tileSize,
-          }
-          commit('setHeatstressLayers', heatstressLayer)
-        })
-      })
-      .catch(error => {
-        console.log('error fetching heatstress reduction', error)
-      })
+
+    // TODO: uncomment this
+    // getApiData('heatstress/reduction', {
+    //   data: {
+    //     type: 'FeatureCollection',
+    //     features: features,
+    //   },
+    // })
+    //   .then(apiData => {
+    //     console.log('apidata check', apiData)
+    //     const tileSize = 256
+    //     const heatstressResults = {}
+    //     heatstressResults.newTemp = apiData.newStats.mean
+    //     heatstressResults.diffTemp = apiData.newStats.mean - apiData.oldStats.mean
+    //     commit('setHeatstressResults', heatstressResults)
+    //     apiData.layers.forEach(layer => {
+    //       const heatstressLayer = {
+    //         id: layer.id,
+    //         title: layer.title,
+    //         url: `${layer.baseUrl}bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.1.1&request=GetMap&srs=EPSG:3857&transparent=true&width=${tileSize}&height=${tileSize}&layers=${layer.layerName}`,
+    //         visible: false,
+    //         showLegend: false,
+    //         opacity: 1,
+    //         layerType: 'raster',
+    //         tilesize: tileSize,
+    //       }
+    //       commit('setHeatstressLayers', heatstressLayer)
+    //     })
+    //   })
+    //   .catch(error => {
+    //     console.log('error fetching heatstress reduction', error)
+    //   })
   },
   bootstrapSettingsProjectArea({ commit }, settings) {
     settings.forEach(setting => {

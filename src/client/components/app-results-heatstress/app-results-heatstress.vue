@@ -1,7 +1,6 @@
 <template>
   <article class="app-results-heatstress">
     <p
-      v-if="heatstressLayers.length === 0"
       class="app-results-heatstress__content"
     >
       De gedetailleerde hittestress effecten worden berekend op basis van de
@@ -13,13 +12,34 @@
       class="app-results-heatstress__content"
     >
       <md-list>
-        <span class="md-list-item-text">Heatstress</span>
-        <md-button class="md-icon-button info-button">
-          <md-icon>info</md-icon>
-          <md-tooltip md-direction="top">
-            Behulpzame tekst
-          </md-tooltip>
-        </md-button>
+        <h2 class="kpi-group__title md-body-2">
+          Heatstress
+        </h2>
+
+        <md-list-item
+          v-for="(result, key) in heatstressResults"
+          :key="key"
+          class="kpi-group__kpi"
+        >
+          <span class="md-body-1 kpi-group__kpi-title">
+            {{ key }}:
+          </span>
+          <p class="kpi-group__kpi-value">
+            {{ roundValue(result) }} {{ unit('temperature') }}
+          </p>
+        </md-list-item>
+      </md-list>
+      <md-list
+        class="app-results-heatstress__information"
+      >
+        <md-list-item>
+          <md-button class="md-icon-button info-button">
+            <md-icon>info</md-icon>
+            <md-tooltip md-direction="top">
+              Behulpzame tekst
+            </md-tooltip>
+          </md-button>
+        </md-list-item>
         <md-list-item v-for="layer in heatstressLayers" :key="layer.id">
           <div class="md-list-item-expand md-list-item-container">
             <div class="md-list-item-content">
@@ -69,15 +89,22 @@ export default {
       type: Array,
       default: () => [],
     },
+    heatstressResults: {
+      type: Object,
+      default: () => {},
+    },
   },
   data() {
     return {
       isLoading: false,
     }
   },
+
   watch: {
     heatstressLayers() {
-      this.isLoading = false
+      if (this.heatstressLayers.length > 0) {
+        this.isLoading = false
+      }
     },
   },
   methods: {
@@ -94,62 +121,20 @@ export default {
       this.isLoading = true
       this.$emit('fetch-data')
     },
+    unit(...args) {
+      return this.$store.getters['data/units/displayValue'](...args)
+    },
+    roundValue(value) {
+      if (value >= 100) {
+        return Math.round(value)
+      } else {
+        return Math.round(value * 100) / 100
+      }
+    },
   },
 }
 </script>
 
 <style>
-.app-results-heatstress {
-  height: 100%;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-}
 
-.app-results-heatstress__content {
-  flex: 1;
-}
-
-.app-results-heatstress__footer {
-  display: grid;
-  grid-template-columns: auto min-content;
-  position: sticky;
-  bottom: 0;
-  z-index: 10;
-  margin-left: calc(-1 * var(--spacing-default));
-  width: calc(100% + (var(--spacing-default) * 2));
-
-  padding: var(--spacing-half);
-
-  border-top: 1px solid var(--border-color);
-  background-color: var(--background-color);
-}
-
-.app-results-heatstress__cta.md-button.md-theme-default.md-raised:not([disabled]) {
-  background-color: var(--nature-green-color);
-  color: var(--neutral-color);
-}
-
-.app-results-heatstress__footer-cta-wrapper {
-  position: relative;
-}
-
-.app-results-heatstress__loading-indicator {
-  position: absolute;
-  top: calc(
-    50% - 15px
-  ); /* 15px is half of the with. somehow translate does not have any effect */
-  left: calc(
-    50% - 25px
-  ); /* 15px is half of the with. somehow translate does not have any effect */
-  --md-theme-default-primary: var(--nature-green-color);
-}
-
-.app-results-heatstress__data-section {
-  margin-bottom: var(--spacing-default);
-}
-
-.app-results-heatstress__section-title {
-  margin-bottom: var(--spacing-half);
-}
 </style>

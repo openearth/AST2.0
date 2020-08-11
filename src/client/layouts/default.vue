@@ -57,7 +57,6 @@
         />
         <app-results-panel
           v-if="filledInSettings"
-          :heatstress-layers="heatstressLayers"
           :buttons="[
             { id: 'heatstress', icon: 'wb_sunny' },
             (activeWorkspace.showRivmCoBenefits && { id: 'rivm', icon: 'local_florist', color: '--nature-green-color' }),
@@ -82,6 +81,7 @@
             />
             <app-results-heatstress
               v-if="scope.active === 'heatstress'"
+              :heatstress-results="heatstressResults"
               :heatstress-layers="heatstressLayers"
               @fetch-data="fetchHeatstressData"
             />
@@ -189,6 +189,7 @@ export default {
       inSetMeasureFlow: state => state.setMeasureFlow.inFlow,
       userIsRefreshing: state => state.user.isRefreshing,
       rivmCoBenefits: state => state.project.rivmCoBenefits,
+      heatstressResults: state => state.project.heatstressResults,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers', 'customLayers', 'heatstressLayers', 'mapLayers', 'layers']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings']),
