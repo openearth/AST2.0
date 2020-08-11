@@ -10,7 +10,7 @@
     <dl class="pdf-export-projectarea-settings__description-list">
       <template v-for="setting in settings">
         <dt :key="`${setting.term}-term`">
-          {{ setting.term }}
+          {{ setting.term }}:
         </dt>
         <dd :key="`${setting.description}-description`">
           {{ setting.description }}

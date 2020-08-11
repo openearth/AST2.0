@@ -17,6 +17,24 @@
       :src="imageSrc"
       class="pdf-export-map__image"
     >
+    <ul class="pdf-export-map__measure-list">
+      <li
+        v-for="{ measure } in measureCollection"
+        :key="measure.measureId"
+        :style="`border-color: ${measure.color.hex}`"
+        class="pdf-export-map__measure-item"
+      >
+        <img
+          :src="`${measure.image.url}?w=75&h=75`"
+          width="50px"
+          height="50px"
+          alt=""
+        >
+        <p>
+          {{ measure.title }}
+        </p>
+      </li>
+    </ul>
   </article>
 </template>
 
@@ -41,7 +59,7 @@ export default {
       center: state => state.project.map.center,
       zoom: state => state.project.map.zoom,
     }),
-    ...mapGetters('project', ['areas']),
+    ...mapGetters('project', ['areas', 'measureCollection']),
     ...mapGetters('map', ['isProject']),
     projectAreaHasLoaded() {
       return Boolean(get(this, 'projectArea.geometry'))
@@ -87,7 +105,6 @@ export default {
 <style>
 .pdf-export-map {
   width: 64vh;
-  height: 50vw !important;
 }
 
 .pdf-export-map__map {
@@ -108,5 +125,20 @@ export default {
   width: 64vh;
   height: 50vw !important;
   object-fit: cover;
+}
+
+.pdf-export-map__measure-list {
+  display: grid;
+  grid-template-columns: repeat( auto-fill, minmax(50px, 18vw) );
+  gap: 0.5cm;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  margin-top: 0.5cm;
+}
+
+.pdf-export-map__measure-item {
+  border-top: 5px solid;
+  padding-top: 0.25cm;
 }
 </style>

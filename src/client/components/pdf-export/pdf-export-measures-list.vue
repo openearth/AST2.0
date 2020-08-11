@@ -24,7 +24,9 @@
           <img
             v-if="measure.images[0]"
             class="pdf-export-measures-list__second-image"
-            :src="`${measure.images[0].image.url}?h=150`"
+            :src="`${measure.images[0].image.url}?w=125&h=125&fit=crop`"
+            width="125"
+            height="125"
           >
           <div class="md-body-1 pdf-export-measures-list__summary" v-html="measure.summary" />
         </section>

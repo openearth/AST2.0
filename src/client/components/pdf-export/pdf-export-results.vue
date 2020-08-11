@@ -4,9 +4,13 @@
       {{ $t('results') }} - {{ $t('detail') }}
     </h2>
     <div ref="content" class="pdf-export-results__content">
-      <kpi-table :show-table-co-benefits="false" class="pdf-export-results__table" />
+      <div ref="coBenefits" class="pdf-export-results__table">
+        <kpi-table :show-table-co-benefits="false" />
+      </div>
       <br>
-      <kpi-table :show-table-climate-and-costs="false" class="pdf-export-results__table" />
+      <div ref="climateCosts" class="pdf-export-results__table">
+        <kpi-table :show-table-climate-and-costs="false" />
+      </div>
     </div>
   </article>
 </template>
@@ -23,12 +27,18 @@ export default {
   mounted() {
     this.$nextTick(() => {
       const contentElement = this.$refs.content
-      const tableElement = this.$refs.content.querySelector('table')
-      const innerContentElement = this.$refs.content.querySelector('.md-table')
-      const scale = contentElement.clientWidth / tableElement.clientWidth
-      tableElement.style.transformOrigin = 'top left'
-      tableElement.style.transform = `scale(${scale}) translateX(-${scale}%)`
-      innerContentElement.style.height = `${innerContentElement.clientHeight * scale}px`
+      const tableCoBenefitsElement = this.$refs.coBenefits.querySelector('table')
+      const tableClimateCostsElement = this.$refs.climateCosts.querySelector('table')
+      const coBenefitsInnerContentElement = this.$refs.coBenefits.querySelector('.md-table')
+      const climateCostsInnerContentElement = this.$refs.climateCosts.querySelector('.md-table')
+      const scale = contentElement.clientWidth / tableCoBenefitsElement.clientWidth
+      tableCoBenefitsElement.style.transformOrigin = 'top left'
+      tableCoBenefitsElement.style.transform = `scale(${scale}) translateX(-${scale}%)`
+      coBenefitsInnerContentElement.style.height = `${coBenefitsInnerContentElement.clientHeight * scale}px`
+
+      tableClimateCostsElement.style.transformOrigin = 'top left'
+      tableClimateCostsElement.style.transform = `scale(${scale}) translateX(-${scale}%)`
+      climateCostsInnerContentElement.style.height = `${climateCostsInnerContentElement.clientHeight * scale}px`
     })
   },
 }
@@ -39,5 +49,9 @@ export default {
   width: 100%;
   font-size: 10pt;
   page-break-before: always;
+}
+
+.pdf-export-results__table {
+  page-break-inside: avoid;
 }
 </style>

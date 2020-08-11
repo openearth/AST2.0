@@ -27,3 +27,13 @@ export default {
   },
 }
 </script>
+
+<style>
+.pdf-export-result-summary {
+  width: 50vw;
+}
+
+.pdf-export-result-summary .kpi-group__kpi .md-list-item-content {
+  min-height: initial;
+}
+</style>
