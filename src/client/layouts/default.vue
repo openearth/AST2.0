@@ -13,11 +13,11 @@
       :created-project-area="createdProjectArea"
       :filled-in-required-settings="filledInRequiredProjectAreaSettings"
       :has-areas="!!areas.length"
-      @onCloseNavigation="hideMenu"
-      @saveProject="saveProject"
-      @importProject="onFileInput"
-      @newProject="onNewProject"
-      @exportProject="() => {showExport(); hideMenu();}"
+      @on-close-navigation="hideMenu"
+      @save-project="saveProject"
+      @import-project="onFileInput"
+      @new-project="onNewProject"
+      @export-project="() => {showExport(); hideMenu();}"
     />
 
     <div class="layout__content">
@@ -53,13 +53,28 @@
           @selectionchange="selectionChange"
           @move="setMapPosition"
         />
-        <kpi-panel
+        <app-results-panel
           v-if="filledInSettings"
-          :kpis="filteredKpiGroups"
-          :kpi-values="filteredKpiValues"
-          :kpi-percentage-values="filteredKpiPercentageValues"
-          :selected-areas="selectedAreas && selectedAreas[0]"
-        />
+          :buttons="sidePanelTabButtons"
+          default-active="numbers"
+        >
+          <template slot-scope="scope">
+            <kpi-panel
+              v-if="scope.active === 'bars' || scope.active === 'numbers'"
+              :display-type="scope.active"
+              :kpis="filteredKpiGroups"
+              :kpi-values="filteredKpiValues"
+              :kpi-percentage-values="filteredKpiPercentageValues"
+              :selected-areas="selectedAreas && selectedAreas[0]"
+            />
+            <app-results-rivm
+              v-if="scope.active === 'rivm'"
+              :data="rivmCoBenefits"
+              :dato-content="kbsResultContent"
+              @fetch-data="fetchRivmCoBenefits"
+            />
+          </template>
+        </app-results-panel>
       </md-content>
     </div>
 
@@ -86,7 +101,7 @@
       </md-dialog-content>
 
       <md-dialog-actions>
-        <md-button class="md-primary" @click="hideExport">
+        <md-button class="md-accent" @click="hideExport">
           Close
         </md-button>
       </md-dialog-actions>
@@ -115,19 +130,22 @@
 
 <script>
 import { mapState, mapMutations, mapGetters, mapActions } from 'vuex';
-import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea } from '../components'
-import ProjectAreaSizeThreshold from '../components/project-area-size-threshold'
+import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea } from '@/components'
+import AppResultsPanel from '@/components/app-results-panel'
+import AppResultsRivm from '@/components/app-results-rivm'
 import getData from '~/lib/get-data'
 import EventBus, { CLICK } from '~/lib/event-bus';
 import log from '~/lib/log'
 
 export default {
-  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea, ProjectAreaSizeThreshold },
+  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea, ProjectAreaSizeThreshold, AppResultsPanel, AppResultsRivm },
   data() {
     return {
       disclaimer: {},
+      kbsResultContent: {},
     }
   },
+
   computed: {
     ...mapState({
       devMode: state => state.devMode,
@@ -144,6 +162,7 @@ export default {
       exportShown: state => state.flow.export,
       inSetMeasureFlow: state => state.setMeasureFlow.inFlow,
       userIsRefreshing: state => state.user.isRefreshing,
+      rivmCoBenefits: state => state.project.rivmCoBenefits,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers', 'customLayers', 'mapLayers', 'layers']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings', 'projectAreaSizeIsBelowThreshold']),
@@ -151,8 +170,16 @@ export default {
     ...mapGetters('map', ['isProject', 'point', 'line', 'polygon', 'addOnly', 'interactive', 'search']),
     ...mapGetters('user', ['isLoggedIn']),
     ...mapGetters('data/appConfig', ['title']),
+    ...mapGetters('data/workspaces', ['activeWorkspace']),
     layerList() {
       return [...this.customLayers, ...this.layers, ...this.mapLayers, ...this.wmsLayers]
+    },
+    sidePanelTabButtons() {
+      return [
+        { id: 'numbers', icon: 'format_list_numbered' },
+        { id: 'bars', icon: 'insert_chart' },
+        ( this.activeWorkspace.showRivmCoBenefits && { id: 'rivm', icon: 'eco', color: '--nature-green-color' } ),
+      ]
     },
   },
 
@@ -163,8 +190,12 @@ export default {
   },
   async beforeMount() {
     const locale = this.$i18n.locale
-    const data =  await getData({ locale, slug: 'legal' })
-    this.disclaimer = { ...data.legal.disclaimer }
+    const [ { kbsResult }, { legal } ] = await Promise.all([
+      getData({ locale, slug: 'kbs-results' }),
+      getData({ locale, slug: 'legal' }),
+    ])
+    this.kbsResultContent = { ...kbsResult }
+    this.disclaimer = { ...legal.disclaimer }
   },
 
   mounted() {
@@ -208,6 +239,7 @@ export default {
       clearState: 'project/clearState',
       exportProject: 'project/exportProject',
       connectMeasureToArea: 'setMeasureFlow/connectMeasureToArea',
+      fetchRivmCoBenefits: 'project/fetchRivmCoBenefits',
     }),
     async onFileInput(event) {
       this.importProject(event)
@@ -251,6 +283,7 @@ export default {
       return message
     },
   },
+
   head() {
     return {
       meta: [

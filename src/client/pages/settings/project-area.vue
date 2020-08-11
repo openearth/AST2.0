@@ -5,7 +5,7 @@
       class="md-transparent project-area__area-size"
     >
       <span class="md-subheading">{{ $t('area_size') }}: <strong>{{ area }}m<sup>2</sup></strong></span>
-      <md-button :to="`/${locale}/new-project`" class="md-primary">
+      <md-button :to="`/${locale}/new-project`" class="md-accent">
         {{ $t('change_area') }}
       </md-button>
     </md-toolbar>
@@ -88,6 +88,14 @@
               {{ setting.infoText }}
             </md-tooltip>
           </md-button>
+
+          <scenario-overview
+            v-if="setting.key === 'scenarioName'"
+            :value="projectAreaSettings[setting.key]"
+            :scenarios="scenariosInActiveWorkspace"
+            class="project-area__scenario-overview"
+            @choose-scenario="value => updateProjectAreaSetting({ type: 'select', key: setting.key, value })"
+          />
         </md-list>
       </section>
     </form>
@@ -95,12 +103,14 @@
 </template>
 
 <script>
+import get from 'lodash/get'
 import { mapState, mapActions, mapGetters } from 'vuex'
 import { SelectInput } from '~/components'
+import ScenarioOverview from '../../components/scenario-overview'
 
 export default {
   middleware: ['access-level-project-area'],
-  components: { SelectInput },
+  components: { SelectInput, ScenarioOverview },
   data() {
     return {
       activeTooltipKey: '',
@@ -115,8 +125,13 @@ export default {
     ...mapGetters({
       projectAreaSettings: 'project/settingsProjectArea',
       areaSettings: 'data/areaSettings/overriddenAreaSettings',
+      workspaces: 'data/workspaces',
+      scenariosInActiveWorkspace: 'data/workspaces/scenariosInActiveWorkspace',
     }),
     area() { return this.projectArea.properties && Math.round(this.projectArea.properties.area) },
+    showScenarioExamplesInSettings() {
+      return get(this, 'workspaces.activeWorkspace.showScenarioExamplesInSettings')
+    },
   },
   methods: {
     ...mapActions({
@@ -157,6 +172,7 @@ export default {
 .project-area__select {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   padding-right: 2px;
@@ -170,5 +186,10 @@ export default {
   position: absolute;
   top: -32px;
   right: 2px;
+}
+
+.project-area__scenario-overview {
+  flex-basis: 100%;
+  transform: translateY(calc(var(--spacing-half) * -1));
 }
 </style>

@@ -3,7 +3,7 @@
     <back-button class="measure__top" comp="div">
       <md-button
         :disabled="!selectedFeatures.length"
-        class="md-raised md-primary"
+        class="md-raised md-accent"
         @click="() => onChoose(measure)"
       >
         {{ $t('choose') }}

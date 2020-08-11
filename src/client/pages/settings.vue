@@ -30,7 +30,7 @@
           :key="1"
           :to="`/${locale}/settings/${nextTabKey}/`"
           :disabled="nextTabDisabled"
-          :class="{'md-primary': !filledInRequiredProjectAreaSettings}"
+          :class="{'md-accent': !filledInRequiredProjectAreaSettings}"
           class="md-raised"
         >
           {{ $t('next') }}
@@ -42,7 +42,7 @@
           :key="2"
           :disabled="!filledInSettings"
           :to="`/${locale}/project`"
-          class="md-primary md-raised"
+          class="md-accent md-raised"
         >
           {{ $t('done') }}
         </md-button>

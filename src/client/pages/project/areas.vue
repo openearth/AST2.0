@@ -44,7 +44,7 @@
                   </p>
                   <md-button
                     :to="`/${locale}/project/measures`"
-                    class="md-primary md-raised areas__choose-button"
+                    class="md-accent md-raised areas__choose-button"
                   >
                     {{ appliedMeasure ? $t('change_measure') : $t('choose_measure') }}
                   </md-button>
