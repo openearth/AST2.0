@@ -17,7 +17,7 @@
         :md-label="$t('project_target')"/>
     </md-tabs>
 
-    <nuxt-child class="settings-view__content"/>
+    <nuxt-child keep-alive class="settings-view__content"/>
 
     <div class="settings-view__action-wrapper">
       <transition name="slide-up">

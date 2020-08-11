@@ -3,7 +3,7 @@
     :class="{[`view-project__${drawerWidth}`]: true}"
     class="view-project"
     md-permanent="clipped">
-    <nuxt-child />
+    <nuxt-child keep-alive/>
   </md-drawer>
 </template>
 

@@ -5,7 +5,7 @@
       :current="activeStep.id"
       :wide="activeStep.isWide"
       @to-step="toStep"/>
-    <nuxt-child />
+    <nuxt-child keep-alive/>
     <md-button
       slot="footer"
       class="md-raised"
@@ -33,7 +33,11 @@ export default {
     this.startFlow()
   },
   destroyed() {
-    this.resetFlow({ relocate: false })
+
+    // Do not reset the flow when the user navigates to measure detail
+    if (!/project-measures-slug/.test(this.$route.name)) {
+      this.resetFlow({ relocate: false })
+    }
   },
   methods: {
     ...mapActions({
