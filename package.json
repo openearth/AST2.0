@@ -57,7 +57,7 @@
     "node-sass": "4.14.1",
     "normalize.css": "8.0.0",
     "nuxt": "1.4.2",
-    "nuxt-i18n": "5.2.1",
+    "nuxt-i18n": "^5.12.7",
     "portal-vue": "^2.1.6",
     "query-string": "6.1.0",
     "sass-loader": "7.1.0",
