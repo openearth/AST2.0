@@ -189,10 +189,12 @@ export default {
   },
   async beforeMount() {
     const locale = this.$i18n.locale
-    const data =  await getData({ locale, slug: 'legal' })
-    this.disclaimer = { ...data.legal.disclaimer }
-    const { kbsResult } = await getData({ locale, slug: 'kbs-results' })
-    this.kbsResultContent = kbsResult
+    const [ { kbsResult }, { legal } ] = await Promise.all([
+      getData({ locale, slug: 'kbs-results' }),
+      getData({ locale, slug: 'legal' }),
+    ])
+    this.kbsResultContent = { ...kbsResult }
+    this.disclaimer = { ...legal.disclaimer }
   },
 
   mounted() {
