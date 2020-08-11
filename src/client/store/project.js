@@ -389,7 +389,7 @@ export const actions = {
       },
     })
       .then(apiData => {
-        const tileSize = 256
+        const tileSize = 512
         const heatstressResults = {}
         heatstressResults.heatstress_new_temperature = apiData.newStats.mean
         heatstressResults.heatstress_temperature_difference = apiData.newStats.mean - apiData.oldStats.mean
@@ -398,7 +398,7 @@ export const actions = {
           const heatstressLayer = {
             id: layer.layerName,
             title: layer.title,
-            url: `${layer.baseUrl}bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.1.1&request=GetMap&srs=EPSG:3857&transparent=true&width=${tileSize}&height=${tileSize}&layers=${layer.layerName}`,
+            url: `${layer.baseUrl}bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.3.0&request=GetMap&crs=EPSG:3857&srs=EPSG:28992&transparent=True&width=${tileSize}&height=${tileSize}&layers=${layer.layerName}`,
             visible: false,
             showLegend: false,
             opacity: 1,
