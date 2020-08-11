@@ -3,9 +3,7 @@
     <p
       class="app-results-heatstress__content"
     >
-      De gedetailleerde hittestress effecten worden berekend op basis van de
-      actieve maatregelen. Na toevoegen of aanpassen van de maatregelen wordt de
-      berekening uitgevoerd na het indrukken van onderstaande knop.
+      {{ $t('heatstress_description') }}
     </p>
     <div
       v-if="heatstressLayers.length > 0"
@@ -13,7 +11,7 @@
     >
       <md-list>
         <h2 class="kpi-group__title md-body-2">
-          Heatstress
+          {{ $t('heatstress_title') }}
         </h2>
 
         <md-list-item
@@ -22,7 +20,7 @@
           class="kpi-group__kpi"
         >
           <span class="md-body-1 kpi-group__kpi-title">
-            {{ key }}:
+            {{ $t(key) }}:
           </span>
           <p class="kpi-group__kpi-value">
             {{ roundValue(result) }} {{ unit('temperature') }}
@@ -36,7 +34,7 @@
           <md-button class="md-icon-button info-button">
             <md-icon>info</md-icon>
             <md-tooltip md-direction="top">
-              Behulpzame tekst
+              {{ $t('heatstress_tooltip') }}
             </md-tooltip>
           </md-button>
         </md-list-item>
