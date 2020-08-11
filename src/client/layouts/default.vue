@@ -27,6 +27,7 @@
       <nuxt v-else />
       <md-content class="layout__map-wrapper">
         <map-viewer
+          v-if="legalAccepted"
           :project-area="projectArea"
           :is-project="isProject"
           :areas="areas"

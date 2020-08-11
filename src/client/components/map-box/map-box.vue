@@ -148,7 +148,13 @@ export default {
   async mounted() {
     const mapZoom = this.mapZoom
     const { lat, lng } = this.mapCenter
-    const [mapboxgl, MapboxDraw, MapboxGeocoder, mapboxBaseStyle] = await Promise.all([import('mapbox-gl'), import('@mapbox/mapbox-gl-draw'), import('@mapbox/mapbox-gl-geocoder'), getData({ folder: 'mapbox-base-layer', slug: 'style' })])
+    const [mapboxgl, MapboxDraw, MapboxGeocoder, mapboxBaseStyle] = await Promise.all([
+      import(/* webpackChunkName: "mapbox-gl" */ 'mapbox-gl'),
+      import(/* webpackChunkName: "mapbox-gl-draw" */ '@mapbox/mapbox-gl-draw'),
+      import(/* webpackChunkName: "mapbox-gl-geocoder" */ '@mapbox/mapbox-gl-geocoder'),
+      getData({ folder: 'mapbox-base-layer', slug: 'style' }),
+    ])
+
     const defaultStyles = [...new MapboxDraw().options.styles]
       .filter(style => /\.hot$/.test(style.id))
       .map(({ source, ...style }) => ({ ...style, id: style.id.replace('.hot', '') }))

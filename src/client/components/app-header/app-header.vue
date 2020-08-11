@@ -1,7 +1,10 @@
 <template>
   <md-toolbar class="md-primary" role="banner">
     <section class="md-toolbar-section-start">
-      <md-button class="md-icon-button" @click="() => $emit('onShowNavigation')">
+      <md-button
+        :class="{'app-header__menu-button--show': legalAccepted}"
+        class="app-header__menu-button md-icon-button"
+        @click="() => legalAccepted && $emit('onShowNavigation')">
         <md-icon>menu</md-icon>
       </md-button>
 
@@ -76,3 +79,13 @@ export default {
   },
 }
 </script>
+
+<style>
+.app-header__menu-button {
+  opacity: 0;
+}
+
+.app-header__menu-button--show {
+  opacity: 1;
+}
+</style>
