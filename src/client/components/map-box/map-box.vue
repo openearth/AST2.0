@@ -150,33 +150,32 @@ export default {
     heatstressLayers: {
       deep: true,
       handler(newLayers) {
-        [...newLayers].reverse().forEach(newLayer => {
-          const layer = this.map.getLayer(`wms-layer-${newLayer.id}`)
-          if (!layer) {
+        const layers = [...newLayers].reverse().forEach(newLayer => {
+          if (!this.map.getLayer(`wms-layer-${newLayer.id}`)) {
             this.addWmsLayer(newLayer)
-            this.oldHeatstressLayers = newLayers
-            return
           }
 
+          if (newLayer.visible === true) {
+            this.showWmsLayer(newLayer.id)
+          } else {
+            this.hideWmsLayer(newLayer.id)
+          }
           // Find the old layer with the same ID
           const oldLayer = this.oldHeatstressLayers.find(
             oldLayer => oldLayer.title === newLayer.title,
           )
 
-          if (oldLayer.layerName === newLayer.layerName) {
-            // If the oldLayer with the same id as the newLayer, check for visibility changes
-            if (newLayer.visible === true) {
-              this.showWmsLayer(newLayer.id)
-            } else {
-              this.hideWmsLayer(newLayer.id)
-            }
-          } else {
+          if (oldLayer && oldLayer.layerName !== newLayer.layerName) {
             // if there is already an old layer with this id, remove it first
-            this.removeWmsLayer(`wms-layer-${oldLayer.id}`)
-            this.addWmsLayer(newLayer)
+            if (this.map.getLayer(`wms-layer-${oldLayer.id}`)) {
+              this.removeWmsLayer(oldLayer.id)
+            }
           }
-          this.oldHeatstressLayers = newLayers
         })
+        if (newLayers.length > 0 ) {
+          this.oldHeatstressLayers = newLayers
+        }
+        return layers
       },
     },
   },
