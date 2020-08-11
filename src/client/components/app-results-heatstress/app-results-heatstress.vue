@@ -61,7 +61,7 @@
     <footer class="app-results-heatstress__footer">
       <div class="app-results-heatstress__footer-cta-wrapper">
         <md-button
-          :disabled="isLoading"
+          :disabled="isLoading || !hasAreas"
           class="app-results-heatstress__cta md-raised"
           @click="handleFetchData"
         >
@@ -82,6 +82,7 @@
 <script>
 import { mapMutations } from 'vuex'
 import cloneDeep from 'lodash/cloneDeep'
+import isEmpty from 'lodash/isEmpty'
 
 export default {
   props: {
@@ -93,13 +94,22 @@ export default {
       type: Object,
       default: () => {},
     },
+    areas: {
+      type: Array,
+      default: () => [],
+    },
   },
   data() {
     return {
       isLoading: false,
     }
   },
-
+  computed: {
+    hasAreas() {
+      const areas = this.areas.filter(area => !isEmpty(area.properties.apiData) && !area.properties.hidden)
+      return areas.length > 0
+    },
+  },
   watch: {
     heatstressLayers() {
       if (this.heatstressLayers.length > 0) {

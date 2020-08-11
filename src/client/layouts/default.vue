@@ -83,6 +83,7 @@
               v-if="scope.active === 'heatstress'"
               :heatstress-results="heatstressResults"
               :heatstress-layers="heatstressLayers"
+              :areas="areas"
               @fetch-data="fetchHeatstressData"
             />
           </template>
