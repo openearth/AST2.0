@@ -10,10 +10,10 @@
       class="kpi-group__kpi"
     >
       <span class="md-body-1 kpi-group__kpi-title">
-        {{ kpi.title }}:
+        {{ inferKpiTitleWithUnit(kpi.title, kpi.unit) }}
       </span>
       <p v-if="type === 'numbers'" class="kpi-group__kpi-value">
-        {{ roundValue(kpiByKey(kpi.key)) }} {{ unit(kpi.unit) }}
+        {{ roundValue(kpiByKey(kpi.key)) }}
       </p>
 
       <md-progress-bar
@@ -68,6 +68,10 @@ export default {
       } else {
         return Math.round(value * 100) / 100
       }
+    },
+    inferKpiTitleWithUnit(title, unit) {
+      const formattedUnit = ` (${ this.unit(unit) })`
+      return `${ title }${ this.type === 'numbers' ? formattedUnit : '' }:`
     },
   },
 }

@@ -72,6 +72,7 @@
             <app-results-rivm
               v-if="scope.active === 'rivm'"
               :data="rivmCoBenefits"
+              :dato-content="kbsResultContent"
               @fetch-data="fetchRivmCoBenefits"
             />
             <app-results-heatstress
@@ -79,6 +80,7 @@
               :heatstress-results="heatstressResults"
               :heatstress-layers="heatstressLayers"
               :areas="areas"
+              :dato-content="kbsResultContent"
               @fetch-data="fetchHeatstressData"
             />
           </template>
@@ -131,6 +133,8 @@
 
     <!-- portal for general popup -->
     <portal-target name="popup-portal" />
+
+    <project-area-size-threshold :is-below-threshold="projectAreaSizeIsBelowThreshold" />
   </div>
 </template>
 
@@ -145,27 +149,18 @@ import AppMenu from '../components/app-menu'
 import NotificationArea from '../components/notification-area'
 import AppResultsPanel from '../components/app-results-panel'
 import AppResultsRivm from '../components/app-results-rivm'
+import ProjectAreaSizeThreshold from '../components/project-area-size-threshold'
 import AppResultsHeatstress from '../components/app-results-heatstress'
 import getData from '~/lib/get-data'
 import EventBus, { CLICK } from '~/lib/event-bus'
 import log from '~/lib/log'
 
 export default {
-  components: {
-    AppDisclaimer,
-    AppHeader,
-    MapViewer,
-    KpiPanel,
-    VirtualKeyboard,
-    AppMenu,
-    NotificationArea,
-    AppResultsPanel,
-    AppResultsRivm,
-    AppResultsHeatstress,
-  },
+  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea, ProjectAreaSizeThreshold, AppResultsPanel, AppResultsRivm, AppResultsHeatstress },
   data() {
     return {
       disclaimer: {},
+      kbsResultContent: {},
     }
   },
 
@@ -189,7 +184,7 @@ export default {
       heatstressResults: state => state.project.heatstressResults,
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers', 'customLayers', 'heatstressLayers', 'mapLayers', 'layers']),
-    ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings']),
+    ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings', 'projectAreaSizeIsBelowThreshold']),
     ...mapGetters({ selectedAreas:  'selectedAreas/features' }),
     ...mapGetters('map', ['isProject', 'point', 'line', 'polygon', 'addOnly', 'interactive', 'search']),
     ...mapGetters('user', ['isLoggedIn']),
@@ -215,8 +210,12 @@ export default {
   },
   async beforeMount() {
     const locale = this.$i18n.locale
-    const data = await getData({ locale, slug: 'legal' })
-    this.disclaimer = { ...data.legal.disclaimer }
+    const [ { kbsResult }, { legal } ] = await Promise.all([
+      getData({ locale, slug: 'kbs-results' }),
+      getData({ locale, slug: 'legal' }),
+    ])
+    this.kbsResultContent = { ...kbsResult }
+    this.disclaimer = { ...legal.disclaimer }
   },
 
   mounted() {
