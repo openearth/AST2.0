@@ -9,8 +9,8 @@
       class="app-results-heatstress__content"
     >
       <md-list
-      v-if="heatstressLayers.length > 0"
->
+        v-if="heatstressLayers.length > 0"
+      >
         <h2 class="app-results-heatstress__title md-body-2">
           {{ $t('heatstress_title') }}
         </h2>
@@ -29,7 +29,7 @@
         </md-list-item>
       </md-list>
       <md-list
-      v-if="heatstressLayers.length > 0"
+        v-if="heatstressLayers.length > 0"
 
         class="app-results-heatstress__information"
       >

@@ -99,6 +99,7 @@ export default {
   data: () => ({
     map: undefined,
     draw: undefined,
+    oldHeatstressLayers: [], // Needed for recalculation and resetting the wmslayers for heatstress
   }),
 
   computed: {
@@ -153,17 +154,18 @@ export default {
     },
     heatstressLayers: {
       deep: true,
-      handler(newLayers, oldLayers) {
+      handler(newLayers) {
         [...newLayers].reverse().forEach(newLayer => {
           const layer = this.map.getLayer(`wms-layer-${newLayer.id}`)
           if (!layer) {
             this.addWmsLayer(newLayer)
+            this.oldHeatstressLayers = newLayers
             return
           }
 
           // Find the old layer with the same ID
-          const oldLayer = oldLayers.find(
-            oldLayer => oldLayer.id === newLayer.id,
+          const oldLayer = this.oldHeatstressLayers.find(
+            oldLayer => oldLayer.title === newLayer.title,
           )
 
           if (oldLayer.layerName === newLayer.layerName) {
@@ -175,9 +177,10 @@ export default {
             }
           } else {
             // if there is already an old layer with this id, remove it first
-            this.removeLayer(`wms-layer-${oldLayer.id}`)
+            this.removeWmsLayer(`wms-layer-${oldLayer.id}`)
             this.addWmsLayer(newLayer)
           }
+          this.oldHeatstressLayers = newLayers
         })
       },
     },
@@ -394,6 +397,7 @@ export default {
       const layer = this.map.getLayer(`wms-layer-${id}`)
       if (layer) {
         this.map.removeLayer(`wms-layer-${id}`)
+        this.map.removeSource(`wms-layer-${id}`)
       }
     },
     addWmsLayer({
@@ -433,7 +437,6 @@ export default {
           const lastWmsLayerId = layers[lastWmsLayerIndex]
             ? layers[lastWmsLayerIndex].id
             : undefined
-
           this.map.addLayer(
             {
               id: `wms-layer-${id}`,
