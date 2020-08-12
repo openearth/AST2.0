@@ -54,8 +54,9 @@
                 </div>
               </div>
 
+              <!-- Depth input -->
               <input-range
-                v-if="appliedMeasure"
+                v-if="appliedMeasure && getDefaultValueProperty('depth', 'show', appliedMeasure.defaultValues)"
                 :value="inputValue(feature.properties.areaDepth, feature.properties.defaultDepth)"
                 :min="getDefaultValueProperty('depth', 'min', appliedMeasure.defaultValues)"
                 :max="getDefaultValueProperty('depth', 'max', appliedMeasure.defaultValues)"
@@ -71,8 +72,9 @@
                 </template>
               </input-range>
 
+              <!-- Inflow input -->
               <input-range
-                v-if="appliedMeasure"
+                v-if="appliedMeasure && getDefaultValueProperty('inflow', 'show', appliedMeasure.defaultValues)"
                 :value="inputValue(feature.properties.areaInflow, feature.properties.defaultInflow)"
                 :min="getDefaultValueProperty('inflow', 'min', appliedMeasure.defaultValues)"
                 :max="getDefaultValueProperty('inflow', 'max', appliedMeasure.defaultValues)"
@@ -88,8 +90,9 @@
                 </template>
               </input-range>
 
+              <!-- Width input -->
               <input-range
-                v-if="appliedMeasure && feature.geometry.type === 'LineString'"
+                v-if="appliedMeasure && feature.geometry.type === 'LineString' && getDefaultValueProperty('width', 'show', appliedMeasure.defaultValues)"
                 :value="inputValue(feature.properties.areaWidth, feature.properties.defaultWidth)"
                 :min="getDefaultValueProperty('width', 'min', appliedMeasure.defaultValues)"
                 :max="getDefaultValueProperty('width', 'max', appliedMeasure.defaultValues)"
@@ -104,8 +107,9 @@
                 </template>
               </input-range>
 
+              <!-- Radius input -->
               <input-range
-                v-if="appliedMeasure && feature.geometry.type === 'Point'"
+                v-if="appliedMeasure && feature.geometry.type === 'Point' && getDefaultValueProperty('radius', 'show', appliedMeasure.defaultValues)"
                 :value="inputValue(feature.properties.areaRadius, feature.properties.defaultRadius)"
                 :min="getDefaultValueProperty('radius', 'min', appliedMeasure.defaultValues)"
                 :max="getDefaultValueProperty('radius', 'max', appliedMeasure.defaultValues)"
@@ -180,7 +184,7 @@ export default {
     getDefaultValueProperty(key, property, defaultValues) {
       const values = defaultValues.find(values => values.key.toLowerCase() === key)
       const value = values ? values[property] : ''
-      return String(value)
+      return property === 'show' ? value : String(value)
     },
     inputValue(value, defaultValue) {
       let returnValue = value || defaultValue
