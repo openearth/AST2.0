@@ -32,7 +32,6 @@ const initialState = () => ({
     layers: [],
     zoom: 16.5,
   },
-  displayMap: false,
   settings: {
     area: {},
     general: {
@@ -60,9 +59,6 @@ export const mutations = {
     }
 
     Object.keys(newState).forEach(key => Vue.set(state, key, newState[key]))
-  },
-  showMap(state) {
-    state.displayMap = true
   },
   setMapZoom(state, value) {
     state.map.zoom = value

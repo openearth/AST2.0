@@ -14,11 +14,11 @@ export const plugins = [ store => {
   )
   store.watch(
     (state, getters) => getters['data/workspaces/activeWorkspace'],
-    async newValue => {
+    newValue => {
       const { zoomLevel, startLocation } = newValue
-      await store.dispatch('project/applyDefaultValuesToAreaSettings')
+      store.dispatch('project/applyDefaultValuesToAreaSettings')
       if (zoomLevel && startLocation) {
-        await store.dispatch('project/setMapPosition', {
+        store.dispatch('project/setMapPosition', {
             zoom: zoomLevel,
             center: {
               lat: startLocation.latitude,
@@ -26,7 +26,16 @@ export const plugins = [ store => {
             },
           },
         )
-        store.commit('project/showMap')
+        setTimeout(() => {
+          MapEventBus.$emit(REPOSITION, {
+            instant: true,
+            zoom: zoomLevel,
+            center: {
+              lat: startLocation.latitude,
+              lng: startLocation.longitude,
+            },
+          })
+        }, 10)
       }
     },
   )
