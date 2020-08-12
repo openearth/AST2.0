@@ -29,6 +29,7 @@
       <nuxt v-else />
       <md-content class="layout__map-wrapper">
         <map-viewer
+          v-if="displayMap"
           :project-area="projectArea"
           :is-project="isProject"
           :areas="areas"
@@ -150,6 +151,7 @@ export default {
   computed: {
     ...mapState({
       devMode: state => state.devMode,
+      displayMap: state => state.project.displayMap,
       map: state => state.project.map,
       projectArea: state => state.project.settings.area,
       legalAccepted: state => state.project.legalAccepted,
