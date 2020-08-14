@@ -138,7 +138,7 @@ export default {
 }
 
 .pdf-export-map__measure-item {
-  border-top: 5px solid;
-  padding-top: 0.25cm;
+  border-left: 5px solid;
+  padding-left: 0.25cm;
 }
 </style>

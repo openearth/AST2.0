@@ -1,7 +1,9 @@
 <template>
   <div class="pdf-export">
     <h1 class="pdf-export__title md-headline">
-      {{ $t('results') }} {{ appConfig && appConfig.title }} - {{ title }}
+      {{ $t('results') }} {{ appConfig && appConfig.title }}
+      <br>
+      {{ title }}
     </h1>
     <p>{{ $t('pdf_tool_description') }}</p>
     <pdf-export-map />
