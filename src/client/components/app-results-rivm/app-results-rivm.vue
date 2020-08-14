@@ -35,7 +35,7 @@
             </dt>
             <dd
               :key="`${ definition.code }-definition`"
-              class="app-results-rivm__value"
+              class="md-body-1 app-results-rivm__value"
             >
               {{ definition.value }}
             </dd>
