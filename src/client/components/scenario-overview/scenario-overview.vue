@@ -108,11 +108,6 @@ export default {
 </script>
 
 <style>
-.scenario-overview {
-  display: flex;
-  justify-content: flex-end;
-}
-
 .scenario-overview__popup {
   display: flex;
   flex-direction: column;

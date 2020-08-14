@@ -194,5 +194,7 @@ export default {
 .project-area__scenario-overview {
   flex-basis: 100%;
   transform: translateY(calc(var(--spacing-half) * -1));
+  display: flex;
+  justify-content: flex-end;
 }
 </style>
