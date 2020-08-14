@@ -373,6 +373,9 @@ export const actions = {
   fetchHeatstressData({ state, commit, getters, dispatch }) {
     commit('clearHeatstressLayers')
     let features = cloneDeep(getters.areas)
+
+    // Only use the areas that are not hidden
+    features.filter(feat => !feat.properties.hidden)
     // If the properties are not set use the defaults
     features.forEach(area => {
       area.properties.areaInflow = area.properties.areaInflow ||  area.properties.defaultInflow
