@@ -4,6 +4,7 @@
 
 <script>
 import { mapActions } from 'vuex'
+import get from 'lodash/get'
 import projectAreaStyles from './project-area-styles'
 import areaStyles from './area-styles'
 import getData from '~/lib/get-data'
@@ -90,6 +91,14 @@ export default {
       type: Array,
       default: () => [],
     },
+    fitToBounds: {
+      type: Array,
+      default: () => [],
+    },
+    animate: {
+      type: Boolean,
+      default: true,
+    },
     heatstressLayers: {
       type: Array,
       default: () => [],
@@ -108,7 +117,7 @@ export default {
       return layers
     },
     hasProjectArea() {
-      return !!this.projectArea.properties
+      return !!get(this, 'projectArea.properties')
     },
     layerVisibility() {
       return this.allMapLayers.reduce((obj, layer) => {
@@ -146,6 +155,11 @@ export default {
     },
     layerList() {
       [...this.layerList].reverse().forEach(this.addWmsLayer)
+    },
+    fitToBounds() {
+      if (this.fitToBounds.length > 0) {
+        this.map.fitBounds(this.fitToBounds, { padding: 20, animate: this.animate })
+      }
     },
     heatstressLayers: {
       deep: true,
@@ -200,7 +214,9 @@ export default {
         zoom: this.mapZoom,
         center: [lng, lat],
         showZoom: false,
+        preserveDrawingBuffer: true,
       })
+      window.map = this.map
       this.draw = new MapboxDraw({
         displayControlsDefault: false,
         userProperties: true,
@@ -222,6 +238,7 @@ export default {
       this.map.on('draw.selectionchange', event => this.$emit('selectionchange', event.features))
       this.map.on('drag', () => this.$emit('move', { center: this.map.getCenter(), zoom: this.map.getZoom() }))
       this.map.on('draw.modechange', event => this.$emit('modechange', event.mode))
+      this.map.on('draw.render', () => this.$emit('render'))
 
       this.map.on('load', () => {
         this.allMapLayers.forEach(this.addWmsLayer)
@@ -232,6 +249,11 @@ export default {
         this.renderWmsLayersVisibility()
         this.renderWmsLayersOpacity()
         this.$emit('modechange', this.draw.getMode())
+        this.$nextTick(() => {
+          // We dispatch an custom event so that the iframe for the export-to-pdf
+          // functionality knows when mapbox has loaded
+          document.dispatchEvent(new CustomEvent('mapbox-loaded'))
+        })
       })
 
       MapEventBus.$on(UPDATE_FEATURE_PROPERTY, ({ featureId, key, value }) => {
@@ -250,9 +272,9 @@ export default {
 
       MapEventBus.$on(REPOSITION, ({ center, zoom, instant = false }) => {
         if (instant) {
-          this.$nextTick(() => this.map.jumpTo({ center, zoom }))
+          this.$nextTick(() => this.map.jumpTo({ center, zoom, animate: this.animate }))
         } else {
-          this.$nextTick(() => this.map.flyTo({ center, zoom }))
+          this.$nextTick(() => this.map.flyTo({ center, zoom, animate: this.animate }))
         }
       })
 
@@ -311,6 +333,7 @@ export default {
       }
     },
     clearMap() {
+      try {
       this.map.getLayer('projectArea-line') && this.map.removeLayer('projectArea-line')
       this.map.getSource('projectArea-line') && this.map.removeSource('projectArea-line')
       this.draw.deleteAll()
@@ -318,6 +341,9 @@ export default {
         this.map.getLayer(`${area.properties.name}-line`) && this.map.removeLayer(`${area.properties.name}-line`)
         this.map.getSource(`${area.properties.name}-line`) && this.map.removeSource(`${area.properties.name}-line`)
       })
+      } catch (err) {
+        console.log(err)
+      }
     },
     fillMap() {
       if (this.interactive === false || this.addOnly === true) {
@@ -340,14 +366,28 @@ export default {
           ? projectAreaStyles[0].paint['fill-color']
           : properties.color
 
-      const lineDetails = {
-        id: `${properties.name || id}-line`,
-        type: 'line',
-        paint: {
-          'line-color': color || '#088',
-          'line-width': id === 'projectArea' ? 5 : 3,
-        },
-      }
+      const lineDetails = geometry.type === 'Polygon' || geometry.type === 'LineString'
+        ? {
+            id: `${properties.name || ''}-${id}-line`,
+            type: 'line',
+            paint: {
+              'line-color': color || '#088',
+              'line-width': id === 'projectArea' ? 5 : 3,
+            },
+          }
+        : {}
+
+      const pointDetails = geometry.type === 'Point'
+        ? {
+            id: `${properties.name || ''}-${id}-point`,
+            type: 'circle',
+            paint: {
+              'circle-radius': 5,
+              'circle-color': color || '#088',
+            },
+          }
+        : {}
+
       const baseObj = {
         source: {
           type: 'geojson',
@@ -361,10 +401,13 @@ export default {
         },
         layout: {},
       }
-      const line = Object.assign({}, baseObj, lineDetails)
+      const line = Object.assign({}, baseObj, lineDetails, pointDetails)
       // const fill = Object.assign({}, baseObj, fillDetails)
       // this.map.addLayer(fill)
-      this.map.addLayer(line)
+      const layer = this.map.getLayer(line.id)
+      if (!layer) {
+        this.map.addLayer(line)
+      }
     },
     removeWmsLayer(id) {
       const layer = this.map.getLayer(`wms-layer-${id}`)

@@ -34,6 +34,7 @@ module.exports = {
       },
     }],
     'vue/no-v-html': 'off',
+    'vue/no-unused-components': 'warn',
     'no-debugger': 'off',
     'no-console': 'off',
     'no-prototype-builtins': 'off',

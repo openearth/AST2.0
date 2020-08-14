@@ -15,6 +15,7 @@ import validateProject from '../lib/validate-project'
 import projectToGeoJson from '../lib/project-to-geojson'
 import projectToCsv from '../lib/project-to-csv'
 import delay from '../lib/delay'
+import exportToPdf from '../lib/export-to-pdf'
 import log from '../lib/log';
 import fetchCoBenefitsFromRivm from '../lib/fetch-rivm-co-benefits'
 
@@ -565,14 +566,39 @@ export const actions = {
     commit('appMenu/hideMenu', null, { root: true })
     return FileSaver.saveAs(blob, `${title || 'ast_project'}.json`)
   },
-  exportProject({ state, getters, rootGetters }, format) {
+  async exportProject({ state, getters, rootState, rootGetters, commit, dispatch }, format) {
     const { title } = state.settings.general
-    const data = format === 'csv'
-      ? projectToCsv(getters.areas, Object.keys(getters.kpiValues), rootGetters['data/measures/measureById'])
-      : projectToGeoJson(getters.areas)
-    const type = format === 'csv' ? 'text/csv' : 'application/json';
+    let data
+    let type
+    switch (format) {
+      case 'csv':
+        data = projectToCsv(getters.areas, Object.keys(getters.kpiValues), rootGetters['data/measures/measureById'])
+        type = 'text/csv'
+        break;
+      case 'geojson':
+        data = projectToGeoJson(getters.areas)
+        type = 'application/json'
+        break;
+      case 'pdf':
+        commit('flow/showPdfExport', null, { root: true })
+        data = await exportToPdf({ locale: rootState.i18n.locale, project: state, title: state.settings.general.title })
+        type = 'application/pdf'
+        break;
+      default:
+        return
+    }
+
     const blob = new Blob([data], { type })
-    return FileSaver.saveAs(blob, `${title || 'ast_project'}.${format}`)
+    if (format === 'pdf') commit('flow/hidePdfExport', null, { root: true })
+    if (data) {
+      return FileSaver.saveAs(blob, `${title || 'ast_project'}.${format}`)
+    } else {
+      dispatch(
+        'notifications/showError',
+        { message: 'Could not save data' },
+        { root: true },
+      )
+    }
   },
   clearState({ commit, dispatch, rootState }) {
     const areaSettings = rootState.data.areaSettings

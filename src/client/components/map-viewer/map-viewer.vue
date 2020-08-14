@@ -3,6 +3,7 @@
     <map-box
       :add-only="addOnly"
       :interactive="interactive"
+      :animate="animate"
       :point="point"
       :line="line"
       :polygon="polygon"
@@ -17,10 +18,12 @@
       :layer-list="layerList"
       :heatstress-layers="heatstressLayers"
       :mode="mode"
+      :fit-to-bounds="fitToBounds"
       class="map-viewer__map"
       @create="onCreate"
       @update="onUpdate"
       @delete="onDelete"
+      @render="onRender"
       @selectionchange="onSelectionchange"
       @move="onMove"
       @modechange="mode => setMode(mode)"
@@ -149,6 +152,14 @@ export default {
       type: String,
       default: '',
     },
+    fitToBounds: {
+      type: Array,
+      default: () => [],
+    },
+    animate: {
+      type: Boolean,
+      default: true,
+    },
   },
   computed: {
     legendLayers() {
@@ -164,33 +175,16 @@ export default {
       setLayerVisibility: 'project/setLayerVisibility',
       setLegendVisibility: 'project/setLegendVisibility',
     }),
-    onCreate(event) {
-      this.$emit('create', event)
-    },
-    onUpdate(event) {
-      this.$emit('update', event)
-    },
-    onDelete(event) {
-      this.$emit('delete', event)
-    },
-    onSelectionchange(event) {
-      this.$emit('selectionchange', event)
-    },
-    onMove(event) {
-      this.$emit('move', event)
-    },
-    onClickDelete() {
-      MapEventBus.$emit(DELETE)
-    },
-    zoomIn() {
-      MapEventBus.$emit(ZOOM_IN)
-    },
-    zoomOut() {
-      MapEventBus.$emit(ZOOM_OUT)
-    },
-    onSearch(event) {
-      MapEventBus.$emit(SEARCH, event)
-    },
+    onCreate(event) { this.$emit('create', event) },
+    onUpdate(event) { this.$emit('update', event) },
+    onDelete(event) { this.$emit('delete', event) },
+    onRender(event) { this.$emit('render', event) },
+    onSelectionchange(event) { this.$emit('selectionchange', event) },
+    onMove(event) { this.$emit('move', event) },
+    onClickDelete() { MapEventBus.$emit(DELETE) },
+    zoomIn() { MapEventBus.$emit(ZOOM_IN) },
+    zoomOut() { MapEventBus.$emit(ZOOM_OUT) },
+    onSearch(event) { MapEventBus.$emit(SEARCH, event) },
   },
 }
 </script>

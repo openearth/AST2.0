@@ -13,6 +13,7 @@ import {
 export const state = () => ({
   fullPath: {},
   export: false,
+  pdfExport: false,
 })
 
 export const mutations = {
@@ -26,6 +27,14 @@ export const mutations = {
 
   hideExport(state) {
     state.export = false
+  },
+
+  showPdfExport(state) {
+    state.pdfExport = true
+  },
+
+  hidePdfExport(state) {
+    state.pdfExport = false
   },
 }
 
