@@ -128,7 +128,7 @@
     <project-area-size-threshold :is-below-threshold="projectAreaSizeIsBelowThreshold" />
 
     <scenario-overview
-      v-if="displayMap"
+      v-if="scenariosShown"
       :value="projectAreaSettings['scenarioName']"
       :scenarios="scenariosInActiveWorkspace"
       @choose-scenario="value => updateProjectAreaSetting({ type: 'select', key: 'scenarioName', value })"
@@ -137,7 +137,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapGetters, mapActions } from 'vuex';
+import { mapState, mapMutations, mapGetters, mapActions } from 'vuex'
 import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea } from '@/components'
 import AppResultsPanel from '@/components/app-results-panel'
 import AppResultsRivm from '@/components/app-results-rivm'
@@ -171,6 +171,7 @@ export default {
       notifications: state => state.notifications.messages,
       mode: state => state.mode.state,
       exportShown: state => state.flow.export,
+      scenariosShown: state => state.flow.scenarios,
       inSetMeasureFlow: state => state.setMeasureFlow.inFlow,
       userIsRefreshing: state => state.user.isRefreshing,
       rivmCoBenefits: state => state.project.rivmCoBenefits,

@@ -93,7 +93,7 @@
             v-if="setting.key === 'scenarioName'"
             class="project-area__scenario-overview scenario-overview"
           >
-            <md-button @click="showPopup = true">
+            <md-button @click="showScenarios">
               {{ $t('scenario_examples') }}
             </md-button>
           </aside>
@@ -105,7 +105,7 @@
 
 <script>
 import get from 'lodash/get'
-import { mapState, mapActions, mapGetters } from 'vuex'
+import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 import { SelectInput } from '~/components'
 
 export default {
@@ -134,6 +134,9 @@ export default {
     },
   },
   methods: {
+    ...mapMutations({
+      showScenarios: 'flow/showScenarios',
+    }),
     ...mapActions({
       updateProjectAreaSetting: 'project/updateProjectAreaSetting',
     }),

@@ -1,8 +1,7 @@
 <template>
   <app-popup
-    v-if="showPopup"
     :title="$t('scenario_examples')"
-    @closePopup="showPopup = false"
+    @closePopup="hideScenarios"
   >
     <div class="scenario-overview__popup">
       <div class="scenario-overview__content">
@@ -53,6 +52,7 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
 import AppPopup from '../app-popup'
 import RichText from '../rich-text'
 import ResponsiveImage from '../responsive-image'
@@ -71,7 +71,6 @@ export default {
   },
   data( ) {
     return {
-      showPopup: true,
       activeTab: undefined,
       nonChosenScenario: { title: '', example: [] },
     }
@@ -97,9 +96,12 @@ export default {
     this.activeTab = this.value
   },
   methods: {
+    ...mapMutations({
+      hideScenarios: 'flow/hideScenarios',
+    }),
     choose() {
       this.$emit('choose-scenario', this.activeTab)
-      this.showPopup = false
+      this.hideScenarios()
     },
   },
 }

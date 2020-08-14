@@ -31,6 +31,7 @@
       >
         <md-button
           class="md-primary md-icon-button"
+          @click="showScenarios"
         >
           <md-icon>location_city</md-icon>
         </md-button>
@@ -50,7 +51,7 @@
 
 <script>
 import startCase from 'lodash/startCase'
-import { mapGetters } from 'vuex';
+import { mapGetters, mapMutations } from 'vuex';
 import { LEVEL_PROJECT_AREA } from '../../lib/flow-levels';
 import FullscreenButton from '../fullscreen-button'
 import LogIn from '../log-in'
@@ -83,6 +84,11 @@ export default {
     formattedTitle() {
       return startCase(this.projectTitle)
     },
+  },
+  methods: {
+    ...mapMutations({
+      showScenarios: 'flow/showScenarios',
+    }),
   },
 }
 </script>
