@@ -126,6 +126,13 @@
     <portal-target name="popup-portal" />
 
     <project-area-size-threshold :is-below-threshold="projectAreaSizeIsBelowThreshold" />
+
+    <scenario-overview
+      v-if="displayMap"
+      :value="projectAreaSettings['scenarioName']"
+      :scenarios="scenariosInActiveWorkspace"
+      @choose-scenario="value => updateProjectAreaSetting({ type: 'select', key: 'scenarioName', value })"
+    />
   </div>
 </template>
 
@@ -135,12 +142,13 @@ import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu
 import AppResultsPanel from '@/components/app-results-panel'
 import AppResultsRivm from '@/components/app-results-rivm'
 import ProjectAreaSizeThreshold from '@/components/project-area-size-threshold'
+import ScenarioOverview from '@/components/scenario-overview'
 import getData from '~/lib/get-data'
 import EventBus, { CLICK } from '~/lib/event-bus';
 import log from '~/lib/log'
 
 export default {
-  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea, ProjectAreaSizeThreshold, AppResultsPanel, AppResultsRivm },
+  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea, ProjectAreaSizeThreshold, AppResultsPanel, AppResultsRivm, ScenarioOverview },
   data() {
     return {
       disclaimer: {},
@@ -169,7 +177,11 @@ export default {
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers', 'customLayers', 'mapLayers', 'layers']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings', 'projectAreaSizeIsBelowThreshold']),
-    ...mapGetters({ selectedAreas:  'selectedAreas/features' }),
+    ...mapGetters({
+      selectedAreas:  'selectedAreas/features',
+      projectAreaSettings: 'project/settingsProjectArea',
+      scenariosInActiveWorkspace: 'data/workspaces/scenariosInActiveWorkspace',
+    }),
     ...mapGetters('map', ['isProject', 'point', 'line', 'polygon', 'addOnly', 'interactive', 'search']),
     ...mapGetters('user', ['isLoggedIn']),
     ...mapGetters('data/appConfig', ['title']),
@@ -243,6 +255,7 @@ export default {
       exportProject: 'project/exportProject',
       connectMeasureToArea: 'setMeasureFlow/connectMeasureToArea',
       fetchRivmCoBenefits: 'project/fetchRivmCoBenefits',
+      updateProjectAreaSetting: 'project/updateProjectAreaSetting',
     }),
     async onFileInput(event) {
       this.importProject(event)

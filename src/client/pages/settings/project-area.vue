@@ -89,13 +89,14 @@
             </md-tooltip>
           </md-button>
 
-          <scenario-overview
+          <aside
             v-if="setting.key === 'scenarioName'"
-            :value="projectAreaSettings[setting.key]"
-            :scenarios="scenariosInActiveWorkspace"
-            class="project-area__scenario-overview"
-            @choose-scenario="value => updateProjectAreaSetting({ type: 'select', key: setting.key, value })"
-          />
+            class="project-area__scenario-overview scenario-overview"
+          >
+            <md-button @click="showPopup = true">
+              {{ $t('scenario_examples') }}
+            </md-button>
+          </aside>
         </md-list>
       </section>
     </form>
@@ -106,11 +107,10 @@
 import get from 'lodash/get'
 import { mapState, mapActions, mapGetters } from 'vuex'
 import { SelectInput } from '~/components'
-import ScenarioOverview from '../../components/scenario-overview'
 
 export default {
   middleware: ['access-level-project-area'],
-  components: { SelectInput, ScenarioOverview },
+  components: { SelectInput },
   data() {
     return {
       activeTooltipKey: '',

@@ -1,60 +1,55 @@
 <template>
-  <aside class="scenario-overview">
-    <md-button @click="showPopup = true">
-      {{ $t('scenario_examples') }}
-    </md-button>
-    <app-popup
-      v-if="showPopup"
-      :title="$t('scenario_examples')"
-      @closePopup="showPopup = false"
-    >
-      <div class="scenario-overview__popup">
-        <div class="scenario-overview__content">
-          <ul class="scenario-overview__tabs">
-            <li v-for="scenario in scenarios" :key="scenario.value">
-              <md-button
-                :class="{'md-accent': activeTab == scenario.value}"
-                @click="activeTab = scenario.value"
-              >
-                {{ scenario.title }}
-              </md-button>
-            </li>
-          </ul>
-          <section class="scenario-overview__tab-content">
-            <div class="scenario-overview__tab-content-wrapper">
-              <h3 class="scenario-overview__tab-content-title md-headline">
-                {{ activeScenario.title }}
-              </h3>
-              <div
-                v-for="(item, index) in activeScenario.example"
-                :key="index"
-                :class="{
-                  'scenario-overview__tab-content--text': Boolean(item.text),
-                  'scenario-overview__tab-content--image': Boolean(item.image),
-                }"
-              >
-                <rich-text
-                  v-if="item.text"
-                  :text="item.text"
-                />
-                <responsive-image
-                  v-if="item.image"
-                  :image="{...item.image, title: item.title}"
-                />
-              </div>
+  <app-popup
+    v-if="showPopup"
+    :title="$t('scenario_examples')"
+    @closePopup="showPopup = false"
+  >
+    <div class="scenario-overview__popup">
+      <div class="scenario-overview__content">
+        <ul class="scenario-overview__tabs">
+          <li v-for="scenario in scenarios" :key="scenario.value">
+            <md-button
+              :class="{'md-accent': activeTab == scenario.value}"
+              @click="activeTab = scenario.value"
+            >
+              {{ scenario.title }}
+            </md-button>
+          </li>
+        </ul>
+        <section class="scenario-overview__tab-content">
+          <div class="scenario-overview__tab-content-wrapper">
+            <h3 class="scenario-overview__tab-content-title md-headline">
+              {{ activeScenario.title }}
+            </h3>
+            <div
+              v-for="(item, index) in activeScenario.example"
+              :key="index"
+              :class="{
+                'scenario-overview__tab-content--text': Boolean(item.text),
+                'scenario-overview__tab-content--image': Boolean(item.image),
+              }"
+            >
+              <rich-text
+                v-if="item.text"
+                :text="item.text"
+              />
+              <responsive-image
+                v-if="item.image"
+                :image="{...item.image, title: item.title}"
+              />
             </div>
-          </section>
-        </div>
-        <md-button
-          class="scenario-overview__choose-btn md-raised md-accent"
-          :disabled="activeScenario === nonChosenScenario"
-          @click="choose"
-        >
-          {{ $t('choose') }} {{ activeTabLabel }}
-        </md-button>
+          </div>
+        </section>
       </div>
-    </app-popup>
-  </aside>
+      <md-button
+        class="scenario-overview__choose-btn md-raised md-accent"
+        :disabled="activeScenario === nonChosenScenario"
+        @click="choose"
+      >
+        {{ $t('choose') }} {{ activeTabLabel }}
+      </md-button>
+    </div>
+  </app-popup>
 </template>
 
 <script>
@@ -76,7 +71,7 @@ export default {
   },
   data( ) {
     return {
-      showPopup: false,
+      showPopup: true,
       activeTab: undefined,
       nonChosenScenario: { title: '', example: [] },
     }

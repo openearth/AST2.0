@@ -13,6 +13,7 @@ import {
 export const state = () => ({
   fullPath: {},
   export: false,
+  scenarios: false,
 })
 
 export const mutations = {
@@ -26,6 +27,14 @@ export const mutations = {
 
   hideExport(state) {
     state.export = false
+  },
+
+  showScenarios(state) {
+    state.scenarios = true
+  },
+
+  hideScenarios(state) {
+    state.scenarios = false
   },
 }
 
