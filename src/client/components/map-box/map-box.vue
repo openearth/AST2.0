@@ -99,6 +99,8 @@ export default {
 
   computed: {
     allMapLayers() {
+      // @REFACTOR :: We spread layerList here, which already contains all of the other layers.
+      // See layouts/default.vue computed propery `layerList`
       const layers = [ ...this.wmsLayers, ...this.customLayers, ...this.mapLayers, ...this.layerList ]
       return layers
     },

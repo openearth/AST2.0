@@ -56,7 +56,7 @@
 
     <layer-legend
       v-if="interactive && layers"
-      :layers="legendLayers"
+      :layers="layerList"
       class="map-viewer__layer-legend"
     />
   </div>
@@ -143,11 +143,6 @@ export default {
     mode: {
       type: String,
       default: '',
-    },
-  },
-  computed: {
-    legendLayers() {
-      return [...this.wmsLayers, ...this.mapLayers]
     },
   },
   methods: {
