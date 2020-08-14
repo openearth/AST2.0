@@ -1,7 +1,7 @@
 <template>
   <md-toolbar class="md-primary" role="banner">
     <section class="md-toolbar-section-start">
-      <md-button class="md-icon-button" @click="() => $emit('onShowNavigation')">
+      <md-button class="md-icon-button" @click="() => $emit('on-show-navigation')">
         <md-icon>menu</md-icon>
       </md-button>
 

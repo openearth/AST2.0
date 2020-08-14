@@ -1,5 +1,3 @@
-import  MapEventBus, { REPOSITION } from '../lib/map-event-bus';
-
 export const state = () => ({})
 
 export const plugins = [ store => {
