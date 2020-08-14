@@ -1,7 +1,7 @@
 <template>
   <div class="pdf-export">
     <h1 class="pdf-export__title md-headline">
-      {{ $t('results') }} {{ appConfig && appConfig.title }}
+      {{ $t('results') }} {{ workspaceTitle }}
       <br>
       {{ title }}
     </h1>
@@ -30,8 +30,16 @@ export default {
   components: { PdfExportMap, PdfExportMeasuresList, PdfExportResults, PdfExportResultSummary, PdfExportProjectareaSettings },
   computed: {
     ...mapState('project', ['settings']),
-    ...mapState('data', ['appConfig']),
+    ...mapState('data', ['appConfig', 'workspaces']),
+    ...mapGetters('data/workspaces', ['activeWorkspace']),
     ...mapGetters('flow', ['currentFilledInLevel']),
+    workspaceTitle() {
+      try {
+        return this.activeWorkspace.applicationTitle
+      } catch (error) {
+        return ''
+      }
+    },
     title() {
       return startCase(this.settings.general.title)
     },
