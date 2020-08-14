@@ -39,7 +39,7 @@
       :layer-list="layerList"
       :current-mode="currentMode"
       class="map-viewer__controls--draw"
-      @setMode="setMode"
+      @set-mode="setMode"
       @trash="onClickDelete"
       @search="onSearch"
       @layer-opacity-change="setLayerOpacity"

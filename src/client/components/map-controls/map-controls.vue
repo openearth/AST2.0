@@ -22,7 +22,7 @@
       <md-button
         :class="{'md-accent': currentMode === 'draw_polygon'}"
         class="md-icon-button md-raised"
-        @click="$emit('setMode', 'draw_polygon')"
+        @click="$emit('set-mode', 'draw_polygon')"
       >
         <md-icon>crop_square</md-icon>
       </md-button>
@@ -32,7 +32,7 @@
       <md-button
         :class="{'md-accent': currentMode === 'draw_line_string'}"
         class="md-icon-button md-raised"
-        @click="$emit('setMode', 'draw_line_string')"
+        @click="$emit('set-mode', 'draw_line_string')"
       >
         <md-icon>timeline</md-icon>
       </md-button>
@@ -42,7 +42,7 @@
       <md-button
         :class="{'md-accent': currentMode === 'draw_point'}"
         class="md-icon-button md-raised"
-        @click="$emit('setMode', 'draw_point')"
+        @click="$emit('set-mode', 'draw_point')"
       >
         <md-icon>location_on</md-icon>
       </md-button>
