@@ -12,7 +12,7 @@
       <span class="md-body-1 kpi-group__kpi-title">
         {{ inferKpiTitleWithUnit(kpi.title, kpi.unit) }}
       </span>
-      <p v-if="type === 'numbers'" class="kpi-group__kpi-value">
+      <p v-if="type === 'numbers'" class="md-body-1 kpi-group__kpi-value">
         {{ roundValue(kpiByKey(kpi.key)) }}
       </p>
 

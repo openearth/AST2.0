@@ -36,6 +36,9 @@ export const actions = {
     commit('mode', mode)
     MapEventBus.$emit(MODE, mode)
   },
+  setModeDefault({ dispatch }) {
+    dispatch('setMode', 'simple_select')
+  },
 }
 
 export const getters = {

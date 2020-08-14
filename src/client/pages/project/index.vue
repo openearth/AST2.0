@@ -54,6 +54,7 @@
       <md-button
         :to="`/${$i18n.locale}/set-measure`"
         class="md-raised md-accent"
+        @click.native="resetMapMode"
       >
         <md-icon>add</md-icon>
         {{ $t('measure') }}
@@ -95,6 +96,7 @@ export default {
     }),
     ...mapActions({
       updateAreaProperties: 'project/updateAreaProperties',
+      resetMapMode: 'map/setModeDefault',
     }),
     toggleMeasure(measureId, expanded) {
       expanded
