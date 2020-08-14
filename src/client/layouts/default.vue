@@ -4,7 +4,7 @@
       :title="title"
       :legal-accepted="legalAccepted"
       :project-title="projectTitle"
-      @onShowNavigation="showMenu"
+      @on-show-navigation="showMenu"
     />
     <app-menu
       :show-navigation="showNavigation"
