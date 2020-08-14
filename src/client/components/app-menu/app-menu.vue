@@ -3,7 +3,6 @@
     <md-drawer :md-active="showNavigation">
       <md-toolbar class="md-transparent app-menu__header" md-elevation="0">
         <h3
-          v-if="title"
           class="md-body-2"
           role="heading"
           aria-level="2"
@@ -11,7 +10,7 @@
           {{ title }}
         </h3>
 
-        <md-button class="md-icon-button" @click="() => $emit('onCloseNavigation')">
+        <md-button class="md-icon-button" @click="$emit('on-close-navigation')">
           <md-icon>clear</md-icon>
         </md-button>
       </md-toolbar>
@@ -23,7 +22,7 @@
             <md-button
               :disabled="!acceptedLegal"
               class="app-menu__button"
-              @click="$emit('newProject')"
+              @click="$emit('new-project')"
             >
               <md-icon>add</md-icon>
               <span class="md-body-1">
@@ -50,7 +49,7 @@
               class="app-menu__input-file"
               type="file"
               accept="application/json"
-              @change="event => $emit('importProject', event)"
+              @change="event => $emit('import-project', event)"
             >
           </md-list-item>
           <md-divider />
@@ -72,7 +71,7 @@
             <md-button
               :disabled="!createdProjectArea"
               class="app-menu__button"
-              @click="$emit('saveProject')"
+              @click="$emit('save-project')"
             >
               <md-icon>save</md-icon>
               <span class="md-body-1">
@@ -86,7 +85,7 @@
               id="export-project"
               :disabled="!hasAreas"
               class="app-menu__button"
-              @click="$emit('exportProject')"
+              @click="$emit('export-project')"
             >
               <md-icon>publish</md-icon>
               <span class="md-body-1">

@@ -2,7 +2,7 @@
   <ul class="map-controls">
     <li v-if="search" class="map-controls__item map-controls__item--search">
       <md-button
-        :class="{'md-primary': showSearch}"
+        :class="{'md-accent': showSearch}"
         class="md-icon-button md-raised"
         @click="showSearch = !showSearch"
       >
@@ -20,7 +20,7 @@
 
     <li v-if="polygon" class="map-controls__item map-controls__item--polygon">
       <md-button
-        :class="{'md-primary': currentMode === 'draw_polygon'}"
+        :class="{'md-accent': currentMode === 'draw_polygon'}"
         class="md-icon-button md-raised"
         @click="$emit('setMode', 'draw_polygon')"
       >
@@ -30,7 +30,7 @@
 
     <li v-if="line" class="map-controls__item map-controls__item--line">
       <md-button
-        :class="{'md-primary': currentMode === 'draw_line_string'}"
+        :class="{'md-accent': currentMode === 'draw_line_string'}"
         class="md-icon-button md-raised"
         @click="$emit('setMode', 'draw_line_string')"
       >
@@ -40,7 +40,7 @@
 
     <li v-if="point" class="map-controls__item map-controls__item--point">
       <md-button
-        :class="{'md-primary': currentMode === 'draw_point'}"
+        :class="{'md-accent': currentMode === 'draw_point'}"
         class="md-icon-button md-raised"
         @click="$emit('setMode', 'draw_point')"
       >

@@ -1,5 +1,5 @@
 <template>
-  <md-button class="md-primary md-icon-button" @click="handleClick">
+  <md-button class="md-accent md-icon-button" @click="handleClick">
     <md-icon v-if="isLoggedIn">
       person
     </md-icon>

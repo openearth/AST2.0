@@ -53,7 +53,7 @@
     <div class="legend__action-wrapper">
       <md-button
         :to="`/${$i18n.locale}/set-measure`"
-        class="md-raised md-primary"
+        class="md-raised md-accent"
       >
         <md-icon>add</md-icon>
         {{ $t('measure') }}

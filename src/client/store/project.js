@@ -6,6 +6,7 @@ import merge from 'lodash/merge'
 import get from 'lodash/get'
 import round from 'lodash/round'
 import unset from 'lodash/unset'
+import flatten from 'lodash/flatten'
 import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT, REPAINT, DELETE_LAYER } from '../lib/map-event-bus'
 import { getApiDataForFeature, getRankedMeasures } from '../lib/get-api-data';
 import FileSaver from 'file-saver'
@@ -14,8 +15,9 @@ import validateProject from '../lib/validate-project'
 import projectToGeoJson from '../lib/project-to-geojson'
 import projectToCsv from '../lib/project-to-csv'
 import delay from '../lib/delay'
-import log from '../lib/log'
 import exportToPdf from '../lib/export-to-pdf'
+import log from '../lib/log';
+import fetchCoBenefitsFromRivm from '../lib/fetch-rivm-co-benefits'
 
 const initialState = () => ({
   areas: [],
@@ -191,6 +193,9 @@ export const mutations = {
     while (state.areas.length) {
       state.areas.pop()
     }
+  },
+  setRivmCoBenefits(state, data) {
+    Vue.set(state, 'rivmCoBenefits', Object.freeze(data))
   },
 }
 
@@ -547,6 +552,28 @@ export const actions = {
 
     dispatch('bootstrapSettingsProjectArea', foo)
   },
+  async fetchRivmCoBenefits({ state, commit, dispatch }) {
+    // We clone to get rid of the Vue Observer properties
+    const areas = cloneDeep(state.areas)
+    const projectArea = cloneDeep(state.settings.area)
+    const receivedAt = Date.now()
+
+    try {
+      const data = await fetchCoBenefitsFromRivm({ areas, projectArea })
+
+      const entries = flatten((data.assessmentResults || []).map(item => get(item, 'entries', [])))
+      commit('setRivmCoBenefits', { receivedAt, entries })
+    }
+    catch(error) {
+      log.error('Problem fetching RIVM data', error)
+      dispatch(
+        'notifications/showError',
+        { message: 'There was a problem fetching your green benefits data' },
+        { root: true },
+      )
+      commit('setRivmCoBenefits', { receivedAt })
+    }
+  },
 }
 
 export const getters = {
@@ -747,7 +774,7 @@ export const getters = {
     const kpiKeys = rootgetters['data/kpiGroups/kpiKeys']
 
     if (areas.length) {
-      return areas
+      const { returnTime, ...kpiValues } = areas
         .map(area => area.properties.apiData)
         .reduce((obj, item) => {
           if (item) {
@@ -758,6 +785,7 @@ export const getters = {
           }
           return obj
         }, {})
+      return { ...kpiValues, returnTime: returnTime + 1 }
     } else {
       return kpiKeys.reduce((obj, key) => ({ ...obj, [key]: 0 }), {})
     }
