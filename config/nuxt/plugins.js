@@ -9,4 +9,5 @@ module.exports = [
   { src: '~/plugins/vue-touch-keyboard', ssr: false },
   { src: '~/plugins/vue-carousel', ssr: false },
   { src: '~/plugins/portal-vue' },
+  { src: '~/plugins/tracking.client', ssr: false },
 ]
