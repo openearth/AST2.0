@@ -236,6 +236,7 @@ export default {
   position: absolute;
   top: calc(50% - 15px); /* 15px is half of the with. somehow translate does not have any effect */
   left: calc(50% - 25px); /* 15px is half of the with. somehow translate does not have any effect */
+  --md-theme-default-primary: var(--yellow-color);
 }
 
 </style>
