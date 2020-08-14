@@ -4,6 +4,7 @@ query ($locale: SiteLocale, $id: ItemId){
     currencySymbol,
     excludeAllMeasures,
     showRivmCoBenefits,
+    showHeatstress,
     showScenarioExamplesInSettings,
     applicationTitle,
     measureOverrides,

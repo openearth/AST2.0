@@ -1,10 +1,11 @@
+
 <template>
   <div ref="base" class="layout">
     <app-header
       :title="title"
       :legal-accepted="legalAccepted"
       :project-title="projectTitle"
-      @onShowNavigation="showMenu"
+      @on-show-navigation="showMenu"
     />
     <app-menu
       :show-navigation="showNavigation"
@@ -46,6 +47,7 @@
           :custom-layers="customLayers"
           :map-layers="mapLayers"
           :layer-list="layerList"
+          :heatstress-layers="heatstressLayers"
           :mode="mode"
           :animate="true"
           class="layout__map"
@@ -74,6 +76,14 @@
               :data="rivmCoBenefits"
               :dato-content="kbsResultContent"
               @fetch-data="fetchRivmCoBenefits"
+            />
+            <app-results-heatstress
+              v-if="scope.active === 'heatstress'"
+              :heatstress-results="heatstressResults"
+              :heatstress-layers="heatstressLayers"
+              :areas="areas"
+              :dato-content="kbsResultContent"
+              @fetch-data="fetchHeatstressData"
             />
           </template>
         </app-results-panel>
@@ -145,17 +155,24 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapGetters, mapActions } from 'vuex';
-import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea } from '@/components'
-import AppResultsPanel from '@/components/app-results-panel'
-import AppResultsRivm from '@/components/app-results-rivm'
-import ProjectAreaSizeThreshold from '@/components/project-area-size-threshold'
+import { mapState, mapMutations, mapGetters, mapActions } from 'vuex'
+import AppDisclaimer from '../components/app-disclaimer'
+import AppHeader from '../components/app-header'
+import MapViewer from '../components/map-viewer'
+import KpiPanel from '../components/kpi-panel'
+import VirtualKeyboard from '../components/virtual-keyboard'
+import AppMenu from '../components/app-menu'
+import NotificationArea from '../components/notification-area'
+import AppResultsPanel from '../components/app-results-panel'
+import AppResultsRivm from '../components/app-results-rivm'
+import ProjectAreaSizeThreshold from '../components/project-area-size-threshold'
+import AppResultsHeatstress from '../components/app-results-heatstress'
 import getData from '~/lib/get-data'
-import EventBus, { CLICK } from '~/lib/event-bus';
+import EventBus, { CLICK } from '~/lib/event-bus'
 import log from '~/lib/log'
 
 export default {
-  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea, ProjectAreaSizeThreshold, AppResultsPanel, AppResultsRivm },
+  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea, ProjectAreaSizeThreshold, AppResultsPanel, AppResultsRivm, AppResultsHeatstress },
   data() {
     return {
       disclaimer: {},
@@ -183,8 +200,9 @@ export default {
       inSetMeasureFlow: state => state.setMeasureFlow.inFlow,
       userIsRefreshing: state => state.user.isRefreshing,
       rivmCoBenefits: state => state.project.rivmCoBenefits,
+      heatstressResults: state => state.project.heatstressResults,
     }),
-    ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers', 'customLayers', 'mapLayers', 'layers']),
+    ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers', 'customLayers', 'heatstressLayers', 'mapLayers', 'layers']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings', 'projectAreaSizeIsBelowThreshold']),
     ...mapGetters({ selectedAreas:  'selectedAreas/features' }),
     ...mapGetters('map', ['isProject', 'point', 'line', 'polygon', 'addOnly', 'interactive', 'search']),
@@ -199,6 +217,7 @@ export default {
         { id: 'numbers', icon: 'format_list_numbered' },
         { id: 'bars', icon: 'insert_chart' },
         ( this.activeWorkspace.showRivmCoBenefits && { id: 'rivm', icon: 'eco', color: '--nature-green-color' } ),
+        ( this.activeWorkspace.showHeatstress && { id: 'heatstress', icon: 'wb_sunny', color: '--yellow-color' } ),
       ]
     },
   },
@@ -276,13 +295,14 @@ export default {
       exportProject: 'project/exportProject',
       connectMeasureToArea: 'setMeasureFlow/connectMeasureToArea',
       fetchRivmCoBenefits: 'project/fetchRivmCoBenefits',
+      fetchHeatstressData: 'project/fetchHeatstressData',
     }),
     async onFileInput(event) {
       this.importProject(event)
         .then(() => this.$router.push(this.currentFilledInLevel.uri))
         .catch(error => {
           if (error.name !== 'NavigationDuplicated') {
-            log.error('Could not load file', error);
+            log.error('Could not load file', error)
             this.showError({ message: this.$i18n.t('could_not_load_file') })
           }
         })
@@ -303,12 +323,11 @@ export default {
       this.$router.push(`/${this.$i18n.locale}/new-project`).catch(() => {})
     },
     onCreateArea(features) {
-      this.createArea(features)
-        .then(() => {
-          if (this.inSetMeasureFlow) {
-            this.connectMeasureToArea(features)
-          }
-        })
+      this.createArea(features).then(() => {
+        if (this.inSetMeasureFlow) {
+          this.connectMeasureToArea(features)
+        }
+      })
     },
     dispatchClickEvent(event) {
       EventBus.$emit(CLICK, event)
