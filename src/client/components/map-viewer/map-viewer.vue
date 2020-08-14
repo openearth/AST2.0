@@ -15,6 +15,7 @@
       :custom-layers="customLayers"
       :map-layers="mapLayers"
       :layer-list="layerList"
+      :heatstress-layers="heatstressLayers"
       :mode="mode"
       class="map-viewer__map"
       @create="onCreate"
@@ -140,6 +141,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    heatstressLayers: {
+      type: Array,
+      default: () => [],
+    },
     mode: {
       type: String,
       default: '',
@@ -157,17 +162,35 @@ export default {
     ...mapMutations({
       setLayerOpacity: 'project/setLayerOpacity',
       setLayerVisibility: 'project/setLayerVisibility',
-      setLegendVisibility:'project/setLegendVisibility',
+      setLegendVisibility: 'project/setLegendVisibility',
     }),
-    onCreate(event) { this.$emit('create', event) },
-    onUpdate(event) { this.$emit('update', event) },
-    onDelete(event) { this.$emit('delete', event) },
-    onSelectionchange(event) { this.$emit('selectionchange', event) },
-    onMove(event) { this.$emit('move', event) },
-    onClickDelete() { MapEventBus.$emit(DELETE) },
-    zoomIn() { MapEventBus.$emit(ZOOM_IN) },
-    zoomOut() { MapEventBus.$emit(ZOOM_OUT) },
-    onSearch(event) { MapEventBus.$emit(SEARCH, event) },
+    onCreate(event) {
+      this.$emit('create', event)
+    },
+    onUpdate(event) {
+      this.$emit('update', event)
+    },
+    onDelete(event) {
+      this.$emit('delete', event)
+    },
+    onSelectionchange(event) {
+      this.$emit('selectionchange', event)
+    },
+    onMove(event) {
+      this.$emit('move', event)
+    },
+    onClickDelete() {
+      MapEventBus.$emit(DELETE)
+    },
+    zoomIn() {
+      MapEventBus.$emit(ZOOM_IN)
+    },
+    zoomOut() {
+      MapEventBus.$emit(ZOOM_OUT)
+    },
+    onSearch(event) {
+      MapEventBus.$emit(SEARCH, event)
+    },
   },
 }
 </script>
@@ -214,6 +237,5 @@ export default {
 
 .mapboxgl-ctrl-top-right {
   display: none;
-
 }
 </style>

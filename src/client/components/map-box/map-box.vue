@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions } from 'vuex'
 import projectAreaStyles from './project-area-styles'
 import areaStyles from './area-styles'
 import getData from '~/lib/get-data'
@@ -90,11 +90,16 @@ export default {
       type: Array,
       default: () => [],
     },
+    heatstressLayers: {
+      type: Array,
+      default: () => [],
+    },
   },
 
   data: () => ({
     map: undefined,
     draw: undefined,
+    oldHeatstressLayers: [], // Needed for recalculation and resetting the wmslayers for heatstress
   }),
 
   computed: {
@@ -142,11 +147,43 @@ export default {
     layerList() {
       [...this.layerList].reverse().forEach(this.addWmsLayer)
     },
+    heatstressLayers: {
+      deep: true,
+      handler(newLayers) {
+        const layers = [...newLayers].reverse().forEach(newLayer => {
+          if (!this.map.getLayer(`wms-layer-${newLayer.id}`)) {
+            this.addWmsLayer(newLayer)
+          }
+
+          if (newLayer.visible === true) {
+            this.showWmsLayer(newLayer.id)
+          } else {
+            this.hideWmsLayer(newLayer.id)
+          }
+          // Find the old layer with the same ID
+          const oldLayer = this.oldHeatstressLayers.find(
+            oldLayer => oldLayer.title === newLayer.title,
+          )
+
+          if (oldLayer && oldLayer.layerName !== newLayer.layerName) {
+            // if there is already an old layer with this id, remove it first
+            if (this.map.getLayer(`wms-layer-${oldLayer.id}`)) {
+              this.removeWmsLayer(oldLayer.id)
+            }
+          }
+        })
+        if (newLayers.length > 0 ) {
+          this.oldHeatstressLayers = newLayers
+        }
+        return layers
+      },
+    },
   },
 
   async mounted() {
     const { lat, lng } = this.mapCenter
-    const [mapboxgl, MapboxDraw, MapboxGeocoder, mapboxBaseStyle] = await Promise.all([import('mapbox-gl'), import('@mapbox/mapbox-gl-draw'), import('@mapbox/mapbox-gl-geocoder'), getData({ folder: 'mapbox-base-layer', slug: 'style' })])
+    const [mapboxgl, MapboxDraw, MapboxGeocoder, mapboxBaseStyle] = await Promise.all([import('mapbox-gl'), import('@mapbox/mapbox-gl-draw'),
+      import('@mapbox/mapbox-gl-geocoder'), getData({ folder: 'mapbox-base-layer', slug: 'style' })])
     const defaultStyles = [...new MapboxDraw().options.styles]
       .filter(style => /\.hot$/.test(style.id))
       .map(({ source, ...style }) => ({ ...style, id: style.id.replace('.hot', '') }))
@@ -264,14 +301,14 @@ export default {
     }),
     selectFeature(id) {
       if (id) {
-          const feature = this.draw.get(id)
-          if (feature.geometry.type === 'Point') {
-            this.draw.changeMode('simple_select', { featureIds: [id] })
-            this.$emit('selectionchange', [feature])
-          } else {
-            this.draw.changeMode('direct_select', { featureId: id })
-          }
+        const feature = this.draw.get(id)
+        if (feature.geometry.type === 'Point') {
+          this.draw.changeMode('simple_select', { featureIds: [id] })
+          this.$emit('selectionchange', [feature])
+        } else {
+          this.draw.changeMode('direct_select', { featureId: id })
         }
+      }
     },
     clearMap() {
       this.map.getLayer('projectArea-line') && this.map.removeLayer('projectArea-line')
@@ -298,9 +335,10 @@ export default {
       }
     },
     addGeojsonLayer({ properties = {}, type, geometry, id }) {
-      const color = id === 'projectArea'
-        ? projectAreaStyles[0].paint['fill-color']
-        : properties.color
+      const color =
+        id === 'projectArea'
+          ? projectAreaStyles[0].paint['fill-color']
+          : properties.color
 
       const lineDetails = {
         id: `${properties.name || id}-line`,
@@ -311,17 +349,17 @@ export default {
         },
       }
       const baseObj = {
-        'source': {
-          'type': 'geojson',
-          'data': {
-            'type': type,
-            'geometry': {
-              'type': geometry.type,
-              'coordinates': geometry.coordinates,
+        source: {
+          type: 'geojson',
+          data: {
+            type: type,
+            geometry: {
+              type: geometry.type,
+              coordinates: geometry.coordinates,
             },
           },
         },
-        'layout': {},
+        layout: {},
       }
       const line = Object.assign({}, baseObj, lineDetails)
       // const fill = Object.assign({}, baseObj, fillDetails)
@@ -332,6 +370,7 @@ export default {
       const layer = this.map.getLayer(`wms-layer-${id}`)
       if (layer) {
         this.map.removeLayer(`wms-layer-${id}`)
+        this.map.removeSource(`wms-layer-${id}`)
       }
     },
     addWmsLayer({ layerType: type, id, url, tilesize: tileSize, title, visible }) {
@@ -340,16 +379,19 @@ export default {
       try {
         this.map.getStyle().layers
       } catch (err) {
-        log.warning(`Map styles are not loaded yet. Ignore adding layer ${title}`, err)
+        log.warning(
+          `Map styles are not loaded yet. Ignore adding layer ${title}`,
+          err,
+        )
         return
       }
 
       if (!this.map.getLayer(`wms-layer-${id}`)) {
         const source = { type, tileSize }
-        if  (url === 'mapbox://mapbox.satellite') {
+        if (url === 'mapbox://mapbox.satellite') {
           source.url = url
         } else {
-          source.tiles = [ url ]
+          source.tiles = [url]
         }
         try {
           const layers = this.map.getStyle().layers
@@ -361,23 +403,24 @@ export default {
           const lastWmsLayerId = layers[lastWmsLayerIndex]
             ? layers[lastWmsLayerIndex].id
             : undefined
-
-          this.map.addLayer({
-            id: `wms-layer-${id}`,
-            type,
-            source,
-            layout: {
-              visibility: visible ? 'visible' : 'none',
-            },
+          this.map.addLayer(
+            {
+              id: `wms-layer-${id}`,
+              type,
+              source,
+              layout: {
+                visibility: visible ? 'visible' : 'none',
+              },
             paint: {},
           }, lastWmsLayerId)
         } catch (err) {
-          this.showError({ message: `Could not load WMS Layer: ${title}`, duration: 0 })
-          log.error(
-            `Could not load WMS Layer: ${title}`,
-            err,
-            { layer: { type, id, url, tileSize, title, visible } },
-          )
+          this.showError({
+            message: `Could not load WMS Layer: ${title}`,
+            duration: 0,
+          })
+          log.error(`Could not load WMS Layer: ${title}`, err, {
+            layer: { type, id, url, tileSize, title, visible },
+          })
         }
       }
     },
@@ -411,17 +454,17 @@ export default {
     },
     showWmsLayer(id) {
       if (this.map && this.map.getLayer(`wms-layer-${id}`)) {
-        this.map.setLayoutProperty(`wms-layer-${id}`, 'visibility', 'visible');
+        this.map.setLayoutProperty(`wms-layer-${id}`, 'visibility', 'visible')
       }
     },
     hideWmsLayer(id) {
       if (this.map && this.map.getLayer(`wms-layer-${id}`)) {
-        this.map.setLayoutProperty(`wms-layer-${id}`, 'visibility', 'none');
+        this.map.setLayoutProperty(`wms-layer-${id}`, 'visibility', 'none')
       }
     },
     wmsLayerOpacity(id, value) {
       if (this.map && this.map.getLayer(`wms-layer-${id}`)) {
-        this.map.setPaintProperty(`wms-layer-${id}`, 'raster-opacity', value);
+        this.map.setPaintProperty(`wms-layer-${id}`, 'raster-opacity', value)
       }
     },
   },
