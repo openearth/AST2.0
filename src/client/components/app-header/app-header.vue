@@ -26,14 +26,22 @@
     </small>
 
     <section class="md-toolbar-section-end">
-      <md-button
+      <template
         v-if="currentFilledInLevel.level >= LEVEL_PROJECT_AREA"
-        :key="2"
-        :to="`/${this.$i18n.locale}/settings/project-area/`"
-        class="md-primary md-icon-button"
       >
-        <md-icon>settings</md-icon>
-      </md-button>
+        <md-button
+          class="md-primary md-icon-button"
+        >
+          <md-icon>location_city</md-icon>
+        </md-button>
+        <md-button
+          :key="2"
+          :to="`/${this.$i18n.locale}/settings/project-area/`"
+          class="md-primary md-icon-button"
+        >
+          <md-icon>settings</md-icon>
+        </md-button>
+      </template>
       <fullscreen-button />
       <LogIn v-if="legalAccepted" />
     </section>
