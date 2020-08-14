@@ -136,4 +136,8 @@ export default {
 .measure-card__icon svg {
   max-width: 20px;
 }
+
+.measure-card .md-chip {
+  transition: none !important;
+}
 </style>
