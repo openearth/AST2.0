@@ -33,6 +33,7 @@ export const mutations = {
   showScenarios(state) {
     state.scenarios = true
   },
+
   showPdfExport(state) {
     state.pdfExport = true
   },
@@ -40,6 +41,7 @@ export const mutations = {
   hideScenarios(state) {
     state.scenarios = false
   },
+
   hidePdfExport(state) {
     state.pdfExport = false
   },
