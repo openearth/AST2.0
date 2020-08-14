@@ -198,7 +198,7 @@ export default {
         { id: 'numbers', icon: 'format_list_numbered' },
         { id: 'bars', icon: 'insert_chart' },
         ( this.activeWorkspace.showRivmCoBenefits && { id: 'rivm', icon: 'eco', color: '--nature-green-color' } ),
-        { id: 'heatstress', icon: 'wb_sunny', color: '--yellow-color' },
+        ( this.activeWorkspace.showHeatstress && { id: 'heatstress', icon: 'wb_sunny', color: '--yellow-color' } ),
       ]
     },
   },
