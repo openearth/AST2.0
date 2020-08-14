@@ -13,7 +13,12 @@
         <h2 class="app-results-heatstress__title md-body-2">
           {{ datoContent.heatstressTitle }}
         </h2>
-
+        <md-button class="md-icon-button info-button">
+          <md-icon>info</md-icon>
+          <md-tooltip md-direction="top">
+            {{ datoContent.heatstressTooltip }}
+          </md-tooltip>
+        </md-button>
         <md-list-item
           v-for="(result, key) in heatstressResults"
           :key="key"
@@ -29,20 +34,15 @@
       </md-list>
       <md-list
         v-if="heatstressLayers.length > 0"
-
         class="app-results-heatstress__information"
       >
-        <md-list-item>
-          <md-button class="md-icon-button info-button">
-            <md-icon>info</md-icon>
-            <md-tooltip md-direction="top">
-              {{ datoContent.heatstressTooltip }}
-            </md-tooltip>
-          </md-button>
-        </md-list-item>
-        <md-list-item v-for="layer in heatstressLayers" :key="layer.id">
-          <div class="md-list-item-container">
-            <div class="md-list-item-content">
+        <md-list-item
+          v-for="layer in heatstressLayers"
+          :key="layer.id"
+          class="app-results-heatstress__list"
+        >
+          <div class="md-list-item__container app-results-heatstress__list-container">
+            <div class="md-list-item__content app-results-heatstress__list-item">
               <span
                 class="md-list-item-text app-results-heatstress-layers__title"
               >{{ layer.title }}</span>
@@ -59,7 +59,7 @@
               >
                 <md-icon
                   :style="{
-                    transform: expanded === layer.id ? 'rotate(180deg)' : 'rotate(0)'
+                    transform: expanded.includes(layer.id) ? 'rotate(180deg)' : 'rotate(0)'
                   }"
                 >
                   keyboard_arrow_down
@@ -67,17 +67,17 @@
               </md-button>
             </div>
             <div
-              :style="{height: expanded === layer.id ? 'auto' : '0px'}"
+              :style="{height: expanded.includes(layer.id) ? 'auto' : '0px'}"
               class="md-list-expand"
             >
-            <md-list>
-              <md-list-item class="md-inset">
-                <img
-                  :src="layer.legendUrl"
-                  alt=""
-                >
-              </md-list-item>
-            </md-list>
+              <md-list>
+                <md-list-item class="md-inset">
+                  <img
+                    :src="layer.legendUrl"
+                    alt=""
+                  >
+                </md-list-item>
+              </md-list>
             </div>
           </div>
         </md-list-item>
@@ -134,7 +134,7 @@ export default {
   data() {
     return {
       isLoading: false,
-      expanded: '',
+      expanded: [],
     }
   },
   computed: {
@@ -155,12 +155,23 @@ export default {
       updateHeatstressLayers: 'project/updateHeatstressLayers',
     }),
     setExpanded(id) {
-      this.expanded = this.expanded !== id ? id : ''
+      if (this.expanded.includes(id)) {
+        this.expanded = this.expanded.filter(ex => ex !== id)
+      } else {
+        this.expanded.push(id)
+      }
     },
     switchHeatstressLayer(evt) {
       const layers = cloneDeep(this.heatstressLayers)
       const heatstressLayer = layers.find(layer => layer.id === evt.id)
       heatstressLayer.visible = evt.value
+      // set expanded depdending on the switch
+      if (!this.expanded.includes(evt.id) && evt.value) {
+        this.expanded.push(evt.id)
+      } else if (this.expanded.includes(evt.id) && !evt.value){
+        this.expanded = this.expanded.filter(ex => !ex === evt.id)
+      }
+
       this.updateHeatstressLayers(heatstressLayer)
     },
     handleFetchData() {
@@ -195,6 +206,7 @@ export default {
 
 .app-results-heatstress__content  {
   flex: 1;
+  padding: 0;
 }
 
 .app-results-heatstress__title {
@@ -208,6 +220,7 @@ export default {
   position: relative;
   margin-bottom: var(--spacing-half);
   padding: 0;
+  margin: 0;
   min-height: 30px; /* overwrites material ui min-height */
 }
 
@@ -237,6 +250,25 @@ export default {
   top: calc(50% - 15px); /* 15px is half of the with. somehow translate does not have any effect */
   left: calc(50% - 25px); /* 15px is half of the with. somehow translate does not have any effect */
   --md-theme-default-primary: var(--yellow-color);
+}
+
+info-button {
+  position: absolute;
+  right: 2px;
+}
+
+.md-list-item-content {
+  padding-left: 0;
+}
+
+.app-results-heatstress__list-container {
+  width: 100%;
+  text-align: left;
+}
+.app-results-heatstress__list-item {
+  padding: 0;
+  display: flex;
+  align-items: center;
 }
 
 </style>
