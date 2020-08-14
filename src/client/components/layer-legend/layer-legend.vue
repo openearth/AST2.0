@@ -72,5 +72,6 @@ export default {
 .layer-legend__item {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
 }
 </style>
