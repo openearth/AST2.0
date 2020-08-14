@@ -11,9 +11,10 @@ export default {
   properties: {
     legalAccepted: { type: 'boolean' },
     areas: { type: 'array', items: { $ref: '/area-feature' } },
+    displayMap: { type: 'boolean' },
     settings: { $ref: '/settings-schema' },
     map: { $ref: '/map-schema' },
     rivmCoBenefits: { type: 'object' },
-    displayMap: { type: 'boolean' },
+    heatstressResults: { type: 'object' },
   },
 }

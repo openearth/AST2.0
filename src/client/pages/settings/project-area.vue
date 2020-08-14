@@ -160,6 +160,7 @@ export default {
 }
 
 .project-area__form {
+  margin: var(--spacing-default);
   margin-top: var(--spacing-large);
 }
 

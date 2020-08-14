@@ -14,6 +14,7 @@ export const state = () => ({
   fullPath: {},
   export: false,
   scenarios: false,
+  pdfExport: false,
 })
 
 export const mutations = {
@@ -32,9 +33,15 @@ export const mutations = {
   showScenarios(state) {
     state.scenarios = true
   },
+  showPdfExport(state) {
+    state.pdfExport = true
+  },
 
   hideScenarios(state) {
     state.scenarios = false
+  },
+  hidePdfExport(state) {
+    state.pdfExport = false
   },
 }
 

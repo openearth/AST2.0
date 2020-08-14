@@ -3,6 +3,7 @@
     <map-box
       :add-only="addOnly"
       :interactive="interactive"
+      :animate="animate"
       :point="point"
       :line="line"
       :polygon="polygon"
@@ -15,11 +16,14 @@
       :custom-layers="customLayers"
       :map-layers="mapLayers"
       :layer-list="layerList"
+      :heatstress-layers="heatstressLayers"
       :mode="mode"
+      :fit-to-bounds="fitToBounds"
       class="map-viewer__map"
       @create="onCreate"
       @update="onUpdate"
       @delete="onDelete"
+      @render="onRender"
       @selectionchange="onSelectionchange"
       @move="onMove"
       @modechange="mode => setMode(mode)"
@@ -140,9 +144,21 @@ export default {
       type: Array,
       default: () => [],
     },
+    heatstressLayers: {
+      type: Array,
+      default: () => [],
+    },
     mode: {
       type: String,
       default: '',
+    },
+    fitToBounds: {
+      type: Array,
+      default: () => [],
+    },
+    animate: {
+      type: Boolean,
+      default: true,
     },
   },
   computed: {
@@ -157,11 +173,12 @@ export default {
     ...mapMutations({
       setLayerOpacity: 'project/setLayerOpacity',
       setLayerVisibility: 'project/setLayerVisibility',
-      setLegendVisibility:'project/setLegendVisibility',
+      setLegendVisibility: 'project/setLegendVisibility',
     }),
     onCreate(event) { this.$emit('create', event) },
     onUpdate(event) { this.$emit('update', event) },
     onDelete(event) { this.$emit('delete', event) },
+    onRender(event) { this.$emit('render', event) },
     onSelectionchange(event) { this.$emit('selectionchange', event) },
     onMove(event) { this.$emit('move', event) },
     onClickDelete() { MapEventBus.$emit(DELETE) },
@@ -214,6 +231,5 @@ export default {
 
 .mapboxgl-ctrl-top-right {
   display: none;
-
 }
 </style>

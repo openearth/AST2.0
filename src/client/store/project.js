@@ -8,13 +8,14 @@ import round from 'lodash/round'
 import unset from 'lodash/unset'
 import flatten from 'lodash/flatten'
 import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT, REPAINT, DELETE_LAYER } from '../lib/map-event-bus'
-import { getApiDataForFeature, getRankedMeasures } from '../lib/get-api-data';
+import { getApiData, getApiDataForFeature, getRankedMeasures } from '../lib/get-api-data';
 import FileSaver from 'file-saver'
 import getLoadedFileContents from '../lib/get-loaded-file-contents'
 import validateProject from '../lib/validate-project'
 import projectToGeoJson from '../lib/project-to-geojson'
 import projectToCsv from '../lib/project-to-csv'
 import delay from '../lib/delay'
+import exportToPdf from '../lib/export-to-pdf'
 import log from '../lib/log';
 import fetchCoBenefitsFromRivm from '../lib/fetch-rivm-co-benefits'
 
@@ -29,6 +30,7 @@ const initialState = () => ({
     customLayers: [],
     mapLayers: [],
     wmsLayers: [],
+    heatstressLayers: [],
     layers: [],
     zoom: 16.5,
   },
@@ -44,10 +46,10 @@ const initialState = () => ({
   },
 })
 
-export const state = () => (initialState())
+export const state = () => initialState()
 
 export const mutations = {
-  import(state, file) {
+  import(state, file){
     const newState = merge({}, state, file)
 
     // Explicitly use stored mapbox features. Since they are object, their
@@ -99,23 +101,23 @@ export const mutations = {
     state.areas.push(value)
   },
   updateArea(state, value) {
-    const updatedArea = (state.areas.find(area => area.id === value.id))
+    const updatedArea = state.areas.find(area => area.id === value.id)
     Object.assign(updatedArea, value)
   },
   updateAreaProperty(state, { id, properties }) {
-    const areaToUpdate = (state.areas.find(area => area.id === id))
+    const areaToUpdate = state.areas.find(area => area.id === id)
     const newProperties = { ...areaToUpdate.properties, ...properties }
-      Vue.set(areaToUpdate, 'properties', newProperties)
-      Object.keys(properties).forEach(key => {
-        MapEventBus.$emit(UPDATE_FEATURE_PROPERTY, {
-          featureId: id,
-          key,
-          value: properties[key],
-        })
+    Vue.set(areaToUpdate, 'properties', newProperties)
+    Object.keys(properties).forEach(key => {
+      MapEventBus.$emit(UPDATE_FEATURE_PROPERTY, {
+        featureId: id,
+        key,
+        value: properties[key],
       })
+    })
   },
   removeAreaProperties(state, { id, propertyPaths = [] }) {
-    const areaToUpdate = (state.areas.find(area => area.id === id))
+    const areaToUpdate = state.areas.find(area => area.id === id)
     const properties = { ...areaToUpdate.properties }
     propertyPaths.forEach(path => unset(properties, path))
     Vue.set(areaToUpdate, 'properties', properties)
@@ -134,6 +136,21 @@ export const mutations = {
   },
   setWmsLayer(state, layer) {
     state.map.wmsLayers.push(layer)
+  },
+  setHeatstressLayers(state, layer) {
+    state.map.heatstressLayers.push(layer)
+  },
+  setHeatstressResults(state, data) {
+    Vue.set(state, 'heatstressResults', Object.freeze(data))
+  },
+  clearHeatstressLayers(state) {
+    state.map.heatstressLayers = []
+  },
+  updateHeatstressLayers(state, value) {
+    const layers = state.map.heatstressLayers.find(
+      layer => layer.id === value.id,
+    )
+    Object.assign(layers, value)
   },
   setMapLayers(state, layer) {
     if (state.map.mapLayers === undefined) {
@@ -254,7 +271,7 @@ export const actions = {
       commit('updateAreaProperty', { id: feature.id, properties })
       const updatedFeature = getters.areas.filter(area => area.id === feature.id)
 
-      if (properties.measure || properties.hasOwnProperty('hidden') ) {
+      if (properties.measure || properties.hasOwnProperty('hidden')) {
         MapEventBus.$emit(REPAINT, updatedFeature)
       }
 
@@ -358,6 +375,60 @@ export const actions = {
       commit('deleteArea', id)
     })
   },
+  fetchHeatstressData({ state, commit, getters, dispatch }) {
+    commit('clearHeatstressLayers')
+    let features = cloneDeep(getters.areas)
+
+    // Only use the areas that are not hidden
+    features = features.filter(feat => !feat.properties.hidden)
+
+    // If the properties are not set use the defaults
+    features.forEach(area => {
+      area.properties.areaInflow = area.properties.areaInflow ||  area.properties.defaultInflow
+      area.properties.areaDepth = area.properties.areaDepth ||  area.properties.defaultDepth
+      area.properties.areaWidth = area.properties.areaWidth ||  area.properties.defaultWidth
+      area.properties.areaRadius = area.properties.areaRadius ||  area.properties.defaultRadius
+    })
+    features.push(state.settings.area)
+
+    getApiData('heatstress/reduction', {
+      data: {
+        type: 'FeatureCollection',
+        features: features,
+      },
+    })
+      .then(apiData => {
+        const tileSize = 512
+        const heatstressResults = {}
+        heatstressResults.heatstressNewTemperature = apiData.newStats.mean
+        heatstressResults.heatstressTemperatureDifference = apiData.newStats.mean - apiData.oldStats.mean
+        commit('setHeatstressResults', heatstressResults)
+        apiData.layers.forEach(layer => {
+          const baseUrlLegend = layer.baseUrl.replace('ows', 'wms')
+          const heatstressLayer = {
+            id: layer.layerName,
+            title: layer.title,
+            url: `${layer.baseUrl}bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.3.0&request=GetMap&crs=EPSG:3857&srs=EPSG:28992&transparent=True&width=${tileSize}&height=${tileSize}&layers=${layer.layerName}`,
+            legendUrl: `${baseUrlLegend}request=GetLegendGraphic&version=1.1.1&format=image/png&layer=${layer.layerName}`,
+            visible: false,
+            showLegend: false,
+            opacity: 1,
+            layerType: 'raster',
+            tilesize: tileSize,
+            layerName: layer.layerName,
+          }
+          commit('setHeatstressLayers', heatstressLayer)
+        })
+      })
+      .catch(error => {
+        dispatch(
+          'notifications/showError',
+          { message: 'Could not calculate heatstress layers!', duration: 0 },
+          { root: true },
+        )
+        log.error('Problems fetching heatstress layers', error)
+      })
+  },
   bootstrapSettingsProjectArea({ commit }, settings) {
     settings.forEach(setting => {
       let value = null
@@ -422,7 +493,7 @@ export const actions = {
       commit('toggleProjectAreaNestedSetting', { key, option, value })
     }
 
-    if ((type === 'radio') || (type === 'select')) {
+    if (type === 'radio' || type === 'select') {
       const { key, value } = payload
       commit('setProjectAreaSetting', { key, value })
     }
@@ -487,18 +558,47 @@ export const actions = {
   },
   saveProject({ state, commit }) {
     const { title } = state.settings.general
-    const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' })
+    let savedState = cloneDeep(state)
+    // Reset heatstresslayers while exporting, because the layers in the geoserver
+    // are removed every day.
+    delete savedState.map.heatstressLayers
+    const blob = new Blob([JSON.stringify(savedState, null, 2)], { type: 'application/json' })
     commit('appMenu/hideMenu', null, { root: true })
     return FileSaver.saveAs(blob, `${title || 'ast_project'}.json`)
   },
-  exportProject({ state, getters, rootGetters }, format) {
+  async exportProject({ state, getters, rootState, rootGetters, commit, dispatch }, format) {
     const { title } = state.settings.general
-    const data = format === 'csv'
-      ? projectToCsv(getters.areas, Object.keys(getters.kpiValues), rootGetters['data/measures/measureById'])
-      : projectToGeoJson(getters.areas)
-    const type = format === 'csv' ? 'text/csv' : 'application/json';
+    let data
+    let type
+    switch (format) {
+      case 'csv':
+        data = projectToCsv(getters.areas, Object.keys(getters.kpiValues), rootGetters['data/measures/measureById'])
+        type = 'text/csv'
+        break;
+      case 'geojson':
+        data = projectToGeoJson(getters.areas)
+        type = 'application/json'
+        break;
+      case 'pdf':
+        commit('flow/showPdfExport', null, { root: true })
+        data = await exportToPdf({ locale: rootState.i18n.locale, project: state, title: state.settings.general.title })
+        type = 'application/pdf'
+        break;
+      default:
+        return
+    }
+
     const blob = new Blob([data], { type })
-    return FileSaver.saveAs(blob, `${title || 'ast_project'}.${format}`)
+    if (format === 'pdf') commit('flow/hidePdfExport', null, { root: true })
+    if (data) {
+      return FileSaver.saveAs(blob, `${title || 'ast_project'}.${format}`)
+    } else {
+      dispatch(
+        'notifications/showError',
+        { message: 'Could not save data' },
+        { root: true },
+      )
+    }
   },
   clearState({ commit, dispatch, rootState }) {
     const areaSettings = rootState.data.areaSettings
@@ -578,13 +678,69 @@ export const getters = {
           if (obj[measureId] === undefined) {
             obj[measureId] = values
           } else {
-            values.forEach((value, index) => obj[measureId][index] += value)
+            values.forEach((value, index) => (obj[measureId][index] += value))
           }
           return obj
         }, {})
 
       return {
         'title': rootState.i18n.messages.climate_and_costs,
+        'header': [
+          rootState.i18n.messages.measure,
+          rootState.i18n.messages.surface,
+          ...kpiKeys.map(kpiTitleByKey),
+        ],
+        rows: Object.entries(measureValueMap).map(([id, values]) => {
+          const [surface, ...kpiValues] = values
+          return [
+            measueTitleForId(id),
+            toDecimalPricision(surface, 2),
+            ...kpiValues.map((val, index) => {
+              const kpiKey = kpiKeys[index]
+              const decimalScale =
+                kpiKeysDecimalScaleMap && kpiKeysDecimalScaleMap[kpiKey]
+              const scale = decimalScale ? decimalScale : 0
+              const value = toDecimalPricision(val, scale)
+              return isNaN(value) ? '-' : value
+            }),
+          ]
+        }),
+      }
+    }
+  },
+
+  tableCoBenefits: (state, getters, rootState, rootGetters) => {
+    if (state.areas.length) {
+      const measureById = rootGetters['data/measures/measureById']
+      const kpiKeys = ['filteringUnit', 'captureUnit', 'settlingUnit']
+      const kpiKeysTitleMap = rootGetters['data/kpiGroups/kpiKeysTitleMap']
+      const kpiKeysUnitMap = rootGetters['data/kpiGroups/kpiKeysUnitMap']
+      const kpiKeysDecimalScaleMap = rootGetters['data/kpiGroups/kpiKeysDecimalScaleMap']
+
+      const toDecimalPricision = (value, precision = 2) => round(value, precision)
+      const measueTitleForId = id => get(measureById(id), 'title')
+      const kpiTitleByKey = key => `${kpiKeysTitleMap[key]}${kpiKeysUnitMap[key] ? ` (${kpiKeysUnitMap[key]})` : ''}`
+
+      const measureValueMap = getters.areas
+        .filter(area => area.properties.hasOwnProperty('measure'))
+        .map(area => {
+          const values = kpiKeys.map(key =>
+            get(area, `properties.apiData[${key}]`),
+          )
+          return [area.properties.measure, area.properties.area, ...values]
+        })
+        .reduce((obj, row) => {
+          const [measureId, ...values] = row
+          if (obj[measureId] === undefined) {
+            obj[measureId] = values
+          } else {
+            values.forEach((value, index) => (obj[measureId][index] += value))
+          }
+          return obj
+        }, {})
+
+      return {
+        'title': rootState.i18n.messages.co_benefits,
         'header': [
           rootState.i18n.messages.measure,
           rootState.i18n.messages.surface,
@@ -609,60 +765,6 @@ export const getters = {
     }
   },
 
-  tableCoBenefits: (state, getters, rootState, rootGetters) => {
-    if (state.areas.length) {
-      const measureById = rootGetters['data/measures/measureById']
-      const kpiKeys = ['filteringUnit', 'captureUnit', 'settlingUnit']
-      const kpiKeysTitleMap = rootGetters['data/kpiGroups/kpiKeysTitleMap']
-      const kpiKeysUnitMap = rootGetters['data/kpiGroups/kpiKeysUnitMap']
-      const kpiKeysDecimalScaleMap = rootGetters['data/kpiGroups/kpiKeysDecimalScaleMap']
-
-      const toDecimalPricision = (value, precision = 2) => round(value, precision)
-      const measueTitleForId = id => get(measureById(id), 'title')
-      const kpiTitleByKey = key => `${kpiKeysTitleMap[key]}${kpiKeysUnitMap[key] ? ` (${kpiKeysUnitMap[key]})` : ''}`
-
-      const measureValueMap = getters.areas
-        .filter(area => area.properties.hasOwnProperty('measure'))
-        .map(area => {
-          const values = kpiKeys.map(key => get(area, `properties.apiData[${key}]`))
-          return [area.properties.measure, area.properties.area, ...values]
-        })
-        .reduce((obj, row) => {
-          const [measureId, ...values] = row
-          if (obj[measureId] === undefined) {
-            obj[measureId] = values
-          } else {
-            values.forEach((value, index) => obj[measureId][index] += value)
-          }
-          return obj
-        }, {})
-
-      return {
-        'title': rootState.i18n.messages.co_benefits,
-        'header': [
-          rootState.i18n.messages.measure,
-          rootState.i18n.messages.surface,
-          ...kpiKeys.map(kpiTitleByKey),
-        ],
-        rows: Object.entries(measureValueMap)
-        .map(([id, values]) => {
-          const [surface, ...kpiValues] = values
-          return [
-            measueTitleForId(id),
-            toDecimalPricision(surface, 2),
-            ...kpiValues.map((val, index) => {
-              const kpiKey = kpiKeys[index]
-              const decimalScale = kpiKeysDecimalScaleMap && kpiKeysDecimalScaleMap[kpiKey]
-              const scale = decimalScale ? decimalScale : 0;
-              const value = toDecimalPricision(val, scale)
-              return isNaN(value) ? '-' : value
-            }),
-          ]
-        }),
-      }
-    }
-  },
-
   areas: state => {
     return state.areas.map(feature => {
       let area;
@@ -674,23 +776,19 @@ export const getters = {
           width = feature.properties.areaWidth || feature.properties.defaultWidth
           length = turfLength(feature.geometry) * 1000
           area = length * parseFloat(width)
-          break;
+          break
         case 'Point':
           radius = feature.properties.areaRadius || feature.properties.defaultRadius
           area = Math.PI * (radius * radius)
-          break;
+          break
         case 'Polygon':
           area = turfArea(feature.geometry)
-          break;
+          break
         default:
           area = 0
       }
 
-      return merge(
-        {},
-        feature,
-        { properties: { area, length, radius } },
-      )
+      return merge({}, feature, { properties: { area, length, radius } })
     })
   },
   areasByMeasure: (state, getters, rootState, rootGetters) => {
@@ -724,7 +822,7 @@ export const getters = {
           .filter(kpi => filteredKpiKeys.indexOf(kpi.key) !== -1)
         return { ...group, kpis }
       })
-    .filter(group => group.kpis.length)
+      .filter(group => group.kpis.length)
   },
   filteredKpiKeys: state => {
     const groups = state.settings.targets
@@ -799,13 +897,16 @@ export const getters = {
         opacity,
       }))
   },
+  heatstressLayers: state => {
+    return state.map.heatstressLayers
+  },
   customLayers: state => {
     return state.map.customLayers
   },
   mapLayers: (state, getters, rootState, rootGetters) => {
     return rootGetters['data/mapLayers/constructed'].map(layer => {
-      const storerdSettings = state.map.mapLayers.find(({ id }) => id === layer.id)
-      return { ...layer, ...storerdSettings }
+      const storedSettings = state.map.mapLayers.find(({ id }) => id === layer.id)
+      return { ...layer, ...storedSettings }
     })
   },
   layers: (state, getters, rootState, rootGetters) => {
