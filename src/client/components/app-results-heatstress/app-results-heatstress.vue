@@ -231,4 +231,11 @@ export default {
 .app-results-heatstress__footer-cta-wrapper {
   position: relative;
 }
+
+.app-results-heatstress__loading-indicator {
+  position: absolute;
+  top: calc(50% - 15px); /* 15px is half of the with. somehow translate does not have any effect */
+  left: calc(50% - 25px); /* 15px is half of the with. somehow translate does not have any effect */
+}
+
 </style>
