@@ -49,7 +49,7 @@
         <strong>{{ datoContent.lastCalculation }}:</strong>
         <span>{{ receivedAt }}</span>
       </small>
-      <div>
+      <div class="app-results-rivm__buttons-wrapper">
         <md-button
           class="md-raised"
           :href="datoContent.greenBenefitsDocumentationLinkAddress"
@@ -180,13 +180,11 @@ export default {
   margin-bottom: var(--spacing-quarter);
 }
 
+.app-results-rivm__buttons-wrapper,
 .app-results-rivm__footer-cta-wrapper {
   position: relative;
   display: flex;
-}
-
-.app-results-rivm__cta {
-  width: 100%;
+  flex-direction: column;
 }
 
 .app-results-rivm__cta.md-button.md-theme-default.md-raised:not([disabled]) {
