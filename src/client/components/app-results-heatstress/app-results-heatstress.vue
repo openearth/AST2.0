@@ -13,12 +13,6 @@
         <h2 class="app-results-heatstress__title md-body-2">
           {{ datoContent.heatstressTitle }}
         </h2>
-        <md-button class="md-icon-button info-button">
-          <md-icon>info</md-icon>
-          <md-tooltip md-direction="top">
-            {{ datoContent.heatstressTooltip }}
-          </md-tooltip>
-        </md-button>
         <md-list-item
           v-for="(result, key) in heatstressResults"
           :key="key"
