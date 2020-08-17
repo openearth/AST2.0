@@ -61,8 +61,6 @@ export const actions = {
       }
 
       commit('fillWorkspace', workspace)
-      dispatch('project/bootstrapWmsLayers', workspace.wmsLayers, { root: true })
-      dispatch('project/bootstrapMapLayers', workspace.mapLayers, { root: true })
       dispatch('project/bootstrapLayers', workspace.layers, { root: true })
     }
   },

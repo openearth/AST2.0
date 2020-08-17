@@ -75,15 +75,7 @@ export default {
       type: Object,
       default: () => ({ lat: 0, lng: 0 }),
     },
-    wmsLayers: {
-      type: Array,
-      default: () => [],
-    },
     customLayers: {
-      type: Array,
-      default: () => [],
-    },
-    mapLayers: {
       type: Array,
       default: () => [],
     },
@@ -113,9 +105,7 @@ export default {
 
   computed: {
     allMapLayers() {
-      // @REFACTOR :: We spread layerList here, which already contains all of the other layers.
-      // See layouts/default.vue computed propery `layerList`
-      const layers = [ ...this.wmsLayers, ...this.customLayers, ...this.mapLayers, ...this.layerList ]
+      const layers = [ ...this.customLayers, ...this.layerList ]
       return layers
     },
     hasProjectArea() {
@@ -146,14 +136,8 @@ export default {
       this.clearMap()
       this.$nextTick(this.fillMap)
     },
-    wmsLayers() {
-      [...this.wmsLayers].reverse().forEach(this.addWmsLayer)
-    },
     customLayers() {
       [...this.customLayers].reverse().forEach(this.addWmsLayer)
-    },
-    mapLayers() {
-      [...this.mapLayers].reverse().forEach(this.addWmsLayer)
     },
     layerList() {
       [...this.layerList].reverse().forEach(this.addWmsLayer)

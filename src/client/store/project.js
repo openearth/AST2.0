@@ -28,8 +28,6 @@ const initialState = () => ({
       lng: 4.380215599999929,
     },
     customLayers: [],
-    mapLayers: [],
-    wmsLayers: [],
     heatstressLayers: [],
     layers: [],
     zoom: 16.5,
@@ -134,9 +132,6 @@ export const mutations = {
   setTarget(state, { group, key, value }) {
     state.settings.targets[group][key] = { ...state.settings.targets[group][key], ...value }
   },
-  setWmsLayer(state, layer) {
-    state.map.wmsLayers.push(layer)
-  },
   setHeatstressLayers(state, layer) {
     state.map.heatstressLayers.push(layer)
   },
@@ -151,12 +146,6 @@ export const mutations = {
       layer => layer.id === value.id,
     )
     Object.assign(layers, value)
-  },
-  setMapLayers(state, layer) {
-    if (state.map.mapLayers === undefined) {
-      Vue.set(state.map, 'mapLayers', [])
-    }
-    state.map.mapLayers.push(layer)
   },
   setCustomLayer(state, layer) {
     if (state.map.customLayers === undefined) {
@@ -181,7 +170,7 @@ export const mutations = {
     state.legalAccepted = true
   },
   setLayerOpacity(state, { id, value }) {
-    const layers = [ ...state.map.wmsLayers,  ...state.map.mapLayers, ...state.map.customLayers, ...state.map.layers ]
+    const layers = [ ...state.map.customLayers, ...state.map.layers ]
     layers.forEach(layer => {
       if (id === layer.id) {
         layer.opacity = value
@@ -189,7 +178,7 @@ export const mutations = {
     })
   },
   setLayerVisibility(state, { id, value }) {
-    const layers = [ ...state.map.wmsLayers,  ...state.map.mapLayers, ...state.map.customLayers, ...state.map.layers ]
+    const layers = [ ...state.map.customLayers, ...state.map.layers ]
     layers.forEach(layer => {
       if (id === layer.id) {
         layer.visible = value
@@ -198,7 +187,7 @@ export const mutations = {
     })
   },
   setLegendVisibility(state, { id, value }) {
-    const layers = [ ...state.map.wmsLayers,  ...state.map.mapLayers, ...state.map.customLayers, ...state.map.layers ]
+    const layers = [ ...state.map.customLayers, ...state.map.layers ]
     layers.forEach(layer => {
       if (id === layer.id && layer.legendUrl) {
         layer.showLegend = value
@@ -460,11 +449,6 @@ export const actions = {
       commit('setTargets', { key, value })
     })
   },
-  bootstrapWmsLayers({ commit }, layers) {
-    layers.forEach(layer => {
-      commit('setWmsLayer', { id: layer.id, visible: false, showLegend: false, opacity: 1 })
-    })
-  },
   bootstrapCustomLayers({ commit }, layers) {
     layers.forEach(layer => {
       commit('setCustomLayer', {
@@ -473,11 +457,6 @@ export const actions = {
         showLegend: false,
         opacity: 1,
       })
-    })
-  },
-  bootstrapMapLayers({ commit }, layers) {
-    layers.forEach(layer => {
-      commit('setMapLayers', { id: layer.id, visible: false, showLegend: false, opacity: 1 })
     })
   },
   bootstrapLayers({ commit }, layers) {
@@ -549,7 +528,6 @@ export const actions = {
     }
 
     commit('appMenu/hideMenu', null, { root: true })
-    dispatch('bootstrapMapLayers', rootState.data.mapLayers)
 
     if (!validProject.valid) {
       log.error('Invalid project', validProject.errors)
@@ -886,28 +864,11 @@ export const getters = {
       }
     }, {})
   },
-  wmsLayers: (state, getters, rootState, rootGetters) => {
-    const { wmsLayers: rootWmsLayers = [] } = rootGetters['data/workspaces/activeWorkspace'] || {}
-    return state.map.wmsLayers
-      .filter(layer => rootWmsLayers.some(rootLayer => rootLayer.id === layer.id))
-      .map(({ id, visible, opacity, showLegend }) => ({
-        ...rootGetters['data/wmsLayers/constructed'].find(layer => layer.id === id),
-        visible,
-        showLegend,
-        opacity,
-      }))
-  },
   heatstressLayers: state => {
     return state.map.heatstressLayers
   },
   customLayers: state => {
     return state.map.customLayers
-  },
-  mapLayers: (state, getters, rootState, rootGetters) => {
-    return rootGetters['data/mapLayers/constructed'].map(layer => {
-      const storedSettings = state.map.mapLayers.find(({ id }) => id === layer.id)
-      return { ...layer, ...storedSettings }
-    })
   },
   layers: (state, getters, rootState, rootGetters) => {
     const { layers: rootLayers = [] } = rootGetters['data/workspaces/activeWorkspace'] || {}

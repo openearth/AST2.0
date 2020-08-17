@@ -43,9 +43,7 @@
           :map-center="center"
           :map-zoom="zoom"
           :current-mode="mapMode"
-          :wms-layers="wmsLayers"
           :custom-layers="customLayers"
-          :map-layers="mapLayers"
           :layer-list="layerList"
           :heatstress-layers="heatstressLayers"
           :mode="mode"
@@ -202,7 +200,7 @@ export default {
       rivmCoBenefits: state => state.project.rivmCoBenefits,
       heatstressResults: state => state.project.heatstressResults,
     }),
-    ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers', 'customLayers', 'heatstressLayers', 'mapLayers', 'layers']),
+    ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'customLayers','layers', 'heatstressLayers']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings', 'projectAreaSizeIsBelowThreshold']),
     ...mapGetters({ selectedAreas:  'selectedAreas/features' }),
     ...mapGetters('map', ['isProject', 'point', 'line', 'polygon', 'addOnly', 'interactive', 'search']),
@@ -210,7 +208,7 @@ export default {
     ...mapGetters('data/appConfig', ['title']),
     ...mapGetters('data/workspaces', ['activeWorkspace']),
     layerList() {
-      return [...this.customLayers, ...this.layers, ...this.mapLayers, ...this.wmsLayers]
+      return [...this.customLayers, ...this.layers]
     },
     sidePanelTabButtons() {
       return [
