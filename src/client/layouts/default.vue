@@ -313,7 +313,15 @@ export default {
     }),
     async onFileInput(event) {
       this.importProject(event)
-        .then(() => this.$router.push(this.currentFilledInLevel.uri))
+        .then(() =>
+          this.$router.push(this.currentFilledInLevel.uri)
+            .catch(error => {
+              if (/Avoided redundant navigation/.test(error.message)) {
+                return
+              }
+              throw new Error(error)
+            }),
+        )
         .catch(error => {
           if (error.name !== 'NavigationDuplicated') {
             log.error('Could not load file', error)
