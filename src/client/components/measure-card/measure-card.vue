@@ -20,6 +20,9 @@
       <div class="md-caption measure-card__tags">
         <md-chip v-if="measure.systemSuitability" class="md-body-2">
           {{ measure.systemSuitability.toFixed(1) }}
+          <md-tooltip md-direction="top">
+            Some text
+          </md-tooltip>
         </md-chip>
         <md-chip
           v-for="(score, index) in scoresWithImageProxy"
@@ -27,11 +30,17 @@
           class="measure-card__tag"
         >
           <md-icon :md-src="score.icon.url" class="measure-card__icon" />
+          <md-tooltip md-direction="top">
+            Some other text yet
+          </md-tooltip>
         </md-chip>
         <md-chip v-if="measure.featured === true" class="measure-card__tag">
           <md-icon class="measure-card__icon">
             star
           </md-icon>
+          <md-tooltip md-direction="top">
+            Some other text
+          </md-tooltip>
         </md-chip>
       </div>
     </md-card-content>
