@@ -13,6 +13,5 @@ query ($locale: SiteLocale) {
     heatstressTemperatureDifference
     heatstressCalculateButton
     heatstressSelectMeasures
-    heatstressTooltip
   }
 }
