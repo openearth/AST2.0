@@ -40,13 +40,18 @@
           </div>
         </section>
       </div>
-      <md-button
-        class="scenario-overview__choose-btn md-raised md-accent"
-        :disabled="activeScenario === nonChosenScenario"
-        @click="choose"
-      >
-        {{ $t('choose') }} {{ activeTabLabel }}
-      </md-button>
+      <div class="scenario-overview__footer">
+        <p class="md-body-1">
+          {{ $t('scenario_choose_disclaimer') }}
+        </p>
+        <md-button
+          class="md-raised md-accent"
+          :disabled="activeScenario === nonChosenScenario"
+          @click="choose"
+        >
+          {{ $t('choose') }} {{ activeTabLabel }}
+        </md-button>
+      </div>
     </div>
   </app-popup>
 </template>
@@ -133,18 +138,12 @@ export default {
   position: sticky;
   top: 0;
   height: 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .scenario-overview__tab-content {
   max-height: 100%;
-  overflow: scroll;
-}
-
-.scenario-overview__choose-btn {
-  align-self: flex-end;
-  flex-grow: 0;
-  flex-shrink: 0;
+  overflow: auto;
 }
 
 .scenario-overview__tab-content-title {
@@ -159,5 +158,11 @@ export default {
 
 .scenario-overview__tab-content--text .rich-text {
   max-width: initial;
+}
+
+.scenario-overview__footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
 </style>
