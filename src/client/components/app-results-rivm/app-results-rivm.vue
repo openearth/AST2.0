@@ -46,16 +46,16 @@
 
     <footer class="app-results-rivm__footer">
       <small class="app-results-rivm__footer__received-at">
-        <strong>{{ $t('last_calculation') }}:</strong>
+        <strong>{{ datoContent.lastCalculation }}:</strong>
         <span>{{ receivedAt }}</span>
       </small>
       <div>
         <md-button
           class="md-raised"
-          :href="'https://google.com'"
+          :href="datoContent.greenBenefitsDocumentationLinkAddress"
           target="_blank"
         >
-          Achtergrond documentatie
+          {{ datoContent.documentationLinkText }}
         </md-button>
         <div class="app-results-rivm__footer-cta-wrapper">
           <md-button

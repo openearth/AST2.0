@@ -85,7 +85,9 @@
     </div>
     <footer class="app-results-heatstress__footer">
       <div>
-        <small v-if="!hasAreas">{{ datoContent.heatstressSelectMeasures }}</small>
+        <small v-if="!hasAreas">
+          {{ datoContent.heatstressSelectMeasures }}
+        </small>
       </div>
       <div class="app-results-heatstress__footer-cta-wrapper">
         <md-button

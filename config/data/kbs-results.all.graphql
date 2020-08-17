@@ -1,10 +1,14 @@
 query ($locale: SiteLocale) {
   kbsResult(locale: $locale) {
+    lastCalculation
+    documentationLinkText
     greenBenefitsCtaText
+    greenBenefitsDocumentationLinkAddress
     greenBenefitsNoDataLoadedYet
     greenBenefitsCalculatingResults
     heatstressTitle
     heatstressDescription
+    heatstressDocumentationLinkAddress
     heatstressNewTemperature
     heatstressTemperatureDifference
     heatstressCalculateButton
