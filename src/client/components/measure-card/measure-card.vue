@@ -21,7 +21,7 @@
         <md-chip v-if="measure.systemSuitability" class="md-body-2">
           {{ measure.systemSuitability.toFixed(1) }}
           <md-tooltip md-direction="top">
-            Some text
+            {{ $t('tooltip_system_suitability') }}
           </md-tooltip>
         </md-chip>
         <md-chip
