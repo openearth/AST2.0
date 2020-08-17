@@ -1,63 +1,63 @@
 <template>
-  <aside class="scenario-overview">
-    <md-button @click="showPopup = true">
-      {{ $t('scenario_examples') }}
-    </md-button>
-    <app-popup
-      v-if="showPopup"
-      :title="$t('scenario_examples')"
-      @closePopup="showPopup = false"
-    >
-      <div class="scenario-overview__popup">
-        <div class="scenario-overview__content">
-          <ul class="scenario-overview__tabs">
-            <li v-for="scenario in scenarios" :key="scenario.value">
-              <md-button
-                :class="{'md-accent': activeTab == scenario.value}"
-                @click="activeTab = scenario.value"
-              >
-                {{ scenario.title }}
-              </md-button>
-            </li>
-          </ul>
-          <section class="scenario-overview__tab-content">
-            <div class="scenario-overview__tab-content-wrapper">
-              <h3 class="scenario-overview__tab-content-title md-headline">
-                {{ activeScenario.title }}
-              </h3>
-              <div
-                v-for="(item, index) in activeScenario.example"
-                :key="index"
-                :class="{
-                  'scenario-overview__tab-content--text': Boolean(item.text),
-                  'scenario-overview__tab-content--image': Boolean(item.image),
-                }"
-              >
-                <rich-text
-                  v-if="item.text"
-                  :text="item.text"
-                />
-                <responsive-image
-                  v-if="item.image"
-                  :image="{...item.image, title: item.title}"
-                />
-              </div>
+  <app-popup
+    :title="$t('scenario_examples')"
+    @closePopup="hideScenarios"
+  >
+    <div class="scenario-overview__popup">
+      <div class="scenario-overview__content">
+        <ul class="scenario-overview__tabs">
+          <li v-for="scenario in scenarios" :key="scenario.value">
+            <md-button
+              :class="{'md-accent': activeTab == scenario.value}"
+              @click="activeTab = scenario.value"
+            >
+              {{ scenario.title }}
+            </md-button>
+          </li>
+        </ul>
+        <section class="scenario-overview__tab-content">
+          <div class="scenario-overview__tab-content-wrapper">
+            <h3 class="scenario-overview__tab-content-title md-headline">
+              {{ activeScenario.title }}
+            </h3>
+            <div
+              v-for="(item, index) in activeScenario.example"
+              :key="index"
+              :class="{
+                'scenario-overview__tab-content--text': Boolean(item.text),
+                'scenario-overview__tab-content--image': Boolean(item.image),
+              }"
+            >
+              <rich-text
+                v-if="item.text"
+                :text="item.text"
+              />
+              <responsive-image
+                v-if="item.image"
+                :image="{...item.image, title: item.title}"
+              />
             </div>
-          </section>
-        </div>
+          </div>
+        </section>
+      </div>
+      <div class="scenario-overview__footer">
+        <p class="md-body-1">
+          {{ $t('scenario_choose_disclaimer') }}
+        </p>
         <md-button
-          class="scenario-overview__choose-btn md-raised md-accent"
+          class="md-raised md-accent"
           :disabled="activeScenario === nonChosenScenario"
           @click="choose"
         >
           {{ $t('choose') }} {{ activeTabLabel }}
         </md-button>
       </div>
-    </app-popup>
-  </aside>
+    </div>
+  </app-popup>
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
 import AppPopup from '../app-popup'
 import RichText from '../rich-text'
 import ResponsiveImage from '../responsive-image'
@@ -76,7 +76,6 @@ export default {
   },
   data( ) {
     return {
-      showPopup: false,
       activeTab: undefined,
       nonChosenScenario: { title: '', example: [] },
     }
@@ -102,20 +101,18 @@ export default {
     this.activeTab = this.value
   },
   methods: {
+    ...mapMutations({
+      hideScenarios: 'flow/hideScenarios',
+    }),
     choose() {
       this.$emit('choose-scenario', this.activeTab)
-      this.showPopup = false
+      this.hideScenarios()
     },
   },
 }
 </script>
 
 <style>
-.scenario-overview {
-  display: flex;
-  justify-content: flex-end;
-}
-
 .scenario-overview__popup {
   display: flex;
   flex-direction: column;
@@ -141,18 +138,12 @@ export default {
   position: sticky;
   top: 0;
   height: 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .scenario-overview__tab-content {
   max-height: 100%;
-  overflow: scroll;
-}
-
-.scenario-overview__choose-btn {
-  align-self: flex-end;
-  flex-grow: 0;
-  flex-shrink: 0;
+  overflow: auto;
 }
 
 .scenario-overview__tab-content-title {
@@ -167,5 +158,11 @@ export default {
 
 .scenario-overview__tab-content--text .rich-text {
   max-width: initial;
+}
+
+.scenario-overview__footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
 </style>

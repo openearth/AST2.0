@@ -89,13 +89,14 @@
             </md-tooltip>
           </md-button>
 
-          <scenario-overview
+          <aside
             v-if="setting.key === 'scenarioName'"
-            :value="projectAreaSettings[setting.key]"
-            :scenarios="scenariosInActiveWorkspace"
-            class="project-area__scenario-overview"
-            @choose-scenario="value => updateProjectAreaSetting({ type: 'select', key: setting.key, value })"
-          />
+            class="project-area__scenario-overview scenario-overview"
+          >
+            <md-button @click="showScenarios">
+              {{ $t('scenario_examples') }}
+            </md-button>
+          </aside>
         </md-list>
       </section>
     </form>
@@ -104,13 +105,12 @@
 
 <script>
 import get from 'lodash/get'
-import { mapState, mapActions, mapGetters } from 'vuex'
+import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 import { SelectInput } from '~/components'
-import ScenarioOverview from '../../components/scenario-overview'
 
 export default {
   middleware: ['access-level-project-area'],
-  components: { SelectInput, ScenarioOverview },
+  components: { SelectInput },
   data() {
     return {
       activeTooltipKey: '',
@@ -134,6 +134,9 @@ export default {
     },
   },
   methods: {
+    ...mapMutations({
+      showScenarios: 'flow/showScenarios',
+    }),
     ...mapActions({
       updateProjectAreaSetting: 'project/updateProjectAreaSetting',
     }),
@@ -192,5 +195,7 @@ export default {
 .project-area__scenario-overview {
   flex-basis: 100%;
   transform: translateY(calc(var(--spacing-half) * -1));
+  display: flex;
+  justify-content: flex-end;
 }
 </style>

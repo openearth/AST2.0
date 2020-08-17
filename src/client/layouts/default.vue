@@ -151,6 +151,13 @@
     <portal-target name="popup-portal" />
 
     <project-area-size-threshold :is-below-threshold="projectAreaSizeIsBelowThreshold" />
+
+    <scenario-overview
+      v-if="scenariosShown"
+      :value="projectAreaSettings['scenarioName']"
+      :scenarios="scenariosInActiveWorkspace"
+      @choose-scenario="value => updateProjectAreaSetting({ type: 'select', key: 'scenarioName', value })"
+    />
   </div>
 </template>
 
@@ -165,14 +172,15 @@ import AppMenu from '../components/app-menu'
 import NotificationArea from '../components/notification-area'
 import AppResultsPanel from '../components/app-results-panel'
 import AppResultsRivm from '../components/app-results-rivm'
-import ProjectAreaSizeThreshold from '../components/project-area-size-threshold'
 import AppResultsHeatstress from '../components/app-results-heatstress'
+import ProjectAreaSizeThreshold from '../components/project-area-size-threshold'
+import ScenarioOverview from '@/components/scenario-overview'
 import getData from '~/lib/get-data'
 import EventBus, { CLICK } from '~/lib/event-bus'
 import log from '~/lib/log'
 
 export default {
-  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea, ProjectAreaSizeThreshold, AppResultsPanel, AppResultsRivm, AppResultsHeatstress },
+  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea, ProjectAreaSizeThreshold, AppResultsPanel, AppResultsRivm, AppResultsHeatstress, ScenarioOverview },
   data() {
     return {
       disclaimer: {},
@@ -197,6 +205,7 @@ export default {
       mode: state => state.mode.state,
       exportShown: state => state.flow.export,
       pdfExportShown: state => state.flow.pdfExport,
+      scenariosShown: state => state.flow.scenarios,
       inSetMeasureFlow: state => state.setMeasureFlow.inFlow,
       userIsRefreshing: state => state.user.isRefreshing,
       rivmCoBenefits: state => state.project.rivmCoBenefits,
@@ -204,7 +213,11 @@ export default {
     }),
     ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers', 'customLayers', 'heatstressLayers', 'mapLayers', 'layers']),
     ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings', 'projectAreaSizeIsBelowThreshold']),
-    ...mapGetters({ selectedAreas:  'selectedAreas/features' }),
+    ...mapGetters({
+      selectedAreas:  'selectedAreas/features',
+      projectAreaSettings: 'project/settingsProjectArea',
+      scenariosInActiveWorkspace: 'data/workspaces/scenariosInActiveWorkspace',
+    }),
     ...mapGetters('map', ['isProject', 'point', 'line', 'polygon', 'addOnly', 'interactive', 'search']),
     ...mapGetters('user', ['isLoggedIn']),
     ...mapGetters('data/appConfig', ['title']),
@@ -296,6 +309,7 @@ export default {
       connectMeasureToArea: 'setMeasureFlow/connectMeasureToArea',
       fetchRivmCoBenefits: 'project/fetchRivmCoBenefits',
       fetchHeatstressData: 'project/fetchHeatstressData',
+      updateProjectAreaSetting: 'project/updateProjectAreaSetting',
     }),
     async onFileInput(event) {
       this.importProject(event)
