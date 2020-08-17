@@ -114,6 +114,7 @@ export default {
 
 .measure-card__tags {
   display: flex;
+  justify-content: flex-end;
 }
 
 .measure-card__tag{
@@ -137,6 +138,19 @@ export default {
 
 .measure-card__icon svg {
   max-width: 20px;
+}
+
+/* Vue Material Overrides */
+.measure-card .md-card-header {
+  padding: var(--spacing-half);
+}
+
+.measure-card .md-card-header .md-card-media {
+  margin-left: var(--spacing-half);
+}
+
+.measure-card .md-card-content {
+  padding: 0 var(--spacing-half);
 }
 
 .measure-card .md-chip {
