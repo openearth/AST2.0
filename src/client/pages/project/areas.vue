@@ -27,9 +27,6 @@
         </md-card-header>
 
         <md-card-content>
-          <!-- Name input
-            @TODO :: Check if this fires when changing selection
-          -->
           <text-input
             v-if="isSingleSelection"
             :label="$t('area_name')"
@@ -59,32 +56,18 @@
           </div>
 
           <template v-if="combinedMeasure">
-            <!-- @TODO :: probably change this into a loop -->
+            <!-- <pre>{{ measurePropertiesToEdit }}</pre>
+            <pre>{{ combinedFeature }}</pre> -->
+
             <area-property-slider
-              :value-type="'depth'"
+              v-for="({ key, min, max, value }) in measurePropertiesToEdit"
+              :key="key"
+              :value-type="key"
+              :value="value"
+              :min="min"
+              :max="max"
               :feature="combinedFeature"
-              :measure="combinedMeasure"
-              @change="updateValue('areaDepth', combinedFeature, $event)"
-            />
-            <area-property-slider
-              :value-type="'inflow'"
-              :feature="combinedFeature"
-              :measure="combinedMeasure"
-              @change="updateValue('areaInflow', combinedFeature, $event)"
-            />
-            <area-property-slider
-              v-if="combinedFeature.geometry.type === 'LineString'"
-              :value-type="'width'"
-              :feature="combinedFeature"
-              :measure="combinedMeasure"
-              @change="updateValue('areaWidth', combinedFeature, $event)"
-            />
-            <area-property-slider
-              v-if="combinedFeature.geometry.type === 'Point'"
-              :value-type="'radius'"
-              :feature="combinedFeature"
-              :measure="combinedMeasure"
-              @change="updateValue('areaRadius', combinedFeature, $event)"
+              @change="updateValue(`area${ key }`, combinedFeature, $event)"
             />
           </template>
         </md-card-content>
@@ -159,6 +142,25 @@ export default {
         return null
       }
     },
+
+    measurePropertiesToEdit() {
+      const geometryType = this.combinedFeature.geometry.type
+      return this.combinedMeasure.defaultValues
+        .map(valueObj => {
+          const { key, show } = valueObj
+          if(!show) return null
+          if(key === 'Radius' && geometryType !== 'Point') return null
+          if(key === 'Width' && geometryType !== 'LineString') return null
+          const value = (
+            this.combinedFeature.properties[`area${ key }`] ||
+            this.combinedFeature.properties[`default${ key}`])
+          .toString()
+          const min = valueObj.min.toString()
+          const max = valueObj.max.toString()
+          return { key, value, min, max }
+        })
+        .filter(Boolean)
+    },
   },
   mounted() {
     MapEventBus.$emit(REDRAW)
@@ -170,14 +172,17 @@ export default {
   methods: {
     ...mapActions({ updateAreaProperties: 'project/updateAreaProperties' }),
     ...mapMutations({ updateAreaProperty: 'project/updateAreaProperty' }),
+
     onDelete() {
       MapEventBus.$emit(MODE, 'simple_select')
       this.$router.push(`/${this.locale}/project/`).catch(() => {})
     },
+
     onDone() {
       MapEventBus.$emit(MODE, 'simple_select')
       this.$router.push(`/${this.locale}/project/`).catch(() => {})
     },
+
     // @TODO :: Check if this needs to be here or in `slider` component
     // after we've accounted for multi-selection
     updateValue(setting, feature, value) {

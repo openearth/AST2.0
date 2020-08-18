@@ -1,16 +1,14 @@
 <template>
-  <!-- @TODO :: We might filter out the 'no-show' properties in parent so we can remove v-if here -->
   <input-range
-    v-if="getDefaultValueProperty('show')"
-    :value="inputValue"
-    :min="getDefaultValueProperty('min')"
-    :max="getDefaultValueProperty('max')"
-    :label="$t(`area_${ valueType }`)"
+    :value="value"
+    :min="min"
+    :max="max"
+    :label="$t(`area_${ valueTypeLower }`)"
     @change="$emit('change', $event)"
   >
     <template v-slot:info>
       <app-tooltip
-        :message="$t(`area_${ valueType }_info`)"
+        :message="$t(`area_${ valueTypeLower }_info`)"
         class="area-property-slider__info"
         direction="left"
       />
@@ -22,8 +20,6 @@
 import InputRange from '@/components/input-range'
 import AppTooltip from '@/components/app-tooltip'
 
-const capitalize = str => str.trim().replace(/^\w/, c => c.toUpperCase())
-
 export default {
   components: {
     InputRange,
@@ -34,28 +30,26 @@ export default {
       type: String,
       required: true,
     },
-    feature: {
-      type: Object,
+    value: {
+      type: String,
       required: true,
     },
-    measure: {
-      type: Object,
-      required: true,
+    min: {
+      type: String,
+      default: '0.1',
+    },
+    max: {
+      type: String,
+      default: '10',
     },
   },
   computed: {
-    inputValue() {
-      const { properties } = this.feature
-      const type = capitalize(this.valueType)
-      return properties[`area${ type }`] || properties[`default${ type }`]
+    valueTypeLower() {
+      return this.valueType.toLowerCase()
     },
   },
   methods: {
-    getDefaultValueProperty(property) {
-      const values = this.measure.defaultValues.find(values => values.key.toLowerCase() === this.valueType)
-      const value = values ? values[property] : ''
-      return property === 'show' ? value : String(value)
-    },
+
   },
 }
 </script>
