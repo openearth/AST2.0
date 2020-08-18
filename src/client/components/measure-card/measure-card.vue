@@ -114,7 +114,6 @@ export default {
 
 .measure-card__tags {
   display: flex;
-  justify-content: flex-end;
 }
 
 .measure-card__tag{
