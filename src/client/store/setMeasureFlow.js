@@ -50,9 +50,6 @@ export const actions = {
     commit('mode/isAddOnly', null, { root: true })
     this.$router.push({ path }).catch(() => {})
   },
-  duplicateMeasure({ commit, getters, rootState }, measure) {
-    commit('setMeasureId', measure.measureId)
-  },
   async connectMeasureToArea({ commit, state, rootGetters, dispatch }, features) {
     const measure = rootGetters['data/measures/measureById'](state.id)
     await dispatch('project/setAreaMeasure', { features, measure }, { root: true })

@@ -126,9 +126,6 @@
             </md-card-content>
 
             <md-card-actions>
-              <md-button @click="duplicateMeasure(appliedMeasure)">
-                Duplicate measure
-              </md-button>
               <md-button @click="onDone">
                 {{ $t('done') }}
               </md-button>
@@ -174,10 +171,7 @@ export default {
     MapEventBus.$off(DELETE, this.onDelete)
   },
   methods: {
-    ...mapActions({
-      updateAreaProperties: 'project/updateAreaProperties',
-      duplicateMeasure: 'setMeasureFlow/duplicateMeasure',
-    }),
+    ...mapActions({ updateAreaProperties: 'project/updateAreaProperties' }),
     ...mapMutations({ updateAreaProperty: 'project/updateAreaProperty' }),
     onDelete() {
       this.$router.push(`/${this.locale}/project/`).catch(() => {})
