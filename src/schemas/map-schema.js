@@ -96,6 +96,7 @@ export default {
           visible: { type: 'boolean' },
           legendUrl: { type: 'string' },
           opacity: { type: 'number' },
+          showLegend: { type: 'boolean' },
         },
       },
     },

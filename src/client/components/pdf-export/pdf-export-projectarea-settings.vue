@@ -29,6 +29,7 @@ export default {
       areaSettings: state => state.data.areaSettings,
     }),
     ...mapGetters('flow', ['currentFilledInLevel']),
+    ...mapGetters('data/workspaces', ['scenariosInActiveWorkspace']),
     settings() {
       if (this.currentFilledInLevel.level < 5) return []
       return Object.entries(this.projectSettings)
@@ -41,7 +42,11 @@ export default {
             const [selectedKey] =  Object.entries(value).find(([_entryKey, entryValue]) => entryValue === true)
             description = selectedKey
           }
-          const chosenOpion = areaSetting.options.find(option => option.value === description)
+
+          const chosenOpion = key === 'scenarioName'
+            ? this.scenariosInActiveWorkspace.find(option => option.value === description)
+            : areaSetting.options.find(option => option.value === description)
+
           description = chosenOpion.title
 
           return { term, description }
