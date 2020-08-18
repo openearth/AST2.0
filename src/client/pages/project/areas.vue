@@ -27,12 +27,14 @@
         </md-card-header>
 
         <md-card-content>
-          <!-- Name input -->
+          <!-- Name input
+            @TODO :: Check if this fires when changing selection
+          -->
           <text-input
             v-if="isSingleSelection"
             :label="$t('area_name')"
             :value="combinedFeature.properties.name"
-            :on-change="name => updateAreaProperty({ id: feature.id, properties: { name }})"
+            :on-change="name => updateAreaProperty({ id: combinedFeature.id, properties: { name }})"
           />
 
           <!-- Measure type input -->
@@ -56,75 +58,35 @@
             </div>
           </div>
 
-          <!-- Depth input -->
-          <!-- <input-range
-            v-if="combinedMeasure && getDefaultValueProperty('depth', 'show', combinedMeasure.defaultValues)"
-            :value="inputValue(combinedFeature.properties.areaDepth, combinedFeature.properties.defaultDepth)"
-            :min="getDefaultValueProperty('depth', 'min', combinedMeasure.defaultValues)"
-            :max="getDefaultValueProperty('depth', 'max', combinedMeasure.defaultValues)"
-            :label="$t('area_depth')"
-            @change="updateValue('areaDepth', combinedFeature, $event)"
-          >
-            <template v-slot:info>
-              <app-tooltip
-                :message="$t('area_depth_info')"
-                class="areas__info-button"
-                direction="left"
-              />
-            </template>
-          </input-range> -->
-
-          <!-- Inflow input -->
-          <!-- <input-range
-            v-if="combinedMeasure && getDefaultValueProperty('inflow', 'show', combinedMeasure.defaultValues)"
-            :value="inputValue(combinedFeature.properties.areaInflow, combinedFeature.properties.defaultInflow)"
-            :min="getDefaultValueProperty('inflow', 'min', combinedMeasure.defaultValues)"
-            :max="getDefaultValueProperty('inflow', 'max', combinedMeasure.defaultValues)"
-            :label="$t('area_inflow')"
-            @change="value => updateAreaProperties({ features: [combinedFeature], properties: { areaInflow: value }})"
-          >
-            <template v-slot:info>
-              <app-tooltip
-                :message="$t('area_inflow_info')"
-                class="areas__info-button"
-                direction="left"
-              />
-            </template>
-          </input-range> -->
-
-          <!-- Width input -->
-          <!-- <input-range
-            v-if="combinedMeasure && combinedFeature.geometry.type === 'LineString' && getDefaultValueProperty('width', 'show', combinedMeasure.defaultValues)"
-            :value="inputValue(combinedFeature.properties.areaWidth, combinedFeature.properties.defaultWidth)"
-            :min="getDefaultValueProperty('width', 'min', combinedMeasure.defaultValues)"
-            :max="getDefaultValueProperty('width', 'max', combinedMeasure.defaultValues)"
-            :label="$t('area_width')"
-            @change="value => updateAreaProperties({ features: [combinedFeature], properties: { areaWidth: value }})"
-          >
-            <template v-slot:info>
-              <app-tooltip
-                :message="$t('area_width_info')"
-                class="areas__info-button"
-              />
-            </template>
-          </input-range> -->
-
-          <!-- Radius input -->
-          <!-- <input-range
-            v-if="combinedMeasure && combinedFeature.geometry.type === 'Point' && getDefaultValueProperty('radius', 'show', combinedMeasure.defaultValues)"
-            :value="inputValue(combinedFeature.properties.areaRadius, combinedFeature.properties.defaultRadius)"
-            :min="getDefaultValueProperty('radius', 'min', combinedMeasure.defaultValues)"
-            :max="getDefaultValueProperty('radius', 'max', combinedMeasure.defaultValues)"
-            :label="$t('area_radius')"
-            @change="value => updateAreaProperties({ features: [combinedFeature], properties: { areaRadius: value }})"
-          >
-            <template v-slot:info>
-              <app-tooltip
-                :message="$t('area_radius_info')"
-                class="areas__info-button"
-              />
-            </template>
-          </input-range> -->
+          <template v-if="combinedMeasure">
+            <!-- @TODO :: probably change this into a loop -->
+            <area-property-slider
+              :value-type="'depth'"
+              :feature="combinedFeature"
+              :measure="combinedMeasure"
+              @change="updateValue('areaDepth', combinedFeature, $event)"
+            />
+            <area-property-slider
+              :value-type="'inflow'"
+              :feature="combinedFeature"
+              :measure="combinedMeasure"
+              @change="updateValue('areaInflow', combinedFeature, $event)"
+            />
+            <area-property-slider
+              v-if="combinedFeature.geometry.type === 'LineString'"
+              :value-type="'width'"
+              :feature="combinedFeature"
+              :measure="combinedMeasure"
+              @change="updateValue('areaWidth', combinedFeature, $event)"
+            />
+            <area-property-slider
+              v-if="combinedFeature.geometry.type === 'Point'"
+              :value-type="'radius'"
+              :feature="combinedFeature"
+              :measure="combinedMeasure"
+              @change="updateValue('areaRadius', combinedFeature, $event)"
+            />
+          </template>
         </md-card-content>
 
         <md-card-actions>
@@ -140,13 +102,12 @@
 <script>
 import { mapGetters, mapActions, mapMutations, mapState } from 'vuex';
 import MapEventBus, { REDRAW, MODE, DELETE } from '../../lib/map-event-bus';
-import InputRange from '../../components/input-range'
+import AreaPropertySlider from '@/components/area-property-slider'
 import TextInput from '../../components/text-input'
-import AppTooltip from '~/components/app-tooltip'
 
 export default {
   middleware: ['access-level-settings'],
-  components: { InputRange, TextInput, AppTooltip },
+  components: { TextInput, AreaPropertySlider },
   data() {
     return {
       visibleAreas: [],
@@ -210,23 +171,15 @@ export default {
     ...mapActions({ updateAreaProperties: 'project/updateAreaProperties' }),
     ...mapMutations({ updateAreaProperty: 'project/updateAreaProperty' }),
     onDelete() {
-      this.$router.push(`/${this.locale}/project/`).catch(() => {})
       MapEventBus.$emit(MODE, 'simple_select')
+      this.$router.push(`/${this.locale}/project/`).catch(() => {})
     },
     onDone() {
-      this.$router.push(`/${this.locale}/project/`).catch(() => {})
       MapEventBus.$emit(MODE, 'simple_select')
+      this.$router.push(`/${this.locale}/project/`).catch(() => {})
     },
-    getDefaultValueProperty(key, property, defaultValues) {
-      const values = defaultValues.find(values => values.key.toLowerCase() === key)
-      const value = values ? values[property] : ''
-      return property === 'show' ? value : String(value)
-    },
-    inputValue(value, defaultValue) {
-      let returnValue = value || defaultValue
-      returnValue = value === '' ? value : returnValue
-      return returnValue
-    },
+    // @TODO :: Check if this needs to be here or in `slider` component
+    // after we've accounted for multi-selection
     updateValue(setting, feature, value) {
       this.updateAreaProperties({
         features: [ feature ],
@@ -297,11 +250,5 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.areas__info-button {
-  position: absolute;
-  top: -9px;
-  right: -40px;
 }
 </style>
