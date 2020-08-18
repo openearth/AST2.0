@@ -4,26 +4,42 @@
       <span class="md-title">{{ $t('selected_measures') }}</span>
     </md-toolbar>
 
-    <div class="areas__editor">
-      <md-card v-if="hasSelection">
+    <div
+      v-if="hasSelection"
+      class="areas__editor"
+    >
+      <!-- PRES!!!!-->
+      <!-- <pre>{{ selectedMeasureId }}</pre>
+      <pre>{{  }}</pre> -->
+
+      <md-card>
         <div
-          :style="`border-left-color: ${ combinedMeasure ? combinedMeasure.color.hex : 'transparent' }`"
+          v-if="!isEditableSelection"
+          class="areas__editor-content"
+        >
+          <md-card-content>
+            You've selected a number of incompatible features
+          </md-card-content>
+        </div>
+        <div
+          v-else
+          :style="`border-left-color: ${ selectedMeasure ? selectedMeasure.color.hex : 'transparent' }`"
           class="areas__editor-content"
         >
           <md-card-header>
             <md-avatar class="areas__avatar">
               <img
-                v-if="combinedMeasure"
-                :src="combinedMeasure.image.url"
+                v-if="selectedMeasure"
+                :src="selectedMeasure.image.url"
                 alt="Avatar"
               >
             </md-avatar>
 
             <div class="md-title">
-              {{ combinedFeature.properties.name }}
+              {{ featureName }}
             </div>
             <div class="md-subhead areas__subhead">
-              {{ combinedMeasure ? combinedMeasure.title : ' ' }}
+              {{ selectedMeasure ? selectedMeasure.title : ' ' }}
             </div>
           </md-card-header>
 
@@ -31,8 +47,8 @@
             <text-input
               v-if="isSingleSelection"
               :label="$t('area_name')"
-              :value="combinedFeature.properties.name"
-              :on-change="name => updateAreaProperty({ id: combinedFeature.id, properties: { name }})"
+              :value="featureName"
+              :on-change="name => updateAreaProperty({ id: featureId, properties: { name }})"
             />
 
             <!-- Measure type input -->
@@ -41,25 +57,22 @@
             </span>
             <div class="areas__choose-wrapper">
               <div class="areas__choose-content">
-                <p v-if="combinedMeasure">
-                  {{ combinedMeasure.title }}
+                <p v-if="selectedMeasure">
+                  {{ selectedMeasure.title }}
                 </p>
                 <md-button
                   :to="`/${locale}/project/measures`"
                   class="md-accent md-raised areas__choose-button"
                 >
-                  {{ combinedMeasure ? $t('change_measure') : $t('choose_measure') }}
+                  {{ selectedMeasure ? $t('change_measure') : $t('choose_measure') }}
                 </md-button>
               </div>
-              <div v-if="combinedMeasure" class="areas__choose-icon">
-                <img :src="combinedMeasure.image.url">
+              <div v-if="selectedMeasure" class="areas__choose-icon">
+                <img :src="selectedMeasure.image.url">
               </div>
             </div>
 
-            <template v-if="combinedMeasure">
-              <!-- <pre>{{ measurePropertiesToEdit }}</pre>
-              <pre>{{ combinedFeature }}</pre> -->
-
+            <template v-if="selectedMeasure">
               <area-property-slider
                 v-for="({ key, min, max, value }) in measurePropertiesToEdit"
                 :key="key"
@@ -67,7 +80,6 @@
                 :value="value"
                 :min="min"
                 :max="max"
-                :feature="combinedFeature"
                 @change="updateValue"
               />
             </template>
@@ -86,9 +98,10 @@
 
 <script>
 import { mapGetters, mapActions, mapMutations, mapState } from 'vuex';
-import MapEventBus, { REDRAW, MODE, DELETE } from '../../lib/map-event-bus';
+import MapEventBus, { REDRAW, MODE, DELETE } from '@/lib/map-event-bus';
+import isNil from '@/lib/isNil'
 import AreaPropertySlider from '@/components/area-property-slider'
-import TextInput from '../../components/text-input'
+import TextInput from '@/components/text-input'
 
 export default {
   middleware: ['access-level-settings'],
@@ -104,13 +117,6 @@ export default {
     ...mapGetters('data/measures', ['measureById']),
     ...mapGetters({ selectedFeatures: 'selectedAreas/features' }),
 
-    featuresWithMeasure() {
-      return this.selectedFeatures.map(feature => ({
-        feature,
-        measure: this.measureById(feature.properties.measure),
-      }))
-    },
-
     hasSelection() {
       return this.selectedFeatures.length > 0
     },
@@ -123,37 +129,52 @@ export default {
       return this.selectedFeatures.length > 1
     },
 
-    isEditableMultiSelection() {
-      return true
+    isEditableSelection() {
+      if(
+        this.isSingleSelection ||
+        this.selectedFeatures.every(({ properties: { measure } }) => isNil(measure)) ||
+        this.selectedFeatures.every(({ properties: { measure } }) => measure === this.selectedMeasureId)
+      ) return true
+      return false
     },
 
+    featureName() {
+      return this.isMultiSelection ? 'Group' : this.selectedFeatures[0].properties.name
+    },
+
+    featureId() {
+      return this.isMultiSelection ? null : this.selectedFeatures[0].id
+    },
+
+    selectedMeasureId() {
+      return this.selectedFeatures[0].properties.measure
+    },
+
+    selectedMeasure() {
+      return this.measureById(this.selectedMeasureId)
+    },
+
+    // @TODO :: build combined values
     combinedFeature() {
       if(this.isSingleSelection) {
         return this.selectedFeatures[0]
       }
       else {
-        return null
-      }
-    },
-
-    combinedMeasure() {
-      if(this.isSingleSelection) {
-        return this.measureById(this.selectedFeatures[0].properties.measure)
-      }
-      else {
-        return null
+        return this.selectedFeatures
       }
     },
 
     measurePropertiesToEdit() {
+      // @TODO :: this 👇
       const geometryType = this.combinedFeature.geometry.type
-      return this.combinedMeasure.defaultValues
+      return this.selectedMeasure.defaultValues
         .map(valueObj => {
           const { key, show } = valueObj
           if(!show) return null
           if(key === 'Radius' && geometryType !== 'Point') return null
           if(key === 'Width' && geometryType !== 'LineString') return null
           const value = (
+            // @TODO :: this 👇
             this.combinedFeature.properties[`area${ key }`] ||
             this.combinedFeature.properties[`default${ key}`])
           .toString()
@@ -187,7 +208,7 @@ export default {
 
     updateValue({ key, value }) {
       this.updateAreaProperties({
-        features: [ this.combinedFeature ],
+        features: [ this.selectedFeatures ],
         properties: {
           [`area${ key }`]: value,
         },
