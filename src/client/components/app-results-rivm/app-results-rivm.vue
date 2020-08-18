@@ -45,22 +45,34 @@
     </div>
 
     <footer class="app-results-rivm__footer">
-      <small>{{ $t('last_calculation') }}: {{ receivedAt }}</small>
-      <div class="app-results-rivm__footer-cta-wrapper">
+      <small class="app-results-rivm__footer__received-at">
+        <strong>{{ datoContent.lastCalculation }}:</strong>
+        <span>{{ receivedAt }}</span>
+      </small>
+      <div class="app-results-rivm__buttons-wrapper">
         <md-button
-          :disabled="isLoading"
-          class="app-results-rivm__cta md-raised"
-          @click="handleFetchData"
+          class="md-raised"
+          :href="datoContent.greenBenefitsDocumentationLinkAddress"
+          target="_blank"
         >
-          {{ datoContent.greenBenefitsCtaText }}
+          {{ datoContent.documentationLinkText }}
         </md-button>
-        <md-progress-spinner
-          v-if="isLoading"
-          :md-diameter="30"
-          :md-stroke="3"
-          class="app-results-rivm__loading-indicator"
-          md-mode="indeterminate"
-        />
+        <div class="app-results-rivm__footer-cta-wrapper">
+          <md-button
+            :disabled="isLoading"
+            class="app-results-rivm__cta md-raised"
+            @click="handleFetchData"
+          >
+            {{ datoContent.greenBenefitsCtaText }}
+          </md-button>
+          <md-progress-spinner
+            v-if="isLoading"
+            :md-diameter="30"
+            :md-stroke="3"
+            class="app-results-rivm__loading-indicator"
+            md-mode="indeterminate"
+          />
+        </div>
       </div>
     </footer>
   </article>
@@ -90,7 +102,7 @@ export default {
         return date.toLocaleString()
       }
       catch (error) {
-        return ''
+        return '-'
       }
     },
     transformedData(){
@@ -161,13 +173,23 @@ export default {
   background-color: var(--background-color);
 }
 
+.app-results-rivm__footer__received-at {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  margin-bottom: var(--spacing-quarter);
+}
+
+.app-results-rivm__buttons-wrapper,
+.app-results-rivm__footer-cta-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
 .app-results-rivm__cta.md-button.md-theme-default.md-raised:not([disabled]) {
   background-color: var(--nature-green-color);
   color: var(--neutral-color);
-}
-
-.app-results-rivm__footer-cta-wrapper {
-  position: relative;
 }
 
 .app-results-rivm__loading-indicator {
