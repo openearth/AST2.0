@@ -75,15 +75,7 @@ export default {
       type: Object,
       default: () => ({ lat: 0, lng: 0 }),
     },
-    wmsLayers: {
-      type: Array,
-      default: () => [],
-    },
     customLayers: {
-      type: Array,
-      default: () => [],
-    },
-    mapLayers: {
       type: Array,
       default: () => [],
     },
@@ -113,9 +105,7 @@ export default {
 
   computed: {
     allMapLayers() {
-      // @REFACTOR :: We spread layerList here, which already contains all of the other layers.
-      // See layouts/default.vue computed propery `layerList`
-      const layers = [ ...this.wmsLayers, ...this.customLayers, ...this.mapLayers, ...this.layerList ]
+      const layers = [ ...this.customLayers, ...this.layerList ]
       return layers
     },
     hasProjectArea() {
@@ -123,13 +113,13 @@ export default {
     },
     layerVisibility() {
       return this.allMapLayers.reduce((obj, layer) => {
-        obj[layer.id] = layer.visible
+        obj[`${layer.id}-${layer.title}`] = layer.visible
         return obj
       }, {})
     },
     layerOpacity() {
       return this.allMapLayers.reduce((obj, layer) => {
-        obj[layer.id] = layer.opacity
+        obj[`${layer.id}-${layer.title}`] = layer.opacity
         return obj
       }, {})
     },
@@ -146,14 +136,8 @@ export default {
       this.clearMap()
       this.$nextTick(this.fillMap)
     },
-    wmsLayers() {
-      [...this.wmsLayers].reverse().forEach(this.addWmsLayer)
-    },
     customLayers() {
       [...this.customLayers].reverse().forEach(this.addWmsLayer)
-    },
-    mapLayers() {
-      [...this.mapLayers].reverse().forEach(this.addWmsLayer)
     },
     layerList() {
       [...this.layerList].reverse().forEach(this.addWmsLayer)
@@ -431,7 +415,7 @@ export default {
         return
       }
 
-      if (!this.map.getLayer(`wms-layer-${id}`)) {
+      if (!this.map.getLayer(`wms-layer-${id}-${title}`)) {
         const source = { type, tileSize }
         if (url === 'mapbox://mapbox.satellite') {
           source.url = url
@@ -442,6 +426,7 @@ export default {
           const layers = this.map.getStyle().layers
           const lastWmsLayerIndex = layers
             .filter(layer => /wms-layer-/.test(layer.id))
+            .reverse()
             .map(layer => layers.indexOf(layer))
             .reduce((_, item) => item, undefined)
 
@@ -450,7 +435,7 @@ export default {
             : undefined
           this.map.addLayer(
             {
-              id: `wms-layer-${id}`,
+              id: `wms-layer-${id}-${title}`,
               type,
               source,
               layout: {
