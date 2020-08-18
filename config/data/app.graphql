@@ -1,5 +1,15 @@
 {
   app {
     title
+    pdfLogos {
+      url,
+      title,
+      alt,
+      height,
+      width,
+      format,
+      size,
+      id
+    }
   }
 }
