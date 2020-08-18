@@ -20,6 +20,9 @@
       <div class="md-caption measure-card__tags">
         <md-chip v-if="measure.systemSuitability" class="md-body-2">
           {{ measure.systemSuitability.toFixed(1) }}
+          <md-tooltip md-direction="top">
+            {{ $t('tooltip_system_suitability') }}
+          </md-tooltip>
         </md-chip>
         <md-chip
           v-for="(score, index) in scoresWithImageProxy"
@@ -27,11 +30,17 @@
           class="measure-card__tag"
         >
           <md-icon :md-src="score.icon.url" class="measure-card__icon" />
+          <md-tooltip md-direction="top">
+            {{ inferScoreTooltip(score.key) }}
+          </md-tooltip>
         </md-chip>
         <md-chip v-if="measure.featured === true" class="measure-card__tag">
           <md-icon class="measure-card__icon">
             star
           </md-icon>
+          <md-tooltip md-direction="top">
+            {{ $t('tooltip_featured_measure') }}
+          </md-tooltip>
         </md-chip>
       </div>
     </md-card-content>
@@ -88,6 +97,13 @@ export default {
     chooseMeasure() {
       // TODO show add measure to selected area
       this.$emit('choose', this.measure.measureId)
+    },
+    inferScoreTooltip(key) {
+      const tooltipKey = key
+        .split(/[\s_-]+/)
+        .map(word => word.toLowerCase())
+        .join('_')
+      return this.$t(`tooltip_${ tooltipKey }`)
     },
   },
 }
