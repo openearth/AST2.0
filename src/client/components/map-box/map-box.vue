@@ -113,13 +113,13 @@ export default {
     },
     layerVisibility() {
       return this.allMapLayers.reduce((obj, layer) => {
-        obj[layer.id] = layer.visible
+        obj[`${layer.id}-${layer.title}`] = layer.visible
         return obj
       }, {})
     },
     layerOpacity() {
       return this.allMapLayers.reduce((obj, layer) => {
-        obj[layer.id] = layer.opacity
+        obj[`${layer.id}-${layer.title}`] = layer.opacity
         return obj
       }, {})
     },
@@ -415,7 +415,7 @@ export default {
         return
       }
 
-      if (!this.map.getLayer(`wms-layer-${id}`)) {
+      if (!this.map.getLayer(`wms-layer-${id}-${title}`)) {
         const source = { type, tileSize }
         if (url === 'mapbox://mapbox.satellite') {
           source.url = url
@@ -426,6 +426,7 @@ export default {
           const layers = this.map.getStyle().layers
           const lastWmsLayerIndex = layers
             .filter(layer => /wms-layer-/.test(layer.id))
+            .reverse()
             .map(layer => layers.indexOf(layer))
             .reduce((_, item) => item, undefined)
 
@@ -434,7 +435,7 @@ export default {
             : undefined
           this.map.addLayer(
             {
-              id: `wms-layer-${id}`,
+              id: `wms-layer-${id}-${title}`,
               type,
               source,
               layout: {
