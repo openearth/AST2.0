@@ -60,5 +60,17 @@ export default async function fetchRivmCoBenefits({ areas, projectArea } = {}) {
     body: JSON.stringify(payload),
   });
 
-  return response.json();
+  const parsedResponse = await response.json();
+
+  if(!parsedResponse.successful || parsedResponse.errors.length) {
+    if(parsedResponse.errors.length) {
+      const messages = parsedResponse.errors
+        .map(({ message }, index) => `${ index + 1 }. ${ message }`)
+        .join('\n')
+      throw new Error(messages)
+    }
+    else throw new Error('The request to fetch the green benefits was unsuccessful, but didn\'t throw any specific errors.')
+  }
+
+  return parsedResponse
 }
