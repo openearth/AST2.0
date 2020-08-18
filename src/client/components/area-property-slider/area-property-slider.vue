@@ -4,7 +4,7 @@
     :min="min"
     :max="max"
     :label="$t(`area_${ valueTypeLower }`)"
-    @change="$emit('change', $event)"
+    @change="$emit('change', { key: valueType, value: $event })"
   >
     <template v-slot:info>
       <app-tooltip
@@ -36,7 +36,7 @@ export default {
     },
     min: {
       type: String,
-      default: '0.1',
+      default: '1',
     },
     max: {
       type: String,

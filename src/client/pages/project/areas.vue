@@ -4,81 +4,83 @@
       <span class="md-title">{{ $t('selected_measures') }}</span>
     </md-toolbar>
 
-    <md-card v-if="hasSelection">
-      <div
-        :style="`border-left-color: ${ combinedMeasure ? combinedMeasure.color.hex : 'transparent' }`"
-        class="areas__item-content"
-      >
-        <md-card-header>
-          <md-avatar class="areas__avatar">
-            <img
-              v-if="combinedMeasure"
-              :src="combinedMeasure.image.url"
-              alt="Avatar"
-            >
-          </md-avatar>
-
-          <div class="md-title">
-            {{ combinedFeature.properties.name }}
-          </div>
-          <div class="md-subhead areas__subhead">
-            {{ combinedMeasure ? combinedMeasure.title : ' ' }}
-          </div>
-        </md-card-header>
-
-        <md-card-content>
-          <text-input
-            v-if="isSingleSelection"
-            :label="$t('area_name')"
-            :value="combinedFeature.properties.name"
-            :on-change="name => updateAreaProperty({ id: combinedFeature.id, properties: { name }})"
-          />
-
-          <!-- Measure type input -->
-          <span class="md-subheading">
-            {{ $t('measure') }}
-          </span>
-          <div class="areas__choose-wrapper">
-            <div class="areas__choose-content">
-              <p v-if="combinedMeasure">
-                {{ combinedMeasure.title }}
-              </p>
-              <md-button
-                :to="`/${locale}/project/measures`"
-                class="md-accent md-raised areas__choose-button"
+    <div class="areas__editor">
+      <md-card v-if="hasSelection">
+        <div
+          :style="`border-left-color: ${ combinedMeasure ? combinedMeasure.color.hex : 'transparent' }`"
+          class="areas__editor-content"
+        >
+          <md-card-header>
+            <md-avatar class="areas__avatar">
+              <img
+                v-if="combinedMeasure"
+                :src="combinedMeasure.image.url"
+                alt="Avatar"
               >
-                {{ combinedMeasure ? $t('change_measure') : $t('choose_measure') }}
-              </md-button>
-            </div>
-            <div v-if="combinedMeasure" class="areas__choose-icon">
-              <img :src="combinedMeasure.image.url">
-            </div>
-          </div>
+            </md-avatar>
 
-          <template v-if="combinedMeasure">
-            <!-- <pre>{{ measurePropertiesToEdit }}</pre>
-            <pre>{{ combinedFeature }}</pre> -->
+            <div class="md-title">
+              {{ combinedFeature.properties.name }}
+            </div>
+            <div class="md-subhead areas__subhead">
+              {{ combinedMeasure ? combinedMeasure.title : ' ' }}
+            </div>
+          </md-card-header>
 
-            <area-property-slider
-              v-for="({ key, min, max, value }) in measurePropertiesToEdit"
-              :key="key"
-              :value-type="key"
-              :value="value"
-              :min="min"
-              :max="max"
-              :feature="combinedFeature"
-              @change="updateValue(`area${ key }`, combinedFeature, $event)"
+          <md-card-content>
+            <text-input
+              v-if="isSingleSelection"
+              :label="$t('area_name')"
+              :value="combinedFeature.properties.name"
+              :on-change="name => updateAreaProperty({ id: combinedFeature.id, properties: { name }})"
             />
-          </template>
-        </md-card-content>
 
-        <md-card-actions>
-          <md-button @click="onDone">
-            {{ $t('done') }}
-          </md-button>
-        </md-card-actions>
-      </div>
-    </md-card>
+            <!-- Measure type input -->
+            <span class="md-subheading">
+              {{ $t('measure') }}
+            </span>
+            <div class="areas__choose-wrapper">
+              <div class="areas__choose-content">
+                <p v-if="combinedMeasure">
+                  {{ combinedMeasure.title }}
+                </p>
+                <md-button
+                  :to="`/${locale}/project/measures`"
+                  class="md-accent md-raised areas__choose-button"
+                >
+                  {{ combinedMeasure ? $t('change_measure') : $t('choose_measure') }}
+                </md-button>
+              </div>
+              <div v-if="combinedMeasure" class="areas__choose-icon">
+                <img :src="combinedMeasure.image.url">
+              </div>
+            </div>
+
+            <template v-if="combinedMeasure">
+              <!-- <pre>{{ measurePropertiesToEdit }}</pre>
+              <pre>{{ combinedFeature }}</pre> -->
+
+              <area-property-slider
+                v-for="({ key, min, max, value }) in measurePropertiesToEdit"
+                :key="key"
+                :value-type="key"
+                :value="value"
+                :min="min"
+                :max="max"
+                :feature="combinedFeature"
+                @change="updateValue"
+              />
+            </template>
+          </md-card-content>
+
+          <md-card-actions>
+            <md-button @click="onDone">
+              {{ $t('done') }}
+            </md-button>
+          </md-card-actions>
+        </div>
+      </md-card>
+    </div>
   </aside>
 </template>
 
@@ -183,13 +185,11 @@ export default {
       this.$router.push(`/${this.locale}/project/`).catch(() => {})
     },
 
-    // @TODO :: Check if this needs to be here or in `slider` component
-    // after we've accounted for multi-selection
-    updateValue(setting, feature, value) {
+    updateValue({ key, value }) {
       this.updateAreaProperties({
-        features: [ feature ],
+        features: [ this.combinedFeature ],
         properties: {
-          [setting]: value,
+          [`area${ key }`]: value,
         },
       })
     },
@@ -198,16 +198,12 @@ export default {
 </script>
 
 <style>
-.areas__list {
+.areas__editor {
   list-style: none;
   padding: var(--spacing-default);
 }
 
-.areas__item {
-  margin-bottom: var(--spacing-default);
-}
-
-.areas__item-content {
+.areas__editor-content {
   border-left-width: 5px;
   border-left-style: solid;
 }
