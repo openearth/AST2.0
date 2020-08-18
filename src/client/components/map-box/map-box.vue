@@ -320,12 +320,12 @@ export default {
     },
     clearMap() {
       try {
-      this.map.getLayer('projectArea-line') && this.map.removeLayer('projectArea-line')
-      this.map.getSource('projectArea-line') && this.map.removeSource('projectArea-line')
+      this.map.getLayer('-projectArea-line') && this.map.removeLayer('-projectArea-line')
+      this.map.getSource('-projectArea-line') && this.map.removeSource('-projectArea-line')
       this.draw.deleteAll()
       this.areas.forEach(area => {
-        this.map.getLayer(`${area.properties.name}-line`) && this.map.removeLayer(`${area.properties.name}-line`)
-        this.map.getSource(`${area.properties.name}-line`) && this.map.removeSource(`${area.properties.name}-line`)
+        this.map.getLayer(`${area.properties.name}-${area.id}-line`) && this.map.removeLayer(`${area.properties.name}-${area.id}-line`)
+        this.map.getSource(`${area.properties.name}-${area.id}-line`) && this.map.removeSource(`${area.properties.name}-${area.id}-line`)
       })
       } catch (err) {
         console.log(err)

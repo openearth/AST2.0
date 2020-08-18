@@ -84,7 +84,7 @@ export const getters = {
 
     switch (mode) {
       case 'draw-project-area':
-        return !rootGetters['flow/createdProjectArea']
+        return rootGetters['flow/projectAreaSizeIsBelowThreshold'] && !rootGetters['flow/createdProjectArea']
       case 'inactive':
       case 'modal':
         return false
