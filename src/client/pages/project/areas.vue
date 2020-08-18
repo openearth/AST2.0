@@ -6,17 +6,20 @@
 
     <ul class="areas__list">
       <li
-        v-for="feature in selectedFeatures"
+        v-for="({ feature, measure }) in featuresWithMeasure"
         :key="feature.id"
         class="areas__item"
       >
         <md-card>
-          <div :style="`border-left-color: ${appliedMeasure ? appliedMeasure.color.hex : 'transparent'}`" class="areas__item-content">
+          <div
+            :style="`border-left-color: ${ measure ? measure.color.hex : 'transparent' }`"
+            class="areas__item-content"
+          >
             <md-card-header>
               <md-avatar class="areas__avatar">
                 <img
-                  v-if="appliedMeasure"
-                  :src="appliedMeasure.image.url"
+                  v-if="measure"
+                  :src="measure.image.url"
                   alt="Avatar"
                 >
               </md-avatar>
@@ -25,7 +28,7 @@
                 {{ feature.properties.name }}
               </div>
               <div class="md-subhead areas__subhead">
-                {{ appliedMeasure ? appliedMeasure.title : '&nbsp;' }}
+                {{ measure ? measure.title : ' ' }}
               </div>
             </md-card-header>
 
@@ -39,27 +42,27 @@
               <span class="md-subheading">{{ $t('measure') }}</span>
               <div class="areas__choose-wrapper">
                 <div class="areas__choose-content">
-                  <p v-if="appliedMeasure">
-                    {{ appliedMeasure.title }}
+                  <p v-if="measure">
+                    {{ measure.title }}
                   </p>
                   <md-button
                     :to="`/${locale}/project/measures`"
                     class="md-accent md-raised areas__choose-button"
                   >
-                    {{ appliedMeasure ? $t('change_measure') : $t('choose_measure') }}
+                    {{ measure ? $t('change_measure') : $t('choose_measure') }}
                   </md-button>
                 </div>
-                <div v-if="appliedMeasure" class="areas__choose-icon">
-                  <img :src="appliedMeasure.image.url">
+                <div v-if="measure" class="areas__choose-icon">
+                  <img :src="measure.image.url">
                 </div>
               </div>
 
               <!-- Depth input -->
               <input-range
-                v-if="appliedMeasure && getDefaultValueProperty('depth', 'show', appliedMeasure.defaultValues)"
+                v-if="measure && getDefaultValueProperty('depth', 'show', measure.defaultValues)"
                 :value="inputValue(feature.properties.areaDepth, feature.properties.defaultDepth)"
-                :min="getDefaultValueProperty('depth', 'min', appliedMeasure.defaultValues)"
-                :max="getDefaultValueProperty('depth', 'max', appliedMeasure.defaultValues)"
+                :min="getDefaultValueProperty('depth', 'min', measure.defaultValues)"
+                :max="getDefaultValueProperty('depth', 'max', measure.defaultValues)"
                 :label="$t('area_depth')"
                 @change="value => updateAreaProperties({ features: [feature], properties: { areaDepth: value }})"
               >
@@ -74,10 +77,10 @@
 
               <!-- Inflow input -->
               <input-range
-                v-if="appliedMeasure && getDefaultValueProperty('inflow', 'show', appliedMeasure.defaultValues)"
+                v-if="measure && getDefaultValueProperty('inflow', 'show', measure.defaultValues)"
                 :value="inputValue(feature.properties.areaInflow, feature.properties.defaultInflow)"
-                :min="getDefaultValueProperty('inflow', 'min', appliedMeasure.defaultValues)"
-                :max="getDefaultValueProperty('inflow', 'max', appliedMeasure.defaultValues)"
+                :min="getDefaultValueProperty('inflow', 'min', measure.defaultValues)"
+                :max="getDefaultValueProperty('inflow', 'max', measure.defaultValues)"
                 :label="$t('area_inflow')"
                 @change="value => updateAreaProperties({ features: [feature], properties: { areaInflow: value }})"
               >
@@ -92,10 +95,10 @@
 
               <!-- Width input -->
               <input-range
-                v-if="appliedMeasure && feature.geometry.type === 'LineString' && getDefaultValueProperty('width', 'show', appliedMeasure.defaultValues)"
+                v-if="measure && feature.geometry.type === 'LineString' && getDefaultValueProperty('width', 'show', measure.defaultValues)"
                 :value="inputValue(feature.properties.areaWidth, feature.properties.defaultWidth)"
-                :min="getDefaultValueProperty('width', 'min', appliedMeasure.defaultValues)"
-                :max="getDefaultValueProperty('width', 'max', appliedMeasure.defaultValues)"
+                :min="getDefaultValueProperty('width', 'min', measure.defaultValues)"
+                :max="getDefaultValueProperty('width', 'max', measure.defaultValues)"
                 :label="$t('area_width')"
                 @change="value => updateAreaProperties({ features: [feature], properties: { areaWidth: value }})"
               >
@@ -109,10 +112,10 @@
 
               <!-- Radius input -->
               <input-range
-                v-if="appliedMeasure && feature.geometry.type === 'Point' && getDefaultValueProperty('radius', 'show', appliedMeasure.defaultValues)"
+                v-if="measure && feature.geometry.type === 'Point' && getDefaultValueProperty('radius', 'show', measure.defaultValues)"
                 :value="inputValue(feature.properties.areaRadius, feature.properties.defaultRadius)"
-                :min="getDefaultValueProperty('radius', 'min', appliedMeasure.defaultValues)"
-                :max="getDefaultValueProperty('radius', 'max', appliedMeasure.defaultValues)"
+                :min="getDefaultValueProperty('radius', 'min', measure.defaultValues)"
+                :max="getDefaultValueProperty('radius', 'max', measure.defaultValues)"
                 :label="$t('area_radius')"
                 @change="value => updateAreaProperties({ features: [feature], properties: { areaRadius: value }})"
               >
@@ -157,10 +160,12 @@ export default {
     ...mapState('i18n', ['locale']),
     ...mapGetters('data/measures', ['measureById']),
     ...mapGetters({ selectedFeatures: 'selectedAreas/features' }),
-    selectedMeasuresIds() { return this.selectedFeatures.map(feature => feature.properties.measure) },
-    appliedMeasure() {
-      const id = this.selectedMeasuresIds.join()
-      return this.measureById(id)
+
+    featuresWithMeasure() {
+      return this.selectedFeatures.map(feature => ({
+        feature,
+        measure: this.measureById(feature.properties.measure),
+      }))
     },
   },
   mounted() {
