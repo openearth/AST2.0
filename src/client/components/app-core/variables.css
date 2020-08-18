@@ -43,6 +43,7 @@
   --spacing-medium: 1.5rem; /* 24px */
   --spacing-double: 2rem; /* 32px */
   --spacing-half: .5rem; /* 8px */
+  --spacing-quarter: .25rem; /* 4px */
 
   /* layers */
   --layer--raised: 1;
