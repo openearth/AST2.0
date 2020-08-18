@@ -31,7 +31,7 @@
         >
           <md-icon :md-src="score.icon.url" class="measure-card__icon" />
           <md-tooltip md-direction="top">
-            Some other text yet
+            {{ inferScoreTooltip(score.key) }}
           </md-tooltip>
         </md-chip>
         <md-chip v-if="measure.featured === true" class="measure-card__tag">
@@ -39,7 +39,7 @@
             star
           </md-icon>
           <md-tooltip md-direction="top">
-            Some other text
+            {{ $t('tooltip_featured_measure') }}
           </md-tooltip>
         </md-chip>
       </div>
@@ -97,6 +97,13 @@ export default {
     chooseMeasure() {
       // TODO show add measure to selected area
       this.$emit('choose', this.measure.measureId)
+    },
+    inferScoreTooltip(key) {
+      const tooltipKey = key
+        .split(/[\s_-]+/)
+        .map(word => word.toLowerCase())
+        .join('_')
+      return this.$t(`tooltip_${ tooltipKey }`)
     },
   },
 }
