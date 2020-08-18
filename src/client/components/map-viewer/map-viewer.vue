@@ -12,9 +12,7 @@
       :areas="areas"
       :map-zoom="mapZoom"
       :map-center="mapCenter"
-      :wms-layers="wmsLayers"
       :custom-layers="customLayers"
-      :map-layers="mapLayers"
       :layer-list="layerList"
       :heatstress-layers="heatstressLayers"
       :mode="mode"
@@ -36,9 +34,7 @@
       :point="interactive && point"
       :trash="interactive"
       :layers="interactive && layers"
-      :wms-layers="wmsLayers"
       :custom-layers="customLayers"
-      :map-layers="mapLayers"
       :layer-list="layerList"
       :current-mode="currentMode"
       class="map-viewer__controls--draw"
@@ -128,15 +124,7 @@ export default {
       type: String,
       default: '',
     },
-    wmsLayers: {
-      type: Array,
-      default: () => [],
-    },
     customLayers: {
-      type: Array,
-      default: () => [],
-    },
-    mapLayers: {
       type: Array,
       default: () => [],
     },

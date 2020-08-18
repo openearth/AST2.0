@@ -145,15 +145,7 @@ export default {
       type: Array,
       default: () => [],
     },
-    wmsLayers: {
-      type: Array,
-      default: () => [],
-    },
     customLayers: {
-      type: Array,
-      default: () => [],
-    },
-    mapLayers: {
       type: Array,
       default: () => [],
     },

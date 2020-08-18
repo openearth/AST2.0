@@ -13,12 +13,6 @@
         <h2 class="app-results-heatstress__title md-body-2">
           {{ datoContent.heatstressTitle }}
         </h2>
-        <md-button class="md-icon-button info-button">
-          <md-icon>info</md-icon>
-          <md-tooltip md-direction="top">
-            {{ datoContent.heatstressTooltip }}
-          </md-tooltip>
-        </md-button>
         <md-list-item
           v-for="(result, key) in heatstressResults"
           :key="key"
@@ -84,24 +78,36 @@
       </md-list>
     </div>
     <footer class="app-results-heatstress__footer">
-      <div>
-        <small v-if="!hasAreas">{{ datoContent.heatstressSelectMeasures }}</small>
-      </div>
-      <div class="app-results-heatstress__footer-cta-wrapper">
+      <small
+        v-if="!hasAreas"
+        class="app-results-heatstress__footer__message"
+      >
+        {{ datoContent.heatstressSelectMeasures }}
+      </small>
+      <div class="app-results-heatstress__buttons-wrapper">
         <md-button
-          :disabled="isLoading || !hasAreas"
-          class="app-results-heatstress__cta md-raised"
-          @click="handleFetchData"
+          class="md-raised"
+          :href="datoContent.heatstressDocumentationLinkAddress"
+          target="_blank"
         >
-          {{ datoContent.heatstressCalculateButton }}
+          {{ datoContent.documentationLinkText }}
         </md-button>
-        <md-progress-spinner
-          v-if="isLoading"
-          :md-diameter="30"
-          :md-stroke="3"
-          class="app-results-heatstress__loading-indicator"
-          md-mode="indeterminate"
-        />
+        <div class="app-results-heatstress__footer-cta-wrapper">
+          <md-button
+            :disabled="isLoading || !hasAreas"
+            class="md-raised md-accent"
+            @click="handleFetchData"
+          >
+            {{ datoContent.heatstressCalculateButton }}
+          </md-button>
+          <md-progress-spinner
+            v-if="isLoading"
+            :md-diameter="30"
+            :md-stroke="3"
+            class="app-results-heatstress__loading-indicator"
+            md-mode="indeterminate"
+          />
+        </div>
       </div>
     </footer>
   </article>
@@ -241,8 +247,11 @@ export default {
   background-color: var(--background-color);
 }
 
+.app-results-heatstress__buttons-wrapper,
 .app-results-heatstress__footer-cta-wrapper {
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .app-results-heatstress__loading-indicator {
