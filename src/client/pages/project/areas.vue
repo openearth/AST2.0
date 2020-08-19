@@ -9,8 +9,8 @@
       class="areas__editor"
     >
       <!-- PRES!!!!-->
-      <!-- <pre>{{ selectedMeasureId }}</pre>
-      <pre>{{  }}</pre> -->
+      <!-- <pre>{{ selectedMeasureId }}</pre> -->
+      <pre>{{ selectedGeometryTypes }}</pre>
 
       <md-card>
         <div
@@ -164,20 +164,26 @@ export default {
       }
     },
 
+    selectedGeometryTypes() {
+      return this.selectedFeatures.reduce((returnArr, { geometry: { type } }) => {
+        return returnArr.includes(type) ? returnArr : [...returnArr, type]
+      }, [])
+    },
+
     measurePropertiesToEdit() {
-      // @TODO :: this 👇
-      const geometryType = this.combinedFeature.geometry.type
       return this.selectedMeasure.defaultValues
         .map(valueObj => {
           const { key, show } = valueObj
           if(!show) return null
-          if(key === 'Radius' && geometryType !== 'Point') return null
-          if(key === 'Width' && geometryType !== 'LineString') return null
+          if((key === 'Radius' || key === 'Width') && this.selectedGeometryTypes.length > 1) return null
+          if(key === 'Radius' && this.selectedGeometryTypes[0] !== 'Point') return null
+          if(key === 'Width' && this.selectedGeometryTypes[0] !== 'LineString') return null
           const value = (
             // @TODO :: this 👇
-            this.combinedFeature.properties[`area${ key }`] ||
-            this.combinedFeature.properties[`default${ key}`])
-          .toString()
+            5
+            // this.combinedFeature.properties[`area${ key }`] ||
+            // this.combinedFeature.properties[`default${ key}`]
+          ).toString()
           const min = valueObj.min.toString()
           const max = valueObj.max.toString()
           return { key, value, min, max }
