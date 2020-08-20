@@ -19,7 +19,7 @@
     </template>
 
     <footer class="pdf-export__footer">
-      <img src="https://www.datocms-assets.com/7033/1597758963-deltareslogod-blauwrgb.svg" width="200px">
+      <img src="https://www.datocms-assets.com/7033/1597758963-deltareslogod-blauwrgb.svg" width="160px">
     </footer>
   </div>
 </template>
