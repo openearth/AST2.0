@@ -35,6 +35,14 @@
           />
         </div>
         <md-list slot="md-expand">
+          <md-list-item class="md-inset">
+            <span class="md-list-item-text">Color</span>
+            <input
+              type="color"
+              :value="measure.color.hex"
+              @change="event => updateMeasureColor({ measureId: measure.measureId, hex: event.target.value })"
+            >
+          </md-list-item>
           <md-list-item
             v-for="area in areas"
             :key="area.id"
@@ -96,6 +104,7 @@ export default {
     }),
     ...mapActions({
       updateAreaProperties: 'project/updateAreaProperties',
+      updateMeasureColor: 'project/updateMeasureColor',
       resetMapMode: 'map/setModeDefault',
     }),
     toggleMeasure(measureId, expanded) {
