@@ -326,6 +326,8 @@ export default {
       this.areas.forEach(area => {
         this.map.getLayer(`${area.properties.name}-${area.id}-line`) && this.map.removeLayer(`${area.properties.name}-${area.id}-line`)
         this.map.getSource(`${area.properties.name}-${area.id}-line`) && this.map.removeSource(`${area.properties.name}-${area.id}-line`)
+        this.map.getLayer(`${area.properties.name}-${area.id}-point`) && this.map.removeLayer(`${area.properties.name}-${area.id}-point`)
+        this.map.getSource(`${area.properties.name}-${area.id}-point`) && this.map.removeSource(`${area.properties.name}-${area.id}-point`)
       })
       } catch (err) {
         console.log(err)

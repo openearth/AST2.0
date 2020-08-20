@@ -42,6 +42,7 @@ const initialState = () => ({
     targets: {},
     userViewedProjectSettings: false,
   },
+  measureOverrides: {},
 })
 
 export const state = () => initialState()
@@ -205,6 +206,10 @@ export const mutations = {
   },
   setRivmCoBenefits(state, data) {
     Vue.set(state, 'rivmCoBenefits', Object.freeze(data))
+  },
+  applyOverrideMeasureSetting(state, { measureId, value }) {
+    const existingOverride = state.measureOverrides[measureId]
+    Vue.set(state.measureOverrides, measureId, merge({}, existingOverride, value))
   },
 }
 
@@ -629,6 +634,16 @@ export const actions = {
       )
       commit('setRivmCoBenefits', { receivedAt })
     }
+  },
+  async updateMeasureColor({ state, commit }, { measureId, hex }) {
+    commit('applyOverrideMeasureSetting', { measureId, value: { color: { hex } } })
+
+    state.areas
+      .filter(area => area.properties.measure === measureId)
+      .forEach(area => {
+        commit('updateAreaProperty', { id: area.id, properties: { color: hex } })
+        MapEventBus.$emit(REPAINT, area)
+      })
   },
 }
 
