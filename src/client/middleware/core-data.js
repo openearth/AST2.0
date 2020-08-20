@@ -39,4 +39,7 @@ export default async function ({ store }) {
   if (!store.state.data.scenarios.length) {
     store.dispatch('data/scenarios/getScenarios', store.state.i18n.locale)
   }
+  if (!store.state.data.tags.length) {
+    store.dispatch('data/tags/getTags', store.state.i18n.locale)
+  }
 }
