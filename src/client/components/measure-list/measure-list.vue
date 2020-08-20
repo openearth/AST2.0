@@ -13,14 +13,21 @@
 
         <div class="md-toolbar-section-end">
           <md-button
-            :class="{'md-accent': sortFeatured === true}"
+            v-for="climateEffectTag in climateEffectTags"
+            :key="climateEffectTag.key"
             class="md-icon-button"
-            @click="sortFeatured = !sortFeatured"
+            :class="{'measure_list__filter-active-icon': sorting.indexOf(climateEffectTag.key) !== -1}"
+            @click="clickFilter(climateEffectTag.key, $event)"
           >
-            <md-icon v-if="featureSorted">
-              star_border
-            </md-icon>
-            <md-icon v-else>
+            <md-icon :md-src="climateEffectTag.icon.url" />
+          </md-button>
+
+          <md-button
+            :class="{'measure_list__filter-active-icon': sorting.indexOf('featured') !== -1}"
+            class="md-icon-button"
+            @click="clickFilter('featured', $event)"
+          >
+            <md-icon>
               star_border
             </md-icon>
           </md-button>
@@ -131,13 +138,12 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 import { MeasureCard } from '..';
 import TextInput from '../text-input'
 
 const SYSTEM_SUITABILITY = 'system-suitability'
 const ALPHA = 'alpha'
-const FEATUERD = 'featured'
 
 export default {
   components: { MeasureCard, TextInput },
@@ -150,12 +156,14 @@ export default {
   data: () => ({
     SYSTEM_SUITABILITY,
     ALPHA,
-    FEATUERD,
     searchValue: '',
     sortType: SYSTEM_SUITABILITY,
-    sortFeatured: true,
+    sorting: ['featured'],
   }),
   computed: {
+    ...mapState({
+      climateEffectTags: state => state.data.tags,
+    }),
     ...mapGetters({ selectedType: 'selectedAreas/selectedGeometryType' }),
     systemSuitabilitySortedMeasures() {
       const withSystemSuitability = this.measures.filter(item => isNaN(Number(item.systemSuitability)) === false)
@@ -186,13 +194,18 @@ export default {
       const list = this.sortType === SYSTEM_SUITABILITY
         ? this.systemSuitabilitySortedMeasures
         : this.alphaSortedMeasures
-      if (this.sortFeatured) {
-        const featured = list.filter(({ featured }) => featured === true)
-        const nonfeatured = list.filter(({ featured }) => featured === false)
-        return [...featured, ...nonfeatured]
-      } else {
-        return list
-      }
+
+      const firstList = list.filter(item => {
+        if (this.sorting.indexOf('featured') !== -1 && item.featured === true) {
+          return true
+        }
+        const foundTag = item.climateEffectTags.find(tag => this.sorting.indexOf(tag.key) !== -1)
+        return Boolean(foundTag)
+      })
+
+      const lastList = list.filter(item => firstList.indexOf(item) === -1)
+      return [...firstList, ...lastList]
+
     },
     sortedMeasures() {
       return this.alphaSorted
@@ -221,6 +234,18 @@ export default {
     choose(value) {
       this.$emit('choose', value)
     },
+    clickFilter(filter, event) {
+      const currentIndex = this.sorting.indexOf(filter)
+      if (currentIndex === -1) {
+        if (event.shiftKey) {
+          this.sorting = [...this.sorting, filter]
+          } else {
+            this.sorting = [filter]
+          }
+      } else {
+        this.sorting = this.sorting.filter((_, index) => index !== currentIndex)
+      }
+    },
   },
 }
 </script>
@@ -248,5 +273,15 @@ export default {
 
 .measure-list__sort-icon {
   width: 100%;
+}
+
+.measure_list__filter-active-icon .md-icon {
+  color: var(--action-color) !important;
+}
+
+.measure_list__filter-active-icon svg,
+.measure_list__filter-active-icon svg path,
+.measure_list__filter-active-icon svg rect {
+  fill: var(--action-color) !important;
 }
 </style>
