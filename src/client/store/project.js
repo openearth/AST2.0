@@ -538,7 +538,7 @@ export const actions = {
     const { title } = state.settings.general
     const workspace = rootGetters['data/workspaces/activeWorkspace'].name
     let savedState = cloneDeep(state)
-    savedState.workspace = workspace
+    savedState.savedInWorkspace = workspace
     // Reset heatstresslayers while exporting, because the layers in the geoserver
     // are removed every day.
     delete savedState.map.heatstressLayers
