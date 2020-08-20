@@ -14,7 +14,7 @@
           class="areas__editor-content"
         >
           <md-card-content>
-            You've selected a number of incompatible features
+            {{ $t('selection_incompatible') }}
           </md-card-content>
         </div>
         <div
@@ -135,7 +135,7 @@ export default {
     },
 
     featureName() {
-      return this.isMultiSelection ? 'Group' : this.selectedFeatures[0].properties.name
+      return this.isMultiSelection ? this.$t('group') : this.selectedFeatures[0].properties.name
     },
 
     featureId() {

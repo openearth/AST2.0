@@ -5,7 +5,7 @@
       ref="inputElement"
       :value="value"
       data-type="number"
-      :placeholder="multi ? 'multi' : ''"
+      :placeholder="multi ? $t('multi') : ''"
       @change="event => validateNumber(event.target.value)"
       @input="value => validateNumber(value)"
     />
