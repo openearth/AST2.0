@@ -83,7 +83,7 @@ export default {
         })
     },
     formattedTargets() {
-      const foo = this.kpiGroups
+      return this.kpiGroups
         .map(group => {
           return {
             title: group.title,
@@ -96,8 +96,6 @@ export default {
           }
         })
         .filter(group => group.kpis.length)
-      console.log(foo)
-      return foo
     },
   },
 }
