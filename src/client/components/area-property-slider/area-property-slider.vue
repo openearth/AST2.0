@@ -73,7 +73,7 @@ export default {
       // Otherwise, we set the value in the center of the slider and display a 'multi' sign
       else {
         this.multi = true
-        this.internalValue = ((parseFloat(this.min) + parseFloat(this.max)) / 2).toString()
+        this.internalValue = ''
       }
     },
     updateExternal(value) {
