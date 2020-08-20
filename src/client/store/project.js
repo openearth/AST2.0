@@ -526,6 +526,15 @@ export const actions = {
 
       MapEventBus.$emit(RELOAD_LAYERS)
       MapEventBus.$emit(REPOSITION, { zoom: map.zoom, center: map.center })
+
+      if (loadedProject.savedInWorkspace !== activeWorkspace.name && loadedProject.savedInWorkspace !== undefined) {
+        log.warning('Loaded project has been saved un der different workspace!', { currentWorkspace: activeWorkspace.name, projectsWorkspace: loadedProject.savedInWorkspace })
+        dispatch(
+          'notifications/showWarning',
+          { message: 'Project has been saved under a different workspace!', duration: 10000 },
+          { root: true },
+        )
+      }
     }
 
     commit('appMenu/hideMenu', null, { root: true })
