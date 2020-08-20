@@ -102,12 +102,6 @@ import TextInput from '@/components/text-input'
 export default {
   middleware: ['access-level-settings'],
   components: { TextInput, AreaPropertySlider },
-  data() {
-    return {
-      visibleAreas: [],
-      areaName: '',
-    }
-  },
   computed: {
     ...mapState('i18n', ['locale']),
     ...mapGetters('data/measures', ['measureById']),
@@ -160,10 +154,14 @@ export default {
       return this.selectedMeasure.defaultValues
         .map(valueObj => {
           const { key, show } = valueObj
-          if(!show) return null
-          if((key === 'Radius' || key === 'Width') && this.selectedGeometryTypes.length > 1) return null
-          if(key === 'Radius' && this.selectedGeometryTypes[0] !== 'Point') return null
-          if(key === 'Width' && this.selectedGeometryTypes[0] !== 'LineString') return null
+
+          if(
+            !show ||
+            ((key === 'Radius' || key === 'Width') && this.selectedGeometryTypes.length > 1) ||
+            (key === 'Radius' && this.selectedGeometryTypes[0] !== 'Point') ||
+            (key === 'Width' && this.selectedGeometryTypes[0] !== 'LineString')
+          ) return null
+
           const values = this.getValuesForProperty(key)
           const min = valueObj.min.toString()
           const max = valueObj.max.toString()
@@ -194,7 +192,6 @@ export default {
     },
 
     updateValue({ key, value }) {
-      console.log('update!!', key, value)
       this.updateAreaProperties({
         features: this.selectedFeatures,
         properties: {
