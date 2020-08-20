@@ -21,6 +21,12 @@
 import InputRange from '@/components/input-range'
 import AppTooltip from '@/components/app-tooltip'
 
+const arrayEquals = (a, b) =>
+  Array.isArray(a) &&
+  Array.isArray(b) &&
+  a.length === b.length &&
+  a.every((val, i) => val === b[i])
+
 export default {
   components: {
     InputRange,
@@ -56,8 +62,11 @@ export default {
     },
   },
   watch: {
-    values() {
-      this.updateHappendThroughSelectionChange = true
+    values(newArr, oldArr) {
+      if(newArr.length !== oldArr.length) {
+        this.updateHappendThroughSelectionChange = true
+      }
+      if(arrayEquals(newArr, oldArr)) return
       this.updateInternal()
     },
   },
