@@ -42,6 +42,7 @@ const initialState = () => ({
     targets: {},
     userViewedProjectSettings: false,
   },
+  savedInWorkspace: undefined,
 })
 
 export const state = () => initialState()
