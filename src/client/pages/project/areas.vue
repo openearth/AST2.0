@@ -8,10 +8,6 @@
       v-if="hasSelection"
       class="areas__editor"
     >
-      <!-- PRES!!!!-->
-      <!-- <pre>{{ selectedMeasureId }}</pre> -->
-      <pre>{{ selectedGeometryTypes }}</pre>
-
       <md-card>
         <div
           v-if="!isEditableSelection"
@@ -74,10 +70,10 @@
 
             <template v-if="selectedMeasure">
               <area-property-slider
-                v-for="({ key, min, max, value }) in measurePropertiesToEdit"
+                v-for="({ key, min, max, values }) in measurePropertiesToEdit"
                 :key="key"
                 :value-type="key"
-                :value="value"
+                :values="values"
                 :min="min"
                 :max="max"
                 @change="updateValue"
@@ -154,16 +150,6 @@ export default {
       return this.measureById(this.selectedMeasureId)
     },
 
-    // @TODO :: build combined values
-    combinedFeature() {
-      if(this.isSingleSelection) {
-        return this.selectedFeatures[0]
-      }
-      else {
-        return this.selectedFeatures
-      }
-    },
-
     selectedGeometryTypes() {
       return this.selectedFeatures.reduce((returnArr, { geometry: { type } }) => {
         return returnArr.includes(type) ? returnArr : [...returnArr, type]
@@ -178,15 +164,10 @@ export default {
           if((key === 'Radius' || key === 'Width') && this.selectedGeometryTypes.length > 1) return null
           if(key === 'Radius' && this.selectedGeometryTypes[0] !== 'Point') return null
           if(key === 'Width' && this.selectedGeometryTypes[0] !== 'LineString') return null
-          const value = (
-            // @TODO :: this 👇
-            5
-            // this.combinedFeature.properties[`area${ key }`] ||
-            // this.combinedFeature.properties[`default${ key}`]
-          ).toString()
+          const values = this.getValuesForProperty(key)
           const min = valueObj.min.toString()
           const max = valueObj.max.toString()
-          return { key, value, min, max }
+          return { key, values, min, max }
         })
         .filter(Boolean)
     },
@@ -213,12 +194,18 @@ export default {
     },
 
     updateValue({ key, value }) {
+      console.log('update!!', key, value)
       this.updateAreaProperties({
-        features: [ this.selectedFeatures ],
+        features: this.selectedFeatures,
         properties: {
           [`area${ key }`]: value,
         },
       })
+    },
+
+    getValuesForProperty(key) {
+      return this.selectedFeatures.map(
+        ({ properties }) => (properties[`area${ key }`] || properties[`default${ key}`]).toString())
     },
   },
 }

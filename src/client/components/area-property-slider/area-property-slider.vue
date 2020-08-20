@@ -1,10 +1,11 @@
 <template>
   <input-range
-    :value="value"
+    v-model="internalValue"
     :min="min"
     :max="max"
     :label="$t(`area_${ valueTypeLower }`)"
-    @change="$emit('change', { key: valueType, value: $event })"
+    :multi="multi"
+    @change="updateExternal"
   >
     <template v-slot:info>
       <app-tooltip
@@ -30,26 +31,62 @@ export default {
       type: String,
       required: true,
     },
-    value: {
-      type: String,
+    values: {
+      type: Array,
       required: true,
+      validator: arr => arr.every(val => typeof val === 'string'),
     },
     min: {
       type: String,
-      default: '1',
+      required: true,
     },
     max: {
       type: String,
-      default: '10',
+      required: true,
     },
   },
+  data: () => ({
+    internalValue: null,
+    updateHappendThroughSelectionChange: false,
+    multi: false,
+  }),
   computed: {
     valueTypeLower() {
       return this.valueType.toLowerCase()
     },
   },
+  watch: {
+    values() {
+      this.updateHappendThroughSelectionChange = true
+      this.updateInternal()
+    },
+  },
+  created() {
+    this.updateInternal()
+  },
   methods: {
-
+    updateInternal() {
+      // If all values are the same, we can safely edit them as one value
+      if(this.values.every((val, i, arr) => val === arr[0])) {
+        this.internalValue = this.values[0]
+      }
+      // Otherwise, we set the value in the center of the slider and display a 'multi' sign
+      else {
+        this.multi = true
+        this.internalValue = ((parseFloat(this.min) + parseFloat(this.max)) / 2).toString()
+      }
+    },
+    updateExternal(value) {
+      if(this.updateHappendThroughSelectionChange) {
+        this.updateHappendThroughSelectionChange = false
+        return
+      }
+      this.multi = false
+      this.$emit('change', {
+        key: this.valueType,
+        value,
+      })
+    },
   },
 }
 </script>
