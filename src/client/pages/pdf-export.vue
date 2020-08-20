@@ -1,11 +1,15 @@
 <template>
   <div class="pdf-export">
-    <h1 class="pdf-export__title md-headline">
-      {{ $t('results') }} {{ workspaceTitle }}
+    <div>
+      <h1 class="pdf-export__title md-headline">
+        {{ $t('results') }} {{ workspaceTitle }}
+        <br>
+        {{ title }}
+      </h1>
+      <p v-html="description" />
       <br>
-      {{ title }}
-    </h1>
-    <p>{{ $t('pdf_tool_description') }}</p>
+      <img :src="appConfig.pdfLogos.url">
+    </div>
     <pdf-export-map />
     <template v-if="currentFilledInLevel.level >= 5">
       <pdf-export-result-summary />
@@ -13,6 +17,10 @@
       <pdf-export-projectarea-settings />
       <pdf-export-measures-list />
     </template>
+
+    <footer class="pdf-export__footer">
+      <img src="https://www.datocms-assets.com/7033/1597758963-deltareslogod-blauwrgb.svg" width="160px">
+    </footer>
   </div>
 </template>
 
@@ -43,6 +51,9 @@ export default {
     title() {
       return startCase(this.settings.general.title)
     },
+    description() {
+      return this.$t('pdf_tool_description').replace(/\n/g, '<br />')
+    },
   },
 }
 </script>
@@ -59,10 +70,17 @@ export default {
 
 .pdf-export .md-headline,
 .pdf-export .md-title {
-  color: var(--action-color);
+  color: var(--primary-color);
 }
 
 .pdf-export__title {
+  margin-top: 0;
   text-align: center;
+}
+
+.pdf-export__footer {
+  position: fixed;
+  bottom: 0cm;
+  right: 1cm;
 }
 </style>

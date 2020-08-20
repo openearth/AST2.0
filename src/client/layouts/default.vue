@@ -121,9 +121,9 @@
     </md-dialog>
 
     <md-dialog :md-active="pdfExportShown">
-      <md-dialog-title>PDF EXPORT</md-dialog-title>
+      <md-dialog-title>{{ $t('pdf_export') }}</md-dialog-title>
       <md-dialog-content>
-        PDF is exporting
+        {{ $t('pdf_is_exporting') }}
         <md-progress-bar
           :md-value="pdfProgress"
           md-mode="determinate"

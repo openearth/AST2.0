@@ -29,7 +29,14 @@ function executeFetch(token, variables, query) {
 function getPaginatedData(token, variables, query) {
   return async function(response) {
     const keyRegex = /_all(.+)Meta/
-    const allKey = Object.keys(response.data).find(key => keyRegex.test(key))
+    let allKey
+
+    try {
+      allKey = Object.keys(response.data).find(key => keyRegex.test(key))
+    } catch (error) {
+      console.log({ query, variables })
+      console.error(error)
+    }
 
     if (allKey) {
       const { count } = response.data[allKey]
