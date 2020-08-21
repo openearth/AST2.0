@@ -16,6 +16,7 @@ export default {
     map: { $ref: '/map-schema' },
     rivmCoBenefits: { type: 'object' },
     heatstressResults: { type: 'object' },
+    measureOverrides: { type: 'object' },
     savedInWorkspace: { type: 'string' },
   },
 }
