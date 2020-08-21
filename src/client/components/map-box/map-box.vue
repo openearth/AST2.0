@@ -105,7 +105,7 @@ export default {
 
   computed: {
     allMapLayers() {
-      const layers = [ ...this.customLayers, ...this.layerList ]
+      const layers = [ ...this.customLayers, ...this.heatstressLayers, ...this.layerList ]
       return layers
     },
     hasProjectArea() {
