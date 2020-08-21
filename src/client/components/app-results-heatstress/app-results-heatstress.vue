@@ -8,13 +8,13 @@
       class="app-results-heatstress__content"
     >
       <md-list
-        v-if="heatstressLayers.length > 0"
+        v-if="heatstressLayers.length > 0 && heatstressResults.entries"
       >
         <h2 class="app-results-heatstress__title md-body-2">
           {{ datoContent.heatstressTitle }}
         </h2>
         <md-list-item
-          v-for="(result, key) in heatstressResults"
+          v-for="(result, key) in heatstressResults.entries"
           :key="key"
           class="app-results-heatstress__list"
         >
@@ -75,11 +75,14 @@
       </md-list>
     </div>
     <footer class="app-results-heatstress__footer">
-      <small
-        v-if="!hasAreas"
-        class="app-results-heatstress__footer__message"
-      >
-        {{ datoContent.heatstressSelectMeasures }}
+      <small class="app-results-rivm__footer__received-at">
+        <template v-if="!hasAreas">
+          {{ datoContent.heatstressSelectMeasures }}
+        </template>
+        <template v-else>
+          <strong>{{ datoContent.lastCalculation }}:</strong>
+          <span>{{ receivedAt }}</span>
+        </template>
       </small>
       <div class="app-results-heatstress__buttons-wrapper">
         <md-button
@@ -145,12 +148,26 @@ export default {
       const areas = this.areas.filter(area => !isEmpty(area.properties.apiData) && !area.properties.hidden)
       return areas.length > 0
     },
+    receivedAt() {
+      try {
+        const { receivedAt } = this.heatstressResults
+        if(!receivedAt) throw 'date undefined'
+        const date = new Date(receivedAt)
+        return date.toLocaleString()
+      }
+      catch (error) {
+        return '-'
+      }
+    },
   },
   watch: {
     heatstressLayers() {
       if (this.heatstressLayers.length > 0) {
         this.isLoading = false
       }
+    },
+    receivedAt() {
+      this.isLoading = false
     },
   },
   methods: {
@@ -242,6 +259,13 @@ export default {
   padding: var(--spacing-half);
   border-top: 1px solid var(--border-color);
   background-color: var(--background-color);
+}
+
+.app-results-rivm__footer__received-at {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  margin-bottom: var(--spacing-quarter);
 }
 
 .app-results-heatstress__buttons-wrapper,
