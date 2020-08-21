@@ -43,6 +43,7 @@ const initialState = () => ({
     userViewedProjectSettings: false,
   },
   measureOverrides: {},
+  savedInWorkspace: undefined,
 })
 
 export const state = () => initialState()
@@ -530,6 +531,20 @@ export const actions = {
 
       MapEventBus.$emit(RELOAD_LAYERS)
       MapEventBus.$emit(REPOSITION, { zoom: map.zoom, center: map.center })
+
+      if (loadedProject.savedInWorkspace !== undefined && loadedProject.savedInWorkspace !== activeWorkspace.name) {
+        log.warning('Loaded project has been saved under different workspace!', {
+          currentWorkspace: activeWorkspace.name,
+          projectsWorkspace: loadedProject.savedInWorkspace,
+        })
+        const datoMessage = this.app.i18n.t('saved_in_different_workspace')
+        const message = `${ datoMessage } "${ loadedProject.savedInWorkspace.replace('-', '.') }"`
+        dispatch(
+          'notifications/showWarning',
+          { message, duration: 10000 },
+          { root: true },
+        )
+      }
     }
 
     commit('appMenu/hideMenu', null, { root: true })
@@ -539,9 +554,11 @@ export const actions = {
       throw new Error('Invalid project')
     }
   },
-  saveProject({ state, commit }) {
+  saveProject({ state, rootGetters, commit }) {
     const { title } = state.settings.general
+    const workspace = rootGetters['data/workspaces/activeWorkspace'].name
     let savedState = cloneDeep(state)
+    savedState.savedInWorkspace = workspace
     // Reset heatstresslayers while exporting, because the layers in the geoserver
     // are removed every day.
     delete savedState.map.heatstressLayers

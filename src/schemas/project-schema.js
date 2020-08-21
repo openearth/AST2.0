@@ -17,5 +17,6 @@ export default {
     rivmCoBenefits: { type: 'object' },
     heatstressResults: { type: 'object' },
     measureOverrides: { type: 'object' },
+    savedInWorkspace: { type: 'string' },
   },
 }
