@@ -394,9 +394,10 @@ export const actions = {
     })
       .then(apiData => {
         const tileSize = 512
-        const heatstressResults = {}
-        heatstressResults.heatstressNewTemperature = apiData.newStats.mean
-        heatstressResults.heatstressTemperatureDifference = apiData.newStats.mean - apiData.oldStats.mean
+        const receivedAt = Date.now()
+        const heatstressResults = { entries: {}, receivedAt }
+        heatstressResults.entries.heatstressNewTemperature = apiData.newStats.mean
+        heatstressResults.entries.heatstressTemperatureDifference = apiData.newStats.mean - apiData.oldStats.mean
         commit('setHeatstressResults', heatstressResults)
         apiData.layers.forEach(layer => {
           const baseUrlLegend = layer.baseUrl.replace('ows', 'wms')
@@ -422,6 +423,8 @@ export const actions = {
           { root: true },
         )
         log.error('Problems fetching heatstress layers', error)
+        const receivedAt = Date.now()
+        commit('setHeatstressResults', { receivedAt })
       })
   },
   bootstrapSettingsProjectArea({ commit }, settings) {
