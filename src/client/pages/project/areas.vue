@@ -4,163 +4,170 @@
       <span class="md-title">{{ $t('selected_measures') }}</span>
     </md-toolbar>
 
-    <ul class="areas__list">
-      <li
-        v-for="feature in selectedFeatures"
-        :key="feature.id"
-        class="areas__item"
-      >
-        <md-card>
-          <div :style="`border-left-color: ${appliedMeasure ? appliedMeasure.color.hex : 'transparent'}`" class="areas__item-content">
-            <md-card-header>
-              <md-avatar class="areas__avatar">
-                <img
-                  v-if="appliedMeasure"
-                  :src="appliedMeasure.image.url"
-                  alt="Avatar"
+    <div
+      v-if="hasSelection"
+      class="areas__editor"
+    >
+      <md-card>
+        <div
+          v-if="!isEditableSelection"
+          class="areas__editor-content"
+        >
+          <md-card-content>
+            {{ $t('selection_incompatible') }}
+          </md-card-content>
+        </div>
+        <div
+          v-else
+          :style="`border-left-color: ${ selectedMeasure ? selectedMeasure.color.hex : 'transparent' }`"
+          class="areas__editor-content"
+        >
+          <md-card-header>
+            <md-avatar class="areas__avatar">
+              <img
+                v-if="selectedMeasure"
+                :src="selectedMeasure.image.url"
+                alt="Avatar"
+              >
+            </md-avatar>
+
+            <div class="md-title">
+              {{ featureName }}
+            </div>
+            <div class="md-subhead areas__subhead">
+              {{ selectedMeasure ? selectedMeasure.title : ' ' }}
+            </div>
+          </md-card-header>
+
+          <md-card-content>
+            <text-input
+              v-if="isSingleSelection"
+              :label="$t('area_name')"
+              :value="featureName"
+              :on-change="name => updateAreaProperty({ id: featureId, properties: { name }})"
+            />
+
+            <!-- Measure type input -->
+            <span class="md-subheading">
+              {{ $t('measure') }}
+            </span>
+            <div class="areas__choose-wrapper">
+              <div class="areas__choose-content">
+                <p v-if="selectedMeasure">
+                  {{ selectedMeasure.title }}
+                </p>
+                <md-button
+                  :to="`/${locale}/project/measures`"
+                  class="md-accent md-raised areas__choose-button"
                 >
-              </md-avatar>
-
-              <div class="md-title">
-                {{ feature.properties.name }}
+                  {{ selectedMeasure ? $t('change_measure') : $t('choose_measure') }}
+                </md-button>
               </div>
-              <div class="md-subhead areas__subhead">
-                {{ appliedMeasure ? appliedMeasure.title : '&nbsp;' }}
+              <div v-if="selectedMeasure" class="areas__choose-icon">
+                <img :src="selectedMeasure.image.url">
               </div>
-            </md-card-header>
+            </div>
 
-            <md-card-content class="areass__card-content">
-              <text-input
-                :label="$t('area_name')"
-                :value="feature.properties.name"
-                :on-change="name => updateAreaProperty({ id: feature.id, properties: { name }})"
+            <template v-if="selectedMeasure">
+              <area-property-slider
+                v-for="({ key, min, max, values }) in measurePropertiesToEdit"
+                :key="key"
+                :value-type="key"
+                :values="values"
+                :min="min"
+                :max="max"
+                @change="updateValue"
               />
+            </template>
+          </md-card-content>
 
-              <span class="md-subheading">{{ $t('measure') }}</span>
-              <div class="areas__choose-wrapper">
-                <div class="areas__choose-content">
-                  <p v-if="appliedMeasure">
-                    {{ appliedMeasure.title }}
-                  </p>
-                  <md-button
-                    :to="`/${locale}/project/measures`"
-                    class="md-accent md-raised areas__choose-button"
-                  >
-                    {{ appliedMeasure ? $t('change_measure') : $t('choose_measure') }}
-                  </md-button>
-                </div>
-                <div v-if="appliedMeasure" class="areas__choose-icon">
-                  <img :src="appliedMeasure.image.url">
-                </div>
-              </div>
-
-              <!-- Depth input -->
-              <input-range
-                v-if="appliedMeasure && getDefaultValueProperty('depth', 'show', appliedMeasure.defaultValues)"
-                :value="inputValue(feature.properties.areaDepth, feature.properties.defaultDepth)"
-                :min="getDefaultValueProperty('depth', 'min', appliedMeasure.defaultValues)"
-                :max="getDefaultValueProperty('depth', 'max', appliedMeasure.defaultValues)"
-                :label="$t('area_depth')"
-                @change="value => updateAreaProperties({ features: [feature], properties: { areaDepth: value }})"
-              >
-                <template v-slot:info>
-                  <app-tooltip
-                    :message="$t('area_depth_info')"
-                    class="areas__info-button"
-                    direction="left"
-                  />
-                </template>
-              </input-range>
-
-              <!-- Inflow input -->
-              <input-range
-                v-if="appliedMeasure && getDefaultValueProperty('inflow', 'show', appliedMeasure.defaultValues)"
-                :value="inputValue(feature.properties.areaInflow, feature.properties.defaultInflow)"
-                :min="getDefaultValueProperty('inflow', 'min', appliedMeasure.defaultValues)"
-                :max="getDefaultValueProperty('inflow', 'max', appliedMeasure.defaultValues)"
-                :label="$t('area_inflow')"
-                @change="value => updateAreaProperties({ features: [feature], properties: { areaInflow: value }})"
-              >
-                <template v-slot:info>
-                  <app-tooltip
-                    :message="$t('area_inflow_info')"
-                    class="areas__info-button"
-                    direction="left"
-                  />
-                </template>
-              </input-range>
-
-              <!-- Width input -->
-              <input-range
-                v-if="appliedMeasure && feature.geometry.type === 'LineString' && getDefaultValueProperty('width', 'show', appliedMeasure.defaultValues)"
-                :value="inputValue(feature.properties.areaWidth, feature.properties.defaultWidth)"
-                :min="getDefaultValueProperty('width', 'min', appliedMeasure.defaultValues)"
-                :max="getDefaultValueProperty('width', 'max', appliedMeasure.defaultValues)"
-                :label="$t('area_width')"
-                @change="value => updateAreaProperties({ features: [feature], properties: { areaWidth: value }})"
-              >
-                <template v-slot:info>
-                  <app-tooltip
-                    :message="$t('area_width_info')"
-                    class="areas__info-button"
-                  />
-                </template>
-              </input-range>
-
-              <!-- Radius input -->
-              <input-range
-                v-if="appliedMeasure && feature.geometry.type === 'Point' && getDefaultValueProperty('radius', 'show', appliedMeasure.defaultValues)"
-                :value="inputValue(feature.properties.areaRadius, feature.properties.defaultRadius)"
-                :min="getDefaultValueProperty('radius', 'min', appliedMeasure.defaultValues)"
-                :max="getDefaultValueProperty('radius', 'max', appliedMeasure.defaultValues)"
-                :label="$t('area_radius')"
-                @change="value => updateAreaProperties({ features: [feature], properties: { areaRadius: value }})"
-              >
-                <template v-slot:info>
-                  <app-tooltip
-                    :message="$t('area_radius_info')"
-                    class="areas__info-button"
-                  />
-                </template>
-              </input-range>
-            </md-card-content>
-
-            <md-card-actions>
-              <md-button @click="onDone">
-                {{ $t('done') }}
-              </md-button>
-            </md-card-actions>
-          </div>
-        </md-card>
-      </li>
-    </ul>
+          <md-card-actions>
+            <md-button @click="onDone">
+              {{ $t('done') }}
+            </md-button>
+          </md-card-actions>
+        </div>
+      </md-card>
+    </div>
   </aside>
 </template>
 
 <script>
 import { mapGetters, mapActions, mapMutations, mapState } from 'vuex';
-import MapEventBus, { REDRAW, MODE, DELETE } from '../../lib/map-event-bus';
-import InputRange from '../../components/input-range'
-import TextInput from '../../components/text-input'
-import AppTooltip from '~/components/app-tooltip'
+import MapEventBus, { REDRAW, MODE, DELETE } from '@/lib/map-event-bus';
+import isNil from '@/lib/isNil'
+import AreaPropertySlider from '@/components/area-property-slider'
+import TextInput from '@/components/text-input'
 
 export default {
   middleware: ['access-level-settings'],
-  components: { InputRange, TextInput, AppTooltip },
-  data() {
-    return {
-      visibleAreas: [],
-      areaName: '',
-    }
-  },
+  components: { TextInput, AreaPropertySlider },
   computed: {
     ...mapState('i18n', ['locale']),
     ...mapGetters('data/measures', ['measureById']),
     ...mapGetters({ selectedFeatures: 'selectedAreas/features' }),
-    selectedMeasuresIds() { return this.selectedFeatures.map(feature => feature.properties.measure) },
-    appliedMeasure() {
-      const id = this.selectedMeasuresIds.join()
-      return this.measureById(id)
+
+    hasSelection() {
+      return this.selectedFeatures.length > 0
+    },
+
+    isSingleSelection() {
+      return this.selectedFeatures.length === 1
+    },
+
+    isMultiSelection() {
+      return this.selectedFeatures.length > 1
+    },
+
+    isEditableSelection() {
+      if(
+        this.isSingleSelection ||
+        this.selectedFeatures.every(({ properties: { measure } }) => isNil(measure)) ||
+        this.selectedFeatures.every(({ properties: { measure } }) => measure === this.selectedMeasureId)
+      ) return true
+      return false
+    },
+
+    featureName() {
+      return this.isMultiSelection ? this.$t('group') : this.selectedFeatures[0].properties.name
+    },
+
+    featureId() {
+      return this.isMultiSelection ? null : this.selectedFeatures[0].id
+    },
+
+    selectedMeasureId() {
+      return this.selectedFeatures[0].properties.measure
+    },
+
+    selectedMeasure() {
+      return this.measureById(this.selectedMeasureId)
+    },
+
+    selectedGeometryTypes() {
+      return this.selectedFeatures.reduce((returnArr, { geometry: { type } }) => {
+        return returnArr.includes(type) ? returnArr : [...returnArr, type]
+      }, [])
+    },
+
+    measurePropertiesToEdit() {
+      return this.selectedMeasure.defaultValues
+        .map(valueObj => {
+          const { key, show } = valueObj
+
+          if(
+            !show ||
+            ((key === 'Radius' || key === 'Width') && this.selectedGeometryTypes.length > 1) ||
+            (key === 'Radius' && this.selectedGeometryTypes[0] !== 'Point') ||
+            (key === 'Width' && this.selectedGeometryTypes[0] !== 'LineString')
+          ) return null
+
+          const values = this.getValuesForProperty(key)
+          const min = valueObj.min.toString()
+          const max = valueObj.max.toString()
+          return { key, values, min, max }
+        })
+        .filter(Boolean)
     },
   },
   mounted() {
@@ -173,39 +180,41 @@ export default {
   methods: {
     ...mapActions({ updateAreaProperties: 'project/updateAreaProperties' }),
     ...mapMutations({ updateAreaProperty: 'project/updateAreaProperty' }),
+
     onDelete() {
-      this.$router.push(`/${this.locale}/project/`).catch(() => {})
       MapEventBus.$emit(MODE, 'simple_select')
+      this.$router.push(`/${this.locale}/project/`).catch(() => {})
     },
+
     onDone() {
-      this.$router.push(`/${this.locale}/project/`).catch(() => {})
       MapEventBus.$emit(MODE, 'simple_select')
+      this.$router.push(`/${this.locale}/project/`).catch(() => {})
     },
-    getDefaultValueProperty(key, property, defaultValues) {
-      const values = defaultValues.find(values => values.key.toLowerCase() === key)
-      const value = values ? values[property] : ''
-      return property === 'show' ? value : String(value)
+
+    updateValue({ key, value }) {
+      this.updateAreaProperties({
+        features: this.selectedFeatures,
+        properties: {
+          [`area${ key }`]: value,
+        },
+      })
     },
-    inputValue(value, defaultValue) {
-      let returnValue = value || defaultValue
-      returnValue = value === '' ? value : returnValue
-      return returnValue
+
+    getValuesForProperty(key) {
+      return this.selectedFeatures.map(
+        ({ properties }) => (properties[`area${ key }`] || properties[`default${ key}`]).toString())
     },
   },
 }
 </script>
 
 <style>
-.areas__list {
+.areas__editor {
   list-style: none;
   padding: var(--spacing-default);
 }
 
-.areas__item {
-  margin-bottom: var(--spacing-default);
-}
-
-.areas__item-content {
+.areas__editor-content {
   border-left-width: 5px;
   border-left-style: solid;
 }
@@ -253,11 +262,5 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.areas__info-button {
-  position: absolute;
-  top: -9px;
-  right: -40px;
 }
 </style>

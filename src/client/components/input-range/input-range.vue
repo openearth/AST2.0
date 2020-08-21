@@ -21,10 +21,11 @@
       >
       <numeric-input
         v-if="numericEnabled"
+        class="input-range__number"
         :label="label"
         :value="stringValue"
         :on-change="value => $emit('change', isNaN(value) ? null : value)"
-        class="input-range__number"
+        :multi="multi"
         hide-label
       />
       <div v-else class="md-field numeric-input input-range__number md-theme-default md-has-value">
@@ -59,6 +60,10 @@ export default {
     numericEnabled: {
       type: Boolean,
       default: true,
+    },
+    multi: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

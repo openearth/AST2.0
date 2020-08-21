@@ -5,6 +5,7 @@
       ref="inputElement"
       :value="value"
       data-type="number"
+      :placeholder="multi ? $t('multi') : ''"
       @change="event => validateNumber(event.target.value)"
       @input="value => validateNumber(value)"
     />
@@ -54,10 +55,17 @@ export default {
       type: Boolean,
       default: false,
     },
+    multi: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
+    hasEmptyInput() {
+      return this.value === ''
+    },
     error() {
-      return !isValidNumber(this.value)
+      return !this.hasEmptyInput && !isValidNumber(this.value)
     },
   },
   methods: {
