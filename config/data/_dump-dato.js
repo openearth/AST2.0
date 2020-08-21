@@ -18,7 +18,7 @@ dotenv.config()
 
 const DATO_API_TOKEN = process.env.DATO_API_TOKEN
 
-const availableLocales = ['en', 'nl', 'zh_CN']
+const availableLocales = ['en', 'nl', 'zh_CN', 'es']
 
 const dataFolder = path.resolve(__dirname, '../../src/client/static/data')
 
