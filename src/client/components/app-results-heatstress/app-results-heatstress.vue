@@ -42,10 +42,7 @@
               >{{ layer.title }}</span>
               <md-switch
                 :value="!layer.visible"
-                @change="
-                  value =>
-                    switchHeatstressLayer({ id: layer.id, value: !!value })
-                "
+                @change="value => switchHeatstressLayer({ id: layer.id, value: !!value })"
               />
               <md-button
                 class="md-icon-button md-list-action"
@@ -171,7 +168,7 @@ export default {
       const layers = cloneDeep(this.heatstressLayers)
       const heatstressLayer = layers.find(layer => layer.id === evt.id)
       heatstressLayer.visible = evt.value
-      // set expanded depdending on the switch
+      // Set expanded depending on the switch
       if (!this.expanded.includes(evt.id) && evt.value) {
         this.expanded.push(evt.id)
       } else if (this.expanded.includes(evt.id) && !evt.value){
