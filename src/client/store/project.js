@@ -537,7 +537,8 @@ export const actions = {
           currentWorkspace: activeWorkspace.name,
           projectsWorkspace: loadedProject.savedInWorkspace,
         })
-        const message = this.app.i18n.t('saved_in_different_workspace')
+        const datoMessage = this.app.i18n.t('saved_in_different_workspace')
+        const message = `${ datoMessage } "${ loadedProject.savedInWorkspace }"`
         dispatch(
           'notifications/showWarning',
           { message, duration: 10000 },
