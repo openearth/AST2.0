@@ -137,14 +137,17 @@ export default [
       ['has', 'user_color'],
     ],
     'paint': {
-      'circle-radius': 5,
+      'circle-radius': 6,
       'circle-color': {
         'type': 'identity',
         'property': 'user_color',
       },
+      'circle-stroke-color': 'white',
+      'circle-stroke-width': 3,
     },
   },
-].reduce((list, style) => {
+]
+.reduce((list, style) => {
   const hiddenStyle = cloneDeep(style)
   const shownStyle = cloneDeep(style)
   hiddenStyle.id = `${hiddenStyle.id}-hidden`
