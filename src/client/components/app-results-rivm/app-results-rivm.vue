@@ -79,7 +79,6 @@
 </template>
 
 <script>
-// @BUMP :: Test new API endpoint in separate preview
 export default {
   props: {
     data: {
