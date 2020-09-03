@@ -104,7 +104,6 @@
 </template>
 
 <script>
-// import get from 'lodash/get'
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 import { SelectInput } from '~/components'
 
@@ -125,13 +124,9 @@ export default {
     ...mapGetters({
       projectAreaSettings: 'project/settingsProjectArea',
       areaSettings: 'data/areaSettings/overriddenAreaSettings',
-      // workspaces: 'data/workspaces',
       scenariosInActiveWorkspace: 'data/workspaces/scenariosInActiveWorkspace',
     }),
     area() { return this.projectArea.properties && Math.round(this.projectArea.properties.area) },
-    // showScenarioExamplesInSettings() {
-    //   return get(this, 'workspaces.activeWorkspace.showScenarioExamplesInSettings')
-    // },
   },
   methods: {
     ...mapMutations({
