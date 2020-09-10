@@ -3,23 +3,26 @@
     <md-list-item
       :md-expanded="shownLayers"
       :md-expand="shownLayers"
-      class="layer-legend__wrapper">
+      class="layer-legend__wrapper"
+    >
       <span>{{ $t('legend') }}</span>
 
       <div
         v-if="shownLayers"
         slot="md-expand"
-        class="layer-legend__content">
+        class="layer-legend__content"
+      >
         <md-list>
           <md-list-item
-            v-for="layer in layers"
-            v-if="layer.showLegend"
-            :key="layer.id">
+            v-for="layer in layersThatShouldShowLegend"
+            :key="layer.id"
+          >
             <div class="layer-legend__item">
               <p>{{ layer.title }}</p>
               <img
                 :src="layer.legendUrl"
-                alt="">
+                alt=""
+              >
             </div>
           </md-list-item>
         </md-list>
@@ -37,10 +40,11 @@ export default {
     },
   },
   computed: {
+    layersThatShouldShowLegend() {
+      return this.layers.filter(layer => layer.showLegend)
+    },
     shownLayers() {
-      return !!this.layers
-        .filter(layer => layer.showLegend)
-        .length
+      return !!this.layersThatShouldShowLegend.length
     },
   },
 }
@@ -68,5 +72,6 @@ export default {
 .layer-legend__item {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
 }
 </style>

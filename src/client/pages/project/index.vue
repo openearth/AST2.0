@@ -8,7 +8,8 @@
       v-if="!measureCollection.length"
       :icon="'crop_square'"
       :text="$t('empty_measures')"
-      class="legend__hint-text" />
+      class="legend__hint-text"
+    />
 
     <md-list v-else>
       <md-list-item
@@ -18,12 +19,15 @@
         :md-expanded="expandedMeasures.indexOf(measure.measureId) !== -1"
         md-expand
         class="legend__item"
-        @update:mdExpanded="value => toggleMeasure(measure.measureId, value)">
+        @update:mdExpanded="value => toggleMeasure(measure.measureId, value)"
+      >
         <div class="legend__item-header">
           <md-avatar class="legend__item-avatar">
-            <img :src="measure.image.url" alt="" >
+            <img :src="measure.image.url" alt="">
           </md-avatar>
-          <md-subheader class="legend__item-title">{{ measure.title }}</md-subheader>
+          <md-subheader class="legend__item-title">
+            {{ measure.title }}
+          </md-subheader>
           <md-switch
             :value="!someAreasAreShown"
             class="legend__item-toggle"
@@ -31,10 +35,19 @@
           />
         </div>
         <md-list slot="md-expand">
+          <md-list-item class="md-inset">
+            <span class="md-list-item-text">Color</span>
+            <input
+              type="color"
+              :value="measure.color.hex"
+              @change="event => updateMeasureColor({ measureId: measure.measureId, hex: event.target.value })"
+            >
+          </md-list-item>
           <md-list-item
             v-for="area in areas"
             :key="area.id"
-            class="md-inset">
+            class="md-inset"
+          >
             <span class="md-list-item-text">{{ area.properties.name }}</span>
             <md-switch
               :value="area.properties.hidden"
@@ -42,13 +55,15 @@
             />
           </md-list-item>
         </md-list>
-        <md-divider/>
+        <md-divider />
       </md-list-item>
     </md-list>
     <div class="legend__action-wrapper">
       <md-button
         :to="`/${$i18n.locale}/set-measure`"
-        class="md-raised md-primary">
+        class="md-raised md-accent"
+        @click.native="resetMapMode"
+      >
         <md-icon>add</md-icon>
         {{ $t('measure') }}
       </md-button>
@@ -57,13 +72,13 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions, mapMutations } from "vuex"
-import { MeasureCard, SearchInput, HintText } from '~/components'
-import MapEventBus, { REDRAW } from "../../lib/map-event-bus";
+import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
+import { HintText } from '~/components'
+import MapEventBus, { REDRAW } from '../../lib/map-event-bus';
 
 export default {
   middleware: ['access-level-settings'],
-  components: { MeasureCard, SearchInput, HintText },
+  components: { HintText },
   data() {
     return {
       isAreasListVisible: false,
@@ -89,6 +104,8 @@ export default {
     }),
     ...mapActions({
       updateAreaProperties: 'project/updateAreaProperties',
+      updateMeasureColor: 'project/updateMeasureColor',
+      resetMapMode: 'map/setModeDefault',
     }),
     toggleMeasure(measureId, expanded) {
       expanded

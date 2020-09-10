@@ -1,3 +1,4 @@
+import get from 'lodash/get'
 import isObject from 'lodash/isObject'
 import getViewPath from '../lib/get-view-path'
 import isValidNumber from '../lib/is-valid-number'
@@ -6,13 +7,14 @@ import {
   LEVEL_LEGAL,
   LEVEL_PROJECT_AREA,
   LEVEL_PROJECT_AREA_SETTINGS,
-  LEVEL_PROJECT_SETTINGS,
   LEVEL_SETTINGS,
-} from "../lib/flow-levels";
+} from '../lib/flow-levels';
 
 export const state = () => ({
   fullPath: {},
   export: false,
+  scenarios: false,
+  pdfExport: false,
 })
 
 export const mutations = {
@@ -27,14 +29,36 @@ export const mutations = {
   hideExport(state) {
     state.export = false
   },
+
+  showScenarios(state) {
+    state.scenarios = true
+  },
+
+  showPdfExport(state) {
+    state.pdfExport = true
+  },
+
+  hideScenarios(state) {
+    state.scenarios = false
+  },
+
+  hidePdfExport(state) {
+    state.pdfExport = false
+  },
 }
 
 export const getters = {
   acceptedLegal(state, getters, rootState) {
     return rootState.project.legalAccepted
   },
+  projectAreaSizeIsBelowThreshold(state, getters, rootState) {
+    const area = get(rootState, 'project.settings.area.properties.area', 0)
+    const threshold = 10000000
+
+    return area < threshold
+  },
   createdProjectArea(state, getters, rootState) {
-    return !!rootState.project.settings.area.properties
+    return !!rootState.project.settings.area.properties && getters.projectAreaSizeIsBelowThreshold
   },
   filledInRequiredProjectAreaSettings(state, getters, rootState) {
     const projectArea = rootState.project.settings.projectArea

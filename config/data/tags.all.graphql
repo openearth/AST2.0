@@ -1,0 +1,12 @@
+query ($locale: SiteLocale, $first: IntType, $skip: IntType = 0) {
+  tags: allTags(locale: $locale, first: $first, skip: $skip) {
+    key
+    title
+    icon {
+      url
+    }
+  },
+  _allTagsMeta {
+    count
+  }
+}

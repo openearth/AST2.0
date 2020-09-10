@@ -3,9 +3,8 @@ import getData from '../../lib/get-data'
 import kebabCase from 'lodash/kebabCase'
 import unset from 'lodash/unset'
 
-const defaultDomain = process.env.NODE_ENV === 'development'
-  ? 'toolboxks-nl'
-  : 'kbstoolbox-nl'
+const isLocalOrPreview = process.env.NODE_ENV === 'development' || process.env.CONTEXT === 'deploy-preview'
+const defaultDomain = isLocalOrPreview ? 'toolboxks-nl' : 'kbstoolbox-nl'
 
 export const state = () => ({
   _domain: undefined,
@@ -62,27 +61,30 @@ export const actions = {
       }
 
       commit('fillWorkspace', workspace)
-      dispatch('project/bootstrapWmsLayers', workspace.wmsLayers, { root: true })
-      dispatch('project/bootstrapMapLayers', workspace.mapLayers, { root: true })
       dispatch('project/bootstrapLayers', workspace.layers, { root: true })
     }
   },
 }
 
 export const getters = {
-  activeWorkspace(state, getters, rootState) {
+  activeWorkspace(state) {
     const activeDomain = state._domain;
     const activeUser = state._user;
     const activeName = activeUser || activeDomain;
     const workspace = state[activeName]
     let scenarioName
-    if (workspace && rootState.data.scenarios) {
-      const options = (workspace.scenarios || []).length ? workspace.scenarios : rootState.data.scenarios
+    if (workspace) {
+      const options = (workspace.scenarios || []).length ? workspace.scenarios : []
       scenarioName = {
         defaultValue: options[0],
         options,
       }
     }
     return workspace ? { ...workspace, scenarioName  } : workspace
+  },
+  scenariosInActiveWorkspace(state, getters, rootState) {
+    return getters.activeWorkspace.scenarios
+      .filter(({ value }) => Boolean(rootState.data.scenarios.find(scenario => scenario.value === value)))
+      .map(({ value }) => rootState.data.scenarios.find(scenario => scenario.value === value))
   },
 }

@@ -1,6 +1,3 @@
-const keys = ['default', 'satellite']
-const labels = ['Default', 'Satellite']
-
 export default {
   $id: '/map-schema',
   type: 'object',
@@ -31,37 +28,9 @@ export default {
       },
     },
 
-    // Leave in for backwards compatibility reasons
-    wmsLayers: {
-      type: 'array',
-      items: {
-        type: 'object',
-        additionalProperties: false,
-        required: ['id', 'showLegend', 'visible', 'opacity'],
-        properties: {
-          id: { type: 'string' },
-          showLegend: { type: 'boolean' },
-          visible: { type: 'boolean' },
-          opacity: { type: 'number' },
-        },
-      },
-    },
+    wmsLayers: { type: 'array' }, // Leave in for backwards compatibility reasons
+    mapLayers: { type: 'array' }, // Leave in for backwards compatibility reasons
 
-    // Leave in for backwards compatibility reasons
-    mapLayers: {
-      type: 'array',
-      items: {
-        type: 'object',
-        additionalProperties: false,
-        required: ['id', 'showLegend', 'visible', 'opacity'],
-        properties: {
-          id: { type: 'string' },
-          showLegend: { type: 'boolean' },
-          visible: { type: 'boolean' },
-          opacity: { type: 'number' },
-        },
-      },
-    },
     customLayers: {
       type: 'array',
       items: {
@@ -79,6 +48,27 @@ export default {
           url: { type: 'string' },
           visible: { type: 'boolean' },
           opacity: { type: 'number' },
+        },
+      },
+    },
+    // Leave in for backwards compatibility reasons
+    heatstressLayers: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['id', 'showLegend', 'visible', 'opacity'],
+        properties: {
+          id: { type: 'string' },
+          layerType: { type: 'string' },
+          tilesize: { type: 'number' },
+          title: { type: 'string' },
+          layerName: { type: 'string' },
+          url: { type: 'string' },
+          visible: { type: 'boolean' },
+          legendUrl: { type: 'string' },
+          opacity: { type: 'number' },
+          showLegend: { type: 'boolean' },
         },
       },
     },

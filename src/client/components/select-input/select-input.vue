@@ -4,7 +4,8 @@
     <md-select
       :id="`select-${id}`"
       v-model="selectedValue"
-      md-dense>
+      md-dense
+    >
       <md-option
         v-for="option in options"
         :key="option.value"
@@ -44,7 +45,9 @@ export default {
     selectedValue(val) {
       this.$emit('change', val)
     },
+    value(val) {
+      this.selectedValue = val
+    },
   },
 }
 </script>
-

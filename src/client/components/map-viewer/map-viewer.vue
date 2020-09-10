@@ -3,6 +3,7 @@
     <map-box
       :add-only="addOnly"
       :interactive="interactive"
+      :animate="animate"
       :point="point"
       :line="line"
       :polygon="polygon"
@@ -11,15 +12,16 @@
       :areas="areas"
       :map-zoom="mapZoom"
       :map-center="mapCenter"
-      :wms-layers="wmsLayers"
       :custom-layers="customLayers"
-      :map-layers="mapLayers"
       :layer-list="layerList"
+      :heatstress-layers="heatstressLayers"
       :mode="mode"
+      :fit-to-bounds="fitToBounds"
       class="map-viewer__map"
       @create="onCreate"
       @update="onUpdate"
       @delete="onDelete"
+      @render="onRender"
       @selectionchange="onSelectionchange"
       @move="onMove"
       @modechange="mode => setMode(mode)"
@@ -32,41 +34,40 @@
       :point="interactive && point"
       :trash="interactive"
       :layers="interactive && layers"
-      :wms-layers="wmsLayers"
       :custom-layers="customLayers"
-      :map-layers="mapLayers"
       :layer-list="layerList"
       :current-mode="currentMode"
       class="map-viewer__controls--draw"
-      @setMode="setMode"
+      @set-mode="setMode"
       @trash="onClickDelete"
       @search="onSearch"
       @layer-opacity-change="setLayerOpacity"
       @legend-visibility-change="setLegendVisibility"
-      @layer-visibility-change="setLayerVisibility"/>
+      @layer-visibility-change="setLayerVisibility"
+    />
 
     <map-controls
       :zoom-in="interactive"
       :zoom-out="interactive"
       class="map-viewer__controls--zoom"
       @zoom-in="zoomIn"
-      @zoom-out="zoomOut"/>
+      @zoom-out="zoomOut"
+    />
 
     <layer-legend
       v-if="interactive && layers"
-      :layers="legendLayers"
-      class="map-viewer__layer-legend"/>
-
-
+      :layers="layerList"
+      class="map-viewer__layer-legend"
+    />
   </div>
 </template>
 
 <script>
-import MapEventBus, { MODE, TRASH, DELETE, ZOOM_IN, ZOOM_OUT, SEARCH } from "../../lib/map-event-bus";
-import MapBox from "../map-box";
-import LayerLegend from "../layer-legend";
-import MapControls from "../map-controls";
-import { mapMutations, mapActions } from "vuex";
+import MapEventBus, { DELETE, ZOOM_IN, ZOOM_OUT, SEARCH } from '../../lib/map-event-bus';
+import MapBox from '../map-box';
+import LayerLegend from '../layer-legend';
+import MapControls from '../map-controls';
+import { mapMutations, mapActions } from 'vuex';
 
 export default {
   components: { MapBox, MapControls, LayerLegend },
@@ -123,15 +124,7 @@ export default {
       type: String,
       default: '',
     },
-    wmsLayers: {
-      type: Array,
-      default: () => [],
-    },
     customLayers: {
-      type: Array,
-      default: () => [],
-    },
-    mapLayers: {
       type: Array,
       default: () => [],
     },
@@ -139,14 +132,21 @@ export default {
       type: Array,
       default: () => [],
     },
+    heatstressLayers: {
+      type: Array,
+      default: () => [],
+    },
     mode: {
       type: String,
       default: '',
     },
-  },
-  computed: {
-    legendLayers() {
-      return [...this.wmsLayers, ...this.mapLayers]
+    fitToBounds: {
+      type: Array,
+      default: () => [],
+    },
+    animate: {
+      type: Boolean,
+      default: true,
     },
   },
   methods: {
@@ -156,11 +156,12 @@ export default {
     ...mapMutations({
       setLayerOpacity: 'project/setLayerOpacity',
       setLayerVisibility: 'project/setLayerVisibility',
-      setLegendVisibility:'project/setLegendVisibility',
+      setLegendVisibility: 'project/setLegendVisibility',
     }),
     onCreate(event) { this.$emit('create', event) },
     onUpdate(event) { this.$emit('update', event) },
     onDelete(event) { this.$emit('delete', event) },
+    onRender(event) { this.$emit('render', event) },
     onSelectionchange(event) { this.$emit('selectionchange', event) },
     onMove(event) { this.$emit('move', event) },
     onClickDelete() { MapEventBus.$emit(DELETE) },
@@ -213,6 +214,5 @@ export default {
 
 .mapboxgl-ctrl-top-right {
   display: none;
-
 }
 </style>

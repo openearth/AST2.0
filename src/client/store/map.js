@@ -1,4 +1,4 @@
-import MapEventBus, { MODE } from "../lib/map-event-bus";
+import MapEventBus, { MODE } from '../lib/map-event-bus';
 
 export const state = () => ({
   mode: '',
@@ -35,6 +35,9 @@ export const actions = {
   setMode({ commit }, mode) {
     commit('mode', mode)
     MapEventBus.$emit(MODE, mode)
+  },
+  setModeDefault({ dispatch }) {
+    dispatch('setMode', 'simple_select')
   },
 }
 
@@ -81,7 +84,7 @@ export const getters = {
 
     switch (mode) {
       case 'draw-project-area':
-        return !rootGetters['flow/createdProjectArea']
+        return rootGetters['flow/projectAreaSizeIsBelowThreshold'] && !rootGetters['flow/createdProjectArea']
       case 'inactive':
       case 'modal':
         return false

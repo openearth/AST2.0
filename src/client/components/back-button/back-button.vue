@@ -17,7 +17,7 @@ export default {
   props: {
     comp: {
       type: String,
-      default: "header",
+      default: 'header',
     },
   },
 }

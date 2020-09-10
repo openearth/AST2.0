@@ -2,17 +2,20 @@
   <div class="search-input">
     <div
       :class="{ 'search-input--visible' : show }"
-      class="search-input__input">
+      class="search-input__input"
+    >
       <text-input
         v-model="value"
         type="text"
         placeholder="Search"
         @input="$emit('search', value)"
         @keyup.enter="() => suggestions.length && fly(suggestions[0])"
-        @blur="() => $emit('hide')">
+        @blur="() => $emit('hide')"
+      >
         <md-button
           class="md-icon-button md-dense"
-          @click="() => suggestions.length && fly(suggestions[0])">
+          @click="() => suggestions.length && fly(suggestions[0])"
+        >
           <md-icon>search</md-icon>
         </md-button>
       </text-input>
@@ -21,12 +24,16 @@
       v-if="suggestions.length"
       class="search-input__suggestions"
       tag="ul"
-      name="suggestions-list">
+      name="suggestions-list"
+    >
       <li
         v-for="suggestion in suggestions"
         :key="suggestion.id"
-        class="search-input__suggestion">
-        <button class="search-input__suggestion-button" @mousedown="() => fly(suggestion)">{{ suggestion['place_name'] }}</button>
+        class="search-input__suggestion"
+      >
+        <button class="search-input__suggestion-button" @mousedown="() => fly(suggestion)">
+          {{ suggestion['place_name'] }}
+        </button>
       </li>
     </transition-group>
   </div>
@@ -34,7 +41,7 @@
 
 <script>
 import  MapEventBus, { SEARCH_SUGGESTIONS, REPOSITION } from '../../lib/map-event-bus';
-import TextInput from "~/components/text-input";
+import TextInput from '~/components/text-input';
 
 export default {
   components: { TextInput },
@@ -51,7 +58,7 @@ export default {
     }
   },
   mounted() {
-    MapEventBus.$on(SEARCH_SUGGESTIONS, (items) => {
+    MapEventBus.$on(SEARCH_SUGGESTIONS, items => {
       console.log({ items })
       this.suggestions = items
     })
