@@ -39,7 +39,7 @@
             <div class="md-list-item__content app-results-heatstress__list-item">
               <span
                 class="md-list-item-text app-results-heatstress-layers__title"
-              >{{  `heatstress${toPascalCase(layer.key)}` }}</span>
+              >{{  datoContent[`heatstress${toPascalCase(layer.key)}`] }}</span>
               <md-switch
                 :value="!layer.visible"
                 @change="value => switchHeatstressLayer({ id: layer.id, value: !!value })"
