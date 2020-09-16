@@ -403,6 +403,7 @@ export const actions = {
           const baseUrlLegend = layer.baseUrl.replace('ows', 'wms')
           const heatstressLayer = {
             id: layer.layerName,
+            key: layer.id,
             title: layer.title,
             url: `${layer.baseUrl}bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.3.0&request=GetMap&crs=EPSG:3857&srs=EPSG:28992&transparent=True&width=${tileSize}&height=${tileSize}&layers=${layer.layerName}`,
             legendUrl: `${baseUrlLegend}request=GetLegendGraphic&version=1.1.1&format=image/png&layer=${layer.layerName}`,
