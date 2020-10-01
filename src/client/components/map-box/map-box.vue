@@ -113,13 +113,13 @@ export default {
     },
     layerVisibility() {
       return this.allMapLayers.reduce((obj, layer) => {
-        obj[`${layer.id}-${layer.title}`] = layer.visible
+        obj[`${layer.id}`] = layer.visible
         return obj
       }, {})
     },
     layerOpacity() {
       return this.allMapLayers.reduce((obj, layer) => {
-        obj[`${layer.id}-${layer.title}`] = layer.opacity
+        obj[`${layer.id}`] = layer.opacity
         return obj
       }, {})
     },
@@ -152,7 +152,7 @@ export default {
       handler(newLayers) {
         const layers = [...newLayers].reverse().forEach(newLayer => {
           if (!this.map.getLayer(`wms-layer-${newLayer.id}`)) {
-            this.addWmsLayer(newLayer)
+            this.addWmsLayer(newLayer, false)
           }
 
           if (newLayer.visible === true) {
@@ -404,7 +404,7 @@ export default {
         this.map.removeSource(`wms-layer-${id}`)
       }
     },
-    addWmsLayer({ layerType: type, id, url, tilesize: tileSize, title, visible }) {
+    addWmsLayer({ layerType: type, id, url, tilesize: tileSize, title, visible }, prependLayer=true) {
       if (!this.map) return
 
       try {
@@ -417,7 +417,7 @@ export default {
         return
       }
 
-      if (!this.map.getLayer(`wms-layer-${id}-${title}`)) {
+      if (!this.map.getLayer(`wms-layer-${id}`)) {
         const source = { type, tileSize }
         if (url === 'mapbox://mapbox.satellite') {
           source.url = url
@@ -426,10 +426,12 @@ export default {
         }
         try {
           const layers = this.map.getStyle().layers
-          const lastWmsLayerIndex = layers
-            .filter(layer => /wms-layer-/.test(layer.id))
-            .reverse()
-            .map(layer => layers.indexOf(layer))
+          let lastWmsLayerIndex = layers
+          .filter(layer => /wms-layer-/.test(layer.id))
+          if (prependLayer) {
+            lastWmsLayerIndex = lastWmsLayerIndex.reverse()
+          }
+          lastWmsLayerIndex = lastWmsLayerIndex.map(layer => layers.indexOf(layer))
             .reduce((_, item) => item, undefined)
 
           const lastWmsLayerId = layers[lastWmsLayerIndex]
@@ -437,7 +439,7 @@ export default {
             : undefined
           this.map.addLayer(
             {
-              id: `wms-layer-${id}-${title}`,
+              id: `wms-layer-${id}`,
               type,
               source,
               layout: {

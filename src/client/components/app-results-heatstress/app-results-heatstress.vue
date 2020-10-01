@@ -39,7 +39,7 @@
             <div class="md-list-item__content app-results-heatstress__list-item">
               <span
                 class="md-list-item-text app-results-heatstress-layers__title"
-              >{{ layer.title }}</span>
+              >{{  datoContent[`heatstress${toPascalCase(layer.key)}`] }}</span>
               <md-switch
                 :value="!layer.visible"
                 @change="value => switchHeatstressLayer({ id: layer.id, value: !!value })"
@@ -117,6 +117,8 @@
 import { mapMutations } from 'vuex'
 import cloneDeep from 'lodash/cloneDeep'
 import isEmpty from 'lodash/isEmpty'
+import camelCase from 'lodash/camelCase'
+import upperFirst from 'lodash/upperFirst'
 
 export default {
   props: {
@@ -174,6 +176,9 @@ export default {
     ...mapMutations({
       updateHeatstressLayers: 'project/updateHeatstressLayers',
     }),
+    toPascalCase(string) {
+      return upperFirst(camelCase(string))
+    },
     setExpanded(id) {
       if (this.expanded.includes(id)) {
         this.expanded = this.expanded.filter(ex => ex !== id)
