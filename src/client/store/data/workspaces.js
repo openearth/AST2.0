@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import getData from '../../lib/get-data'
+import log from '../../lib/log'
 import kebabCase from 'lodash/kebabCase'
 import unset from 'lodash/unset'
 
@@ -28,6 +29,7 @@ export const mutations = {
       ? defaultDomain
       : domain
 
+    log.info(domainName)
     Vue.set(state, '_domain', domainName)
   },
 }
