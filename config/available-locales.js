@@ -1,1 +1,1 @@
-module.exports = ['en', 'nl', 'zh_CN', 'es']
+module.exports = ['en', 'nl', 'zh_CN', 'es', 'ru']
