@@ -1,8 +1,8 @@
 const path = require('path')
 const { readFileSync, writeFileSync } = require('fs')
 const { pipe, curry, get, map, reduce, assign } = require('lodash/fp')
+const availableLocales = require('../available-locales')
 
-const locales = ['en', 'nl', 'zh_CN', 'es']
 const dataDir = path.join(__dirname, '../../src/client/static/data')
 const sourceFilename = 'translations.json'
 const targetFilename = 'messages.json'
@@ -24,4 +24,4 @@ const transformTranslations = locale =>
     writeFile(locale),
   )(locale)
 
-map(transformTranslations, locales)
+map(transformTranslations, availableLocales)
