@@ -14,11 +14,10 @@ const set = require('lodash/fp/set')
 const kebabCase = require('lodash/fp/kebabCase')
 const queryApi = require('../../src/client/lib/query-api')
 const dotenv = require('dotenv-safe')
+const availableLocales = require('../available-locales')
 dotenv.config()
 
 const DATO_API_TOKEN = process.env.DATO_API_TOKEN
-
-const availableLocales = ['en', 'nl', 'zh_CN']
 
 const dataFolder = path.resolve(__dirname, '../../src/client/static/data')
 
