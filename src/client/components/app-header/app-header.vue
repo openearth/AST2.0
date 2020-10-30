@@ -30,6 +30,7 @@
         v-if="currentFilledInLevel.level >= LEVEL_PROJECT_AREA"
       >
         <md-button
+          v-if="activeWorkspace.showScenarioExamplesInSettings"
           class="md-primary md-icon-button"
           @click="showScenarios"
         >
@@ -78,6 +79,7 @@ export default {
   data: () => ({ LEVEL_PROJECT_AREA }),
   computed: {
     ...mapGetters('flow', ['currentFilledInLevel']),
+    ...mapGetters('data/workspaces', ['activeWorkspace']),
     hasTitle() {
       return !!this.projectTitle
     },
