@@ -3,7 +3,6 @@ import getData from '../../lib/get-data'
 import log from '../../lib/log'
 import kebabCase from 'lodash/kebabCase'
 import unset from 'lodash/unset'
-import log from '../../lib/log'
 
 const isLocalOrPreview = process.env.NODE_ENV === 'development' || process.env.CONTEXT === 'deploy-preview'
 const defaultDomain = isLocalOrPreview
