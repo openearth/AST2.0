@@ -10,7 +10,6 @@ query ($locale: SiteLocale, $first: IntType, $skip: IntType = 0) {
         key
       },
       defaultTargetValue,
-      operator,
     }
   }
   _allKpiGroupsMeta {

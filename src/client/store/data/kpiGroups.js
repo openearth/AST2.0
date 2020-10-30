@@ -33,17 +33,6 @@ export const getters = {
 
     return keys
   },
-  kpiKeysOperatorMap: state => {
-    let map = {}
-
-    state.forEach(group => {
-      group.kpis.forEach(kpi => {
-        map[kpi.key] = kpi.operator
-      })
-    })
-
-    return map
-  },
   kpiKeysTitleMap: state => {
     let map = {}
 
