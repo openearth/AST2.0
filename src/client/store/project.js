@@ -882,6 +882,17 @@ export const getters = {
   kpiValues: (state, getters, rootState, rootgetters) => {
     const areas = state.areas.filter(area => !area.properties.hidden)
     const kpiKeys = rootgetters['data/kpiGroups/kpiKeys']
+    const kpiKeysOperatorMap = rootgetters['data/kpiGroups/kpiKeysOperatorMap']
+
+    function combine(operator, a, b) {
+      switch (operator) {
+        case 'add':      return a + (b || 0)
+        case 'subtract': return a - (b || 0)
+        case 'multiply': return (a || 1) * (b || 1)
+        case 'divide':   return (a || 1) / (b || 1)
+        default: throw new Error(`Operator (${operator}) not found`)
+      }
+    }
 
     if (areas.length) {
       const { returnTime, ...kpiValues } = areas
@@ -890,12 +901,13 @@ export const getters = {
           if (item) {
             kpiKeys.forEach(key => {
               if (!obj[key]) { obj[key] = 0 }
-              obj[key] = obj[key] + (item[key] || 0)
+              obj[key] = combine(kpiKeysOperatorMap[key], obj[key], item[key])
             })
           }
           return obj
         }, {})
-      return { ...kpiValues, returnTime: returnTime + 1 }
+      // return { ...kpiValues, returnTime: returnTime + 1 }
+      return { ...kpiValues, returnTime }
     } else {
       return kpiKeys.reduce((obj, key) => ({ ...obj, [key]: 0 }), {})
     }
