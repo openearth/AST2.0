@@ -2,9 +2,12 @@ import Vue from 'vue'
 import getData from '../../lib/get-data'
 import kebabCase from 'lodash/kebabCase'
 import unset from 'lodash/unset'
+import log from '../../lib/log'
 
 const isLocalOrPreview = process.env.NODE_ENV === 'development' || process.env.CONTEXT === 'deploy-preview'
-const defaultDomain = isLocalOrPreview ? 'toolboxks-nl' : 'kbstoolbox-nl'
+const defaultDomain = isLocalOrPreview
+  ? process.env.DEVELOPMENT_WORKSPACE
+  : process.env.PRODUCTION_WORKSPACE
 
 export const state = () => ({
   _domain: undefined,
@@ -28,6 +31,7 @@ export const mutations = {
       ? defaultDomain
       : domain
 
+    log.info(`Workspace: ${domainName}`)
     Vue.set(state, '_domain', domainName)
   },
 }
