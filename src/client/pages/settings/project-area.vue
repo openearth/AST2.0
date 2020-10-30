@@ -93,7 +93,7 @@
             v-if="setting.key === 'scenarioName'"
             class="project-area__scenario-overview scenario-overview"
           >
-            <md-button @click="showScenarios">
+            <md-button v-if="activeWorkspace.showScenarioExamplesInSettings" @click="showScenarios">
               {{ $t('scenario_examples') }}
             </md-button>
           </aside>
@@ -125,6 +125,7 @@ export default {
       projectAreaSettings: 'project/settingsProjectArea',
       areaSettings: 'data/areaSettings/overriddenAreaSettings',
       scenariosInActiveWorkspace: 'data/workspaces/scenariosInActiveWorkspace',
+      activeWorkspace: 'data/workspaces/activeWorkspace',
     }),
     area() { return this.projectArea.properties && Math.round(this.projectArea.properties.area) },
   },
