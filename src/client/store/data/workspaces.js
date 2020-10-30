@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import getData from '../../lib/get-data'
+import log from '../../lib/log'
 import kebabCase from 'lodash/kebabCase'
 import unset from 'lodash/unset'
 import log from '../../lib/log'
