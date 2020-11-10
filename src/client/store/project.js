@@ -529,7 +529,35 @@ export const actions = {
 
     loadedProject.settings.general.title = name.replace('.json', '')
 
-    if (validProject.valid) {
+    commit('appMenu/hideMenu', null, { root: true })
+
+    let recoveredFromError = false
+    if (!validProject.valid) {
+      let shouldTrowError = true
+
+      // Provided scenario name is not available.
+      // Remove user-provided and notify user
+      if (validProject.errors.length === 1) {
+        const error = validProject.errors[0]
+        if (error.property === 'instance.settings.projectArea.scenarioName' && /is\snot\sone\sof\senum\svalues/.test(error.message)) {
+          loadedProject.settings.projectArea.scenarioName = null
+          shouldTrowError = false
+          recoveredFromError = true
+          dispatch(
+            'notifications/showWarning',
+            { message: this.app.i18n.t('error_scenario_name_reset'), duration: 0 },
+            { root: true },
+          )
+        }
+      }
+
+      if (shouldTrowError) {
+        log.error('Invalid project', validProject.errors)
+        throw new Error('Invalid project')
+      }
+    }
+
+    if (validProject.valid || recoveredFromError) {
       commit('import', loadedProject)
       dispatch('updateMeasuresRanking')
 
@@ -549,13 +577,6 @@ export const actions = {
           { root: true },
         )
       }
-    }
-
-    commit('appMenu/hideMenu', null, { root: true })
-
-    if (!validProject.valid) {
-      log.error('Invalid project', validProject.errors)
-      throw new Error('Invalid project')
     }
   },
   saveProject({ state, rootGetters, commit }) {
