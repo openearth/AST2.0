@@ -29,6 +29,7 @@
             <md-checkbox
               v-if="setting.multiple && !setting.isSelect"
               :value="!projectAreaSettings[setting.key][option.value]"
+              :disabled="loadingDefaultValueAreaSettings.includes(setting.key)"
               @change="value => updateProjectAreaSetting({
                 type: 'checkbox',
                 key: setting.key,
@@ -39,6 +40,7 @@
             <md-radio
               v-else
               :value="projectAreaSettings[setting.key] !== option.value"
+              :disabled="loadingDefaultValueAreaSettings.includes(setting.key)"
               required
               @change="value => updateProjectAreaSetting({
                 type: 'radio',
@@ -70,6 +72,7 @@
                 :id="setting.key"
                 :options="setting.options"
                 :value="projectAreaSettings[setting.key]"
+                :disabled="loadingDefaultValueAreaSettings.includes(setting.key)"
                 @change="value => updateProjectAreaSetting({
                   type: 'select',
                   key: setting.key,
@@ -121,6 +124,7 @@ export default {
       locale: state => state.i18n.locale,
       projectArea: state => state.project.settings.area,
       userViewedProjectSettings: state => state.project.settings.userViewedProjectSettings,
+      loadingDefaultValueAreaSettings: state => state['loading-default-value-area-settings'],
     }),
     ...mapGetters({
       projectAreaSettings: 'project/settingsProjectArea',

@@ -474,17 +474,18 @@ export const actions = {
       commit('setLayer', { id: layer.id, visible: false, showLegend: false, opacity: 1 })
     })
   },
-  setSmartDefaultsForProjectSettings({ state, rootState, dispatch }) {
+  setSmartDefaultsForProjectSettings({ commit, state, rootState, dispatch }) {
     const { properties, id,...area } = state.settings.area
 
     rootState.data.areaSettings
       .filter(({ defaultValueEndpoint }) => defaultValueEndpoint)
-      .forEach(setting => {
+      .forEach(async setting => {
         const { defaultValueEndpoint, key } = setting
         const payload = { ...defaultValueEndpoint, area }
-        getDefaultValueForProjectSetting(payload)
+        commit( 'loading-default-value-area-settings/isLoading', key, { root: true })
+        await getDefaultValueForProjectSetting(payload)
           .then(({ errors, value }) => {
-            if (errors) return
+            if (errors) throw errors
             const { isSelect, multiple } = setting
             let type;
 
@@ -499,10 +500,11 @@ export const actions = {
           .catch(error => {
             log.error(
               `Could not get default value for "${key}"`,
-              'payload:', payload,
+              { payload },
               error,
             )
           })
+          commit( 'loading-default-value-area-settings/isDoneLoading', key, { root: true })
       })
   },
   async updateProjectAreaSetting({ commit, getters, dispatch }, payload ) {

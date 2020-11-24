@@ -1,13 +1,10 @@
-const astColor = 'background: #008fc5; color: #fff; border-radius: 3px 0 0 3px;'
-
 function log(label, color1, color2) {
   return function ({ isGroup = false } = {}) {
     return function (...values) {
       const [title, ...vals] = values
       if (values.length > 1) {
         console.groupCollapsed(
-          `%c AST 2.0 %c ${label} %c ${title} `.replace(/\s{2,}/, ''),
-          astColor,
+          `%c ${label} %c ${title} `,
           color1,
           color2,
         )
@@ -19,35 +16,22 @@ function log(label, color1, color2) {
               console.log(value)
             }
           })
-          console.groupCollapsed(
-            '%c Trace: ',
-            'background: #263238; color: #eeffff; border-radius: 3px; font-weight: 400;',
-          )
-          console.trace()
-          console.groupEnd()
           console.groupEnd()
         }
       } else {
         if (isGroup) {
           console.groupCollapsed(
-            `%c AST 2.0 %c ${label} %c ${title} `.replace(/\s{2,}/, ''),
-            astColor,
+            `%c ${label} %c ${title} `,
             color1,
             color2,
           )
         } else {
           console.groupCollapsed(
-            `%c AST 2.0 %c ${label} %c ${title} `.replace(/\s{2,}/, ''),
-            astColor,
+            `%c ${label} %c ${title} `,
             color1,
             color2,
           )
-          console.groupCollapsed(
-            '%c Trace ',
-            'background: #263238; color: #eeffff; border-radius: 3px; font-weight: 400;',
-          )
           console.trace()
-          console.groupEnd()
           console.groupEnd()
         }
       }
