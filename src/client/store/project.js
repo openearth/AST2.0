@@ -551,6 +551,19 @@ export const actions = {
         }
       }
 
+      if (validProject.errors.length === 1) {
+        const error = validProject.errors[0]
+        if (/instance\.settings\.targets\.(climate|cost|waterquality)\srequires\sproperty/.test(error.stack)) {
+          shouldTrowError = false
+          recoveredFromError = true
+          log.warning(
+            'Loaded project kpi\'s did not match with server expectations',
+            'Result calculation is not reliable!',
+            { error },
+          )
+        }
+      }
+
       if (shouldTrowError) {
         log.error('Invalid project', validProject.errors)
         throw new Error('Invalid project')
