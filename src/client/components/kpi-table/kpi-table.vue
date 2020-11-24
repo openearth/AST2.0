@@ -1,5 +1,8 @@
 <template>
-  <md-tabs md-dynamic-height class="kpi-table">
+  <md-tabs
+    md-dynamic-height
+    class="kpi-table"
+  >
     <md-tab
       v-for="table in tables"
       :id="table.title"
@@ -23,8 +26,8 @@
             :key="index"
           >
             <md-table-cell
-              v-for="(value, index) in row"
-              :key="index"
+              v-for="(value, rowIndex) in row"
+              :key="rowIndex"
             >
               {{ value }}
             </md-table-cell>
@@ -36,16 +39,33 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters } from 'vuex';
 
 export default {
+  props: {
+    showTableCoBenefits: {
+      type: Boolean,
+      default: true,
+    },
+    showTableClimateAndCosts: {
+      type: Boolean,
+      default: true,
+    },
+  },
   computed: {
     ...mapGetters('project', ['tableClimateAndCosts', 'tableCoBenefits']),
     tables() {
-      return [
-        this.tableClimateAndCosts ? this.tableClimateAndCosts : [],
-        this.tableCoBenefits ? this.tableCoBenefits : [],
-      ]
+      const tables = []
+
+      if (this.tableClimateAndCosts && this.showTableClimateAndCosts) {
+        tables.push(this.tableClimateAndCosts)
+      }
+
+      if (this.tableCoBenefits && this.showTableCoBenefits) {
+        tables.push(this.tableCoBenefits)
+      }
+
+      return tables
     },
   },
 }

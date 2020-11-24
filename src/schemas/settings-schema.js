@@ -42,8 +42,8 @@ function addKpiProperty(obj, item) {
 }
 
 export default (areaSettings, kpiGroups) => ({
-    $id: "/settings-schema",
-    type: "object",
+    $id: '/settings-schema',
+    type: 'object',
     additionalProperties: false,
     required: ['area', 'general', 'projectArea', 'targets'],
     properties: {

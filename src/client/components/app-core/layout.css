@@ -28,7 +28,8 @@ button:hover {
   cursor: pointer;
 }
 
-.md-primary {
+.md-primary,
+.md-accent {
   z-index: 1;
 }
 

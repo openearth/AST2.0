@@ -2,22 +2,8 @@
   <md-card :style="`border-left-color: ${measure.color.hex}`" class="measure-card">
     <md-card-header>
       <md-card-header-text>
-        <div class="md-subheading measure-card__title">{{ measure.title }}</div>
-        <div class="md-caption measure-card__tags">
-          <md-chip v-if="measure.systemSuitability" class="md-body-2">
-            {{ measure.systemSuitability.toFixed(1) }}
-          </md-chip>
-          <md-chip
-            v-for="(score, index) in scoresWithImageProxy"
-            :key="index"
-            class="measure-card__tag">
-            <md-icon :md-src="score.icon.url" class="measure-card__icon" />
-          </md-chip>
-          <md-chip v-if="measure.featured === true" class="measure-card__tag">
-            <md-icon class="measure-card__icon">
-              star
-            </md-icon>
-          </md-chip>
+        <div class="md-subheading measure-card__title">
+          {{ measure.title }}
         </div>
       </md-card-header-text>
 
@@ -25,15 +11,47 @@
         <img
           :src="measure.image.url"
           class="md-image measure-card__img"
-          alt="">
+          alt=""
+        >
       </md-card-media>
     </md-card-header>
 
+    <md-card-content>
+      <div class="md-caption measure-card__tags">
+        <md-chip v-if="measure.systemSuitability" class="md-body-2">
+          {{ measure.systemSuitability.toFixed(1) }}
+          <md-tooltip md-direction="top">
+            {{ $t('tooltip_system_suitability') }}
+          </md-tooltip>
+        </md-chip>
+        <md-chip
+          v-for="(score, index) in scoresWithImageProxy"
+          :key="index"
+          class="measure-card__tag"
+        >
+          <md-icon :md-src="score.icon.url" class="measure-card__icon" />
+          <md-tooltip md-direction="top">
+            {{ inferScoreTooltip(score.key) }}
+          </md-tooltip>
+        </md-chip>
+        <md-chip v-if="measure.featured === true" class="measure-card__tag">
+          <md-icon class="measure-card__icon">
+            star
+          </md-icon>
+          <md-tooltip md-direction="top">
+            {{ $t('tooltip_featured_measure') }}
+          </md-tooltip>
+        </md-chip>
+      </div>
+    </md-card-content>
+
     <md-card-actions v-if="interactive">
-      <md-button :to="`/${$i18n.locale}/project/measures/${measure.slug}`" class="md-dense">{{ $t('learn_more') }}</md-button>
+      <md-button :to="`/${$i18n.locale}/project/measures/${measure.slug}`" class="md-dense">
+        {{ $t('learn_more') }}
+      </md-button>
       <md-button
         :disabled="measure.measureId === '0'"
-        class="md-raised md-primary md-dense"
+        class="md-accent md-raised md-dense"
         @click="chooseMeasure"
       >
         {{ $t('choose') }}
@@ -43,10 +61,7 @@
 </template>
 
 <script>
-import ResponsiveImage from '~/components/responsive-image'
-
 export default {
-  components: { ResponsiveImage },
   props: {
     measure: {
       type: Object,
@@ -83,6 +98,13 @@ export default {
       // TODO show add measure to selected area
       this.$emit('choose', this.measure.measureId)
     },
+    inferScoreTooltip(key) {
+      const tooltipKey = key
+        .split(/[\s_-]+/)
+        .map(word => word.toLowerCase())
+        .join('_')
+      return this.$t(`tooltip_${ tooltipKey }`)
+    },
   },
 }
 </script>
@@ -107,7 +129,6 @@ export default {
 }
 
 .measure-card__tags {
-  margin-top: var(--spacing-default);
   display: flex;
 }
 
@@ -132,5 +153,22 @@ export default {
 
 .measure-card__icon svg {
   max-width: 20px;
+}
+
+/* Vue Material Overrides */
+.measure-card .md-card-header {
+  padding: var(--spacing-half);
+}
+
+.measure-card .md-card-header .md-card-media {
+  margin-left: var(--spacing-half);
+}
+
+.measure-card .md-card-content {
+  padding: 0 var(--spacing-half);
+}
+
+.measure-card .md-chip {
+  transition: none !important;
 }
 </style>

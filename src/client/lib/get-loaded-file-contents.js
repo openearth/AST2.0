@@ -1,5 +1,5 @@
 export default function getLoadedFileContents(event) {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const [file] = event.target.files
     const reader = new FileReader()
 

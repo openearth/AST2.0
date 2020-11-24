@@ -1,9 +1,10 @@
 <template>
-  <div ref="map" class="map"/>
+  <div ref="map" class="map" />
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions } from 'vuex'
+import get from 'lodash/get'
 import projectAreaStyles from './project-area-styles'
 import areaStyles from './area-styles'
 import getData from '~/lib/get-data'
@@ -19,7 +20,6 @@ import MapEventBus, {
   SELECT,
   SEARCH,
   SEARCH_SUGGESTIONS,
-  FLY_TO,
   REPAINT,
   DELETE_LAYER,
 } from '../../lib/map-event-bus'
@@ -75,15 +75,23 @@ export default {
       type: Object,
       default: () => ({ lat: 0, lng: 0 }),
     },
-    wmsLayers: {
-      type: Array,
-      default: () => [],
-    },
     customLayers: {
       type: Array,
       default: () => [],
     },
-    mapLayers: {
+    layerList: {
+      type: Array,
+      default: () => [],
+    },
+    fitToBounds: {
+      type: Array,
+      default: () => [],
+    },
+    animate: {
+      type: Boolean,
+      default: true,
+    },
+    heatstressLayers: {
       type: Array,
       default: () => [],
     },
@@ -92,56 +100,90 @@ export default {
   data: () => ({
     map: undefined,
     draw: undefined,
+    oldHeatstressLayers: [], // Needed for recalculation and resetting the wmslayers for heatstress
   }),
 
   computed: {
     allMapLayers() {
-      const layers = [ ...this.wmsLayers, ...this.customLayers, ...this.mapLayers ]
+      const layers = [ ...this.customLayers, ...this.heatstressLayers, ...this.layerList ]
       return layers
     },
     hasProjectArea() {
-      return !!this.projectArea.properties
+      return !!get(this, 'projectArea.properties')
     },
     layerVisibility() {
       return this.allMapLayers.reduce((obj, layer) => {
-        obj[layer.id] = layer.visible
+        obj[`${layer.id}`] = layer.visible
         return obj
       }, {})
     },
     layerOpacity() {
       return this.allMapLayers.reduce((obj, layer) => {
-        obj[layer.id] = layer.opacity
+        obj[`${layer.id}`] = layer.opacity
         return obj
       }, {})
     },
   },
 
   watch: {
-    layerVisibility(newValue) {
+    layerVisibility() {
       this.renderWmsLayersVisibility()
     },
-    layerOpacity(newValue) {
+    layerOpacity() {
       this.renderWmsLayersOpacity()
     },
-    mode(mode) {
+    mode() {
       this.clearMap()
       this.$nextTick(this.fillMap)
-    },
-    wmsLayers() {
-      [...this.wmsLayers].reverse().forEach(this.addWmsLayer)
     },
     customLayers() {
       [...this.customLayers].reverse().forEach(this.addWmsLayer)
     },
-    mapLayers() {
-      [...this.mapLayers].reverse().forEach(this.addWmsLayer)
+    layerList() {
+      [...this.layerList].reverse().forEach(this.addWmsLayer)
+    },
+    fitToBounds() {
+      if (this.fitToBounds.length > 0) {
+        this.map.fitBounds(this.fitToBounds, { padding: 20, animate: this.animate })
+      }
+    },
+    heatstressLayers: {
+      deep: true,
+      handler(newLayers) {
+        const layers = [...newLayers].reverse().forEach(newLayer => {
+          if (!this.map.getLayer(`wms-layer-${newLayer.id}`)) {
+            this.addWmsLayer(newLayer, false)
+          }
+
+          if (newLayer.visible === true) {
+            this.showWmsLayer(newLayer.id)
+          } else {
+            this.hideWmsLayer(newLayer.id)
+          }
+          // Find the old layer with the same ID
+          const oldLayer = this.oldHeatstressLayers.find(
+            oldLayer => oldLayer.title === newLayer.title,
+          )
+
+          if (oldLayer && oldLayer.layerName !== newLayer.layerName) {
+            // if there is already an old layer with this id, remove it first
+            if (this.map.getLayer(`wms-layer-${oldLayer.id}`)) {
+              this.removeWmsLayer(oldLayer.id)
+            }
+          }
+        })
+        if (newLayers.length > 0 ) {
+          this.oldHeatstressLayers = newLayers
+        }
+        return layers
+      },
     },
   },
 
   async mounted() {
-    const mapZoom = this.mapZoom
     const { lat, lng } = this.mapCenter
-    const [mapboxgl, MapboxDraw, MapboxGeocoder, mapboxBaseStyle] = await Promise.all([import('mapbox-gl'), import('@mapbox/mapbox-gl-draw'), import('@mapbox/mapbox-gl-geocoder'), getData({ folder: 'mapbox-base-layer', slug: 'style' })])
+    const [mapboxgl, MapboxDraw, MapboxGeocoder, mapboxBaseStyle] = await Promise.all([import('mapbox-gl'), import('@mapbox/mapbox-gl-draw'),
+      import('@mapbox/mapbox-gl-geocoder'), getData({ folder: 'mapbox-base-layer', slug: 'style' })])
     const defaultStyles = [...new MapboxDraw().options.styles]
       .filter(style => /\.hot$/.test(style.id))
       .map(({ source, ...style }) => ({ ...style, id: style.id.replace('.hot', '') }))
@@ -158,7 +200,9 @@ export default {
         zoom: this.mapZoom,
         center: [lng, lat],
         showZoom: false,
+        preserveDrawingBuffer: true,
       })
+      window.map = this.map
       this.draw = new MapboxDraw({
         displayControlsDefault: false,
         userProperties: true,
@@ -178,8 +222,9 @@ export default {
       this.map.on('draw.update', event => this.$emit('update', event.features))
       this.map.on('draw.delete', event => this.$emit('delete', event.features))
       this.map.on('draw.selectionchange', event => this.$emit('selectionchange', event.features))
-      this.map.on('drag', event => this.$emit('move', { center: this.map.getCenter(), zoom: this.map.getZoom() }))
+      this.map.on('drag', () => this.$emit('move', { center: this.map.getCenter(), zoom: this.map.getZoom() }))
       this.map.on('draw.modechange', event => this.$emit('modechange', event.mode))
+      this.map.on('draw.render', () => this.$emit('render'))
 
       this.map.on('load', () => {
         this.allMapLayers.forEach(this.addWmsLayer)
@@ -190,11 +235,16 @@ export default {
         this.renderWmsLayersVisibility()
         this.renderWmsLayersOpacity()
         this.$emit('modechange', this.draw.getMode())
+        this.$nextTick(() => {
+          // We dispatch an custom event so that the iframe for the export-to-pdf
+          // functionality knows when mapbox has loaded
+          document.dispatchEvent(new CustomEvent('mapbox-loaded'))
+        })
       })
 
       MapEventBus.$on(UPDATE_FEATURE_PROPERTY, ({ featureId, key, value }) => {
         if (this.draw.get(featureId) !== undefined) {
-          const updatedFeature = this.draw.setFeatureProperty(featureId, key, value).get(featureId)
+          this.draw.setFeatureProperty(featureId, key, value).get(featureId)  // @REFACTOR :: Can this getter be removed?
         }
       })
 
@@ -202,15 +252,15 @@ export default {
         this.map.resize()
       })
 
-      MapEventBus.$on(SEARCH, (value) => {
+      MapEventBus.$on(SEARCH, value => {
         this.geoCoder.setInput(value).query(value)
       })
 
       MapEventBus.$on(REPOSITION, ({ center, zoom, instant = false }) => {
         if (instant) {
-          this.$nextTick(() => this.map.jumpTo({ center, zoom }))
+          this.$nextTick(() => this.map.jumpTo({ center, zoom, animate: this.animate }))
         } else {
-          this.$nextTick(() => this.map.flyTo({ center, zoom }))
+          this.$nextTick(() => this.map.flyTo({ center, zoom, animate: this.animate }))
         }
       })
 
@@ -219,7 +269,7 @@ export default {
         this.$nextTick(this.fillMap)
       })
 
-      MapEventBus.$on(MODE, (mode) => {
+      MapEventBus.$on(MODE, mode => {
         if (mode !== 'direct_select') {
           this.draw.changeMode(mode)
         }
@@ -239,14 +289,14 @@ export default {
       MapEventBus.$on(ZOOM_IN, () => this.map.zoomIn())
       MapEventBus.$on(ZOOM_OUT, () => this.map.zoomOut())
 
-      MapEventBus.$on(SELECT, (id) => {
+      MapEventBus.$on(SELECT, id => {
         this.selectFeature(id)
       })
 
       MapEventBus.$on(REPAINT, payload =>
         payload.length
           ? this.repaintFeatures(payload)
-          : this.repaintFeature(payload)
+          : this.repaintFeature(payload),
       )
     }
   },
@@ -259,23 +309,29 @@ export default {
     }),
     selectFeature(id) {
       if (id) {
-          const feature = this.draw.get(id)
-          if (feature.geometry.type === 'Point') {
-            this.draw.changeMode('simple_select', { featureIds: [id] })
-            this.$emit('selectionchange', [feature])
-          } else {
-            this.draw.changeMode('direct_select', { featureId: id })
-          }
+        const feature = this.draw.get(id)
+        if (feature.geometry.type === 'Point') {
+          this.draw.changeMode('simple_select', { featureIds: [id] })
+          this.$emit('selectionchange', [feature])
+        } else {
+          this.draw.changeMode('direct_select', { featureId: id })
         }
+      }
     },
     clearMap() {
-      this.map.getLayer('projectArea-line') && this.map.removeLayer('projectArea-line')
-      this.map.getSource('projectArea-line') && this.map.removeSource('projectArea-line')
+      try {
+      this.map.getLayer('-projectArea-line') && this.map.removeLayer('-projectArea-line')
+      this.map.getSource('-projectArea-line') && this.map.removeSource('-projectArea-line')
       this.draw.deleteAll()
       this.areas.forEach(area => {
-        this.map.getLayer(`${area.properties.name}-line`) && this.map.removeLayer(`${area.properties.name}-line`)
-        this.map.getSource(`${area.properties.name}-line`) && this.map.removeSource(`${area.properties.name}-line`)
+        this.map.getLayer(`${area.properties.name}-${area.id}-line`) && this.map.removeLayer(`${area.properties.name}-${area.id}-line`)
+        this.map.getSource(`${area.properties.name}-${area.id}-line`) && this.map.removeSource(`${area.properties.name}-${area.id}-line`)
+        this.map.getLayer(`${area.properties.name}-${area.id}-point`) && this.map.removeLayer(`${area.properties.name}-${area.id}-point`)
+        this.map.getSource(`${area.properties.name}-${area.id}-point`) && this.map.removeSource(`${area.properties.name}-${area.id}-point`)
       })
+      } catch (err) {
+        console.log(err)
+      }
     },
     fillMap() {
       if (this.interactive === false || this.addOnly === true) {
@@ -293,96 +349,112 @@ export default {
       }
     },
     addGeojsonLayer({ properties = {}, type, geometry, id }) {
-      const color = id === 'projectArea'
-        ? projectAreaStyles[0].paint['fill-color']
-        : properties.color
+      const color =
+        id === 'projectArea'
+          ? projectAreaStyles[0].paint['fill-color']
+          : properties.color
 
-      const lineDetails = {
-        id: `${properties.name || id}-line`,
-        type: 'line',
-        paint: {
-          'line-color': color || '#088',
-          'line-width': id === 'projectArea' ? 5 : 3,
-        },
-      }
-      const fillDetails = {
-        id: `${properties.name || id}-fill`,
-        type: 'fill',
-        paint: {
-          'fill-color': color || '#088',
-          'fill-opacity': id === 'projectArea' ? 0 : 0.1,
-        },
-      }
+      const lineDetails = geometry.type === 'Polygon' || geometry.type === 'LineString'
+        ? {
+            id: `${properties.name || ''}-${id}-line`,
+            type: 'line',
+            paint: {
+              'line-color': color || '#088',
+              'line-width': id === 'projectArea' ? 5 : 3,
+            },
+          }
+        : {}
+
+      const pointDetails = geometry.type === 'Point'
+        ? {
+            id: `${properties.name || ''}-${id}-point`,
+            type: 'circle',
+            paint: {
+              'circle-radius': 5,
+              'circle-color': color || '#088',
+            },
+          }
+        : {}
+
       const baseObj = {
-        'source': {
-          'type': 'geojson',
-          'data': {
-            'type': type,
-            'geometry': {
-              'type': geometry.type,
-              'coordinates': geometry.coordinates,
+        source: {
+          type: 'geojson',
+          data: {
+            type: type,
+            geometry: {
+              type: geometry.type,
+              coordinates: geometry.coordinates,
             },
           },
         },
-        'layout': {},
+        layout: {},
       }
-      const line = Object.assign({}, baseObj, lineDetails)
+      const line = Object.assign({}, baseObj, lineDetails, pointDetails)
       // const fill = Object.assign({}, baseObj, fillDetails)
       // this.map.addLayer(fill)
-      this.map.addLayer(line)
+      const layer = this.map.getLayer(line.id)
+      if (!layer) {
+        this.map.addLayer(line)
+      }
     },
     removeWmsLayer(id) {
       const layer = this.map.getLayer(`wms-layer-${id}`)
       if (layer) {
         this.map.removeLayer(`wms-layer-${id}`)
+        this.map.removeSource(`wms-layer-${id}`)
       }
     },
-    addWmsLayer({ layerType: type, id, url, tilesize: tileSize, title, visible }) {
+    addWmsLayer({ layerType: type, id, url, tilesize: tileSize, title, visible }, prependLayer=true) {
       if (!this.map) return
 
-      let layers;
       try {
-        const style = this.map.getStyle()
-        layers = style.layers
+        this.map.getStyle().layers
       } catch (err) {
-        log.warning(`Map styles are not loaded yet. Ignore adding layer ${title}`, err)
+        log.warning(
+          `Map styles are not loaded yet. Ignore adding layer ${title}`,
+          err,
+        )
         return
       }
 
       if (!this.map.getLayer(`wms-layer-${id}`)) {
         const source = { type, tileSize }
-        if  (url === 'mapbox://mapbox.satellite') {
+        if (url === 'mapbox://mapbox.satellite') {
           source.url = url
         } else {
-          source.tiles = [ url ]
+          source.tiles = [url]
         }
         try {
           const layers = this.map.getStyle().layers
-          const lastWmsLayerIndex = layers
-            .filter(layer => /wms-layer-/.test(layer.id))
-            .map(layer => layers.indexOf(layer))
+          let lastWmsLayerIndex = layers
+          .filter(layer => /wms-layer-/.test(layer.id))
+          if (prependLayer) {
+            lastWmsLayerIndex = lastWmsLayerIndex.reverse()
+          }
+          lastWmsLayerIndex = lastWmsLayerIndex.map(layer => layers.indexOf(layer))
             .reduce((_, item) => item, undefined)
 
           const lastWmsLayerId = layers[lastWmsLayerIndex]
             ? layers[lastWmsLayerIndex].id
             : undefined
-
-          this.map.addLayer({
-            id: `wms-layer-${id}`,
-            type,
-            source,
-            layout: {
-              visibility: visible ? 'visible' : 'none',
-            },
+          this.map.addLayer(
+            {
+              id: `wms-layer-${id}`,
+              type,
+              source,
+              layout: {
+                visibility: visible ? 'visible' : 'none',
+              },
             paint: {},
           }, lastWmsLayerId)
         } catch (err) {
-          this.showError({ message: `Could not load WMS Layer: ${title}`, duration: 0 })
-          log.error(
-            `Could not load WMS Layer: ${title}`,
-            err,
-            { layer: { type, id, url, tileSize, title, visible } }
-          )
+          this.showError({
+            message: `Could not load WMS Layer: ${title}`,
+            duration: 0,
+          })
+          log.error(`Could not load WMS Layer: ${title}`, err, {
+            layer: { type, id, url, tileSize, title, visible },
+          })
         }
       }
     },
@@ -416,17 +488,17 @@ export default {
     },
     showWmsLayer(id) {
       if (this.map && this.map.getLayer(`wms-layer-${id}`)) {
-        this.map.setLayoutProperty(`wms-layer-${id}`, 'visibility', 'visible');
+        this.map.setLayoutProperty(`wms-layer-${id}`, 'visibility', 'visible')
       }
     },
     hideWmsLayer(id) {
       if (this.map && this.map.getLayer(`wms-layer-${id}`)) {
-        this.map.setLayoutProperty(`wms-layer-${id}`, 'visibility', 'none');
+        this.map.setLayoutProperty(`wms-layer-${id}`, 'visibility', 'none')
       }
     },
     wmsLayerOpacity(id, value) {
       if (this.map && this.map.getLayer(`wms-layer-${id}`)) {
-        this.map.setPaintProperty(`wms-layer-${id}`, 'raster-opacity', value);
+        this.map.setPaintProperty(`wms-layer-${id}`, 'raster-opacity', value)
       }
     },
   },

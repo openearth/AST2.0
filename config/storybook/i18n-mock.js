@@ -1,6 +1,6 @@
 import VueI18n from 'vue-i18n'
 
-export const mockLocales = (locales) => {
+export const mockLocales = locales => {
   return locales.map(locale => ({
     code: locale,
     iso: locale,

@@ -1,6 +1,3 @@
-const keys = ['default', 'satellite']
-const labels = ['Default', 'Satellite']
-
 export default {
   $id: '/map-schema',
   type: 'object',
@@ -16,7 +13,7 @@ export default {
       },
     },
     zoom: { type: 'number' },
-    wmsLayers: {
+    layers: {
       type: 'array',
       items: {
         type: 'object',
@@ -30,20 +27,10 @@ export default {
         },
       },
     },
-    mapLayers: {
-      type: 'array',
-      items: {
-        type: 'object',
-        additionalProperties: false,
-        required: ['id', 'showLegend', 'visible', 'opacity'],
-        properties: {
-          id: { type: 'string' },
-          showLegend: { type: 'boolean' },
-          visible: { type: 'boolean' },
-          opacity: { type: 'number' },
-        },
-      },
-    },
+
+    wmsLayers: { type: 'array' }, // Leave in for backwards compatibility reasons
+    mapLayers: { type: 'array' }, // Leave in for backwards compatibility reasons
+
     customLayers: {
       type: 'array',
       items: {
@@ -61,6 +48,27 @@ export default {
           url: { type: 'string' },
           visible: { type: 'boolean' },
           opacity: { type: 'number' },
+        },
+      },
+    },
+    // Leave in for backwards compatibility reasons
+    heatstressLayers: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['id', 'showLegend', 'visible', 'opacity'],
+        properties: {
+          id: { type: 'string' },
+          layerType: { type: 'string' },
+          tilesize: { type: 'number' },
+          title: { type: 'string' },
+          layerName: { type: 'string' },
+          url: { type: 'string' },
+          visible: { type: 'boolean' },
+          legendUrl: { type: 'string' },
+          opacity: { type: 'number' },
+          showLegend: { type: 'boolean' },
         },
       },
     },

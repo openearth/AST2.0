@@ -1,45 +1,53 @@
 <template>
   <div class="page-index">
-    <h2 class="md-headline">{{ $t('welcome') }}</h2>
-    <p class="md-body-1 page-index__intro">{{ $t('welcome_intro') }}</p>
+    <h2 class="md-headline">
+      {{ $t('welcome') }}
+    </h2>
+    <p class="md-body-1 page-index__intro">
+      {{ $t('welcome_intro') }}
+    </p>
 
     <div class="page-index__actions">
       <md-button
         :to="`/${locale}/new-project/`"
         :disabled="!acceptedLegal"
-        class="md-raised md-primary">
+        class="md-accent md-raised"
+      >
         {{ $t('start_new_project') }}
       </md-button>
       <div class="page-index__divider" />
       <div class="page-index__import-button-wrapper">
         <md-button
           :disabled="!acceptedLegal"
-          class="md-raised md-primary">
+          class="md-accent md-raised"
+        >
           {{ $t('import_exisiting_project') }}
         </md-button>
         <input
           class="page-index__input-file"
           type="file"
           accept="application/json"
-          @change="onFileInput">
+          @change="onFileInput"
+        >
       </div>
 
       <div class="page-index__docs-button-wrapper">
         <md-button
           :to="`/${$i18n.locale}/documentation/`"
           :disabled="!acceptedLegal"
-          class="md-raised page-index__docs-button">
+          class="md-raised page-index__docs-button"
+        >
           {{ $t('documentation') }}
         </md-button>
       </div>
-
     </div>
   </div>
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
-import MapEventBus, { REDRAW } from "../lib/map-event-bus"
+import { mapState, mapGetters, mapActions } from 'vuex';
+import MapEventBus, { REDRAW } from '../lib/map-event-bus'
+import log from '../lib/log'
 
 export default {
   middleware: ['state-is-modal'],
@@ -58,7 +66,12 @@ export default {
     async onFileInput(event) {
       this.importProject(event)
         .then(() => this.$router.push(this.currentFilledInLevel.uri))
-        .catch(error => this.showError({ message: this.$i18n.t('could_not_load_file') }))
+        .catch(error => {
+          if (error.name !== 'NavigationDuplicated') {
+            log.error('Could not load file', error);
+            this.showError({ message: this.$i18n.t('could_not_load_file') })
+          }
+        })
     },
   },
 }
@@ -116,6 +129,10 @@ export default {
   width: 100%;
   margin-right: 0;
   margin-left: 0;
+}
+
+.page-index__action-btn {
+  background-color: var(--success-color) !important;
 }
 
 @supports (display: grid) {

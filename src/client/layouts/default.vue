@@ -1,10 +1,12 @@
+
 <template>
   <div ref="base" class="layout">
     <app-header
       :title="title"
       :legal-accepted="legalAccepted"
       :project-title="projectTitle"
-      @onShowNavigation="showMenu"/>
+      @on-show-navigation="showMenu"
+    />
     <app-menu
       :show-navigation="showNavigation"
       :title="title"
@@ -12,21 +14,23 @@
       :created-project-area="createdProjectArea"
       :filled-in-required-settings="filledInRequiredProjectAreaSettings"
       :has-areas="!!areas.length"
-      @onCloseNavigation="hideMenu"
-      @saveProject="saveProject"
-      @importProject="onFileInput"
-      @newProject="onNewProject"
-      @exportProject="() => {showExport(); hideMenu();}"/>
+      @on-close-navigation="hideMenu"
+      @save-project="saveProject"
+      @import-project="onFileInput"
+      @new-project="onNewProject"
+      @export-project="() => {showExport(); hideMenu();}"
+    />
 
     <div class="layout__content">
       <div v-if="mode === 'modal'" class="layout__page-wrapper">
         <md-content class="md-elevation-6">
-          <nuxt class="layout__page"/>
+          <nuxt class="layout__page" />
         </md-content>
       </div>
       <nuxt v-else />
       <md-content class="layout__map-wrapper">
         <map-viewer
+          v-if="displayMap"
           :project-area="projectArea"
           :is-project="isProject"
           :areas="areas"
@@ -39,44 +43,92 @@
           :map-center="center"
           :map-zoom="zoom"
           :current-mode="mapMode"
-          :wms-layers="wmsLayers"
           :custom-layers="customLayers"
-          :map-layers="mapLayers"
+          :layer-list="layerList"
+          :heatstress-layers="heatstressLayers"
           :mode="mode"
+          :animate="true"
           class="layout__map"
           @create="onCreateArea"
           @update="updateArea"
           @delete="deleteArea"
           @selectionchange="selectionChange"
-          @move="setMapPosition"/>
-        <kpi-panel
+          @move="setMapPosition"
+        />
+        <app-results-panel
           v-if="filledInSettings"
-          :kpis="filteredKpiGroups"
-          :kpi-values="filteredKpiValues"
-          :kpi-percentage-values="filteredKpiPercentageValues"
-          :selected-areas="selectedAreas && selectedAreas[0]"/>
+          :buttons="sidePanelTabButtons"
+          default-active="numbers"
+        >
+          <template slot-scope="scope">
+            <kpi-panel
+              v-if="scope.active === 'bars' || scope.active === 'numbers'"
+              :display-type="scope.active"
+              :kpis="filteredKpiGroups"
+              :kpi-values="filteredKpiValues"
+              :kpi-percentage-values="filteredKpiPercentageValues"
+              :selected-areas="selectedAreas && selectedAreas[0]"
+            />
+            <app-results-rivm
+              v-if="scope.active === 'rivm'"
+              :data="rivmCoBenefits"
+              :dato-content="kbsResultContent"
+              @fetch-data="fetchRivmCoBenefits"
+            />
+            <app-results-heatstress
+              v-if="scope.active === 'heatstress'"
+              :heatstress-results="heatstressResults"
+              :heatstress-layers="heatstressLayers"
+              :areas="areas"
+              :dato-content="kbsResultContent"
+              @fetch-data="fetchHeatstressData"
+            />
+          </template>
+        </app-results-panel>
       </md-content>
     </div>
 
-    <virtual-keyboard class="layout__virtual-keyboard"/>
+    <virtual-keyboard class="layout__virtual-keyboard" />
 
     <md-dialog :md-active="exportShown">
       <md-dialog-title>{{ $t('export_project') }}</md-dialog-title>
 
       <md-dialog-content>
-        <p class="md-body">{{ $t('export_description') }}</p>
+        <p class="md-body">
+          {{ $t('export_description') }}
+        </p>
         <md-field>
           <label for="movie">{{ $t('format') }}</label>
           <md-select @input="value => { hideExport(); exportProject(value) }">
-            <md-option value="csv">{{ $t('csv') }}</md-option>
-            <md-option value="geojson">{{ $t('geojson') }}</md-option>
+            <md-option value="csv">
+              {{ $t('csv') }}
+            </md-option>
+            <md-option value="geojson">
+              {{ $t('geojson') }}
+            </md-option>
+            <md-option value="pdf">
+              {{ $t('pdf') }}
+            </md-option>
           </md-select>
         </md-field>
       </md-dialog-content>
 
       <md-dialog-actions>
-        <md-button class="md-primary" @click="hideExport">Close</md-button>
+        <md-button class="md-accent" @click="hideExport">
+          Close
+        </md-button>
       </md-dialog-actions>
+    </md-dialog>
+
+    <md-dialog :md-active="pdfExportShown">
+      <md-dialog-title>{{ $t('pdf_export') }}</md-dialog-title>
+      <md-dialog-content>
+        {{ $t('pdf_is_exporting') }}
+        <md-progress-bar
+          :md-value="pdfProgress"
+          md-mode="determinate"
+        />
+      </md-dialog-content>
     </md-dialog>
 
     <transition name="slide-up">
@@ -84,7 +136,8 @@
         v-if="!legalAccepted"
         :disclaimer="disclaimer"
         class="layout__disclaimer"
-        @accepted="acceptLegal"/>
+        @accepted="acceptLegal"
+      />
     </transition>
 
     <notification-area
@@ -94,35 +147,50 @@
 
     <!-- portal for general popup -->
     <portal-target name="popup-portal" />
+
+    <project-area-size-threshold :is-below-threshold="projectAreaSizeIsBelowThreshold" />
+
+    <scenario-overview
+      v-if="scenariosShown"
+      :value="projectAreaSettings['scenarioName']"
+      :scenarios="scenariosInActiveWorkspace"
+      @choose-scenario="value => updateProjectAreaSetting({ type: 'select', key: 'scenarioName', value })"
+    />
   </div>
 </template>
 
 <script>
-import { mapState, mapMutations, mapGetters, mapActions } from "vuex";
-import { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea } from '../components'
-import { mapFields } from 'vuex-map-fields';
+import { mapState, mapMutations, mapGetters, mapActions } from 'vuex'
+import AppDisclaimer from '../components/app-disclaimer'
+import AppHeader from '../components/app-header'
+import MapViewer from '../components/map-viewer'
+import KpiPanel from '../components/kpi-panel'
+import VirtualKeyboard from '../components/virtual-keyboard'
+import AppMenu from '../components/app-menu'
+import NotificationArea from '../components/notification-area'
+import AppResultsPanel from '../components/app-results-panel'
+import AppResultsRivm from '../components/app-results-rivm'
+import AppResultsHeatstress from '../components/app-results-heatstress'
+import ProjectAreaSizeThreshold from '../components/project-area-size-threshold'
+import ScenarioOverview from '@/components/scenario-overview'
 import getData from '~/lib/get-data'
-import EventBus, { CLICK } from "~/lib/event-bus";
+import EventBus, { CLICK } from '~/lib/event-bus'
+import log from '~/lib/log'
 
 export default {
-  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea },
+  components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea, ProjectAreaSizeThreshold, AppResultsPanel, AppResultsRivm, AppResultsHeatstress, ScenarioOverview },
   data() {
     return {
       disclaimer: {},
-    }
-  },
-  head() {
-    return {
-      meta: [
-        { hid: 'description', name: 'description', content: this.$i18n.t('app_description') },
-      ],
-      title: this.title,
+      pdfProgress: undefined,
+      kbsResultContent: {},
     }
   },
 
   computed: {
     ...mapState({
       devMode: state => state.devMode,
+      displayMap: state => state.project.displayMap,
       map: state => state.project.map,
       projectArea: state => state.project.settings.area,
       legalAccepted: state => state.project.legalAccepted,
@@ -134,26 +202,55 @@ export default {
       notifications: state => state.notifications.messages,
       mode: state => state.mode.state,
       exportShown: state => state.flow.export,
+      pdfExportShown: state => state.flow.pdfExport,
+      scenariosShown: state => state.flow.scenarios,
       inSetMeasureFlow: state => state.setMeasureFlow.inFlow,
       userIsRefreshing: state => state.user.isRefreshing,
+      rivmCoBenefits: state => state.project.rivmCoBenefits,
+      heatstressResults: state => state.project.heatstressResults,
     }),
-    ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'wmsLayers', 'customLayers', 'mapLayers']),
-    ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings']),
-    ...mapGetters({ selectedAreas:  'selectedAreas/features' }),
+    ...mapGetters('project', ['filteredKpiValues', 'filteredKpiPercentageValues', 'filteredKpiGroups', 'areas', 'customLayers','layers', 'heatstressLayers']),
+    ...mapGetters('flow', ['acceptedLegal', 'createdProjectArea', 'filledInRequiredProjectAreaSettings', 'currentFilledInLevel', 'filledInSettings', 'projectAreaSizeIsBelowThreshold']),
+    ...mapGetters({
+      selectedAreas:  'selectedAreas/features',
+      projectAreaSettings: 'project/settingsProjectArea',
+      scenariosInActiveWorkspace: 'data/workspaces/scenariosInActiveWorkspace',
+    }),
     ...mapGetters('map', ['isProject', 'point', 'line', 'polygon', 'addOnly', 'interactive', 'search']),
     ...mapGetters('user', ['isLoggedIn']),
     ...mapGetters('data/appConfig', ['title']),
+    ...mapGetters('data/workspaces', ['activeWorkspace']),
+    layerList() {
+      return [...this.customLayers, ...this.layers]
+    },
+    sidePanelTabButtons() {
+      return [
+        { id: 'numbers', icon: 'format_list_numbered' },
+        { id: 'bars', icon: 'insert_chart' },
+        ( this.activeWorkspace.showRivmCoBenefits && { id: 'rivm', icon: 'eco', color: '--nature-green-color' } ),
+        ( this.activeWorkspace.showHeatstress && { id: 'heatstress', icon: 'wb_sunny', color: '--yellow-color' } ),
+      ]
+    },
   },
 
   watch: {
     userIsRefreshing() {
       window.removeEventListener('beforeunload', this.beforeUnload)
     },
+    pdfExportShown(isShown) {
+      if (isShown === false) {
+        this.pdfProgress = undefined
+      }
+    },
   },
   async beforeMount() {
     const locale = this.$i18n.locale
-    const data =  await getData({ locale, slug: 'legal' })
-    this.disclaimer = { ...data.legal.disclaimer }
+    const [ { kbsResult }, { legal } ] = await Promise.all([
+      getData({ locale, slug: 'kbs-results' }),
+      getData({ locale, slug: 'legal' }),
+    ])
+    this.kbsResultContent = { ...kbsResult }
+    this.disclaimer = { ...legal.disclaimer }
   },
 
   mounted() {
@@ -162,6 +259,22 @@ export default {
     if (this.devMode === false) {
       window.addEventListener('beforeunload', this.beforeUnload)
     }
+
+    document.addEventListener('pdf-export-progress', event => {
+      this.pdfProgress = event.detail.percentage
+    })
+
+    window.addEventListener('keydown', event => {
+      if (event.key === 'o' && event.metaKey) {
+        event.preventDefault()
+        document.querySelector('#open-project').click()
+      }
+
+      if (event.key === 'e' && event.metaKey) {
+        event.preventDefault()
+        document.querySelector('#export-project').click()
+      }
+    })
   },
 
   beforeDestroy() {
@@ -176,6 +289,8 @@ export default {
       hideMenu: 'appMenu/hideMenu',
       showExport: 'flow/showExport',
       hideExport: 'flow/hideExport',
+      showPdfExport: 'flow/showPdfExport',
+      hidePdfExport: 'flow/hidePdfExport',
       removeNotification: 'notifications/remove',
     }),
     ...mapActions({
@@ -190,11 +305,27 @@ export default {
       clearState: 'project/clearState',
       exportProject: 'project/exportProject',
       connectMeasureToArea: 'setMeasureFlow/connectMeasureToArea',
+      fetchRivmCoBenefits: 'project/fetchRivmCoBenefits',
+      fetchHeatstressData: 'project/fetchHeatstressData',
+      updateProjectAreaSetting: 'project/updateProjectAreaSetting',
     }),
     async onFileInput(event) {
       this.importProject(event)
-        .then(() => this.$router.push(this.currentFilledInLevel.uri))
-        .catch(error => this.showError({ message: this.$i18n.t('could_not_load_file') }))
+        .then(() =>
+          this.$router.push(this.currentFilledInLevel.uri)
+            .catch(error => {
+              if (/Avoided redundant navigation/.test(error.message)) {
+                return
+              }
+              throw new Error(error)
+            }),
+        )
+        .catch(error => {
+          if (error.name !== 'NavigationDuplicated') {
+            log.error('Could not load file', error)
+            this.showError({ message: this.$i18n.t('could_not_load_file') })
+          }
+        })
     },
     onNewProject() {
       if (this.projectArea.id || this.areas.length) {
@@ -209,24 +340,32 @@ export default {
       }
 
       this.hideMenu()
-      this.$router.push(`/${this.$i18n.locale}/new-project`).catch(err => {})
+      this.$router.push(`/${this.$i18n.locale}/new-project`).catch(() => {})
     },
     onCreateArea(features) {
-      this.createArea(features)
-        .then(() => {
-          if (this.inSetMeasureFlow) {
-            this.connectMeasureToArea(features)
-          }
-        })
+      this.createArea(features).then(() => {
+        if (this.inSetMeasureFlow) {
+          this.connectMeasureToArea(features)
+        }
+      })
     },
     dispatchClickEvent(event) {
       EventBus.$emit(CLICK, event)
     },
     beforeUnload(e) {
-      const message = "You may have unsaved changes"
+      const message = 'You may have unsaved changes'
       e.returnValue = message
       return message
     },
+  },
+
+  head() {
+    return {
+      meta: [
+        { hid: 'description', name: 'description', content: this.$i18n.t('app_description') },
+      ],
+      title: this.title,
+    }
   },
 }
 </script>

@@ -26,11 +26,15 @@ export const actions = {
     idsToAdd.forEach(id => commit('addAreaId', id))
 
     if (features.length && !features.find(({ id }) => id === area.id)) {
-      this.$router.push({ path: `/${rootState.i18n.locale}/project/areas/` }).catch(err => {})
+      this.$router.push({ path: `/${rootState.i18n.locale}/project/areas/` }).catch(() => {})
     }
 
-    if (!features.length && !rootGetters['flow/isNewProjectView']) {
-      this.$router.push({ path: `/${rootState.i18n.locale}/project/` }).catch(err => {})
+    // Checking when ON the 'new project' view, but also when routing away from it,
+    // in which case the view might already be passed on to the 'settings' route
+    const isOnOrRoutingFromNewProjectView = rootGetters['flow/isNewProjectView'] || rootGetters['flow/isSettingsView']
+
+    if (!features.length && !isOnOrRoutingFromNewProjectView) {
+      this.$router.push({ path: `/${rootState.i18n.locale}/project/` }).catch(() => {})
     }
   },
 }

@@ -1,0 +1,27 @@
+query ($locale: SiteLocale, $first: IntType, $skip: IntType = 0) {
+  scenarios: allScenarios(locale: $locale, first: $first, skip: $skip) {
+    title
+    value
+    example {
+      ... on TextSectionRecord {
+        text,
+      },
+      ... on ImageRecord {
+        title,
+        image {
+          url,
+          title,
+          alt,
+          height,
+          width,
+          format,
+          size,
+          id
+        }
+      }
+    }
+  }
+  _allScenariosMeta {
+    count
+  }
+}

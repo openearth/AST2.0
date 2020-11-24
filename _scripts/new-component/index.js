@@ -82,6 +82,6 @@ readFile(path.join(__dirname, `${componentsFolder}/index.js`), 'utf8')
     .sort()
     .filter(line => line !== '')
     .concat('')
-    .join('\n')
+    .join('\n'),
   )
   .then(contents => writeFile(path.join(__dirname, `${componentsFolder}/index.js`), contents))

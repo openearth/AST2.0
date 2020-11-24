@@ -4,7 +4,9 @@ query ($locale: SiteLocale, $first: IntType, $skip: IntType = 0) {
     workspaceInclude,
     slug,
     measureId,
-    scenarioNames,
+    scenarios {
+      value
+    },
     canDrawPolygon,
     canDrawPolyline,
     canDrawPoint,
@@ -45,7 +47,8 @@ query ($locale: SiteLocale, $first: IntType, $skip: IntType = 0) {
       key: title,
       value,
       min,
-      max
+      max,
+      show
     }
   }
   _allMeasuresMeta {

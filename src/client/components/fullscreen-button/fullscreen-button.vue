@@ -6,9 +6,15 @@
   >
     <md-icon>{{ isFullscreen ? 'fullscreen_exit' : 'fullscreen ' }}</md-icon>
     <md-tooltip md-direction="bottom">
-      <template v-if="!supportsFullscreen">{{ $t('fullscreen_not_supported') }}</template>
-      <template v-else-if="isFullscreen">{{ $t('fullscreen_close') }}</template>
-      <template v-else>{{ $t('fullscreen_open') }}</template>
+      <template v-if="!supportsFullscreen">
+        {{ $t('fullscreen_not_supported') }}
+      </template>
+      <template v-else-if="isFullscreen">
+        {{ $t('fullscreen_close') }}
+      </template>
+      <template v-else>
+        {{ $t('fullscreen_open') }}
+      </template>
     </md-tooltip>
   </md-button>
 </template>

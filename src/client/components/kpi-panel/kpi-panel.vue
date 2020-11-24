@@ -1,24 +1,5 @@
 <template>
   <section :class="{ 'kpi-panel__has-footer': hasFooter }" class="kpi-panel">
-    <div class="kpi-panel__header">
-      <h4 class="md-title">{{ $t('results') }}</h4>
-
-      <div>
-        <md-button
-          :class="{'md-primary': displayType === 'numbers'}"
-          class="md-icon-button"
-          @click="displayType = 'numbers'">
-          <md-icon>format_list_numbered</md-icon>
-        </md-button>
-
-        <md-button
-          :class="{'md-primary': displayType === 'bars'}"
-          class="md-icon-button"
-          @click="displayType = 'bars'">
-          <md-icon>insert_chart</md-icon>
-        </md-button>
-      </div>
-    </div>
     <div class="kpi-panel__content">
       <kpi-group
         v-for="kpiGroup in kpis"
@@ -28,11 +9,14 @@
         :kpi-values="kpiValues"
         :kpi-percentage-values="kpiPercentageValues"
         :selected-areas="selectedAreas"
-        class="kpi-panel__kpi-group" />
+        class="kpi-panel__kpi-group"
+      />
     </div>
 
     <footer v-if="hasFooter" class="kpi-panel__footer">
-      <md-button class="md-raised" @click="togglePopup(true)">{{ $t('view_as_table') }}</md-button>
+      <md-button class="md-raised" @click="togglePopup(true)">
+        {{ $t('view_as_table') }}
+      </md-button>
       <app-popup
         v-if="openState"
         :title="$t('results')"
@@ -40,13 +24,12 @@
       >
         <kpi-table />
       </app-popup>
-
     </footer>
   </section>
 </template>
 
 <script>
-import { mapGetters, mapMutations } from "vuex"
+import { mapGetters, mapMutations } from 'vuex'
 import { KpiGroup, AppPopup } from '~/components'
 import KpiTable from '~/components/kpi-table'
 
@@ -70,11 +53,11 @@ export default {
       required: false,
       default: () => {},
     },
-  },
-  data() {
-    return {
-      displayType: 'bars',
-    }
+    displayType: {
+      type: String,
+      required: true,
+      validator: value => /numbers|bars/.test(value),
+    },
   },
   computed: {
     ...mapGetters('popup', ['openState']),
@@ -95,13 +78,6 @@ export default {
 </script>
 
 <style>
-.kpi-panel {
-  position: relative;
-  width: var(--width-medium);
-  padding: var(--spacing-default);
-  overflow-y: auto;
-}
-
 .kpi-panel__has-footer {
   display: flex;
   flex-direction: column;

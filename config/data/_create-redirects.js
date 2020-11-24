@@ -16,5 +16,5 @@ pipe(
   get(['redirects']),
   map(redirectToLine),
   join('\n'),
-  writeFile(targetFile)
+  writeFile(targetFile),
 )(sourceFile)

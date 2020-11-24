@@ -1,5 +1,3 @@
-import getData from "../lib/get-data";
-
 const ItemsWithoutUnderscore = x => !/_/.test(x)
 
 export default async function ({ store }) {
@@ -36,5 +34,12 @@ export default async function ({ store }) {
 
   if (!store.state.data.appConfig.title) {
     store.dispatch('data/appConfig/getAppConfig')
+  }
+
+  if (!store.state.data.scenarios.length) {
+    store.dispatch('data/scenarios/getScenarios', store.state.i18n.locale)
+  }
+  if (!store.state.data.tags.length) {
+    store.dispatch('data/tags/getTags', store.state.i18n.locale)
   }
 }

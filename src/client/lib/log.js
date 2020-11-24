@@ -21,7 +21,7 @@ function log(label, color1, color2) {
           })
           console.groupCollapsed(
             '%c Trace: ',
-            'background: #263238; color: #eeffff; border-radius: 3px; font-weight: 400;'
+            'background: #263238; color: #eeffff; border-radius: 3px; font-weight: 400;',
           )
           console.trace()
           console.groupEnd()
@@ -44,7 +44,7 @@ function log(label, color1, color2) {
           )
           console.groupCollapsed(
             '%c Trace ',
-            'background: #263238; color: #eeffff; border-radius: 3px; font-weight: 400;'
+            'background: #263238; color: #eeffff; border-radius: 3px; font-weight: 400;',
           )
           console.trace()
           console.groupEnd()
@@ -58,18 +58,18 @@ function log(label, color1, color2) {
 const methods = {
   error: log(
     'Error:',
-    'background: #F44336; color: #fff;',
-    'background: #263238; color: #eeffff; border-radius: 0 3px 3px 0; font-weight: 400;'
+    'background: #F44336; color: #fff; border-radius: 3px 0 0 3px;',
+    'background: #263238; color: #eeffff; border-radius: 0 3px 3px 0; font-weight: 400;',
   ),
   warning: log(
     'Warning:',
-    'background: #c6a700; color: #fff;',
-    'background: #263238; color: #eeffff; border-radius: 0 3px 3px 0; font-weight: 400;'
+    'background: #c6a700; color: #fff; border-radius: 3px 0 0 3px;',
+    'background: #263238; color: #eeffff; border-radius: 0 3px 3px 0; font-weight: 400;',
   ),
   info: log(
-    '',
-    '',
-    'background: #263238; color: #eeffff; border-radius: 0 3px 3px 0; font-weight: 400;'
+    'Info:',
+    'background: #0069c0; color: #fff; border-radius: 3px 0 0 3px;',
+    'background: #263238; color: #eeffff; border-radius: 0 3px 3px 0; font-weight: 400;',
   ),
 }
 

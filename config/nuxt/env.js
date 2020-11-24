@@ -1,7 +1,6 @@
 require('dotenv-safe').config() // load env variables from .env file into process.env
 
 const rev = require('fs').readFileSync('.git/HEAD').toString();
-let branch;
 let commit;
 if (rev.indexOf(':') === -1) {
   commit = rev.substring(0, 7).trim();
@@ -24,5 +23,9 @@ module.exports = {
   branch: process.env.BRANCH,
   MAPBOX_ACCESS_TOKEN: process.env.MAPBOX_ACCESS_TOKEN,
   API_BASE: process.env.API_BASE,
+  API_GBP: process.env.API_GBP,
   GIT_COMMIT: commit,
+  CONTEXT: process.env.CONTEXT,
+  DEVELOPMENT_WORKSPACE: process.env.DEVELOPMENT_WORKSPACE,
+  PRODUCTION_WORKSPACE: process.env.PRODUCTION_WORKSPACE,
 }

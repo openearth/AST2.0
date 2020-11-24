@@ -6,8 +6,4 @@
   Referrer-Policy: no-referrer-when-downgrade
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
   X-Content-Type-Options: nosniff
-  X-Frame-Options: SAMEORIGIN
   X-XSS-Protection: 1; mode=block
-
-/dato-plugins/*
-  X-Frame-Options: allow-from datocms.com

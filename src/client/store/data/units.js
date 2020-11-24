@@ -9,23 +9,25 @@ export const mutations = {
 }
 
 export const actions = {
-  async getUnits({ commit, dispatch }) {
+  async getUnits({ commit }) {
     const data = await getData({ slug: 'units' })
     data.units.forEach(unit => commit('addUnit', unit))
   },
 }
 
 export const getters = {
-  displayValue: (state, getters, rootState) => (key) => {
+  displayValue: (state, getters, rootState, rootGetters) => key => {
     switch(key) {
       case 'currency':
-        return '€'
+        return rootGetters['data/workspaces/activeWorkspace'].currencySymbol
       case 'currency_per_year':
-        return `€/${rootState.i18n.messages.year}`
+        return `${rootGetters['data/workspaces/activeWorkspace'].currencySymbol}/${rootState.i18n.messages.year}`
       case 'years':
         return rootState.i18n.messages.years
       case 'Ratemmy':
         return `mm/${rootState.i18n.messages.year}`
+      case 'number':
+        return `${ rootState.i18n.messages.number }`
       default:
         return state.find(unit => unit.key === key)['metric']
     }

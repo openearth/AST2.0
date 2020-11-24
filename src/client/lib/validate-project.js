@@ -2,7 +2,7 @@ import JsonSchema from 'jsonschema'
 import projectSchema from '../../schemas/project-schema'
 import areaSchemaFactory from '../../schemas/area-schema'
 import settingsSchemaFactory from '../../schemas/settings-schema'
-import mapSchema from "../../schemas/map-schema";
+import mapSchema from '../../schemas/map-schema';
 
 const validator = new JsonSchema.Validator()
 

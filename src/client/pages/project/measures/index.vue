@@ -12,12 +12,12 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions } from "vuex"
-import { MeasureCard, SearchInput, MeasureList } from '~/components'
-import MapEventBus, { REDRAW } from "~/lib/map-event-bus";
+import { mapState, mapGetters } from 'vuex'
+import { MeasureList } from '~/components'
+import MapEventBus, { REDRAW } from '~/lib/map-event-bus';
 
 export default {
-  components: { MeasureCard, SearchInput, MeasureList },
+  components: { MeasureList },
   data() {
     return {
       isAlphabeticallyOrdered: false,
@@ -46,7 +46,7 @@ export default {
     onChooseMeasure(measureId) {
       const measure = this.measureById(measureId)
       this.$store.dispatch('project/setAreaMeasure', { features: this.selectedFeatures, measure })
-      this.$router.push(`/${this.$i18n.locale}/project/areas/`).catch(err => {})
+      this.$router.push(`/${this.$i18n.locale}/project/areas/`).catch(() => {})
     },
   },
 }

@@ -5,6 +5,7 @@
       ref="inputElement"
       :value="value"
       data-type="number"
+      :placeholder="multi ? $t('multi') : ''"
       @change="event => validateNumber(event.target.value)"
       @input="value => validateNumber(value)"
     />
@@ -15,19 +16,21 @@
     <div
       v-if="forceKeyboard"
       class="numeric-input__click-highjack"
-      @click="onFocus" />
+      @click="onFocus"
+    />
 
     <md-button
       v-if="!forceKeyboard"
       class="md-icon-button md-dense"
-      @click="onFocus">
+      @click="onFocus"
+    >
       <md-icon>keyboard</md-icon>
     </md-button>
   </md-field>
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import { mapMutations } from 'vuex';
 import isValidNumber from '../../lib/is-valid-number'
 
 export default {
@@ -52,10 +55,17 @@ export default {
       type: Boolean,
       default: false,
     },
+    multi: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
+    hasEmptyInput() {
+      return this.value === ''
+    },
     error() {
-      return !isValidNumber(this.value)
+      return !this.hasEmptyInput && !isValidNumber(this.value)
     },
   },
   methods: {
