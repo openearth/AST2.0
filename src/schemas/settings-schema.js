@@ -22,7 +22,7 @@ function addAreaProperty(obj, item) {
 function addKpiProperty(obj, item) {
   obj[item.key] = {
     type: 'object',
-    additionalProperties: false,
+    additionalProperties: true,
     required: item.kpis.map(kpi => kpi.key),
     properties: item.kpis.reduce((propObj, kpi) => ({
       ...propObj,
