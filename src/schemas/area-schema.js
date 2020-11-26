@@ -19,7 +19,7 @@ const propertiesSchema = kpiGroups => ({
     isProjectArea: { type: 'boolean' },
     apiData: {
       type: 'object',
-      additionalProperties: false,
+      additionalProperties: true,
       properties: Object.keys(kpiGroups)
       .map(groupKey => kpiGroups[groupKey].kpis.map(kpi => kpi.key))
       .reduce((groupObject, keys) => ({
