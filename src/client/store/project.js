@@ -551,6 +551,10 @@ export const actions = {
         }
       }
 
+      // The server has a different set of kpi's than project. This happens
+      // mostly when kpis change server side (adding for instance). The rest of
+      // the code should deal with these inconsistencies.
+      // There for, we only notify on the console instead of using a notification
       if (validProject.errors.length === 1) {
         const error = validProject.errors[0]
         if (/instance\.settings\.targets\.(climate|cost|waterquality)\srequires\sproperty/.test(error.stack)) {
@@ -558,7 +562,7 @@ export const actions = {
           recoveredFromError = true
           log.warning(
             'Loaded project kpi\'s did not match with server expectations',
-            'Result calculation is not reliable!',
+            'Result of the calculations might not be reliable!',
             { error },
           )
         }
