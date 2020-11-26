@@ -531,50 +531,46 @@ export const actions = {
 
     commit('appMenu/hideMenu', null, { root: true })
 
-    let recoveredFromError = false
-    if (!validProject.valid) {
-      let shouldTrowError = true
+    let projectErrors = validProject.errors.filter(error => {
 
       // Provided scenario name is not available.
       // Remove user-provided and notify user
-      if (validProject.errors.length === 1) {
-        const error = validProject.errors[0]
-        if (error.property === 'instance.settings.projectArea.scenarioName' && /is\snot\sone\sof\senum\svalues/.test(error.message)) {
-          loadedProject.settings.projectArea.scenarioName = null
-          shouldTrowError = false
-          recoveredFromError = true
-          dispatch(
-            'notifications/showWarning',
-            { message: this.app.i18n.t('error_scenario_name_reset'), duration: 0 },
-            { root: true },
-          )
-        }
+      if (error.property === 'instance.settings.projectArea.scenarioName' && /is\snot\sone\sof\senum\svalues/.test(error.message)) {
+        loadedProject.settings.projectArea.scenarioName = null
+        log.warning(
+          'The provided scenario name is not known in the workspace',
+          'It was reset, the user has been asked to choose a different one',
+          { error },
+        )
+        dispatch(
+          'notifications/showWarning',
+          { message: this.app.i18n.t('error_scenario_name_reset'), duration: 0 },
+          { root: true },
+        )
+
+        return false
       }
 
       // The server has a different set of kpi's than project. This happens
       // mostly when kpis change server side (adding for instance). The rest of
       // the code should deal with these inconsistencies.
       // There for, we only notify on the console instead of using a notification
-      if (validProject.errors.length === 1) {
-        const error = validProject.errors[0]
-        if (/instance\.settings\.targets\.(climate|cost|waterquality)\srequires\sproperty/.test(error.stack)) {
-          shouldTrowError = false
-          recoveredFromError = true
-          log.warning(
-            'Loaded project kpi\'s did not match with server expectations',
-            'Result of the calculations might not be reliable!',
-            { error },
-          )
-        }
+      if (/instance\.settings\.targets\.(climate|cost|waterquality)\srequires\sproperty/.test(error.stack)) {
+        log.warning(
+          'Loaded project kpi\'s did not match with server expectations',
+          'Result of the calculations might not be reliable!',
+          { error },
+        )
+        return false
       }
 
-      if (shouldTrowError) {
-        log.error('Invalid project', validProject.errors)
-        throw new Error('Invalid project')
-      }
-    }
+      return true
+    })
 
-    if (validProject.valid || recoveredFromError) {
+    if (projectErrors.length > 0) {
+      log.error('Invalid project', projectErrors)
+      throw new Error('Invalid project')
+    } else {
       commit('import', loadedProject)
       dispatch('updateMeasuresRanking')
 
