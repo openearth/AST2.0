@@ -8,7 +8,7 @@ import round from 'lodash/round'
 import unset from 'lodash/unset'
 import flatten from 'lodash/flatten'
 import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT, REPAINT, DELETE_LAYER } from '../lib/map-event-bus'
-import { getApiData, getApiDataForFeature, getRankedMeasures } from '../lib/get-api-data';
+import { getApiData, getApiDataForFeature, getRankedMeasures, getPluvfloodParam } from '../lib/get-api-data';
 import FileSaver from 'file-saver'
 import getLoadedFileContents from '../lib/get-loaded-file-contents'
 import validateProject from '../lib/validate-project'
@@ -41,6 +41,7 @@ const initialState = () => ({
     projectArea: {},
     targets: {},
     userViewedProjectSettings: false,
+    pluvfloodParam: undefined,
   },
   measureOverrides: {},
   savedInWorkspace: undefined,
@@ -212,9 +213,18 @@ export const mutations = {
     const existingOverride = state.measureOverrides[measureId]
     Vue.set(state.measureOverrides, measureId, merge({}, existingOverride, value))
   },
+  setPluvfloodParam(state, payload) {
+    state.settings.pluvfloodParam = payload.result
+  },
 }
 
 export const actions = {
+  fetchPluvfloodParam({ commit }, { area }) {
+    getPluvfloodParam({ projectArea: area })
+      .then(payload => {
+        commit('setPluvfloodParam', payload)
+      })
+  },
   setMapPosition({ commit }, { zoom, center }) {
     zoom && commit('setMapZoom', zoom)
     center && commit('setMapCenter', center)
@@ -227,6 +237,7 @@ export const actions = {
         if (!state.settings.area.id) {
           commit('addProjectArea', feature)
           commit('updateProjectAreaProperty', { area, isProjectArea: true })
+          dispatch('fetchPluvfloodParam', { area })
           resolve()
           return
         }
@@ -896,20 +907,56 @@ export const getters = {
   kpiValues: (state, getters, rootState, rootgetters) => {
     const areas = state.areas.filter(area => !area.properties.hidden)
     const kpiKeys = rootgetters['data/kpiGroups/kpiKeys']
+    const kpiKeysOperatorMap = rootgetters['data/kpiGroups/kpiKeysOperatorMap']
+
+    function applyOperation(operator, source, item) {
+      switch (operator) {
+        case 'add':
+          return source + (item || 0)
+        case 'subtract':
+          return source - (item || 0)
+        case 'multiply':
+          return source * (item || 1)
+        case 'divide':
+          return (source || 1) / (item || 1)
+        case 'to_array':
+          return [...(source || []), item]
+        default:
+          return source + (item || 0)
+      }
+    }
+
+    function calculateFmeasArea(FMeas_areas = []) {
+      const A_tot = state.settings.area.properties.area
+      const A_p = state.settings.pluvfloodParam.A_p
+      const Frac_RA = state.settings.pluvfloodParam.Frac_RA
+      const sum = list => list.reduce((a, b) => a + b, 0)
+      const e = Math.exp
+
+      return (A_p * e(sum(FMeas_areas) / A_p) + Frac_RA * (A_tot - A_p)) / (A_p + Frac_RA * (A_tot - A_p))
+    }
 
     if (areas.length) {
-      const { returnTime, ...kpiValues } = areas
+      const AllKpiValues = areas
         .map(area => area.properties.apiData)
         .reduce((obj, item) => {
           if (item) {
+            console.log({ item })
             kpiKeys.forEach(key => {
               if (!obj[key]) { obj[key] = 0 }
-              obj[key] = obj[key] + (item[key] || 0)
+              obj[key] = applyOperation(
+                  kpiKeysOperatorMap[key],
+                  obj[key],
+                  item[key],
+                )
             })
           }
           return obj
         }, {})
-      return { ...kpiValues, returnTime: returnTime + 1 }
+
+      const { Fmeas_area: Fmeas_area_list, ...kpiValues } = AllKpiValues
+      const Fmeas_area = calculateFmeasArea(Fmeas_area_list)
+      return { ...kpiValues, Fmeas_area }
     } else {
       return kpiKeys.reduce((obj, key) => ({ ...obj, [key]: 0 }), {})
     }

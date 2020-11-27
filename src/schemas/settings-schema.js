@@ -71,5 +71,13 @@ export default (areaSettings, kpiGroups) => ({
         required: kpiGroups.map(item => item.key),
         properties: kpiGroups.reduce(addKpiProperty, {}),
       },
+      pluvfloodParam: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          A_p: { type: 'number' },
+          Frac_RA: { type: 'number' },
+        },
+      },
     },
   })
