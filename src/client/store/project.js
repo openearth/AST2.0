@@ -57,7 +57,21 @@ export const mutations = {
     newState.settings.area = file.settings.area
     newState.areas = file.areas
 
-    if (file.settings.hasOwnProperty('userViewedProjectSettings') === false) {
+    // We want to test if the user has seen the project area settings. If not,
+    // we should try to autofill some values.
+    // We test this by checking if some required values are filled in. When the
+    // user did filled some in, there will be strings in the settings.
+    // If a string is found, the user has seen the settings before
+    const someRequiredProjectAreaOptionsAreFilledIn = Object
+      .entries(file.settings.projectArea)
+      .some(([key, value]) => {
+        // The scenarioName is always filled in, ignore this key
+        if (key === 'scenarioName') return false
+
+        return typeof value === 'string'
+      })
+
+    if (someRequiredProjectAreaOptionsAreFilledIn) {
       newState.settings.userViewedProjectSettings = true
     }
 

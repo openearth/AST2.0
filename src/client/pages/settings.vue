@@ -41,8 +41,8 @@
           v-if="filledInRequiredProjectAreaSettings"
           :key="2"
           :disabled="!filledInSettings"
-          :to="`/${locale}/project`"
           class="md-accent md-raised"
+          @click="handleDoneClick"
         >
           {{ $t('done') }}
         </md-button>
@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex';
+import { mapState, mapGetters, mapMutations } from 'vuex';
 import MapEventBus, { REDRAW } from '../lib/map-event-bus'
 
 export default {
@@ -93,6 +93,15 @@ export default {
   },
   mounted() {
     MapEventBus.$emit(REDRAW)
+  },
+  methods: {
+    ...mapMutations({
+      setUserViewedProjectSettings: 'project/setUserViewedProjectSettings',
+    }),
+    handleDoneClick() {
+      this.setUserViewedProjectSettings()
+      this.$router.push(`/${this.locale}/project`)
+    },
   },
 }
 </script>
