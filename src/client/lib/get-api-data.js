@@ -57,14 +57,12 @@ export async function getApiDataForFeature(feature, projectArea, scenarioName, c
         getRealApiData('heatstress/cost', { scenarioName, area, id }),
         getRealApiData('heatstress/temperature', { scenarioName, area, id, projectArea }),
         getRealApiData('heatstress/waterquality', { scenarioName, area, id, projectArea }),
-        getRealApiData('pluvflood', { scenarioName, area, id, returnTime, inflow, depth, projectArea }),
         getRealApiData('pluvflood_fmeas', { scenarioName, area, id, returnTime, inflow, depth, projectArea }),
         getRealApiData('groundwater_recharge', { scenarioName, area, id, returnTime, inflow, depth, projectArea }),
         getRealApiData('evapotranspiration', { scenarioName, area, id, returnTime, inflow, depth, projectArea }),
 
         Promise.resolve({ data: { storageCapacity: measureArea * depth } }),
       ])
-      .then(apiData => { console.log({ apiData }); return apiData })
       .then(apiData => apiData.reduce((obj, res) => ({ ...obj, ...res.data, ...res.result }), {}))
 
   } else {

@@ -521,7 +521,7 @@ export const actions = {
         })
     }
   },
-  async importProject({ state, commit, dispatch, rootGetters, rootState }, event) {
+  async importProject({ state, getters, commit, dispatch, rootGetters, rootState }, event) {
 
     // Workspaces can have custom scenario names. We need to augment the
     // rootState.data object, which contains the scenarioNames, with the scenarios
@@ -536,6 +536,7 @@ export const actions = {
     const { name } = event.target.files[0]
     const validProject = validateProject(loadedProject, rootData)
     const { map } = loadedProject
+    let reloadAreaApiData = false
 
     loadedProject.settings.general.title = name.replace('.json', '')
 
@@ -585,6 +586,17 @@ export const actions = {
         return false
       }
 
+      // The loaded project still has returnTime in its apiData object of the areas.
+      // returnTime has been refactored and this property is obsolete.
+      // the property should be deleted and the api data should be refetched
+      // for the area
+      if (error.argument === 'returnTime' && error.name === 'additionalProperties' && /apiData/.test(error.property)) {
+        const apiData = get(loadedProject, error.property.replace('instance.', ''))
+        delete apiData.returnTime
+        reloadAreaApiData = true
+        return false
+      }
+
       return true
     })
 
@@ -598,6 +610,10 @@ export const actions = {
 
       commit('import', loadedProject)
       dispatch('updateMeasuresRanking')
+
+      if (reloadAreaApiData && scenarioName) {
+        dispatch('fetchAreaApiData', getters.areas)
+      }
 
       MapEventBus.$emit(RELOAD_LAYERS)
       MapEventBus.$emit(REPOSITION, { zoom: map.zoom, center: map.center })
