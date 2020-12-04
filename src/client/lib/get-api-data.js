@@ -72,15 +72,15 @@ export async function getApiDataForFeature(feature, projectArea, scenarioName, c
   }
 }
 
-export async function getPluvfloodParam({ projectArea } = {}) {
+export async function getPluvfloodParam({ projectArea, scenarioName } = {}) {
   return getRealApiData('pluvflood_param', {
-    'scenarioName':'WestNL_Post_war_garden_city_low_rise',
+    scenarioName,
+    projectArea,
     'area':0,
     'id':0,
     'returnTime':0,
     'inflow':0,
     'depth':0,
-    projectArea,
   })
 }
 

@@ -10,4 +10,5 @@ module.exports = [
   { src: '~/plugins/vue-carousel', ssr: false },
   { src: '~/plugins/portal-vue' },
   { src: '~/plugins/tracking.client', ssr: false },
+  { src: '~/plugins/pluvflood-params', ssr: false },
 ]

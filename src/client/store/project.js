@@ -41,7 +41,7 @@ const initialState = () => ({
     projectArea: {},
     targets: {},
     userViewedProjectSettings: false,
-    pluvfloodParam: undefined,
+    pluvfloodParam: {},
   },
   measureOverrides: {},
   savedInWorkspace: undefined,
@@ -219,11 +219,11 @@ export const mutations = {
 }
 
 export const actions = {
-  fetchPluvfloodParam({ commit }, { area }) {
-    getPluvfloodParam({ projectArea: area })
-      .then(payload => {
-        commit('setPluvfloodParam', payload)
-      })
+  fetchPluvfloodParam({ commit }, { projectArea, scenarioName }) {
+    if (projectArea && scenarioName) {
+      return getPluvfloodParam({ projectArea, scenarioName })
+        .then(payload => commit('setPluvfloodParam', payload))
+    }
   },
   setMapPosition({ commit }, { zoom, center }) {
     zoom && commit('setMapZoom', zoom)
@@ -237,7 +237,6 @@ export const actions = {
         if (!state.settings.area.id) {
           commit('addProjectArea', feature)
           commit('updateProjectAreaProperty', { area, isProjectArea: true })
-          dispatch('fetchPluvfloodParam', { area })
           resolve()
           return
         }
@@ -593,6 +592,10 @@ export const actions = {
       log.error('Invalid project', projectErrors)
       throw new Error('Invalid project')
     } else {
+      const projectArea = get(loadedProject, 'settings.area.properties.area')
+      const scenarioName = get(loadedProject, 'settings.projectArea.scenarioName')
+      await dispatch('fetchPluvfloodParam', { projectArea, scenarioName })
+
       commit('import', loadedProject)
       dispatch('updateMeasuresRanking')
 
@@ -952,7 +955,6 @@ export const getters = {
         .map(area => area.properties.apiData)
         .reduce((obj, item) => {
           if (item) {
-            console.log({ item })
             kpiKeys.forEach(key => {
               if (!obj[key]) { obj[key] = 0 }
               obj[key] = applyOperation(
