@@ -13,7 +13,7 @@
         {{ inferKpiTitleWithUnit(kpi.title, kpi.unit) }}
       </span>
       <p v-if="type === 'numbers'" class="md-body-1 kpi-group__kpi-value">
-        {{ roundValue(kpiByKey(kpi.key)) }}
+        {{ kpiByKey(kpi.key) }}
       </p>
 
       <md-progress-bar
@@ -24,13 +24,19 @@
 
       <div v-if="(type === 'numbers') && selectedAreas" class="kpi-group__measure-kpi">
         <span><em>{{ $t('measure') }}</em></span>
-        <span><em>{{ roundValue(selectedAreas.properties.apiData[kpi.key]) }} {{ unit(kpi.unit) }}</em></span>
+        <span><em>{{ getKpiValueForArea(kpi.key) }} {{ unit(kpi.unit) }}</em></span>
       </div>
     </md-list-item>
   </md-list>
 </template>
 
 <script>
+import calculateFmeasArea from '../../lib/calculate-fmeas-area'
+
+const displayDecimal = number => {
+  return `${Math.round(number * 100)}`.replace(/(.+)(.{2})$/, '$1.$2')
+}
+
 export default {
   props: {
     kpiGroup: {
@@ -57,7 +63,11 @@ export default {
     },
   },
   methods: {
-    kpiByKey(key) { return this.kpiValues[key] },
+    kpiByKey(key) {
+      return key === 'Fmeas_area'
+        ? displayDecimal(this.kpiValues[key])
+        : this.roundValue(this.kpiValues[key])
+    },
     percentageKpiByKey(key) { return this.kpiPercentageValues[key] },
     unit(...args) {
       return this.$store.getters['data/units/displayValue'](...args)
@@ -72,6 +82,16 @@ export default {
     inferKpiTitleWithUnit(title, unit) {
       const formattedUnit = ` (${ this.unit(unit) })`
       return `${ title }${ this.type === 'numbers' ? formattedUnit : '' }:`
+    },
+    getKpiValueForArea(key) {
+      return key === 'Fmeas_area'
+        ? displayDecimal(calculateFmeasArea(
+            this.$store.state.project.settings.area.properties.area,
+            this.$store.state.project.settings.pluvfloodParam.A_p,
+            this.$store.state.project.settings.pluvfloodParam.Frac_RA,
+            this.selectedAreas.properties.apiData[key],
+          ))
+        : this.roundValue(this.selectedAreas.properties.apiData[key])
     },
   },
 }

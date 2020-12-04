@@ -17,6 +17,7 @@ import projectToCsv from '../lib/project-to-csv'
 import delay from '../lib/delay'
 import exportToPdf from '../lib/export-to-pdf'
 import log from '../lib/log';
+import calculateFmeasArea from '../lib/calculate-fmeas-area'
 import fetchCoBenefitsFromRivm from '../lib/fetch-rivm-co-benefits'
 
 const initialState = () => ({
@@ -541,7 +542,6 @@ export const actions = {
     loadedProject.settings.general.title = name.replace('.json', '')
 
     commit('appMenu/hideMenu', null, { root: true })
-
     let projectErrors = validProject.errors.filter(error => {
 
       // Provided scenario name is not available.
@@ -591,6 +591,7 @@ export const actions = {
       // the property should be deleted and the api data should be refetched
       // for the area
       if (error.argument === 'returnTime' && error.name === 'additionalProperties' && /apiData/.test(error.property)) {
+        log.info(error)
         const apiData = get(loadedProject, error.property.replace('instance.', ''))
         delete apiData.returnTime
         reloadAreaApiData = true
@@ -956,16 +957,6 @@ export const getters = {
       }
     }
 
-    function calculateFmeasArea(FMeas_areas = []) {
-      const A_tot = state.settings.area.properties.area
-      const A_p = state.settings.pluvfloodParam.A_p
-      const Frac_RA = state.settings.pluvfloodParam.Frac_RA
-      const sum = list => list.reduce((a, b) => a + b, 0)
-      const e = Math.exp
-
-      return (A_p * e(sum(FMeas_areas) / A_p) + Frac_RA * (A_tot - A_p)) / (A_p + Frac_RA * (A_tot - A_p))
-    }
-
     if (areas.length) {
       const AllKpiValues = areas
         .map(area => area.properties.apiData)
@@ -983,8 +974,11 @@ export const getters = {
           return obj
         }, {})
 
+      const A_tot = state.settings.area.properties.area
+      const A_p = state.settings.pluvfloodParam.A_p
+      const Frac_RA = state.settings.pluvfloodParam.Frac_RA
       const { Fmeas_area: Fmeas_area_list, ...kpiValues } = AllKpiValues
-      const Fmeas_area = calculateFmeasArea(Fmeas_area_list)
+      const Fmeas_area = calculateFmeasArea(A_tot, A_p, Frac_RA, Fmeas_area_list)
       return { ...kpiValues, Fmeas_area }
     } else {
       return kpiKeys.reduce((obj, key) => ({ ...obj, [key]: 0 }), {})
