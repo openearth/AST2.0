@@ -522,7 +522,7 @@ export const actions = {
         })
     }
   },
-  async importProject({ commit, dispatch, rootGetters, rootState }, event) {
+  async importProject({ state, commit, dispatch, rootGetters, rootState }, event) {
 
     // Workspaces can have custom scenario names. We need to augment the
     // rootState.data object, which contains the scenarioNames, with the scenarios
@@ -555,9 +555,20 @@ export const actions = {
         )
         dispatch(
           'notifications/showWarning',
-          { message: this.app.i18n.t('error_scenario_name_reset'), duration: 0 },
+          { message: this.app.i18n.t('error_scenario_name_reset'), duration: 0, closable: false },
           { root: true },
         )
+          .then(notificationId => {
+            const unwatch = this.watch(
+              () => state.settings.projectArea.scenarioName,
+              name => {
+                if (name) {
+                  unwatch()
+                  commit('notifications/remove', notificationId, { root: true })
+                }
+              },
+            )
+          })
 
         return false
       }
