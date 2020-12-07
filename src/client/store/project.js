@@ -48,6 +48,23 @@ const initialState = () => ({
   savedInWorkspace: undefined,
 })
 
+function applyKpiOperation(operator, source, item) {
+  switch (operator) {
+    case 'add':
+      return source + (item || 0)
+    case 'subtract':
+      return source - (item || 0)
+    case 'multiply':
+      return source * (item || 1)
+    case 'divide':
+      return (source || 1) / (item || 1)
+    case 'to_array':
+      return [...(source || []), item]
+    default:
+      return source + (item || 0)
+  }
+}
+
 export const state = () => initialState()
 
 export const mutations = {
@@ -746,9 +763,10 @@ export const actions = {
 
 export const getters = {
   tableClimateAndCosts: (state, getters, rootState, rootGetters) => {
+    console.log('table climate and cost')
     if (state.areas.length) {
       const measureById = rootGetters['data/measures/measureById']
-      const kpiKeys = ['storageCapacity', 'returnTime', 'groundwater_recharge', 'evapotranspiration', 'tempReduction', 'coolSpot', 'constructionCost', 'maintenanceCost']
+      const kpiKeys = ['storageCapacity', 'Fmeas_area', 'groundwater_recharge', 'evapotranspiration', 'tempReduction', 'coolSpot', 'constructionCost', 'maintenanceCost']
       const kpiKeysTitleMap = rootGetters['data/kpiGroups/kpiKeysTitleMap']
       const kpiKeysUnitMap = rootGetters['data/kpiGroups/kpiKeysUnitMap']
       const kpiKeysDecimalScaleMap = rootGetters['data/kpiGroups/kpiKeysDecimalScaleMap']
@@ -766,13 +784,31 @@ export const getters = {
         .reduce((obj, row) => {
           const [measureId, ...values] = row
           if (obj[measureId] === undefined) {
+            console.log({ measureId, values })
             obj[measureId] = values
           } else {
-            values.forEach((value, index) => (obj[measureId][index] += value))
+            values.forEach((value, index) => {
+              if (index === 2) {
+                return Array.isArray(obj[measureId][index])
+                  ? obj[measureId][index].push(value)
+                  : obj[measureId][index] = [obj[measureId][index], value]
+              }
+              obj[measureId][index] += value
+            })
           }
           return obj
         }, {})
 
+      Object.entries(measureValueMap).forEach(([key, value]) => {
+        const A_tot = state.settings.area.properties.area
+        const A_p = state.settings.pluvfloodParam.A_p
+        const Frac_RA = state.settings.pluvfloodParam.Frac_RA
+        const Fmeas_area = calculateFmeasArea(A_tot, A_p, Frac_RA, measureValueMap[key][2])
+        measureValueMap[key][2] = Fmeas_area
+        console.log({ key, value })
+      })
+
+      // console.log({ measureValueMap })
       return {
         'title': rootState.i18n.messages.climate_and_costs,
         'header': [
@@ -940,23 +976,6 @@ export const getters = {
     const kpiKeys = rootgetters['data/kpiGroups/kpiKeys']
     const kpiKeysOperatorMap = rootgetters['data/kpiGroups/kpiKeysOperatorMap']
 
-    function applyOperation(operator, source, item) {
-      switch (operator) {
-        case 'add':
-          return source + (item || 0)
-        case 'subtract':
-          return source - (item || 0)
-        case 'multiply':
-          return source * (item || 1)
-        case 'divide':
-          return (source || 1) / (item || 1)
-        case 'to_array':
-          return [...(source || []), item]
-        default:
-          return source + (item || 0)
-      }
-    }
-
     if (areas.length) {
       const AllKpiValues = areas
         .map(area => area.properties.apiData)
@@ -964,7 +983,7 @@ export const getters = {
           if (item) {
             kpiKeys.forEach(key => {
               if (!obj[key]) { obj[key] = 0 }
-              obj[key] = applyOperation(
+              obj[key] = applyKpiOperation(
                   kpiKeysOperatorMap[key],
                   obj[key],
                   item[key],
