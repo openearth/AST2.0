@@ -1,10 +1,12 @@
+import calculateFmeasArea from './calculate-fmeas-area';
+
 function value(input) {
   return input === 0 || !!input
     ? input
     : 0
 }
 
-export default function projectToCsv(areas, kpiKeys, measureById) {
+export default function projectToCsv(areas, kpiKeys, measureById, pluvfloodParam) {
   const header = ['id', 'measure', 'type', 'length', 'width', 'depth', 'radius', 'area', 'inflow'].concat(kpiKeys)
   const results = areas
     .map(({ id, properties, geometry }) => {
@@ -21,7 +23,15 @@ export default function projectToCsv(areas, kpiKeys, measureById) {
         value(radius),
         value(area),
         value(areaInflow || defaultInflow),
-        ...kpiKeys.map(key => value(apiData && apiData[key])),
+        ...kpiKeys.map(key => {
+          return key !== 'Fmeas_area'
+            ? value(apiData && apiData[key])
+            : value(
+              apiData &&
+              apiData[key] &&
+              calculateFmeasArea(pluvfloodParam.A_tot, pluvfloodParam.A_p, pluvfloodParam.Frac_RA, apiData[key]),
+            )
+        }),
       ]
     })
   return [header, ...results]

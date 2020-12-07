@@ -664,12 +664,20 @@ export const actions = {
     return FileSaver.saveAs(blob, `${title || 'ast_project'}.json`)
   },
   async exportProject({ state, getters, rootState, rootGetters, commit, dispatch }, format) {
+    const A_tot = state.settings.area.properties.area
+    const A_p = state.settings.pluvfloodParam.A_p
+    const Frac_RA = state.settings.pluvfloodParam.Frac_RA
     const { title } = state.settings.general
     let data
     let type
     switch (format) {
       case 'csv':
-        data = projectToCsv(getters.areas, Object.keys(getters.kpiValues), rootGetters['data/measures/measureById'])
+        data = projectToCsv(
+          getters.areas,
+          Object.keys(getters.kpiValues),
+          rootGetters['data/measures/measureById'],
+          { A_tot, A_p, Frac_RA },
+        )
         type = 'text/csv'
         break;
       case 'geojson':
@@ -763,7 +771,6 @@ export const actions = {
 
 export const getters = {
   tableClimateAndCosts: (state, getters, rootState, rootGetters) => {
-    console.log('table climate and cost')
     if (state.areas.length) {
       const measureById = rootGetters['data/measures/measureById']
       const kpiKeys = ['storageCapacity', 'Fmeas_area', 'groundwater_recharge', 'evapotranspiration', 'tempReduction', 'coolSpot', 'constructionCost', 'maintenanceCost']
@@ -784,7 +791,6 @@ export const getters = {
         .reduce((obj, row) => {
           const [measureId, ...values] = row
           if (obj[measureId] === undefined) {
-            console.log({ measureId, values })
             obj[measureId] = values
           } else {
             values.forEach((value, index) => {
@@ -799,16 +805,14 @@ export const getters = {
           return obj
         }, {})
 
-      Object.entries(measureValueMap).forEach(([key, value]) => {
+      Object.keys(measureValueMap).forEach(key => {
         const A_tot = state.settings.area.properties.area
         const A_p = state.settings.pluvfloodParam.A_p
         const Frac_RA = state.settings.pluvfloodParam.Frac_RA
         const Fmeas_area = calculateFmeasArea(A_tot, A_p, Frac_RA, measureValueMap[key][2])
         measureValueMap[key][2] = Fmeas_area
-        console.log({ key, value })
       })
 
-      // console.log({ measureValueMap })
       return {
         'title': rootState.i18n.messages.climate_and_costs,
         'header': [
