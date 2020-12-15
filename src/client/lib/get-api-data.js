@@ -89,6 +89,10 @@ export async function getRankedMeasures(projectArea) {
     .then(({ result }) => result)
 }
 
+export async function getDefaultValueForProjectSetting({ area, url, layer, field }) {
+  return getRealApiData('mapsetup', { area, url, layer, field })
+}
+
 function formatRequestBody(projectArea) {
   let body = cloneDeep(projectArea)
 

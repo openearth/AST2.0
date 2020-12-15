@@ -29,6 +29,7 @@
             <md-checkbox
               v-if="setting.multiple && !setting.isSelect"
               :value="!projectAreaSettings[setting.key][option.value]"
+              :disabled="loadingDefaultValueAreaSettings.includes(setting.key)"
               @change="value => updateProjectAreaSetting({
                 type: 'checkbox',
                 key: setting.key,
@@ -39,6 +40,7 @@
             <md-radio
               v-else
               :value="projectAreaSettings[setting.key] !== option.value"
+              :disabled="loadingDefaultValueAreaSettings.includes(setting.key)"
               required
               @change="value => updateProjectAreaSetting({
                 type: 'radio',
@@ -70,6 +72,7 @@
                 :id="setting.key"
                 :options="setting.options"
                 :value="projectAreaSettings[setting.key]"
+                :disabled="loadingDefaultValueAreaSettings.includes(setting.key)"
                 @change="value => updateProjectAreaSetting({
                   type: 'select',
                   key: setting.key,
@@ -106,6 +109,7 @@
 <script>
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 import { SelectInput } from '~/components'
+import log from '~/lib/log'
 
 export default {
   middleware: ['access-level-project-area'],
@@ -120,6 +124,7 @@ export default {
       locale: state => state.i18n.locale,
       projectArea: state => state.project.settings.area,
       userViewedProjectSettings: state => state.project.settings.userViewedProjectSettings,
+      loadingDefaultValueAreaSettings: state => state['loading-default-value-area-settings'],
     }),
     ...mapGetters({
       projectAreaSettings: 'project/settingsProjectArea',
@@ -129,12 +134,19 @@ export default {
     }),
     area() { return this.projectArea.properties && Math.round(this.projectArea.properties.area) },
   },
+  mounted() {
+    if (this.userViewedProjectSettings === false) {
+      log.info('User did not see settings before. Start filling with smart defaults')
+      this.setSmartDefaultsForProjectSettings()
+    }
+  },
   methods: {
     ...mapMutations({
       showScenarios: 'flow/showScenarios',
     }),
     ...mapActions({
       updateProjectAreaSetting: 'project/updateProjectAreaSetting',
+      setSmartDefaultsForProjectSettings: 'project/setSmartDefaultsForProjectSettings',
     }),
     setActiveTooltip(key) {
       if (this.activeTooltipKey === key) {
