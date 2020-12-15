@@ -16,7 +16,9 @@ export const mutations = {
   remove(state, id) {
     const notification = state.messages.find(item => item.id === id)
     const index = state.messages.indexOf(notification)
-    state.messages.splice(index, 1)
+    if (index !== -1) {
+      state.messages.splice(index, 1)
+    }
   },
 }
 

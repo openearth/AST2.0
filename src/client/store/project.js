@@ -8,7 +8,7 @@ import round from 'lodash/round'
 import unset from 'lodash/unset'
 import flatten from 'lodash/flatten'
 import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT, REPAINT, DELETE_LAYER } from '../lib/map-event-bus'
-import { getApiData, getApiDataForFeature, getRankedMeasures, getDefaultValueForProjectSetting } from '../lib/get-api-data';
+import { getApiData, getApiDataForFeature, getRankedMeasures, getPluvfloodParam, getDefaultValueForProjectSetting } from '../lib/get-api-data';
 import FileSaver from 'file-saver'
 import getLoadedFileContents from '../lib/get-loaded-file-contents'
 import validateProject from '../lib/validate-project'
@@ -17,6 +17,7 @@ import projectToCsv from '../lib/project-to-csv'
 import delay from '../lib/delay'
 import exportToPdf from '../lib/export-to-pdf'
 import log from '../lib/log';
+import calculateFmeasArea from '../lib/calculate-fmeas-area'
 import fetchCoBenefitsFromRivm from '../lib/fetch-rivm-co-benefits'
 
 const initialState = () => ({
@@ -41,10 +42,28 @@ const initialState = () => ({
     projectArea: {},
     targets: {},
     userViewedProjectSettings: false,
+    pluvfloodParam: {},
   },
   measureOverrides: {},
   savedInWorkspace: undefined,
 })
+
+function applyKpiOperation(operator, source, item) {
+  switch (operator) {
+    case 'add':
+      return source + (item || 0)
+    case 'subtract':
+      return source - (item || 0)
+    case 'multiply':
+      return source * (item || 1)
+    case 'divide':
+      return (source || 1) / (item || 1)
+    case 'to_array':
+      return [...(source || []), item]
+    default:
+      return source + (item || 0)
+  }
+}
 
 export const state = () => initialState()
 
@@ -226,9 +245,18 @@ export const mutations = {
     const existingOverride = state.measureOverrides[measureId]
     Vue.set(state.measureOverrides, measureId, merge({}, existingOverride, value))
   },
+  setPluvfloodParam(state, payload) {
+    state.settings.pluvfloodParam = payload.result
+  },
 }
 
 export const actions = {
+  fetchPluvfloodParam({ commit }, { projectArea, scenarioName }) {
+    if (projectArea && scenarioName) {
+      return getPluvfloodParam({ projectArea, scenarioName })
+        .then(payload => commit('setPluvfloodParam', payload))
+    }
+  },
   setMapPosition({ commit }, { zoom, center }) {
     zoom && commit('setMapZoom', zoom)
     center && commit('setMapCenter', center)
@@ -558,7 +586,7 @@ export const actions = {
         })
     }
   },
-  async importProject({ commit, dispatch, rootGetters, rootState }, event) {
+  async importProject({ state, getters, commit, dispatch, rootGetters, rootState }, event) {
 
     // Workspaces can have custom scenario names. We need to augment the
     // rootState.data object, which contains the scenarioNames, with the scenarios
@@ -573,11 +601,11 @@ export const actions = {
     const { name } = event.target.files[0]
     const validProject = validateProject(loadedProject, rootData)
     const { map } = loadedProject
+    let reloadAreaApiData = false
 
     loadedProject.settings.general.title = name.replace('.json', '')
 
     commit('appMenu/hideMenu', null, { root: true })
-
     let projectErrors = validProject.errors.filter(error => {
 
       // Provided scenario name is not available.
@@ -591,9 +619,20 @@ export const actions = {
         )
         dispatch(
           'notifications/showWarning',
-          { message: this.app.i18n.t('error_scenario_name_reset'), duration: 0 },
+          { message: this.app.i18n.t('error_scenario_name_reset'), duration: 0, closable: false },
           { root: true },
         )
+          .then(notificationId => {
+            const unwatch = this.watch(
+              () => state.settings.projectArea.scenarioName,
+              name => {
+                if (name) {
+                  unwatch()
+                  commit('notifications/remove', notificationId, { root: true })
+                }
+              },
+            )
+          })
 
         return false
       }
@@ -611,6 +650,18 @@ export const actions = {
         return false
       }
 
+      // The loaded project still has returnTime in its apiData object of the areas.
+      // returnTime has been refactored and this property is obsolete.
+      // the property should be deleted and the api data should be refetched
+      // for the area
+      if (error.argument === 'returnTime' && error.name === 'additionalProperties' && /apiData/.test(error.property)) {
+        log.info(error)
+        const apiData = get(loadedProject, error.property.replace('instance.', ''))
+        delete apiData.returnTime
+        reloadAreaApiData = true
+        return false
+      }
+
       return true
     })
 
@@ -618,8 +669,16 @@ export const actions = {
       log.error('Invalid project', projectErrors)
       throw new Error('Invalid project')
     } else {
+      const projectArea = get(loadedProject, 'settings.area.properties.area')
+      const scenarioName = get(loadedProject, 'settings.projectArea.scenarioName')
+      await dispatch('fetchPluvfloodParam', { projectArea, scenarioName })
+
       commit('import', loadedProject)
       dispatch('updateMeasuresRanking')
+
+      if (reloadAreaApiData && scenarioName) {
+        dispatch('fetchAreaApiData', getters.areas)
+      }
 
       MapEventBus.$emit(RELOAD_LAYERS)
       MapEventBus.$emit(REPOSITION, { zoom: map.zoom, center: map.center })
@@ -652,12 +711,20 @@ export const actions = {
     return FileSaver.saveAs(blob, `${title || 'ast_project'}.json`)
   },
   async exportProject({ state, getters, rootState, rootGetters, commit, dispatch }, format) {
+    const A_tot = state.settings.area.properties.area
+    const A_p = state.settings.pluvfloodParam.A_p
+    const Frac_RA = state.settings.pluvfloodParam.Frac_RA
     const { title } = state.settings.general
     let data
     let type
     switch (format) {
       case 'csv':
-        data = projectToCsv(getters.areas, Object.keys(getters.kpiValues), rootGetters['data/measures/measureById'])
+        data = projectToCsv(
+          getters.areas,
+          Object.keys(getters.kpiValues),
+          rootGetters['data/measures/measureById'],
+          { A_tot, A_p, Frac_RA },
+        )
         type = 'text/csv'
         break;
       case 'geojson':
@@ -753,7 +820,7 @@ export const getters = {
   tableClimateAndCosts: (state, getters, rootState, rootGetters) => {
     if (state.areas.length) {
       const measureById = rootGetters['data/measures/measureById']
-      const kpiKeys = ['storageCapacity', 'returnTime', 'groundwater_recharge', 'evapotranspiration', 'tempReduction', 'coolSpot', 'constructionCost', 'maintenanceCost']
+      const kpiKeys = ['storageCapacity', 'Fmeas_area', 'groundwater_recharge', 'evapotranspiration', 'tempReduction', 'coolSpot', 'constructionCost', 'maintenanceCost']
       const kpiKeysTitleMap = rootGetters['data/kpiGroups/kpiKeysTitleMap']
       const kpiKeysUnitMap = rootGetters['data/kpiGroups/kpiKeysUnitMap']
       const kpiKeysDecimalScaleMap = rootGetters['data/kpiGroups/kpiKeysDecimalScaleMap']
@@ -773,10 +840,25 @@ export const getters = {
           if (obj[measureId] === undefined) {
             obj[measureId] = values
           } else {
-            values.forEach((value, index) => (obj[measureId][index] += value))
+            values.forEach((value, index) => {
+              if (index === 2) {
+                return Array.isArray(obj[measureId][index])
+                  ? obj[measureId][index].push(value)
+                  : obj[measureId][index] = [obj[measureId][index], value]
+              }
+              obj[measureId][index] += value
+            })
           }
           return obj
         }, {})
+
+      Object.keys(measureValueMap).forEach(key => {
+        const A_tot = state.settings.area.properties.area
+        const A_p = state.settings.pluvfloodParam.A_p
+        const Frac_RA = state.settings.pluvfloodParam.Frac_RA
+        const Fmeas_area = calculateFmeasArea(A_tot, A_p, Frac_RA, measureValueMap[key][2])
+        measureValueMap[key][2] = Fmeas_area
+      })
 
       return {
         'title': rootState.i18n.messages.climate_and_costs,
@@ -943,20 +1025,31 @@ export const getters = {
   kpiValues: (state, getters, rootState, rootgetters) => {
     const areas = state.areas.filter(area => !area.properties.hidden)
     const kpiKeys = rootgetters['data/kpiGroups/kpiKeys']
+    const kpiKeysOperatorMap = rootgetters['data/kpiGroups/kpiKeysOperatorMap']
 
     if (areas.length) {
-      const { returnTime, ...kpiValues } = areas
+      const AllKpiValues = areas
         .map(area => area.properties.apiData)
         .reduce((obj, item) => {
           if (item) {
             kpiKeys.forEach(key => {
               if (!obj[key]) { obj[key] = 0 }
-              obj[key] = obj[key] + (item[key] || 0)
+              obj[key] = applyKpiOperation(
+                  kpiKeysOperatorMap[key],
+                  obj[key],
+                  item[key],
+                )
             })
           }
           return obj
         }, {})
-      return { ...kpiValues, returnTime: returnTime + 1 }
+
+      const A_tot = state.settings.area.properties.area
+      const A_p = state.settings.pluvfloodParam.A_p
+      const Frac_RA = state.settings.pluvfloodParam.Frac_RA
+      const { Fmeas_area: Fmeas_area_list, ...kpiValues } = AllKpiValues
+      const Fmeas_area = calculateFmeasArea(A_tot, A_p, Frac_RA, Fmeas_area_list)
+      return { ...kpiValues, Fmeas_area }
     } else {
       return kpiKeys.reduce((obj, key) => ({ ...obj, [key]: 0 }), {})
     }

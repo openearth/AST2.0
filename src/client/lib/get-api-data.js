@@ -57,7 +57,7 @@ export async function getApiDataForFeature(feature, projectArea, scenarioName, c
         getRealApiData('heatstress/cost', { scenarioName, area, id }),
         getRealApiData('heatstress/temperature', { scenarioName, area, id, projectArea }),
         getRealApiData('heatstress/waterquality', { scenarioName, area, id, projectArea }),
-        getRealApiData('pluvflood', { scenarioName, area, id, returnTime, inflow, depth, projectArea }),
+        getRealApiData('pluvflood_fmeas', { scenarioName, area, id, returnTime, inflow, depth, projectArea }),
         getRealApiData('groundwater_recharge', { scenarioName, area, id, returnTime, inflow, depth, projectArea }),
         getRealApiData('evapotranspiration', { scenarioName, area, id, returnTime, inflow, depth, projectArea }),
 
@@ -68,6 +68,18 @@ export async function getApiDataForFeature(feature, projectArea, scenarioName, c
   } else {
     return Promise.resolve({})
   }
+}
+
+export async function getPluvfloodParam({ projectArea, scenarioName } = {}) {
+  return getRealApiData('pluvflood_param', {
+    scenarioName,
+    projectArea,
+    'area':0,
+    'id':0,
+    'returnTime':0,
+    'inflow':0,
+    'depth':0,
+  })
 }
 
 export async function getRankedMeasures(projectArea) {

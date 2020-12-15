@@ -65,4 +65,13 @@ export const getters = {
     })
     return map
   },
+  kpiKeysOperatorMap: state => {
+    let map = {}
+    state.forEach(group => {
+      group.kpis.forEach(kpi => {
+        map[kpi.key] = kpi.operator
+      })
+    })
+    return map
+  },
 }

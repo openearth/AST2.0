@@ -2,6 +2,7 @@ import get from 'lodash/get'
 import isObject from 'lodash/isObject'
 import getViewPath from '../lib/get-view-path'
 import isValidNumber from '../lib/is-valid-number'
+import log from '../lib/log'
 import {
   LEVEL_NO_LEGAL,
   LEVEL_LEGAL,
@@ -61,12 +62,27 @@ export const getters = {
     return !!rootState.project.settings.area.properties && getters.projectAreaSizeIsBelowThreshold
   },
   filledInRequiredProjectAreaSettings(state, getters, rootState) {
+    const { A_p, Frac_RA } = rootState.project.settings.pluvfloodParam
     const projectArea = rootState.project.settings.projectArea
-    return !Object.keys(projectArea)
+
+    const settingsFilledIn = !Object.keys(projectArea)
       .filter(setting => !isObject(projectArea[setting]))
       .map(key => projectArea[key])
       .filter(value => value === null)
       .length
+
+    if ( (!A_p || !Frac_RA) && settingsFilledIn ) {
+      setTimeout(() => {
+          if (
+            !rootState.project.settings.pluvfloodParam.A_p ||
+            !rootState.project.settings.pluvfloodParam.Frac_RA
+          ){
+            log.info('Pluvflood parameters are not available yet. It seems to take a while')
+          }
+      }, 1000)
+    }
+
+    return A_p && Frac_RA && settingsFilledIn
   },
   filledInTargets(state, getters, rootState, rootGetters) {
     const { targets } = rootState.project.settings
