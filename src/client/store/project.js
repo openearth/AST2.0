@@ -8,7 +8,7 @@ import round from 'lodash/round'
 import unset from 'lodash/unset'
 import flatten from 'lodash/flatten'
 import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT, REPAINT, DELETE_LAYER } from '../lib/map-event-bus'
-import { getApiData, getApiDataForFeature, getRankedMeasures } from '../lib/get-api-data';
+import { getApiData, getApiDataForFeature, getRankedMeasures, getDefaultValueForProjectSetting } from '../lib/get-api-data';
 import FileSaver from 'file-saver'
 import getLoadedFileContents from '../lib/get-loaded-file-contents'
 import validateProject from '../lib/validate-project'
@@ -57,7 +57,21 @@ export const mutations = {
     newState.settings.area = file.settings.area
     newState.areas = file.areas
 
-    if (file.settings.hasOwnProperty('userViewedProjectSettings') === false) {
+    // We want to test if the user has seen the project area settings. If not,
+    // we should try to autofill some values.
+    // We test this by checking if some required values are filled in. When the
+    // user did filled some in, there will be strings in the settings.
+    // If a string is found, the user has seen the settings before
+    const someRequiredProjectAreaOptionsAreFilledIn = Object
+      .entries(file.settings.projectArea)
+      .some(([key, value]) => {
+        // The scenarioName is always filled in, ignore this key
+        if (key === 'scenarioName') return false
+
+        return typeof value === 'string'
+      })
+
+    if (someRequiredProjectAreaOptionsAreFilledIn) {
       newState.settings.userViewedProjectSettings = true
     }
 
@@ -473,6 +487,39 @@ export const actions = {
     layers.forEach(layer => {
       commit('setLayer', { id: layer.id, visible: false, showLegend: false, opacity: 1 })
     })
+  },
+  setSmartDefaultsForProjectSettings({ commit, state, rootState, dispatch }) {
+    const { properties, id,...area } = state.settings.area
+
+    rootState.data.areaSettings
+      .filter(({ defaultValueEndpoint }) => defaultValueEndpoint)
+      .forEach(async setting => {
+        const { defaultValueEndpoint, key } = setting
+        const payload = { ...defaultValueEndpoint, area }
+        commit( 'loading-default-value-area-settings/isLoading', key, { root: true })
+        await getDefaultValueForProjectSetting(payload)
+          .then(({ errors, value }) => {
+            if (errors) throw errors
+            const { isSelect, multiple } = setting
+            let type;
+
+            switch (true) {
+              case  multiple && !isSelect: { type = 'checkbox'; break; }
+              case !multiple && !isSelect: { type = 'radio';    break; }
+              case !multiple &&  isSelect: { type = 'select';   break; }
+            }
+
+            dispatch('updateProjectAreaSetting', { type, key, value })
+          })
+          .catch(error => {
+            log.error(
+              `Could not get default value for "${key}"`,
+              { payload },
+              error,
+            )
+          })
+          commit( 'loading-default-value-area-settings/isDoneLoading', key, { root: true })
+      })
   },
   async updateProjectAreaSetting({ commit, getters, dispatch }, payload ) {
     const { type } = payload
