@@ -11,4 +11,5 @@ module.exports = [
   { src: '~/plugins/portal-vue' },
   { src: '~/plugins/tracking.client', ssr: false },
   { src: '~/plugins/pluvflood-params', ssr: false },
+  { src: '~/plugins/api-queue' },
 ]

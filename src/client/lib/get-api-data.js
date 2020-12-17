@@ -1,5 +1,9 @@
 import log from './log'
 import cloneDeep from 'lodash/cloneDeep'
+// import ApiQueue from './api-queue';
+import { apiQueue } from '../plugins/api-queue'
+
+// const apiQueue = new ApiQueue({ batchSize: 2 })
 
 async function handleApiResponse(response) {
   if (response.ok === true) {
@@ -18,17 +22,21 @@ async function handleApiResponse(response) {
   throw new Error(error)
 }
 
-async function getRealApiData(uri, body) {
-  const url = `${process.env.API_BASE}/api/${uri}`
-  const options = {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  }
+async function getTheRealApiData(uri, body) {
+  // return apiQueue.add(async () => {
+    const url = `${process.env.API_BASE}/api/${uri}`
+    const options = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    }
 
-  const response = await fetch(url, options)
-  return handleApiResponse(response)
+    const response = await fetch(url, options)
+    return handleApiResponse(response)
+  // })
 }
+
+const getRealApiData = apiQueue.enqueue(getTheRealApiData)
 
 export function getApiData(uri, body) {
   return getRealApiData(uri, body)

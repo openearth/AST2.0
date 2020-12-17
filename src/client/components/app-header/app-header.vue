@@ -29,6 +29,13 @@
       <template
         v-if="currentFilledInLevel.level >= LEVEL_PROJECT_AREA"
       >
+        <md-progress-spinner
+          v-if="fetchingApiData"
+          :md-diameter="24"
+          :md-stroke="3"
+          md-mode="indeterminate"
+          class="md-accent"
+        />
         <md-button
           v-if="activeWorkspace.showScenarioExamplesInSettings"
           class="md-primary md-icon-button"
@@ -52,7 +59,7 @@
 
 <script>
 import startCase from 'lodash/startCase'
-import { mapGetters, mapMutations } from 'vuex';
+import { mapGetters, mapMutations, mapState } from 'vuex';
 import { LEVEL_PROJECT_AREA } from '../../lib/flow-levels';
 import FullscreenButton from '../fullscreen-button'
 import LogIn from '../log-in'
@@ -78,6 +85,9 @@ export default {
   },
   data: () => ({ LEVEL_PROJECT_AREA }),
   computed: {
+    ...mapState({
+      fetchingApiData: state => state.flow.fetchingApiData,
+    }),
     ...mapGetters('flow', ['currentFilledInLevel']),
     ...mapGetters('data/workspaces', ['activeWorkspace']),
     hasTitle() {

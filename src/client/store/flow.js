@@ -16,6 +16,7 @@ export const state = () => ({
   export: false,
   scenarios: false,
   pdfExport: false,
+  fetchingApiData: false,
 })
 
 export const mutations = {
@@ -45,6 +46,14 @@ export const mutations = {
 
   hidePdfExport(state) {
     state.pdfExport = false
+  },
+
+  isFetchingApiData(state) {
+    state.fetchingApiData = true
+  },
+
+  doneFetchingApiData(state) {
+    state.fetchingApiData = false
   },
 }
 
