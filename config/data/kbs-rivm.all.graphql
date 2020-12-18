@@ -1,0 +1,8 @@
+query ($locale: SiteLocale, $first: IntType, $skip: IntType = 0) {
+  kbsRivm: allKbsRivms(locale: $locale, first: $first, skip: $skip) {
+    code,
+    name,
+    units,
+    modelDescription
+  }
+}

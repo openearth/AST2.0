@@ -89,6 +89,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    translations: {
+      type: Array,
+      default: () => [],
+    },
     showFooter: {
       type: Boolean,
       default: true,
@@ -112,14 +116,20 @@ export default {
     transformedData(){
       try {
         return this.data.entries
-          .map(({ code, name, tablevalue, units, model, modelDescription }) => ({
-            code,
-            text: name.trim(),
-            value: tablevalue,
-            unit: units,
-            model,
-            modelDescription,
-          }))
+          .filter(item => {
+            return this.translations.find(translation => translation.code === item.code)
+          })
+          .map(({ code, tablevalue, model }) => {
+            const translation = this.translations.find(translation => translation.code === code)
+            return {
+              code,
+              text: translation.name.trim(),
+              value: tablevalue,
+              unit: translation.units,
+              model,
+              modelDescription: translation.modelDescription,
+            }
+          })
           // Group items by model
           .reduce((sections, item) => {
             let section = sections.find(({ model }) => model === item.model)
