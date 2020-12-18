@@ -16,6 +16,7 @@
       <pdf-export-results />
       <pdf-export-projectarea-settings />
       <pdf-export-measures-list />
+      <pdf-export-rivm />
     </template>
 
     <footer class="pdf-export__footer">
@@ -32,10 +33,11 @@ import PdfExportResults from '../components/pdf-export/pdf-export-results'
 import PdfExportMap from '../components/pdf-export/pdf-export-map'
 import PdfExportResultSummary from '../components/pdf-export/pdf-export-result-summary'
 import PdfExportProjectareaSettings from '../components/pdf-export/pdf-export-projectarea-settings'
+import PdfExportRivm from '../components/pdf-export/pdf-export-rivm'
 
 export default {
   layout: 'pdf-export',
-  components: { PdfExportMap, PdfExportMeasuresList, PdfExportResults, PdfExportResultSummary, PdfExportProjectareaSettings },
+  components: { PdfExportMap, PdfExportMeasuresList, PdfExportResults, PdfExportResultSummary, PdfExportProjectareaSettings, PdfExportRivm },
   computed: {
     ...mapState('project', ['settings']),
     ...mapState('data', ['appConfig', 'workspaces']),

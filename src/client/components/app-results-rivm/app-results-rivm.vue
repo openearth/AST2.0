@@ -44,7 +44,7 @@
       </section>
     </div>
 
-    <footer class="app-results-rivm__footer">
+    <footer v-if="showFooter" class="app-results-rivm__footer">
       <small class="app-results-rivm__footer__received-at">
         <strong>{{ datoContent.lastCalculation }}:</strong>
         <span>{{ receivedAt }}</span>
@@ -88,6 +88,10 @@ export default {
     datoContent: {
       type: Object,
       default: () => ({}),
+    },
+    showFooter: {
+      type: Boolean,
+      default: true,
     },
   },
   data: () => ({
