@@ -5,6 +5,7 @@
       :id="`select-${id}`"
       v-model="selectedValue"
       md-dense
+      :disabled="disabled"
     >
       <md-option
         v-for="option in options"
@@ -34,6 +35,10 @@ export default {
     id: {
       type: String,
       required: true,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
