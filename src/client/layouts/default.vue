@@ -73,6 +73,7 @@
               v-if="scope.active === 'rivm'"
               :data="rivmCoBenefits"
               :dato-content="kbsResultContent"
+              :translations="kbsRivmContent"
               @fetch-data="fetchRivmCoBenefits"
             />
             <app-results-heatstress
@@ -184,6 +185,7 @@ export default {
       disclaimer: {},
       pdfProgress: undefined,
       kbsResultContent: {},
+      kbsRivmContent: [],
     }
   },
 
@@ -245,11 +247,14 @@ export default {
   },
   async beforeMount() {
     const locale = this.$i18n.locale
-    const [ { kbsResult }, { legal } ] = await Promise.all([
+    const [ { kbsResult }, { kbsRivm }, { legal } ] = await Promise.all([
       getData({ locale, slug: 'kbs-results' }),
+      getData({ locale, slug: 'kbs-rivm' }),
       getData({ locale, slug: 'legal' }),
     ])
+    console.log({ kbsRivm })
     this.kbsResultContent = { ...kbsResult }
+    this.kbsRivmContent = kbsRivm
     this.disclaimer = { ...legal.disclaimer }
   },
 

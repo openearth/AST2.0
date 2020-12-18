@@ -90,7 +90,7 @@ export default {
             kpis: Object.entries(this.targets[group.key])
               .filter(([, value]) => value.include)
               .map(([key, { value }]) => ({
-                key: group.kpis.find(kpi => kpi.key === key).title,
+                key: (group.kpis.find(kpi => kpi.key === key) || { title: '' }).title,
                 value,
               })),
           }
