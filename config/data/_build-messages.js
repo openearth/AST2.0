@@ -20,7 +20,7 @@ const transformTranslations = locale =>
     get('translations'),
     map(toObject),
     reduce(assign, {}),
-    JSON.stringify,
+    data => JSON.stringify(data, null, 2),
     writeFile(locale),
   )(locale)
 
