@@ -1,6 +1,10 @@
 
 <template>
-  <div ref="base" class="layout">
+  <div
+    ref="base"
+    class="layout"
+    :style="workspaceColors"
+  >
     <app-header
       :title="title"
       :legal-accepted="legalAccepted"
@@ -230,6 +234,18 @@ export default {
         ( this.activeWorkspace.showRivmCoBenefits && { id: 'rivm', icon: 'eco', color: '--nature-green-color' } ),
         ( this.activeWorkspace.showHeatstress && { id: 'heatstress', icon: 'wb_sunny', color: '--yellow-color' } ),
       ]
+    },
+    workspaceColors() {
+      try {
+      return`
+        --primary-color: ${this.activeWorkspace.primaryColor.hex};
+        --accent-color: ${this.activeWorkspace.accentColor.hex};
+        --md-theme-default-primary: var(--primary-color);
+        --md-theme-default-accent: var(--accent-color);
+      `
+      } catch (error) {
+        return ''
+      }
     },
   },
 
