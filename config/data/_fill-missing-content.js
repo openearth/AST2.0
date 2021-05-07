@@ -13,6 +13,8 @@ const localesWithMissingContent = require('../locales-with-missing-content')
 const { pipe, defaultsDeep, isPlainObject } = require('lodash/fp')
 const dataFolder = path.join(__dirname, '../../src/client/static/data')
 
+const keepBackups = false
+
 function convertEmptyStringsToUndefined(obj) {
   function convert(value) {
     if (value === '') return undefined
@@ -36,16 +38,15 @@ const getDefaultFile = (sourceLocale, baseLocale) => file => file.replace(source
 const readFile = filePath => fs.readFileSync(filePath, { encoding: 'utf-8' })
 const getFileContent = pipe(readFile, JSON.parse, convertEmptyStringsToUndefined)
 const getDefaultFileContent = (sourceLocale, baseLocale) => filePath => pipe(getDefaultFile(sourceLocale, baseLocale), readFile, JSON.parse)(filePath)
-const writeFileWithSuffix = (filePath, data) => fs.writeFileSync(filePath, JSON.stringify(data, null, 2), { encoding: 'utf-8' })
-const getContentPairsFromFile = (sourceLocale, baseLocale ) => filePath => [
+  const getContentPairsFromFile = (sourceLocale, baseLocale ) => filePath => [
   getDefaultFileContent(sourceLocale, baseLocale)(filePath),
   getFileContent(filePath),
   filePath,
 ]
 const mergeDefaultInSource = ([defaultContent, source, filePath]) => ({ content: defaultsDeep(defaultContent, source), filePath })
 const writeResult = sourceLocale => ({ content, filePath }) => {
-  fs.renameSync(filePath, filePath.replace(sourceLocale, `${sourceLocale}_BK`))
-  writeFileWithSuffix(filePath, content)
+  keepBackups && fs.renameSync(filePath, filePath.replace(sourceLocale, `${sourceLocale}_BK`))
+  fs.writeFileSync(filePath, JSON.stringify(content, null, 2), { encoding: 'utf-8' })
 }
 
 const parse = (sourceLocale, baseLocale) => pipe(
@@ -55,10 +56,10 @@ const parse = (sourceLocale, baseLocale) => pipe(
 )
 
 function execute(locales = []) {
-  locales.forEach(({ source, baseLocale }) => {
-    fs.mkdirSync(path.join(dataFolder, `${source}_BK`))
-    fs.mkdirSync(path.join(dataFolder, `${source}_BK`, 'workspaces'))
-    files(source).forEach(parse(source, baseLocale))
+  locales.forEach(({ sourceLocale, baseLocale }) => {
+    keepBackups && fs.mkdirSync(path.join(dataFolder, `${sourceLocale}_BK`))
+    keepBackups && fs.mkdirSync(path.join(dataFolder, `${sourceLocale}_BK`, 'workspaces'))
+    files(sourceLocale).forEach(parse(sourceLocale, baseLocale))
   })
 }
 
