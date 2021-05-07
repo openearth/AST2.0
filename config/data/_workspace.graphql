@@ -2,6 +2,12 @@ query ($locale: SiteLocale, $id: ItemId){
   workspace(locale: $locale, filter: {id: {eq: $id}}) {
     name,
     currencySymbol,
+    primaryColor {
+      hex
+    }
+    accentColor {
+      hex
+    }
     excludeAllMeasures,
     showRivmCoBenefits,
     showHeatstress,
