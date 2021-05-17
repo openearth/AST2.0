@@ -268,7 +268,7 @@ export default {
       getData({ locale, slug: 'kbs-rivm' }),
       getData({ locale, slug: 'legal' }),
     ])
-    console.log({ kbsRivm })
+
     this.kbsResultContent = { ...kbsResult }
     this.kbsRivmContent = kbsRivm
     this.disclaimer = { ...legal.disclaimer }
