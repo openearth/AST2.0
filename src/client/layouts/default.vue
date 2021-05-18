@@ -190,6 +190,7 @@ import ScenarioOverview from '@/components/scenario-overview'
 import getData from '~/lib/get-data'
 import EventBus, { CLICK } from '~/lib/event-bus'
 import log from '~/lib/log'
+import lightOrDark from '~/lib/light-or-dark'
 
 export default {
   components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea, ProjectAreaSizeThreshold, AppResultsPanel, AppResultsRivm, AppResultsHeatstress, ScenarioOverview },
@@ -249,11 +250,25 @@ export default {
     },
     workspaceColors() {
       try {
+        const primary = this.activeWorkspace.primaryColor.hex
+        const accent = this.activeWorkspace.accentColor.hex
+        const isPrimaryDark = lightOrDark(primary)
+        const isAccentDark = lightOrDark(accent)
+        const primaryText = isPrimaryDark ? 'white' : 'black'
+        const accentText = isAccentDark ? 'white' : 'black'
         return`
           --primary-color: ${this.activeWorkspace.primaryColor.hex};
+          --primary-text-color: ${primaryText};
           --accent-color: ${this.activeWorkspace.accentColor.hex};
+          --accent-text-color: ${accentText};
           --md-theme-default-primary: var(--primary-color);
           --md-theme-default-accent: var(--accent-color);
+          --md-theme-default-text-primary-on-primary: var(--primary-text-color);
+          --md-theme-default-text-primary-on-accent: var(--accent-text-color);
+          --md-theme-default-text-primary-on-background: var(--primary-color);
+          --md-theme-default-text-accent-on-background: var(--primary-color);
+          --md-theme-default-primary-on-background: var(--primary-color);
+          --md-theme-default-accent-on-background: var(--accent-color);
         `
       } catch (error) {
         return ''
