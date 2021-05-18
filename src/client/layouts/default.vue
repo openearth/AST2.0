@@ -168,6 +168,7 @@
         'default__splashscreen--hidden': isReady
       }"
     >
+      <div class="default__splashscreen-spinner" />
       Loading...
     </div>
   </div>
@@ -265,8 +266,6 @@ export default {
           --md-theme-default-accent: var(--accent-color);
           --md-theme-default-text-primary-on-primary: var(--primary-text-color);
           --md-theme-default-text-primary-on-accent: var(--accent-text-color);
-          --md-theme-default-text-primary-on-background: var(--primary-color);
-          --md-theme-default-text-accent-on-background: var(--primary-color);
           --md-theme-default-primary-on-background: var(--primary-color);
           --md-theme-default-accent-on-background: var(--accent-color);
         `
@@ -426,6 +425,10 @@ export default {
 <style>
 @import '../components/app-core/index.css';
 
+@keyframes rotatingSpinner {
+  100% { transform: rotate(360deg); }
+}
+
 .default__splashscreen {
   position: absolute;
   top: 0;
@@ -445,6 +448,16 @@ export default {
 .default__splashscreen--hidden {
   opacity: 0;
   pointer-events: none;
+}
+
+.default__splashscreen-spinner {
+  border: 1px solid grey;
+  border-left-color: transparent;
+  width: 100px;
+  height: 100px;
+  border-radius: 100%;
+  position: absolute;
+  animation: rotatingSpinner 3.5s linear infinite;
 }
 
 .layout {
