@@ -6,6 +6,7 @@
     :style="workspaceColors"
   >
     <app-header
+      v-show="isReady"
       :title="title"
       :legal-accepted="legalAccepted"
       :project-title="projectTitle"
@@ -161,6 +162,14 @@
       :scenarios="scenariosInActiveWorkspace"
       @choose-scenario="value => updateProjectAreaSetting({ type: 'select', key: 'scenarioName', value })"
     />
+    <div
+      :class="{
+        'default__splashscreen': true,
+        'default__splashscreen--hidden': isReady
+      }"
+    >
+      Loading...
+    </div>
   </div>
 </template>
 
@@ -190,6 +199,7 @@ export default {
       pdfProgress: undefined,
       kbsResultContent: {},
       kbsRivmContent: [],
+      mapboxLoaded: false,
     }
   },
 
@@ -239,15 +249,18 @@ export default {
     },
     workspaceColors() {
       try {
-      return`
-        --primary-color: ${this.activeWorkspace.primaryColor.hex};
-        --accent-color: ${this.activeWorkspace.accentColor.hex};
-        --md-theme-default-primary: var(--primary-color);
-        --md-theme-default-accent: var(--accent-color);
-      `
+        return`
+          --primary-color: ${this.activeWorkspace.primaryColor.hex};
+          --accent-color: ${this.activeWorkspace.accentColor.hex};
+          --md-theme-default-primary: var(--primary-color);
+          --md-theme-default-accent: var(--accent-color);
+        `
       } catch (error) {
         return ''
       }
+    },
+    isReady() {
+      return Boolean(this.activeWorkspace) && this.mapboxLoaded
     },
   },
 
@@ -283,6 +296,10 @@ export default {
 
     document.addEventListener('pdf-export-progress', event => {
       this.pdfProgress = event.detail.percentage
+    })
+
+    document.addEventListener('mapbox-loaded', () => {
+      this.mapboxLoaded = true
     })
 
     window.addEventListener('keydown', event => {
@@ -393,6 +410,27 @@ export default {
 
 <style>
 @import '../components/app-core/index.css';
+
+.default__splashscreen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  background-color: white;
+  z-index: 1;
+  font-family: sans-serif;
+  font-size: 1rem;
+  transition: opacity 0.20s ease-out;
+}
+
+.default__splashscreen--hidden {
+  opacity: 0;
+  pointer-events: none;
+}
 
 .layout {
   display: flex;
