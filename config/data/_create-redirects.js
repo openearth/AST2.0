@@ -8,7 +8,13 @@ const targetFile = path.join(staticDir, '_redirects')
 
 const redirectToLine = redirect => `${redirect.from} ${redirect.to} ${redirect.statusCode}`
 const readFile = filePath => fs.readFileSync(filePath, { encoding: 'utf8' })
-const writeFile = curry((filePath, contents) => fs.writeFileSync(filePath, contents, { encoding: 'utf8' }))
+const writeFile = curry((filePath, contents) => {
+  fs.writeFileSync(
+    filePath,
+    `/ /en_US 301 Country=us\n${contents}`,
+    { encoding: 'utf8' },
+  )
+})
 
 pipe(
   readFile,
