@@ -6,6 +6,7 @@
     :style="workspaceColors"
   >
     <app-header
+      v-show="isReady"
       :title="title"
       :legal-accepted="legalAccepted"
       :project-title="projectTitle"
@@ -161,6 +162,15 @@
       :scenarios="scenariosInActiveWorkspace"
       @choose-scenario="value => updateProjectAreaSetting({ type: 'select', key: 'scenarioName', value })"
     />
+    <div
+      :class="{
+        'default__splashscreen': true,
+        'default__splashscreen--hidden': isReady
+      }"
+    >
+      <div class="default__splashscreen-spinner" />
+      Loading...
+    </div>
   </div>
 </template>
 
@@ -181,6 +191,7 @@ import ScenarioOverview from '@/components/scenario-overview'
 import getData from '~/lib/get-data'
 import EventBus, { CLICK } from '~/lib/event-bus'
 import log from '~/lib/log'
+import lightOrDark from '~/lib/light-or-dark'
 
 export default {
   components: { AppDisclaimer, AppHeader, MapViewer, KpiPanel, VirtualKeyboard, AppMenu, NotificationArea, ProjectAreaSizeThreshold, AppResultsPanel, AppResultsRivm, AppResultsHeatstress, ScenarioOverview },
@@ -190,6 +201,7 @@ export default {
       pdfProgress: undefined,
       kbsResultContent: {},
       kbsRivmContent: [],
+      mapboxLoaded: false,
     }
   },
 
@@ -239,15 +251,30 @@ export default {
     },
     workspaceColors() {
       try {
-      return`
-        --primary-color: ${this.activeWorkspace.primaryColor.hex};
-        --accent-color: ${this.activeWorkspace.accentColor.hex};
-        --md-theme-default-primary: var(--primary-color);
-        --md-theme-default-accent: var(--accent-color);
-      `
+        const primary = this.activeWorkspace.primaryColor.hex
+        const accent = this.activeWorkspace.accentColor.hex
+        const isPrimaryDark = lightOrDark(primary)
+        const isAccentDark = lightOrDark(accent)
+        const primaryText = isPrimaryDark ? 'white' : 'black'
+        const accentText = isAccentDark ? 'white' : 'black'
+        return`
+          --primary-color: ${this.activeWorkspace.primaryColor.hex};
+          --primary-text-color: ${primaryText};
+          --accent-color: ${this.activeWorkspace.accentColor.hex};
+          --accent-text-color: ${accentText};
+          --md-theme-default-primary: var(--primary-color);
+          --md-theme-default-accent: var(--accent-color);
+          --md-theme-default-text-primary-on-primary: var(--primary-text-color);
+          --md-theme-default-text-primary-on-accent: var(--accent-text-color);
+          --md-theme-default-primary-on-background: var(--primary-color);
+          --md-theme-default-accent-on-background: var(--accent-color);
+        `
       } catch (error) {
         return ''
       }
+    },
+    isReady() {
+      return Boolean(this.activeWorkspace) && this.mapboxLoaded
     },
   },
 
@@ -283,6 +310,10 @@ export default {
 
     document.addEventListener('pdf-export-progress', event => {
       this.pdfProgress = event.detail.percentage
+    })
+
+    document.addEventListener('mapbox-loaded', () => {
+      this.mapboxLoaded = true
     })
 
     window.addEventListener('keydown', event => {
@@ -393,6 +424,41 @@ export default {
 
 <style>
 @import '../components/app-core/index.css';
+
+@keyframes rotatingSpinner {
+  100% { transform: rotate(360deg); }
+}
+
+.default__splashscreen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  background-color: white;
+  z-index: 1;
+  font-family: sans-serif;
+  font-size: 1rem;
+  transition: opacity 0.20s ease-out;
+}
+
+.default__splashscreen--hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.default__splashscreen-spinner {
+  border: 1px solid grey;
+  border-left-color: transparent;
+  width: 100px;
+  height: 100px;
+  border-radius: 100%;
+  position: absolute;
+  animation: rotatingSpinner 3.5s linear infinite;
+}
 
 .layout {
   display: flex;
