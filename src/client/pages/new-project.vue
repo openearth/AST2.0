@@ -18,8 +18,7 @@
         <span v-if="settings.area.properties" class="md-subheading">
           <unit-output
             :value="areaSize"
-            metric-unit="m2"
-            :target-system="'imperial'"
+            unit="surface"
           />
         </span>
       </div>
@@ -40,7 +39,8 @@
 <script>
 import { mapState, mapGetters } from 'vuex';
 import MapEventBus, { REDRAW } from '../lib/map-event-bus'
-import { HintText, UnitOutput } from '~/components'
+import { HintText } from '~/components'
+import UnitOutput from '~/components/unit-output'
 
 export default {
   middleware: ['access-level-legal', 'state-is-draw-project-area'],

@@ -50,7 +50,7 @@ export const getters = {
     state.forEach(group => {
       group.kpis.forEach(kpi => {
         const unit = rootState.data.units.find(unit => unit.key === kpi.unit)
-        map[kpi.key] = get(unit, 'metric')
+        map[kpi.key] = get(unit, 'key')
       })
     })
 

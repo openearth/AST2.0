@@ -22,7 +22,11 @@
             {{ datoContent[key] }} ({{ unit('temperature') }}):
           </span>
           <p class="app-results-heatstress__value">
-            {{ roundValue(result) }}
+            <unit-output
+              :value="result"
+              unit="temperature"
+              hide-unit
+            />
           </p>
         </md-list-item>
       </md-list>
@@ -119,8 +123,10 @@ import cloneDeep from 'lodash/cloneDeep'
 import isEmpty from 'lodash/isEmpty'
 import camelCase from 'lodash/camelCase'
 import upperFirst from 'lodash/upperFirst'
+import UnitOutput from '../unit-output'
 
 export default {
+  components: { UnitOutput },
   props: {
     heatstressLayers: {
       type: Array,

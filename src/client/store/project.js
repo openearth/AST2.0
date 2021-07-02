@@ -827,7 +827,7 @@ export const getters = {
 
       const toDecimalPricision = (value, precision = 2) => round(value, precision)
       const measueTitleForId = id => get(measureById(id), 'title')
-      const kpiTitleByKey = key => `${kpiKeysTitleMap[key]}${kpiKeysUnitMap[key] ? ` (${kpiKeysUnitMap[key]})` : ''}`
+      const kpiTitleByKey = key => `${kpiKeysTitleMap[key]}`
 
       const measureValueMap = getters.areas
         .filter(area => area.properties.hasOwnProperty('measure'))
@@ -867,6 +867,11 @@ export const getters = {
           rootState.i18n.messages.surface,
           ...kpiKeys.map(kpiTitleByKey),
         ],
+        'units': [
+          '',
+          'surface',
+          ...kpiKeys.map(key => kpiKeysUnitMap[key]),
+        ],
         rows: Object.entries(measureValueMap).map(([id, values]) => {
           const [surface, ...kpiValues] = values
           return [
@@ -896,7 +901,7 @@ export const getters = {
 
       const toDecimalPricision = (value, precision = 2) => round(value, precision)
       const measueTitleForId = id => get(measureById(id), 'title')
-      const kpiTitleByKey = key => `${kpiKeysTitleMap[key]}${kpiKeysUnitMap[key] ? ` (${kpiKeysUnitMap[key]})` : ''}`
+      const kpiTitleByKey = key => `${kpiKeysTitleMap[key]}`
 
       const measureValueMap = getters.areas
         .filter(area => area.properties.hasOwnProperty('measure'))
@@ -922,6 +927,11 @@ export const getters = {
           rootState.i18n.messages.measure,
           rootState.i18n.messages.surface,
           ...kpiKeys.map(kpiTitleByKey),
+        ],
+        'units': [
+          '',
+          'surface',
+          ...kpiKeys.map(key => kpiKeysUnitMap[key]),
         ],
         rows: Object.entries(measureValueMap)
           .map(([id, values]) => {

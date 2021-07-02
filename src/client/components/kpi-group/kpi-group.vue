@@ -10,10 +10,14 @@
       class="kpi-group__kpi"
     >
       <span class="md-body-1 kpi-group__kpi-title">
-        {{ inferKpiTitleWithUnit(kpi.title, kpi.unit) }}
+        {{ kpi.title }} (<unit-output :unit="kpi.unit" /><template v-if="kpi.unit === 'number'">{{ $t('number') }}</template>)
       </span>
       <p v-if="type === 'numbers'" class="md-body-1 kpi-group__kpi-value">
-        {{ kpiByKey(kpi.key) }}
+        <unit-output
+          :value="kpiByKey(kpi.key)"
+          :unit="kpi.unit"
+          hide-unit
+        />
       </p>
 
       <md-progress-bar
@@ -24,7 +28,7 @@
 
       <div v-if="(type === 'numbers') && selectedAreas" class="kpi-group__measure-kpi">
         <span><em>{{ $t('measure') }}</em></span>
-        <span><em>{{ getKpiValueForArea(kpi.key) }} {{ unit(kpi.unit) }}</em></span>
+        <span><em><unit-output :value="getKpiValueForArea(kpi.key)" :unit="kpi.unit" /></em></span>
       </div>
     </md-list-item>
   </md-list>
@@ -32,12 +36,14 @@
 
 <script>
 import calculateFmeasArea from '../../lib/calculate-fmeas-area'
+import UnitOutput from '~/components/unit-output'
 
 const displayDecimal = number => {
   return `${Math.round(number * 100)}`.replace(/(.+)(.{2})$/, '$1.$2')
 }
 
 export default {
+  components: { UnitOutput },
   props: {
     kpiGroup: {
       type: Object,

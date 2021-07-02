@@ -1,63 +1,74 @@
 <template>
   <span>
-    <span>{{ computedValue }} </span>
-    <template v-if="outputMetric">
-      <template v-if="metricUnit === 'mm'">mm</template>
-      <template v-if="metricUnit === 'm'">m</template>
-      <template v-if="metricUnit === 'm2'">m<sup>2</sup></template>
-      <template v-if="metricUnit === 'm3'">m<sup>3</sup></template>
-      <template v-if="metricUnit === 'c'">°C</template>
-    </template>
-    <template v-if="outputImperial">
-      <template v-if="imperialUnit === 'inch'">inch</template>
-      <template v-if="imperialUnit === 'ft'">ft</template>
-      <template v-if="imperialUnit === 'ft2'">ft<sup>2</sup></template>
-      <template v-if="imperialUnit === 'ft3'">ft<sup>3</sup></template>
-      <template v-if="imperialUnit === 'f'">°F</template>
+    <span v-if="value !== null">{{ computedValue }} </span>
+    <template v-if="hideUnit === false">
+      <template v-if="unit === 'surface'">
+        <template v-if="unitSystem === 'metric'">m<sup>2</sup></template>
+        <template v-else>ft<sup>2</sup></template>
+      </template>
+      <template v-else-if="unit === 'volume'">
+        <template v-if="unitSystem === 'metric'">m<sup>3</sup></template>
+        <template v-else>ft<sup>3</sup></template>
+      </template>
+      <template v-else-if="unit === 'Ratemmy'">
+        <template v-if="unitSystem === 'metric'">mm/{{ $t('year') }}</template>
+        <template v-else>in/{{ $t('year') }}</template>
+      </template>
+      <template v-else-if="unit === 'currency_per_year'">{{ activeWorkspace.currencySymbol }}/{{ $t('year') }}</template>
+      <template v-else-if="unit === 'currency'">{{ activeWorkspace.currencySymbol }}</template>
+      <template v-else-if="unit === 'years'">{{ $t('years') }}</template>
+      <template v-else-if="unit === 'number'">&#8203;</template>
+      <template v-else-if="unit">{{ unitMap[unit][unitSystem] }}</template>
     </template>
   </span>
 </template>
 
 <script>
-import convertValue from './convert-value'
+import { mapGetters, mapState } from 'vuex'
+import convertToImperial from './convert-to-imperial'
+
 export default {
   props: {
     value: {
       type: [String, Number],
-      required: true,
+      default: null,
     },
-    metricUnit: {
+    unit: {
       type: String,
-      required: true,
-      validator: value => {
-        switch (value) {
-          case 'mm':
-          case 'm':
-          case 'm3':
-          case 'm2':
-          case 'c':
-            return true;
-          default:
-            return false;
-        }
-      },
-    },
-    targetSystem: {
-      type: String,
-      default: 'metric',
-      validator: value => /metric|imperial/.test(value),
+      default: null,
     },
     decimals: {
       type: Number,
       default: 2,
     },
+    hideUnit: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
+    ...mapState({
+      units: state => state.data.units,
+    }),
+    ...mapGetters('data/workspaces', ['activeWorkspace']),
+    ...mapGetters('data/units', ['displayValue']),
+    unitMap() {
+      return this.units.reduce((collection, _unit) => {
+        const { title, key, ...unit } = _unit
+        return {
+          ...collection,
+          ...{ [key]: unit },
+          }
+      }, {})
+    },
+    unitSystem() {
+      return this.activeWorkspace.unitSystem
+    },
     outputMetric() {
-      return this.targetSystem === 'metric'
+      return this.unitSystem === 'metric'
     },
     outputImperial() {
-      return this.targetSystem === 'imperial'
+      return this.unitSystem === 'imperial'
     },
     imperialUnit() {
       switch(this.metricUnit) {
@@ -76,15 +87,18 @@ export default {
       }
     },
     computedValue() {
-      const converted =  this.targetSystem === 'imperial'
-        ? convertValue(this.value, this.metricUnit)
-        : this.value
+      const converted =  this.unitSystem === 'imperial'
+        ? convertToImperial(Number(this.value), this.unit)
+        : Number(this.value)
 
       const places = Math.pow(10, this.decimals)
       const rounded = Math.round(converted * places) / places
 
-      const thousandSeparator = '.'
-      const decimalSeparator = ','
+      const { thousandSeparator, decimalSeparator } = this.activeWorkspace
+
+      if (isNaN(rounded)) {
+        return ''
+      }
 
       return rounded.toString().replace('.', decimalSeparator).replace(/(\d)(?=(\d{3})+(?!\d))/g, `$1${thousandSeparator}`) // 1000 -> 1.000
     },
