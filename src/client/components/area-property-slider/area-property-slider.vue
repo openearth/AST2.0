@@ -5,6 +5,7 @@
     :max="max"
     :label="$t(`area_${ valueTypeLower }`)"
     :multi="multi"
+    :unit="unit"
     @change="updateExternal"
   >
     <template v-slot:info>
@@ -49,6 +50,10 @@ export default {
     max: {
       type: String,
       required: true,
+    },
+    unit: {
+      type: String,
+      default: undefined,
     },
   },
   data: () => ({

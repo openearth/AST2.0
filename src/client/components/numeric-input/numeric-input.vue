@@ -65,6 +65,10 @@ export default {
       type: String,
       default: undefined,
     },
+    decimals: {
+      type: Number,
+      default: 100,
+    },
   },
   computed: {
     ...mapGetters('data/workspaces', ['activeWorkspace']),
@@ -75,9 +79,14 @@ export default {
       return !this.hasEmptyInput && !isValidNumber(this.value)
     },
     convertedValue() {
-      return this.activeWorkspace.unitSystem === 'imperial'
-        ?`${convertToImperial(this.value, this.unit)}`
-        : this.value
+      if (this.activeWorkspace.unitSystem === 'imperial') {
+        const converted = convertToImperial(this.value, this.unit)
+        const places = Math.pow(10, this.decimals)
+        const rounded = Math.round(converted * places) / places
+        return `${rounded}`
+      } else {
+        return this.value
+      }
     },
   },
   methods: {

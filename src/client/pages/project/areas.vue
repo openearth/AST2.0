@@ -70,12 +70,13 @@
 
             <template v-if="selectedMeasure">
               <area-property-slider
-                v-for="({ key, min, max, values }) in measurePropertiesToEdit"
+                v-for="({ key, min, max, values, unit }) in measurePropertiesToEdit"
                 :key="key"
                 :value-type="key"
                 :values="values"
                 :min="min"
                 :max="max"
+                :unit="unit"
                 @change="updateValue"
               />
             </template>
@@ -154,7 +155,7 @@ export default {
       return this.selectedMeasure.defaultValues
         .map(valueObj => {
           const { key, show } = valueObj
-
+          console.log({ valueObj })
           if(
             !show ||
             ((key === 'Radius' || key === 'Width') && this.selectedGeometryTypes.length > 1) ||
@@ -165,7 +166,24 @@ export default {
           const values = this.getValuesForProperty(key)
           const min = valueObj.min.toString()
           const max = valueObj.max.toString()
-          return { key, values, min, max }
+
+          let unit
+          switch (key) {
+            case 'Radius':
+              unit = 'surface'
+              break
+            case 'Width':
+              unit = 'distance'
+              break
+            case 'Depth':
+              unit = 'distance'
+              break
+            case 'Inflow':
+            default:
+                unit = undefined
+          }
+
+          return { key, values, min, max, unit }
         })
         .filter(Boolean)
     },

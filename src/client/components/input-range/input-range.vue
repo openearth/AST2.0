@@ -27,6 +27,8 @@
         :on-change="value => $emit('change', isNaN(value) ? null : value)"
         :multi="multi"
         hide-label
+        :unit="unit"
+        :decimals="3"
       />
       <div v-else class="md-field numeric-input input-range__number md-theme-default md-has-value">
         <span class="md-input">{{ Math.floor(value) }}</span>
@@ -36,6 +38,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import NumericInput from '../numeric-input';
 
 export default {
@@ -65,10 +68,16 @@ export default {
       type: Boolean,
       default: false,
     },
+    unit: {
+      type: String,
+      default: undefined,
+    },
   },
   computed: {
+    ...mapGetters('data/workspaces', ['activeWorkspace']),
     inputListeners: function () {
       var vm = this
+
       // `Object.assign` merges objects together to form a new object
       return Object.assign({},
         // We add all the listeners from the parent
