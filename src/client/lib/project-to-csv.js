@@ -1,4 +1,5 @@
 import calculateFmeasArea from './calculate-fmeas-area';
+import convertToImperial from '../components/unit-output/convert-to-imperial'
 
 function value(input) {
   return input === 0 || !!input
@@ -6,7 +7,15 @@ function value(input) {
     : 0
 }
 
-export default function projectToCsv(areas, kpiKeys, measureById, pluvfloodParam) {
+function toUnitSystem(imperial) {
+  return function execute(unit, value) {
+    return imperial ? convertToImperial(value, unit) : value
+  }
+}
+
+export default function projectToCsv(areas, kpiKeys, kpiKeysUnitMap, measureById, pluvfloodParam, imperial = false) {
+  const convertToUnitSystem = toUnitSystem(imperial)
+
   const header = ['id', 'measure', 'type', 'length', 'width', 'depth', 'radius', 'area', 'inflow'].concat(kpiKeys)
   const results = areas
     .map(({ id, properties, geometry }) => {
@@ -17,20 +26,21 @@ export default function projectToCsv(areas, kpiKeys, measureById, pluvfloodParam
         id,
         value(measureObj.title),
         type,
-        value(length),
-        value(areaWidth || defaultWidth),
-        value(areaDepth || defaultDepth),
-        value(radius),
-        value(area),
+        convertToUnitSystem('distance', value(length)),
+        convertToUnitSystem('distance', value(areaWidth || defaultWidth)),
+        convertToUnitSystem('distance', value(areaDepth || defaultDepth)),
+        convertToUnitSystem('surface', value(radius)),
+        convertToUnitSystem('surface', value(area)),
         value(areaInflow || defaultInflow),
         ...kpiKeys.map(key => {
-          return key !== 'Fmeas_area'
+          const val = key !== 'Fmeas_area'
             ? value(apiData && apiData[key])
             : value(
               apiData &&
               apiData[key] &&
               calculateFmeasArea(pluvfloodParam.A_tot, pluvfloodParam.A_p, pluvfloodParam.Frac_RA, apiData[key]),
             )
+          return convertToUnitSystem(kpiKeysUnitMap[key], val)
         }),
       ]
     })

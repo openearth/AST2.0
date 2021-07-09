@@ -715,6 +715,8 @@ export const actions = {
     const A_p = state.settings.pluvfloodParam.A_p
     const Frac_RA = state.settings.pluvfloodParam.Frac_RA
     const { title } = state.settings.general
+    const kpiKeysUnitMap = rootGetters['data/kpiGroups/kpiKeysUnitMap']
+    const isImperial = rootGetters['data/activeWorkspace'].unitSystem === 'imperial'
     let data
     let type
     switch (format) {
@@ -722,8 +724,10 @@ export const actions = {
         data = projectToCsv(
           getters.areas,
           Object.keys(getters.kpiValues),
+          kpiKeysUnitMap,
           rootGetters['data/measures/measureById'],
           { A_tot, A_p, Frac_RA },
+          isImperial,
         )
         type = 'text/csv'
         break;
