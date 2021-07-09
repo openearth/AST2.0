@@ -155,7 +155,6 @@ export default {
       return this.selectedMeasure.defaultValues
         .map(valueObj => {
           const { key, show } = valueObj
-          console.log({ valueObj })
           if(
             !show ||
             ((key === 'Radius' || key === 'Width') && this.selectedGeometryTypes.length > 1) ||
