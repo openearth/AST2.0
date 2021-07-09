@@ -37,6 +37,7 @@
           <numeric-input
             :label="kpi.title"
             :value="String(targets[group.key][kpi.key].value || '')"
+            :unit="kpi.unit"
             :on-change="value => setTarget({
               group: group.key,
               key: kpi.key,
@@ -45,7 +46,9 @@
             hide-label
           >
             <span class="md-suffix">
-              {{ unit(kpi.unit) }}
+              <unit-ouput
+                :unit="kpi.unit"
+              />
             </span>
           </numeric-input>
         </md-table-cell>
@@ -56,10 +59,12 @@
 
 <script>
 import { NumericInput } from '../../components';
+import UnitOuput from '../../components/unit-output'
 import { mapState, mapMutations } from 'vuex';
+
 export default {
   middleware: ['access-level-project-area-settings'],
-  components: { NumericInput },
+  components: { NumericInput, UnitOuput },
   computed: {
     ...mapState('data', ['kpiGroups']),
     ...mapState({
