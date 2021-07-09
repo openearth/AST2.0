@@ -4,7 +4,11 @@
       md-elevation="0"
       class="md-transparent project-area__area-size"
     >
-      <span class="md-subheading">{{ $t('area_size') }}: <strong><unit-output :value="area" unit="surface" /></strong></span>
+      <span class="md-subheading">{{ $t('area_size') }}: <strong><unit-output
+        :value="area"
+        unit="surface"
+        :decimals="0"
+      /></strong></span>
       <md-button
         :to="`/${locale}/new-project`"
         class="md-accent"

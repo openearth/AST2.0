@@ -19,6 +19,7 @@
           <unit-output
             :value="areaSize"
             unit="surface"
+            :decimals="0"
           />
         </span>
       </div>
