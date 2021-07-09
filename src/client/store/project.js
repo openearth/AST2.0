@@ -716,7 +716,7 @@ export const actions = {
     const Frac_RA = state.settings.pluvfloodParam.Frac_RA
     const { title } = state.settings.general
     const kpiKeysUnitMap = rootGetters['data/kpiGroups/kpiKeysUnitMap']
-    const isImperial = rootGetters['data/activeWorkspace'].unitSystem === 'imperial'
+    const isImperial = rootGetters['data/workspaces/activeWorkspace'].unitSystem === 'imperial'
     let data
     let type
     switch (format) {
