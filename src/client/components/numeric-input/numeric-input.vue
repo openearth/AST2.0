@@ -3,7 +3,7 @@
     <label v-if="!hideLabel">{{ label }}</label>
     <md-input
       ref="inputElement"
-      :value="value"
+      :value="convertedValue"
       data-type="number"
       :placeholder="multi ? $t('multi') : ''"
       @change="event => validateNumber(event.target.value)"
@@ -30,8 +30,10 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex';
+import { mapMutations, mapGetters } from 'vuex';
 import isValidNumber from '../../lib/is-valid-number'
+import convertToMetric from '../../components/unit-output/convert-to-metric'
+import convertToImperial from '../../components/unit-output/convert-to-imperial'
 
 export default {
   props: {
@@ -59,13 +61,23 @@ export default {
       type: Boolean,
       default: false,
     },
+    unit: {
+      type: String,
+      default: undefined,
+    },
   },
   computed: {
+    ...mapGetters('data/workspaces', ['activeWorkspace']),
     hasEmptyInput() {
       return this.value === ''
     },
     error() {
       return !this.hasEmptyInput && !isValidNumber(this.value)
+    },
+    convertedValue() {
+      return this.activeWorkspace.unitSystem === 'imperial'
+        ?`${convertToImperial(this.value, this.unit)}`
+        : this.value
     },
   },
   methods: {
@@ -81,7 +93,11 @@ export default {
       this.$refs.inputElement.$el.focus()
     },
     validateNumber(_input) {
-      const input = _input.replace(',', '.')
+      const num = this.activeWorkspace.unitSystem === 'imperial'
+        ? `${convertToMetric(_input, this.unit)}`
+        : _input
+
+      const input = num.replace(',', '.')
       this.onChange(input)
     },
   },
