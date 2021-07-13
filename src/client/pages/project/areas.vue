@@ -169,7 +169,7 @@ export default {
           let unit
           switch (key) {
             case 'Radius':
-              unit = 'surface'
+              unit = 'distance'
               break
             case 'Width':
               unit = 'distance'
