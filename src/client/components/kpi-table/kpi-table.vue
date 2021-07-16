@@ -34,15 +34,7 @@
               v-for="(value, rowIndex) in row"
               :key="rowIndex"
             >
-              <template v-if="rowIndex === 0">
-                {{ value }}
-              </template>
-              <unit-ouput
-                v-else
-                :value="value"
-                :unit="(table.units || [])[rowIndex]"
-                hide-unit
-              />
+              {{ value }}
             </md-table-cell>
           </md-table-row>
         </template>

@@ -18,7 +18,9 @@ import delay from '../lib/delay'
 import exportToPdf from '../lib/export-to-pdf'
 import log from '../lib/log';
 import calculateFmeasArea from '../lib/calculate-fmeas-area'
+import formattedValue from '../lib/formatted-value'
 import fetchCoBenefitsFromRivm from '../lib/fetch-rivm-co-benefits'
+import convertToImperial from '~/components/unit-output/convert-to-imperial'
 
 const initialState = () => ({
   areas: [],
@@ -828,10 +830,14 @@ export const getters = {
       const kpiKeysTitleMap = rootGetters['data/kpiGroups/kpiKeysTitleMap']
       const kpiKeysUnitMap = rootGetters['data/kpiGroups/kpiKeysUnitMap']
       const kpiKeysDecimalScaleMap = rootGetters['data/kpiGroups/kpiKeysDecimalScaleMap']
+      const activeWorkspace = rootGetters['data/workspaces/activeWorkspace']
 
       const toDecimalPricision = (value, precision = 2) => round(value, precision)
       const measueTitleForId = id => get(measureById(id), 'title')
       const kpiTitleByKey = key => `${kpiKeysTitleMap[key]}`
+      const convertToCorrectUnit = (value, unit) => activeWorkspace.unitSystem === 'imperial'
+        ? convertToImperial(value, unit)
+        : value
 
       const measureValueMap = getters.areas
         .filter(area => area.properties.hasOwnProperty('measure'))
@@ -880,14 +886,15 @@ export const getters = {
           const [surface, ...kpiValues] = values
           return [
             measueTitleForId(id),
-            toDecimalPricision(surface, 2),
+              formattedValue(toDecimalPricision(convertToCorrectUnit(surface, 'surface'), 2), activeWorkspace.thousandSeparator, activeWorkspace.decimalSeparator),
             ...kpiValues.map((val, index) => {
               const kpiKey = kpiKeys[index]
               const decimalScale =
                 kpiKeysDecimalScaleMap && kpiKeysDecimalScaleMap[kpiKey]
               const scale = decimalScale ? decimalScale : 0
-              const value = toDecimalPricision(val, scale)
-              return isNaN(value) ? '-' : value
+              const convertedValue = convertToCorrectUnit(val, kpiKeysUnitMap[kpiKey])
+              const value = toDecimalPricision(convertedValue, scale)
+              return isNaN(value) ? '-' : formattedValue(value, activeWorkspace.thousandSeparator, activeWorkspace.decimalSeparator)
             }),
           ]
         }),
@@ -902,10 +909,14 @@ export const getters = {
       const kpiKeysTitleMap = rootGetters['data/kpiGroups/kpiKeysTitleMap']
       const kpiKeysUnitMap = rootGetters['data/kpiGroups/kpiKeysUnitMap']
       const kpiKeysDecimalScaleMap = rootGetters['data/kpiGroups/kpiKeysDecimalScaleMap']
+      const activeWorkspace = rootGetters['data/workspaces/activeWorkspace']
 
       const toDecimalPricision = (value, precision = 2) => round(value, precision)
       const measueTitleForId = id => get(measureById(id), 'title')
       const kpiTitleByKey = key => `${kpiKeysTitleMap[key]}`
+      const convertToCorrectUnit = (value, unit) => activeWorkspace.unitSystem === 'imperial'
+        ? convertToImperial(value, unit)
+        : value
 
       const measureValueMap = getters.areas
         .filter(area => area.properties.hasOwnProperty('measure'))
@@ -942,13 +953,14 @@ export const getters = {
             const [surface, ...kpiValues] = values
             return [
               measueTitleForId(id),
-              toDecimalPricision(surface, 2),
+              formattedValue(toDecimalPricision(convertToCorrectUnit(surface, 'surface'), 2), activeWorkspace.thousandSeparator, activeWorkspace.decimalSeparator),
               ...kpiValues.map((val, index) => {
                 const kpiKey = kpiKeys[index]
                 const decimalScale = kpiKeysDecimalScaleMap && kpiKeysDecimalScaleMap[kpiKey]
                 const scale = decimalScale ? decimalScale : 0;
-                const value = toDecimalPricision(val, scale)
-                return isNaN(value) ? '-' : value
+                const convertedValue = convertToCorrectUnit(val, kpiKeysUnitMap[kpiKey])
+                const value = toDecimalPricision(convertedValue, scale)
+                return isNaN(value) ? '-' : formattedValue(value, activeWorkspace.thousandSeparator, activeWorkspace.decimalSeparator)
               }),
             ]
           }),
