@@ -28,4 +28,5 @@ module.exports = {
   CONTEXT: process.env.CONTEXT,
   DEVELOPMENT_WORKSPACE: process.env.DEVELOPMENT_WORKSPACE,
   PRODUCTION_WORKSPACE: process.env.PRODUCTION_WORKSPACE,
+  IS_DEVELOPMENT: process.env.NODE_ENV !== 'production',
 }
