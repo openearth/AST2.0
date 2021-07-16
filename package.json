@@ -21,7 +21,7 @@
     "nobuild:guide": "build-storybook -c config/storybook -o dist/client/guide/",
     "predata": "rimraf src/client/static/data/ src/client/static/_redirects",
     "data": "node ./config/data/_dump-dato.js",
-    "postdata": "node ./config/data/_create-redirects.js && node ./config/data/_build-messages.js & node ./config/data/_fill-missing-content.js",
+    "postdata": "node ./config/data/_create-redirects.js && node ./config/data/_build-messages.js && node ./config/data/_fill-missing-content.js",
     "predev": "rimraf dist/ && npm run data",
     "dev": "netlify dev --port 5326 ",
     "start": "nuxt",
