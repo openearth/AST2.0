@@ -16,17 +16,26 @@ const dataFolder = path.join(__dirname, '../../src/client/static/data')
 const keepBackups = false
 
 function convertEmptyStringsToUndefined(obj) {
-  function convert(value) {
-    if (value === '') return undefined
+  function convert(value, changeNullToUndefined = false) {
+    if (value === '') {
+      return undefined
+    }
+
+    if (value === null && changeNullToUndefined) {
+      return undefined
+    }
+
     return (Array.isArray(value) || isPlainObject(value))
       ? convertEmptyStringsToUndefined(value)
       : value
   }
 
+  const nullValuesForKeysToBeConverted = ['slug']
+
   return Array.isArray(obj)
     ? obj.map(item => convert(item))
     : Object.entries(obj).reduce(
-        (acc, [key, value]) => ({ ...acc, [key]: convert(value) }),
+        (acc, [key, value]) => ({ ...acc, [key]: convert(value, nullValuesForKeysToBeConverted.includes(key)) }),
         {},
       )
 }
