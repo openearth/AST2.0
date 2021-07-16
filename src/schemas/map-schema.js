@@ -60,6 +60,7 @@ export default {
         required: ['id', 'showLegend', 'visible', 'opacity'],
         properties: {
           id: { type: 'string' },
+          key: { type: 'string' },
           layerType: { type: 'string' },
           tilesize: { type: 'number' },
           title: { type: 'string' },
