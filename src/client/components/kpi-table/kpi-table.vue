@@ -12,11 +12,16 @@
       <md-table>
         <md-table-row v-if="table.header">
           <md-table-head
-            v-for="head in table.header"
+            v-for="(head, headIndex) in table.header"
             :key="head"
             class="kpi-table__head"
           >
             {{ head }}
+            <template v-if="headIndex > 0 && (table.units || [])[headIndex] !== 'number'">
+              (<unit-ouput
+                :unit="(table.units || [])[headIndex]"
+              />)
+            </template>
           </md-table-head>
         </md-table-row>
 
@@ -40,8 +45,10 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import UnitOuput from '~/components/unit-output'
 
 export default {
+  components: { UnitOuput },
   props: {
     showTableCoBenefits: {
       type: Boolean,

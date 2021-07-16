@@ -4,7 +4,11 @@
       md-elevation="0"
       class="md-transparent project-area__area-size"
     >
-      <span class="md-subheading">{{ $t('area_size') }}: <strong>{{ area }}m<sup>2</sup></strong></span>
+      <span class="md-subheading">{{ $t('area_size') }}: <strong><unit-output
+        :value="area"
+        unit="surface"
+        :decimals="0"
+      /></strong></span>
       <md-button
         :to="`/${locale}/new-project`"
         class="md-accent"
@@ -113,11 +117,12 @@
 <script>
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 import { SelectInput } from '~/components'
+import UnitOutput from '~/components/unit-output'
 import log from '~/lib/log'
 
 export default {
   middleware: ['access-level-project-area'],
-  components: { SelectInput },
+  components: { SelectInput, UnitOutput },
   data() {
     return {
       activeTooltipKey: '',

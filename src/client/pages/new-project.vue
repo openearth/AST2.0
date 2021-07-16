@@ -15,7 +15,13 @@
         <p class="md-body-2">
           {{ $t('area_size') }}:
         </p>
-        <span v-if="settings.area.properties" class="md-subheading">{{ areaSize }}m<sup>2</sup></span>
+        <span v-if="settings.area.properties" class="md-subheading">
+          <unit-output
+            :value="areaSize"
+            unit="surface"
+            :decimals="0"
+          />
+        </span>
       </div>
     </div>
 
@@ -35,10 +41,11 @@
 import { mapState, mapGetters } from 'vuex';
 import MapEventBus, { REDRAW } from '../lib/map-event-bus'
 import { HintText } from '~/components'
+import UnitOutput from '~/components/unit-output'
 
 export default {
   middleware: ['access-level-legal', 'state-is-draw-project-area'],
-  components: { HintText },
+  components: { HintText, UnitOutput },
   computed: {
     ...mapState('i18n', ['locale']),
     ...mapState('project', ['settings']),

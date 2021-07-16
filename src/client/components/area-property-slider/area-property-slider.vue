@@ -3,8 +3,9 @@
     v-model="internalValue"
     :min="min"
     :max="max"
-    :label="$t(`area_${ valueTypeLower }`)"
+    :label="`${$t(`area_${ valueTypeLower }`)} ${unitLabel}`"
     :multi="multi"
+    :unit="unit"
     @change="updateExternal"
   >
     <template v-slot:info>
@@ -18,6 +19,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import InputRange from '@/components/input-range'
 import AppTooltip from '@/components/app-tooltip'
 
@@ -50,6 +52,10 @@ export default {
       type: String,
       required: true,
     },
+    unit: {
+      type: String,
+      default: undefined,
+    },
   },
   data: () => ({
     internalValue: null,
@@ -57,8 +63,20 @@ export default {
     multi: false,
   }),
   computed: {
+    ...mapGetters('data/workspaces', ['activeWorkspace']),
     valueTypeLower() {
       return this.valueType.toLowerCase()
+    },
+    unitLabel() {
+      const isImperial = this.activeWorkspace.unitSystem === 'imperial'
+      switch (this.unit) {
+        case 'surface':
+          return `(${isImperial ? 'ft2' : 'm2'})`
+        case 'distance':
+          return `(${isImperial ? 'ft' : 'm'})`
+        default:
+          return '(x)'
+      }
     },
   },
   watch: {

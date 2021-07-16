@@ -26,6 +26,7 @@
     </small>
 
     <section class="md-toolbar-section-end">
+      <unit-system-toggle v-if="isDevelopment" />
       <template
         v-if="currentFilledInLevel.level >= LEVEL_PROJECT_AREA"
       >
@@ -63,11 +64,13 @@ import { mapGetters, mapMutations, mapState } from 'vuex';
 import { LEVEL_PROJECT_AREA } from '../../lib/flow-levels';
 import FullscreenButton from '../fullscreen-button'
 import LogIn from '../log-in'
+import UnitSystemToggle from '../unit-system-toggle'
 
 export default {
   components: {
     FullscreenButton,
     LogIn,
+    UnitSystemToggle,
   },
   props: {
     title: {
@@ -95,6 +98,9 @@ export default {
     },
     formattedTitle() {
       return startCase(this.projectTitle)
+    },
+    isDevelopment() {
+      return process.env.IS_DEVELOPMENT
     },
   },
   methods: {

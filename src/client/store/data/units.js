@@ -17,6 +17,7 @@ export const actions = {
 
 export const getters = {
   displayValue: (state, getters, rootState, rootGetters) => key => {
+    const unitSystem = rootGetters['data/workspaces/activeWorkspace'].unitSystem
     switch(key) {
       case 'currency':
         return rootGetters['data/workspaces/activeWorkspace'].currencySymbol
@@ -25,11 +26,13 @@ export const getters = {
       case 'years':
         return rootState.i18n.messages.years
       case 'Ratemmy':
-        return `mm/${rootState.i18n.messages.year}`
+        return unitSystem === 'metric'
+          ? `mm/${rootState.i18n.messages.year}`
+          : `in/${rootState.i18n.messages.year}`
       case 'number':
         return `${ rootState.i18n.messages.number }`
       default:
-        return state.find(unit => unit.key === key)['metric']
+        return state.find(unit => unit.key === key)[unitSystem]
     }
   },
 }
