@@ -14,8 +14,11 @@ export default function convertToImperial(value, unitKey) {
       // https://www.metric-conversions.org/volume/cubic-meters-to-cubic-feet.htm
       return value * 35.315
     case 'temperature':
+      // Based on:
       // https://www.metric-conversions.org/temperature/celsius-to-fahrenheit.htm
-      return (value * 1.8000) + 32
+      // However, the subtraction of 32 is left out since we only care about
+      // relative temperatures
+      return value * 1.8000
     default:
       return value
   }

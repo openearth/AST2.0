@@ -14,8 +14,11 @@ export default function convertToMetric(value, unitKey) {
       // https://www.metric-conversions.org/volume/cubic-feet-to-cubic-meters.htm
       return value / 35.315
     case 'temperature':
+      // Based on:
       // https://www.metric-conversions.org/temperature/fahrenheit-to-celsius.htm
-      return (value - 32) / 1.8000
+      // However, the subtraction of 32 is left out since we only care about
+      // relative temperatures
+      return value / 1.8000
     default:
       return value
   }
