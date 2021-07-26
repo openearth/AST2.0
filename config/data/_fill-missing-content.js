@@ -13,7 +13,7 @@ const localesWithMissingContent = require('../locales-with-missing-content')
 const { pipe, defaultsDeep, isPlainObject } = require('lodash/fp')
 const dataFolder = path.join(__dirname, '../../src/client/static/data')
 
-const keepBackups = false
+const keepBackups = true
 
 function convertEmptyStringsToUndefined(obj) {
   function convert(value, changeNullToUndefined = false) {
@@ -43,7 +43,7 @@ function convertEmptyStringsToUndefined(obj) {
 // eslint-disable-next-line no-unused-vars
 const log = data => {console.log(data); return data}
 const files = sourceLocale => glob.sync(`${dataFolder}/${sourceLocale}/**/*.json`)
-const getDefaultFile = (sourceLocale, baseLocale) => file => file.replace(sourceLocale, baseLocale)
+const getDefaultFile = (sourceLocale, baseLocale) => file => file.replace(`data/${sourceLocale}`, `data/${baseLocale}`)
 const readFile = filePath => fs.readFileSync(filePath, { encoding: 'utf-8' })
 const getFileContent = pipe(readFile, JSON.parse, convertEmptyStringsToUndefined)
 const getDefaultFileContent = (sourceLocale, baseLocale) => filePath => pipe(getDefaultFile(sourceLocale, baseLocale), readFile, JSON.parse)(filePath)
@@ -54,7 +54,7 @@ const getDefaultFileContent = (sourceLocale, baseLocale) => filePath => pipe(get
 ]
 const mergeDefaultInSource = ([defaultContent, source, filePath]) => ({ content: defaultsDeep(defaultContent, source), filePath })
 const writeResult = sourceLocale => ({ content, filePath }) => {
-  keepBackups && fs.renameSync(filePath, filePath.replace(sourceLocale, `${sourceLocale}_BK`))
+  keepBackups && fs.renameSync(filePath, filePath.replace(`data/${sourceLocale}`, `data/${sourceLocale}_BK`))
   fs.writeFileSync(filePath, JSON.stringify(content, null, 2), { encoding: 'utf-8' })
 }
 
