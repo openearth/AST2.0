@@ -227,7 +227,7 @@ export default {
         .filter(measure => measure.title.match(searchRE))
         .filter(measure => measure.measureId !== '0')
 
-      return searchFiltered(this.featureSorted)
+      return searchFiltered(this.featureSorted).filter((item, index) => index < 10)
     },
   },
   methods: {
