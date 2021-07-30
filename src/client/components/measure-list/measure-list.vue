@@ -252,6 +252,17 @@ export default {
       return [...this.filteredMeasures].slice(start, end)
     },
   },
+  watch: {
+    searchValue() {
+      this.page = 1
+    },
+    sortType() {
+      this.page = 1
+    },
+    sorting() {
+      this.page = 1
+    },
+  },
   methods: {
     choose(value) {
       this.$emit('choose', value)
