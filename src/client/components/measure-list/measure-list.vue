@@ -122,7 +122,7 @@
 
     <ul class="measure-list__list">
       <li
-        v-for="measure in filteredMeasures"
+        v-for="measure in paginatedMeasures"
         :key="measure.id"
         class="measure-list__item"
       >
@@ -133,6 +133,18 @@
           @choose="choose"
         />
       </li>
+    </ul>
+    <ul v-if="totalPages > 1" class="measure-list__pagination-list">
+      <li v-for="i in totalPages" :key="i">
+        <md-button
+          :class="{'md-raised': true, 'md-accent': i === page}"
+          @click="page = i"
+          @keydown="page = i"
+        >
+          {{ i }}
+        </md-button>
+      </li>
+      <ul />
     </ul>
   </div>
 </template>
@@ -159,6 +171,8 @@ export default {
     searchValue: '',
     sortType: SYSTEM_SUITABILITY,
     sorting: ['featured'],
+    page: 1,
+    perPage: 16,
   }),
   computed: {
     ...mapState({
@@ -229,6 +243,25 @@ export default {
 
       return searchFiltered(this.featureSorted)
     },
+    totalPages() {
+      return Math.ceil(this.filteredMeasures.length / this.perPage)
+    },
+    paginatedMeasures() {
+      const start = (this.page - 1) * this.perPage
+      const end = start + this.perPage
+      return [...this.filteredMeasures].slice(start, end)
+    },
+  },
+  watch: {
+    searchValue() {
+      this.page = 1
+    },
+    sortType() {
+      this.page = 1
+    },
+    sorting() {
+      this.page = 1
+    },
   },
   methods: {
     choose(value) {
@@ -258,6 +291,12 @@ export default {
   grid-gap: var(--spacing-default);
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   padding: var(--spacing-default);
+}
+
+.measure-list__pagination-list {
+  list-style: none;
+  display: flex;
+  justify-content: center;
 }
 
 .measure-list__card {
