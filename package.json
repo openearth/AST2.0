@@ -44,7 +44,6 @@
     "@turf/area": "^6.0.1",
     "@turf/bbox": "6.0.1",
     "@turf/length": "6.0.2",
-    "chrome-aws-lambda": "^2.0.0",
     "dotenv": "6.0.0",
     "dotenv-safe": "6.0.0",
     "file-saver": "2.0.0-rc.3",
@@ -61,7 +60,6 @@
     "playwright-aws-lambda": "^0.9.0",
     "playwright-core": "^1.28.1",
     "portal-vue": "^2.1.6",
-    "puppeteer-core": "^2.0.0",
     "query-string": "6.1.0",
     "sass-loader": "7.1.0",
     "typeface-roboto": "0.0.54",
@@ -105,6 +103,6 @@
     "vue-svg-loader": "0.8.0"
   },
   "optionalDependencies": {
-    "puppeteer": "^2.0.0"
+    "playwright": "^1.28.1"
   }
 }

@@ -1,5 +1,4 @@
-const chromium = require('chrome-aws-lambda');
-
+const playwright = require('playwright-aws-lambda');
 
 async function loadProjectInPage(project) {
   try {
@@ -43,14 +42,8 @@ exports.handler = async event => {
     const requestingPath = referer.replace(origin, '')
     const [, locale] = /^(?:\/)(\w+)/.exec(requestingPath)
 
-    const endBrowserTimer = startTimer('launch', 'Launch Puppeteer')
-    browser = await chromium.puppeteer.launch({
-      args: chromium.args,
-      defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath,
-      headless: chromium.headless,
-      ignoreHTTPSErrors: true,
-    });
+    const endBrowserTimer = startTimer('launch', 'Launch Playwright')
+    browser = await playwright.launchChromium();
     timings.push(endBrowserTimer())
 
     const endPageCreation = startTimer('newpage', 'Create New Page')
