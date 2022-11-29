@@ -1,4 +1,4 @@
-const playwright = require('playwright-aws-lambda');
+const chromium = require('chrome-aws-lambda');
 
 function startTimer(id, description) {
   const start = Date.now()
@@ -19,12 +19,18 @@ exports.handler = async event => {
   try {
     const endBrowserTimer = startTimer('launch', 'Launch Puppeteer')
     if (!process.env.NETLIFY_DEV) {
-      browser = await playwright.launchChromium();
-    } else {
+      browser = await chromium.puppeteer.launch({
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath,
+        headless: chromium.headless,
+        ignoreHTTPSErrors: true,
+      });
+    }
+    if (process.env.NETLIFY_DEV) {
       const puppeteer = await import('puppeteer')
       browser = await puppeteer.default.launch({ headless: true })
     }
-
     timings.push(endBrowserTimer())
 
     const endPageCreation = startTimer('newpage', 'Create New Page')
