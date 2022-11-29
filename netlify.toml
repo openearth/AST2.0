@@ -3,5 +3,5 @@
   publish = "dist/client/"
   functions = "./src/server/functions/"
   [build.environment]
-    AWS_LAMBDA_JS_RUNTIME = "nodejs13.13.0"
-    NODE_VERSION = "v13.13.0"
+    AWS_LAMBDA_JS_RUNTIME = "nodejs14.21.1"
+    NODE_VERSION = "v14.21.1"
