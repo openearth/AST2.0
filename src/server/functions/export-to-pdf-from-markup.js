@@ -20,7 +20,7 @@ exports.handler = async event => {
       const playwright = require('playwright-aws-lambda');
       browser = await playwright.launchChromium();
     } else {
-      const playwright = await import('playwright')
+      const playwright = await import('playwright-chromium')
       browser = await playwright.chromium.launch({ headless: true })
     }
 

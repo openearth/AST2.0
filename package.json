@@ -103,6 +103,6 @@
     "vue-svg-loader": "0.8.0"
   },
   "optionalDependencies": {
-    "playwright": "^1.28.1"
+    "playwright-chromium": "^1.28.1"
   }
 }
