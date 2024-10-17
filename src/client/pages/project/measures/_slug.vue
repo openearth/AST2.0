@@ -2,7 +2,6 @@
   <div class="measure">
     <back-button class="measure__top" comp="div">
       <md-button
-        :disabled="!selectedFeatures.length"
         class="md-raised md-accent"
         @click="() => onChoose(measure)"
       >
@@ -61,9 +60,20 @@ export default {
   },
   methods: {
     ...mapActions({ setAreaMeasure: 'project/setAreaMeasure' }),
+    ...mapActions({
+      chooseMeasure: 'setMeasureFlow/chooseMeasure',
+      startFlow: 'setMeasureFlow/startFlow',
+    }),
     onChoose(measure) {
-      this.setAreaMeasure({ features: this.selectedFeatures, measure })
-      this.$router.push(`/${this.$i18n.locale}/project/areas/`).catch(() => {})
+      if (this.selectedFeatures.length) {
+        // set measure to selected features
+        this.setAreaMeasure({ features: this.selectedFeatures, measure })
+        this.$router.push(`/${this.$i18n.locale}/project/areas/`).catch(() => {})
+      } else {
+        // go to drawing mode in set-measure-flow
+        this.startFlow()
+        this.chooseMeasure(measure.measureId)
+      }
     },
     back() {
       this.$router.back()

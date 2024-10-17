@@ -32,7 +32,9 @@ export default {
     ...mapGetters('setMeasureFlow', ['activeStep']),
   },
   mounted() {
-    this.startFlow()
+    if (!this.currentStep) {
+      this.startFlow()
+    }
   },
   destroyed() {
     this.resetFlow({ relocate: false })
