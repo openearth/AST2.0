@@ -23,7 +23,7 @@
     "data": "node ./config/data/_dump-dato.js",
     "postdata": "node ./config/data/_create-redirects.js && node ./config/data/_build-messages.js & node ./config/data/_fill-missing-content.js",
     "predev": "rimraf dist/ && npm run data",
-    "dev": "netlify dev --port 5326 ",
+    "dev": "NODE_OPTIONS=--openssl-legacy-provider netlify dev --port 5326 ",
     "start": "nuxt",
     "guide": "start-storybook -p 5327 -c config/storybook -s src/client/static/",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
