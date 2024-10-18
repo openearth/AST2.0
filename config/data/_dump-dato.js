@@ -1,11 +1,10 @@
 /* eslint-disable no-useless-escape */
-const { promisify } = require('util')
 const path = require('path')
-const readFile = promisify(require('fs').readFile)
+const {readFile} = require('fs/promises')
 const readFileSync = require('fs').readFileSync
 const readDir = require('fs').readdirSync
 const writeFile = require('fs').writeFileSync
-const mkdirp = promisify(require('mkdirp'))
+const { mkdirp } = require('mkdirp')
 const map = require('lodash/fp/map')
 const identity = require('lodash/fp/identity')
 const flatten = require('lodash/flatten')

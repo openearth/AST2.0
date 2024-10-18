@@ -28,11 +28,10 @@ module.exports = {
     ],
     'vue/max-attributes-per-line': [2, {
       'singleline': 2,
-      'multiline': {
-        'max': 1,
-        'allowFirstLine': false,
-      },
+      'multiline': 1,
     }],
+    'vue/multi-word-component-names': 'off',
+    'vue/one-component-per-file': 'off',
     'vue/no-v-html': 'off',
     'vue/no-unused-components': 'warn',
     'no-debugger': 'off',
@@ -41,4 +40,18 @@ module.exports = {
     'quotes': [ 'warn', 'single' ],
     'arrow-parens': ['warn', 'as-needed'],
   },
+  overrides: [
+    {
+      files: ['*.vue'],
+      rules: {
+        'vue/one-component-per-file': 'error',
+      }
+    },
+    {
+      files: ['src/components/**/*.vue'],
+      rules: {
+        'vue/multi-word-component-names': 'error',
+      }
+    },
+  ],
 }
