@@ -69,6 +69,13 @@
             </div>
 
             <template v-if="selectedMeasure">
+              <area-property-radio
+                :value="actor"
+                :options="ACTORS"
+                value-type="actor"
+                @change="({ _, value }) => actor = value"
+              />
+
               <area-property-slider
                 v-for="({ key, min, max, values, unit }) in measurePropertiesToEdit"
                 :key="key"
@@ -94,15 +101,18 @@
 </template>
 
 <script>
-import { mapGetters, mapActions, mapMutations, mapState } from 'vuex';
-import MapEventBus, { REDRAW, MODE, DELETE } from '@/lib/map-event-bus';
+import { mapGetters, mapActions, mapMutations, mapState } from 'vuex'
+import { ACTORS, DEFAULT_ACTOR } from '@/lib/area-actors'
+import MapEventBus, { REDRAW, MODE, DELETE } from '@/lib/map-event-bus'
 import isNil from '@/lib/isNil'
+import AreaPropertyRadio from '@/components/area-property-radio'
 import AreaPropertySlider from '@/components/area-property-slider'
 import TextInput from '@/components/text-input'
 
 export default {
   middleware: ['access-level-settings'],
-  components: { TextInput, AreaPropertySlider },
+  components: { TextInput, AreaPropertyRadio, AreaPropertySlider },
+  data: () => ({ ACTORS }),
   computed: {
     ...mapState('i18n', ['locale']),
     ...mapGetters('data/measures', ['measureById']),
@@ -143,6 +153,25 @@ export default {
 
     selectedMeasure() {
       return this.measureById(this.selectedMeasureId)
+    },
+
+    actor: {
+      get() {
+        const isConsistentSelectionValue = this.selectedFeatures
+          .every(({ properties: { actor } }, _, arr) => actor === arr[0].properties.actor)
+
+        return isConsistentSelectionValue
+          ? this.selectedFeatures[0].properties.actor || DEFAULT_ACTOR
+          : '' // Leave empty if not all selected features have the same value
+      },
+      set(value) {
+        this.updateAreaProperties({
+          features: this.selectedFeatures,
+          properties: {
+            actor: value,
+          },
+        })
+      },
     },
 
     selectedGeometryTypes() {
