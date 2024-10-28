@@ -25,14 +25,25 @@
           </md-table-head>
         </md-table-row>
 
-        <template v-if="table.rows">
+        <template v-for="(header, i) in table.rowSetHeaders">
           <md-table-row
-            v-for="(row, index) in table.rows"
-            :key="index"
+            v-if="table.rowSetHeaders.length > 1"
+            :key="`row-heading-${header}`"
+          >
+            <md-table-head
+              :colspan="table.header.length"
+              scope="colgroup"
+            >
+              {{ $t(`area_actor_${header}`) }}
+            </md-table-head>
+          </md-table-row>
+          <md-table-row
+            v-for="(row, j) in table.rowSets[i]"
+            :key="`row-${i}-${j}`"
           >
             <md-table-cell
-              v-for="(value, rowIndex) in row"
-              :key="rowIndex"
+              v-for="(value, k) in row"
+              :key="`cell-${i}-${j}-${k}`"
             >
               {{ value }}
             </md-table-cell>
