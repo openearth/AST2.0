@@ -840,13 +840,15 @@ export const getters = {
         : value
 
       const measureValueMap = getters.areas
-        .filter(area => area.properties.hasOwnProperty('measure'))
-        .map(area => {
-          const values = kpiKeys.map(key => get(area, `properties.apiData[${key}]`))
-          return [area.properties.measure, area.properties.area, ...values]
-        })
-        .reduce((obj, row) => {
-          const [measureId, ...values] = row
+        .reduce((obj, area) => {
+          if (!area.properties.hasOwnProperty('measure')) return obj
+
+          const measureId = area.properties.measure
+          const values = [
+            area.properties.area,
+            ...kpiKeys.map(key => get(area, `properties.apiData[${key}]`)),
+          ]
+
           if (obj[measureId] === undefined) {
             obj[measureId] = values
           } else {
@@ -859,16 +861,15 @@ export const getters = {
               obj[measureId][index] += value
             })
           }
+
+          const A_tot = state.settings.area.properties.area
+          const A_p = state.settings.pluvfloodParam.A_p
+          const Frac_RA = state.settings.pluvfloodParam.Frac_RA
+          const Fmeas_area = calculateFmeasArea(A_tot, A_p, Frac_RA, obj[measureId][2])
+          obj[measureId][2] = Fmeas_area
+
           return obj
         }, {})
-
-      Object.keys(measureValueMap).forEach(key => {
-        const A_tot = state.settings.area.properties.area
-        const A_p = state.settings.pluvfloodParam.A_p
-        const Frac_RA = state.settings.pluvfloodParam.Frac_RA
-        const Fmeas_area = calculateFmeasArea(A_tot, A_p, Frac_RA, measureValueMap[key][2])
-        measureValueMap[key][2] = Fmeas_area
-      })
 
       return {
         'title': rootState.i18n.messages.climate_and_costs,
@@ -919,20 +920,18 @@ export const getters = {
         : value
 
       const measureValueMap = getters.areas
-        .filter(area => area.properties.hasOwnProperty('measure'))
-        .map(area => {
-          const values = kpiKeys.map(key =>
-            get(area, `properties.apiData[${key}]`),
-          )
-          return [area.properties.measure, area.properties.area, ...values]
-        })
-        .reduce((obj, row) => {
-          const [measureId, ...values] = row
+        .reduce((obj, area) => {
+          if (!area.properties.hasOwnProperty('measure')) return obj
+
+          const measureId = area.properties.measure
+          const values = [area.properties.area, ...kpiKeys.map(key => get(area, `properties.apiData[${key}]`))]
+
           if (obj[measureId] === undefined) {
             obj[measureId] = values
           } else {
             values.forEach((value, index) => (obj[measureId][index] += value))
           }
+
           return obj
         }, {})
 
