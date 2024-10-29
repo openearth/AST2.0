@@ -32,10 +32,11 @@ exports.handler = async event => {
       browser = await playwright.chromium.launch({ headless: true })
     }
 
+    const context = await browser.newContext()
     timings.push(endBrowserTimer())
 
     const endPageCreation = startTimer('newpage', 'Create New Page')
-    const page = await browser.newPage()
+    const page = await context.newPage()
     page.on('pageerror', console.error);
     timings.push(endPageCreation())
 
