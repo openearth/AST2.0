@@ -40,7 +40,7 @@ exports.handler = async event => {
     timings.push(endPageCreation())
 
     const endLoadPage = startTimer('load', 'Load page')
-    await page.setContent(event.body, { waitUntil: 'networkidle0' })
+    await page.setContent(event.body, { waitUntil: 'domcontentloaded' })
     timings.push(endLoadPage())
 
     const endCreatePdf = startTimer('pdf', 'Create Pdf')
