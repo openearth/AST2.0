@@ -18,7 +18,15 @@ exports.handler = async event => {
     const endBrowserTimer = startTimer('launch', 'Launch Playwright')
     if (!process.env.NETLIFY_DEV) {
       const playwright = require('playwright-aws-lambda');
-      browser = await playwright.launchChromium();
+      browser = await playwright.launchChromium({
+        headless: true,
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage',
+          '--single-process',
+        ],
+      });
     } else {
       const playwright = await import('playwright-chromium')
       browser = await playwright.chromium.launch({ headless: true })
