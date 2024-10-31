@@ -8,13 +8,14 @@ function startTimer(id, description) {
   }
 }
 
-exports.handler = async _event => {
+exports.handler = async event => {
   const endTotalTimer = startTimer('total', 'Total Time')
   const timings = []
   let browser = null
   let pdf = null
 
   const body = '<html><body><h1>Hello, world!</h1></body></html>'
+  console.log(JSON.stringify(event.body))
 
   try {
     const endBrowserTimer = startTimer('launch', 'Launch Playwright')
