@@ -68,7 +68,7 @@
               </div>
             </div>
 
-            <template v-if="selectedMeasure">
+            <template v-if="selectedMeasureId && selectedMeasure">
               <area-property-radio
                 :value="actor"
                 :options="ACTORS"
