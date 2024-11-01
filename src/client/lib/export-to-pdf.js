@@ -1,5 +1,4 @@
 import log from '../lib/log'
-import b63ToBlob from '../lib/b64-to-blob';
 
 if (process.browser) {
   window.addProject = async function (projectData, title) {
@@ -33,20 +32,18 @@ export default function exportToPdf({ locale, project, title }) {
       iframe.style.height = '297mm'
       iframe.addEventListener('load', () => {
         log.groupEnd()
-        log.groupStart.info('Creating PDF')
-        dispatch('Iframe loaded', 1/7)
+        log.groupStart.info('Creating View')
+        dispatch('Iframe loaded', 1 / 5)
         iframe.contentWindow.document.addEventListener('mapbox-loaded', async () => {
-          dispatch('MapBox loaded', 2/7)
+          dispatch('MapBox loaded', 2 / 5)
           await iframe.contentWindow.window.addProject(JSON.stringify(project), title)
-          dispatch('Project added', 3/7)
+          dispatch('Project added', 3 / 5)
           iframe.contentWindow.document.addEventListener('mapbox-image-created', async () => {
-            dispatch('MapBox Image created', 4/7)
-            ;[...iframe.contentWindow.document.querySelectorAll('script')].forEach(scriptElement => {
-              scriptElement.parentNode.removeChild(scriptElement)
-            })
-            resolve(iframe.contentWindow.document.documentElement.outerHTML)
-            dispatch('Removing iframe', 5/7)
-            iframe.parentElement.removeChild(iframe)
+            dispatch('MapBox Image created', 4 / 5)
+              ;[...iframe.contentWindow.document.querySelectorAll('script')].forEach(scriptElement => {
+                scriptElement.parentNode.removeChild(scriptElement)
+              })
+            resolve(iframe)
           })
         })
       })
@@ -56,27 +53,21 @@ export default function exportToPdf({ locale, project, title }) {
       throw new Error(error)
     }
   })
-  .then(markup => {
-    dispatch('Sending markup to server', 6/7)
-    return fetch('/.netlify/functions/export-to-pdf-from-markup', {
-        method: 'POST',
-        body: markup,
-      })
-      .then(async res => {
-        if (res.ok) {
-          return await res.json()
-        } else {
-          throw new Error(`Failed to receive PDF response from server (${res.status}). ${res.statusText}`)
-        }
-      })
-  })
-  .then(({ pdf }) => {
-    dispatch('Received PDF response from server', 7/7)
+  .then(iframe => {
+    dispatch('Present print dialog', 5 / 5)
+    const titleToRestore = document.title
+    // Overwrite title to set filename for print dialog
+    document.title = title
+    iframe.contentDocument.title = title
+    iframe.contentWindow.print()
+    document.title = titleToRestore
     log.groupEnd()
-    return b63ToBlob(pdf, 'application/pdf')
+    iframe.remove()
+    return
   })
   .catch(error => {
     log.groupEnd()
     log.error(error.message, error)
+
   })
 }
