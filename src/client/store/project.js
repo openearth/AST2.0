@@ -739,15 +739,18 @@ export const actions = {
         break;
       case 'pdf':
         commit('flow/showPdfExport', null, { root: true })
-        data = await exportToPdf({ locale: rootState.i18n.locale, project: state, title: state.settings.general.title })
-        type = 'application/pdf'
-        break;
+        /*
+          exportToPdf triggers print dialog box, which does not return a data blob.
+          Therefore, we return early here.
+        */
+        await exportToPdf({ locale: rootState.i18n.locale, project: state, title: state.settings.general.title })
+        commit('flow/hidePdfExport', null, { root: true })
+        return
       default:
         return
     }
 
     const blob = new Blob([data], { type })
-    if (format === 'pdf') commit('flow/hidePdfExport', null, { root: true })
     if (data) {
       return FileSaver.saveAs(blob, `${title || 'ast_project'}.${format}`)
     } else {
