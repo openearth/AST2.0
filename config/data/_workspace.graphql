@@ -11,6 +11,7 @@ query ($locale: SiteLocale, $id: ItemId){
     accentColor {
       hex
     }
+    skipAreaSettings,
     excludeAllMeasures,
     showRivmCoBenefits,
     showHeatstress,

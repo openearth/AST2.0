@@ -18,8 +18,25 @@ export const actions = {
 }
 
 export const getters = {
+  requiredAreaSettings(state, getters, rootState, rootGetters) {
+    const overriddenAreaSettings = getters.overriddenAreaSettings
+    const skipAreaSettings = rootGetters['data/workspaces/skipAreaSettings']
+
+    const scenarioNameSetting = overriddenAreaSettings.find(({ key }) => key === 'scenarioName');
+
+    if (skipAreaSettings) {
+      return [scenarioNameSetting]
+    }
+
+    return overriddenAreaSettings
+  },
   overriddenAreaSettings(state, getters, rootState, rootGetters) {
     const activeWorkspace = rootGetters['data/workspaces/activeWorkspace']
+
+    if (!activeWorkspace) {
+      return state
+    }
+
     return state.map(item => {
       const { options, defaultValue, ...itemRest } = item
       const { key } = itemRest

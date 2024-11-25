@@ -572,9 +572,10 @@ export const actions = {
   },
   async updateMeasuresRanking({ state, commit, rootGetters, dispatch }) {
     const filledInRequiredProjectAreaSettings = rootGetters['flow/filledInRequiredProjectAreaSettings']
+    const skipAreaSettings = rootGetters['data/workspaces/skipAreaSettings']
+    const { projectArea } = state.settings;
 
-    if (filledInRequiredProjectAreaSettings) {
-      const { projectArea } = state.settings
+    if (!skipAreaSettings && filledInRequiredProjectAreaSettings) {
       getRankedMeasures(projectArea)
         .then(rankedMeasures =>
           commit('data/measures/addMeasuresRanking', rankedMeasures, { root: true }),
