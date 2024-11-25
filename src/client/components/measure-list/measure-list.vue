@@ -76,6 +76,7 @@
             </svg>
           </md-button>
           <md-button
+            v-if="hasSuitabilityRankings"
             :class="{'md-accent': sortType === SYSTEM_SUITABILITY}"
             class="md-icon-button"
             @click="sortType = SYSTEM_SUITABILITY"
@@ -157,7 +158,7 @@ export default {
     SYSTEM_SUITABILITY,
     ALPHA,
     searchValue: '',
-    sortType: SYSTEM_SUITABILITY,
+    sortType: ALPHA,
     sorting: ['featured'],
   }),
   computed: {
@@ -178,6 +179,10 @@ export default {
         return 0
       })
       return [...sorted, ...withoutSuitablility]
+    },
+    hasSuitabilityRankings() {
+      // If the first measure does not have a systemSuitability value, then none of them do
+      return !isNaN(Number(this.measures[0].systemSuitability))
     },
     alphaSortedMeasures() {
       return [...this.measures].sort((a, b) => {
@@ -229,6 +234,11 @@ export default {
 
       return searchFiltered(this.featureSorted)
     },
+  },
+  mounted() {
+    if (this.hasSuitabilityRankings) {
+      this.sortType = SYSTEM_SUITABILITY
+    }
   },
   methods: {
     choose(value) {
