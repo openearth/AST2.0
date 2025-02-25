@@ -6,6 +6,7 @@ const readFileSync = require('fs').readFileSync
 const readDir = require('fs').readdirSync
 const writeFile = require('fs').writeFileSync
 const mkdirp = promisify(require('mkdirp'))
+const curry = require('lodash/fp/curry')
 const map = require('lodash/fp/map')
 const identity = require('lodash/fp/identity')
 const flatten = require('lodash/flatten')
@@ -27,6 +28,29 @@ const readFileFromPath = path => readFile(path, { encoding: 'utf8' })
 const getFileUri = file => file.replace(__dirname, '').replace(/\.[\w\.]+$/, '')
 const getTargetFilePath = (locale, file) => `${dataFolder}/${locale}${locale ? '/' : ''}${getFileUri(file)}.json`
 const writeToFile = filePath => contents => writeFile(filePath, JSON.stringify(contents, null, 2))
+
+/**
+* Query API with retry mechanism
+*/
+const gentleQueryApi = curry(async (token, variables, query) => {
+  const maxRetries = 3;
+  let retries = 0;
+  let lastError = null;
+
+  while (retries < maxRetries) {
+    try {
+      const response = await queryApi(token, variables, query);
+      return response;
+    } catch (error) {
+      lastError = error;
+      retries += 1;
+      console.log(`Retrying in ${retries} seconds...`);
+      const waitTime = retries * 1000;
+      await new Promise(resolve => setTimeout(resolve, waitTime));
+    }
+  }
+  throw new Error(lastError);
+});
 
 const queryFilePaths = readDir(__dirname)
   .filter(isQueryFile)
@@ -53,7 +77,7 @@ const queryFilePaths = readDir(__dirname)
 const dumpByQueryFile = locale => file =>
   mkdirp(`${dataFolder}/${locale}`)
     .then(() => readFileFromPath(file))
-    .then(queryApi(DATO_API_TOKEN, { locale }))
+    .then(gentleQueryApi(DATO_API_TOKEN, { locale }))
     .then(writeToFile(getTargetFilePath(locale, file)))
     .then(() => console.log(`Written ${locale}${getFileUri(file)}.json`))
 
@@ -79,7 +103,7 @@ Promise.all(flatten(queryFilesPerLocale))
   .then(map(({ id }) => {
     availableLocales.forEach(locale => {
       mkdirp(path.join(dataFolder, locale, 'workspaces'))
-      queryApi(DATO_API_TOKEN, { id, locale }, workspaceQuery)
+      gentleQueryApi(DATO_API_TOKEN, { id, locale }, workspaceQuery)
         .then(addFilePathToObject(locale))
         .then(({ workspace, filePath }) => {
           writeToFile(path.join(dataFolder, filePath))(workspace)
