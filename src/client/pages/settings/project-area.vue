@@ -138,7 +138,7 @@ export default {
     }),
     ...mapGetters({
       projectAreaSettings: 'project/settingsProjectArea',
-      areaSettings: 'data/areaSettings/overriddenAreaSettings',
+      areaSettings: 'data/areaSettings/requiredAreaSettings',
       scenariosInActiveWorkspace: 'data/workspaces/scenariosInActiveWorkspace',
       activeWorkspace: 'data/workspaces/activeWorkspace',
     }),

@@ -1,5 +1,4 @@
 import get from 'lodash/get'
-import isObject from 'lodash/isObject'
 import getViewPath from '../lib/get-view-path'
 import isValidNumber from '../lib/is-valid-number'
 import log from '../lib/log'
@@ -70,13 +69,13 @@ export const getters = {
   createdProjectArea(state, getters, rootState) {
     return !!rootState.project.settings.area.properties && getters.projectAreaSizeIsBelowThreshold
   },
-  filledInRequiredProjectAreaSettings(state, getters, rootState) {
+  filledInRequiredProjectAreaSettings(state, getters, rootState, rootGetters) {
     const { A_p, Frac_RA } = rootState.project.settings.pluvfloodParam
     const projectArea = rootState.project.settings.projectArea
+    const requiredAreaSettings = rootGetters['data/areaSettings/requiredAreaSettings'];
 
-    const settingsFilledIn = !Object.keys(projectArea)
-      .filter(setting => !isObject(projectArea[setting]))
-      .map(key => projectArea[key])
+    let settingsFilledIn = 0 === requiredAreaSettings
+      .map(({ key }) => projectArea[key])
       .filter(value => value === null)
       .length
 

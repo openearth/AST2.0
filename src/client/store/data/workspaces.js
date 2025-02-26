@@ -91,4 +91,16 @@ export const getters = {
       .filter(({ value }) => Boolean(rootState.data.scenarios.find(scenario => scenario.value === value)))
       .map(({ value }) => rootState.data.scenarios.find(scenario => scenario.value === value))
   },
+  skipAreaSettings(state) {
+    const activeDomain = state._domain
+    const activeUser = state._user
+    const activeName = activeUser || activeDomain
+    const workspace = state[activeName]
+
+    let skipAreaSettings = false
+    if (workspace) {
+      skipAreaSettings = workspace.skipAreaSettings || skipAreaSettings
+    }
+    return skipAreaSettings
+  },
 }

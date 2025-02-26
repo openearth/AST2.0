@@ -10,6 +10,7 @@ import flatten from 'lodash/flatten'
 import MapEventBus, { UPDATE_FEATURE_PROPERTY, REPOSITION, RELOAD_LAYERS, SELECT, REPAINT, DELETE_LAYER } from '../lib/map-event-bus'
 import { getApiData, getApiDataForFeature, getRankedMeasures, getPluvfloodParam, getDefaultValueForProjectSetting } from '../lib/get-api-data';
 import FileSaver from 'file-saver'
+import { DEFAULT_ACTOR } from '../lib/area-actors'
 import getLoadedFileContents from '../lib/get-loaded-file-contents'
 import validateProject from '../lib/validate-project'
 import projectToGeoJson from '../lib/project-to-geojson'
@@ -572,9 +573,10 @@ export const actions = {
   },
   async updateMeasuresRanking({ state, commit, rootGetters, dispatch }) {
     const filledInRequiredProjectAreaSettings = rootGetters['flow/filledInRequiredProjectAreaSettings']
+    const skipAreaSettings = rootGetters['data/workspaces/skipAreaSettings']
+    const { projectArea } = state.settings;
 
-    if (filledInRequiredProjectAreaSettings) {
-      const { projectArea } = state.settings
+    if (!skipAreaSettings && filledInRequiredProjectAreaSettings) {
       getRankedMeasures(projectArea)
         .then(rankedMeasures =>
           commit('data/measures/addMeasuresRanking', rankedMeasures, { root: true }),
@@ -739,15 +741,18 @@ export const actions = {
         break;
       case 'pdf':
         commit('flow/showPdfExport', null, { root: true })
-        data = await exportToPdf({ locale: rootState.i18n.locale, project: state, title: state.settings.general.title })
-        type = 'application/pdf'
-        break;
+        /*
+          exportToPdf triggers print dialog box, which does not return a data blob.
+          Therefore, we return early here.
+        */
+        await exportToPdf({ locale: rootState.i18n.locale, project: state, title: state.settings.general.title })
+        commit('flow/hidePdfExport', null, { root: true })
+        return
       default:
         return
     }
 
     const blob = new Blob([data], { type })
-    if (format === 'pdf') commit('flow/hidePdfExport', null, { root: true })
     if (data) {
       return FileSaver.saveAs(blob, `${title || 'ast_project'}.${format}`)
     } else {
@@ -840,64 +845,70 @@ export const getters = {
         : value
 
       const measureValueMap = getters.areas
-        .filter(area => area.properties.hasOwnProperty('measure'))
-        .map(area => {
-          const values = kpiKeys.map(key => get(area, `properties.apiData[${key}]`))
-          return [area.properties.measure, area.properties.area, ...values]
-        })
-        .reduce((obj, row) => {
-          const [measureId, ...values] = row
-          if (obj[measureId] === undefined) {
-            obj[measureId] = values
+        .reduce((obj, area) => {
+          if (!area.properties.hasOwnProperty('measure')) return obj
+
+          const measureId = area.properties.measure
+          const actor = area.properties.actor || DEFAULT_ACTOR
+          const values = [
+            area.properties.area,
+            ...kpiKeys.map(key => get(area, `properties.apiData[${key}]`)),
+          ]
+
+          obj[actor] = obj[actor] || {}
+          if (obj[actor][measureId] === undefined) {
+            obj[actor][measureId] = values
           } else {
             values.forEach((value, index) => {
               if (index === 2) {
-                return Array.isArray(obj[measureId][index])
-                  ? obj[measureId][index].push(value)
-                  : obj[measureId][index] = [obj[measureId][index], value]
+                return Array.isArray(obj[actor][measureId][index])
+                ? obj[actor][measureId][index].push(value)
+                : obj[actor][measureId][index] = [obj[actor][measureId][index], value]
               }
-              obj[measureId][index] += value
+              obj[actor][measureId][index] += value
             })
           }
+
+          const A_tot = state.settings.area.properties.area
+          const A_p = state.settings.pluvfloodParam.A_p
+          const Frac_RA = state.settings.pluvfloodParam.Frac_RA
+          const Fmeas_area = calculateFmeasArea(A_tot, A_p, Frac_RA, obj[actor][measureId][2])
+          obj[actor][measureId][2] = Fmeas_area
+
           return obj
         }, {})
 
-      Object.keys(measureValueMap).forEach(key => {
-        const A_tot = state.settings.area.properties.area
-        const A_p = state.settings.pluvfloodParam.A_p
-        const Frac_RA = state.settings.pluvfloodParam.Frac_RA
-        const Fmeas_area = calculateFmeasArea(A_tot, A_p, Frac_RA, measureValueMap[key][2])
-        measureValueMap[key][2] = Fmeas_area
-      })
-
+      const rowSetHeaders = Object.keys(measureValueMap).sort().reverse();
       return {
-        'title': rootState.i18n.messages.climate_and_costs,
-        'header': [
+        title: rootState.i18n.messages.climate_and_costs,
+        header: [
           rootState.i18n.messages.measure,
           rootState.i18n.messages.surface,
           ...kpiKeys.map(kpiTitleByKey),
         ],
-        'units': [
+        rowSetHeaders: rowSetHeaders,
+        units: [
           '',
           'surface',
           ...kpiKeys.map(key => kpiKeysUnitMap[key]),
         ],
-        rows: Object.entries(measureValueMap).map(([id, values]) => {
-          const [surface, ...kpiValues] = values
-          return [
-            measueTitleForId(id),
-              formattedValue(toDecimalPricision(convertToCorrectUnit(surface, 'surface'), 2), activeWorkspace.thousandSeparator, activeWorkspace.decimalSeparator),
-            ...kpiValues.map((val, index) => {
-              const kpiKey = kpiKeys[index]
-              const decimalScale =
-                kpiKeysDecimalScaleMap && kpiKeysDecimalScaleMap[kpiKey]
-              const scale = decimalScale ? decimalScale : 0
-              const convertedValue = convertToCorrectUnit(val, kpiKeysUnitMap[kpiKey])
-              const value = toDecimalPricision(convertedValue, scale)
-              return isNaN(value) ? '-' : formattedValue(value, activeWorkspace.thousandSeparator, activeWorkspace.decimalSeparator)
-            }),
-          ]
-        }),
+        rowSets: rowSetHeaders.map(key => Object.entries(measureValueMap[key])
+          .map(([id, values]) => {
+            const [surface, ...kpiValues] = values
+            return [
+              measueTitleForId(id),
+                formattedValue(toDecimalPricision(convertToCorrectUnit(surface, 'surface'), 2), activeWorkspace.thousandSeparator, activeWorkspace.decimalSeparator),
+              ...kpiValues.map((val, index) => {
+                const kpiKey = kpiKeys[index]
+                const decimalScale =
+                  kpiKeysDecimalScaleMap && kpiKeysDecimalScaleMap[kpiKey]
+                const scale = decimalScale ? decimalScale : 0
+                const convertedValue = convertToCorrectUnit(val, kpiKeysUnitMap[kpiKey])
+                const value = toDecimalPricision(convertedValue, scale)
+                return isNaN(value) ? '-' : formattedValue(value, activeWorkspace.thousandSeparator, activeWorkspace.decimalSeparator)
+              }),
+            ]
+          })),
       }
     }
   },
@@ -919,36 +930,43 @@ export const getters = {
         : value
 
       const measureValueMap = getters.areas
-        .filter(area => area.properties.hasOwnProperty('measure'))
-        .map(area => {
-          const values = kpiKeys.map(key =>
-            get(area, `properties.apiData[${key}]`),
-          )
-          return [area.properties.measure, area.properties.area, ...values]
-        })
-        .reduce((obj, row) => {
-          const [measureId, ...values] = row
-          if (obj[measureId] === undefined) {
-            obj[measureId] = values
+        .reduce((obj, area) => {
+          if (!area.properties.hasOwnProperty('measure')) return obj
+
+          const measureId = area.properties.measure
+          const actor = area.properties.actor || DEFAULT_ACTOR
+          const values = [
+            area.properties.area,
+            ...kpiKeys.map(key => get(area, `properties.apiData[${key}]`)),
+          ]
+
+          obj[actor] = obj[actor] || {}
+
+          if (obj[actor][measureId] === undefined) {
+            obj[actor][measureId] = values
           } else {
-            values.forEach((value, index) => (obj[measureId][index] += value))
+            values.forEach((value, index) => (obj[actor][measureId][index] += value))
           }
+
           return obj
         }, {})
 
+      const rowSetHeaders = Object.keys(measureValueMap).sort().reverse();
+
       return {
-        'title': rootState.i18n.messages.co_benefits,
-        'header': [
+        title: rootState.i18n.messages.co_benefits,
+        header: [
           rootState.i18n.messages.measure,
           rootState.i18n.messages.surface,
           ...kpiKeys.map(kpiTitleByKey),
         ],
-        'units': [
+        rowSetHeaders: rowSetHeaders,
+        units: [
           '',
           'surface',
           ...kpiKeys.map(key => kpiKeysUnitMap[key]),
         ],
-        rows: Object.entries(measureValueMap)
+        rowSets: rowSetHeaders.map(key => Object.entries(measureValueMap[key])
           .map(([id, values]) => {
             const [surface, ...kpiValues] = values
             return [
@@ -963,7 +981,7 @@ export const getters = {
                 return isNaN(value) ? '-' : formattedValue(value, activeWorkspace.thousandSeparator, activeWorkspace.decimalSeparator)
               }),
             ]
-          }),
+          })),
       }
     }
   },
