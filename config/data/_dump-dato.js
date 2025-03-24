@@ -40,6 +40,11 @@ const gentleQueryApi = curry(async (token, variables, query) => {
   while (retries < maxRetries) {
     try {
       const response = await queryApi(token, variables, query);
+      // Check if response is an array and has attributes property to avoid potential errors
+      if (response && Array.isArray(response) && response[0] &&
+          response[0].attributes && response[0].attributes.code === 'RATE_LIMIT_EXCEEDED') {
+        throw new Error('Rate limit exceeded');
+      }
       return response;
     } catch (error) {
       lastError = error;
