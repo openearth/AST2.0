@@ -415,8 +415,13 @@ export const actions = {
       commit('deleteArea', id)
     })
   },
-  fetchHeatstressData({ state, commit, getters, dispatch }) {
+  fetchHeatstressData({ state, commit, getters, dispatch, rootGetters }) {
     commit('clearHeatstressLayers')
+    const {
+      PETCurrentLayerName,
+      PETPotentialLayerName,
+    } = rootGetters['data/workspaces/heatstressSettings'];
+
     let features = cloneDeep(getters.areas)
 
     // Only use the areas that are not hidden
@@ -431,7 +436,12 @@ export const actions = {
     })
     features.push(state.settings.area)
 
-    getApiData('heatstress/reduction', {
+    const query = new URLSearchParams({
+      PETCurrentLayerName,
+      PETPotentialLayerName,
+    }).toString();
+
+    getApiData(`heatstress/reduction?${query}`, {
       data: {
         type: 'FeatureCollection',
         features: features,
