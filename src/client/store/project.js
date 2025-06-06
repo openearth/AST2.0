@@ -436,15 +436,12 @@ export const actions = {
     })
     features.push(state.settings.area)
 
-    const query = new URLSearchParams({
-      PETCurrentLayerName,
-      PETPotentialLayerName,
-    }).toString();
-
-    getApiData(`heatstress/reduction?${query}`, {
+    getApiData('heatstress/reduction', {
       data: {
         type: 'FeatureCollection',
-        features: features,
+        features,
+        PETCurrentLayerName,
+        PETPotentialLayerName,
       },
     })
       .then(apiData => {
