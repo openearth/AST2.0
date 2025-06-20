@@ -33,13 +33,18 @@ const writeToFile = filePath => contents => writeFile(filePath, JSON.stringify(c
 * Query API with retry mechanism
 */
 const gentleQueryApi = curry(async (token, variables, query) => {
-  const maxRetries = 3;
+  const maxRetries = 5;
   let retries = 0;
   let lastError = null;
 
   while (retries < maxRetries) {
     try {
       const response = await queryApi(token, variables, query);
+      // Check if response is an array and has attributes property to avoid potential errors
+      if (response && Array.isArray(response) && response[0] &&
+          response[0].attributes && response[0].attributes.code === 'RATE_LIMIT_EXCEEDED') {
+        throw new Error('Rate limit exceeded');
+      }
       return response;
     } catch (error) {
       lastError = error;
