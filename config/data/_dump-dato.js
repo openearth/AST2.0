@@ -33,7 +33,7 @@ const writeToFile = filePath => contents => writeFile(filePath, JSON.stringify(c
 * Query API with retry mechanism
 */
 const gentleQueryApi = curry(async (token, variables, query) => {
-  const maxRetries = 3;
+  const maxRetries = 5;
   let retries = 0;
   let lastError = null;
 
