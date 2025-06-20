@@ -14,7 +14,6 @@ function executeFetch(token, variables, query) {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Authorization': `Bearer ${token}`,
-        'X-Environment': 'heatstress-layers',
       },
       body: JSON.stringify({ query, variables }),
     },
