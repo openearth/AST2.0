@@ -440,9 +440,9 @@ export const actions = {
       data: {
         type: 'FeatureCollection',
         features,
-        PETCurrentLayerName,
-        PETPotentialLayerName,
       },
+      PETCurrentLayerName,
+      PETPotentialLayerName,
     })
       .then(apiData => {
         const tileSize = 512
