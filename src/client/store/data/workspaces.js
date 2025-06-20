@@ -84,7 +84,7 @@ export const getters = {
         options,
       }
     }
-    return workspace ? { ...workspace, scenarioName  } : workspace
+    return workspace ? { ...workspace, scenarioName } : workspace
   },
   scenariosInActiveWorkspace(state, getters, rootState) {
     return getters.activeWorkspace.scenarios
@@ -102,5 +102,21 @@ export const getters = {
       skipAreaSettings = workspace.skipAreaSettings || skipAreaSettings
     }
     return skipAreaSettings
+  },
+  heatstressSettings(state) {
+    const activeDomain = state._domain
+    const activeUser = state._user
+    const activeName = activeUser || activeDomain
+    const workspace = state[activeName]
+
+    if (!workspace) return {};
+
+    const { petCurrent, petPotential, showHeatstress } = workspace || {};
+
+    return {
+      PETCurrentLayerName: petCurrent,
+      PETPotentialLayerName: petPotential,
+      showHeatstress,
+    }
   },
 }
